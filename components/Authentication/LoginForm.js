@@ -1,0 +1,138 @@
+import React from 'react';
+import Link from 'next/link';
+
+import { useCallback, useState, useEffect } from 'react';
+import Router from 'next/router';
+import { magic } from '../../magic';
+
+import Swal from 'sweetalert2';
+
+
+
+
+const LoginForm = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  
+
+  /**
+   * Perform login action via Magic's passwordless flow. Upon successuful
+   * completion of the login flow, a user is redirected to the homepage.
+   */
+  const login = useCallback(async () => {
+    setIsLoggingIn(true);
+
+    
+    try {
+      const dataa = {
+        email:email,
+        password:password
+  
+      }
+
+    console.log("email1 =>",email)
+    console.log("password =>",password)
+
+    
+      // Pour connexion simple
+    // const res = await fetch("http://localhost:3080/api/session/login", {
+      const res = await fetch("https://apiv3.liquidity.wealthtechinnovations.com/api/session/login", {
+        method:"POST",
+        body: JSON.stringify(dataa),
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    const data = await res.json();
+    console.log("data", data)
+    // setter
+    localStorage.setItem('tokenEnCours', data.token);
+
+    // setter userId
+    localStorage.setItem('idEnCours', data.auth);
+
+
+    // getter
+    const ok = localStorage.getItem('tokenEnCours');
+    console.log("tokenEnCours", ok)
+
+    console.log("email",email)
+      //Pour magic Grab auth token from loginWithMagicLink
+      const didToken = await magic.auth.loginWithMagicLink({
+        email,
+        redirectURI: new URL('/callback', window.location.origin).href,
+      });
+      console.log("email 2",email)
+      setTimeout(() => {
+        
+          window.location.reload()
+      
+      }, 1000)
+      Router.push("/profil"); 
+    } catch {
+      setIsLoggingIn(false);
+    }
+  }, [email, password]);
+  // Fin
+
+
+
+
+  return (
+    <>
+
+      <div className='col-lg-3 col-md-12'></div>
+      <div className='col-lg-6 col-md-12'>
+        <div className='login-form'>
+          <h2 className='text-center'>Connexion</h2>
+          <form >
+            <div className='form-group'>
+            <input
+              type='email'
+              name='email'
+              required='required'
+              placeholder='Email'
+              className="form-control"
+              defaultValue={email} 
+              onChange={(event)=>setEmail(event.target.value)}
+            />
+            </div>
+            <div className='form-group'>
+              <input
+                type='password'
+                className='form-control'
+                placeholder='Mot de passe'
+                defaultValue={password} 
+                onChange={(event)=>setPassword(event.target.value)}
+              />
+            </div>
+            {/* <div className='form-group'>
+              <input
+                type='password'
+                className='form-control'
+                placeholder='Mot de passe'
+              />
+            </div> */}
+            <div className='row align-items-center'>
+              <div className='col-lg-12 col-md-6 col-sm-6 lost-your-password-wrap text-center'>
+                Pas de compte ?  
+                <a href='/auth/enregistrer/'className='lost-your-password mx-2'>Créer un compte
+                </a>
+              </div>
+            </div>
+
+              <button className="btn btn-primary mx-3" onClick={login} disabled={isLoggingIn}>Connecter</button>
+          </form>
+        </div>
+      </div>
+      <div className='col-lg-3 col-md-12'></div>
+
+    </>
+  );
+};
+
+LoginForm.getInitialProps = async (ctx) => {};
+
+export default LoginForm;
