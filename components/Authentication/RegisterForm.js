@@ -156,9 +156,9 @@ const handleSubmit = (event) =>{
               >
                 <optgroup >
                   <option>Choisissez le type d'utilisateur</option>
-                  <option value="p">Particlier</option>
-                  <option  value="e">Entreprise</option>
-                  <option  value="i">institution</option>
+                  <option value="p">Particulier</option>
+                  <option  value="i">Institution Financière</option>
+		              <option  value="e">Entreprise/commerçant</option>
                 </optgroup>
               </select>
             </div>
