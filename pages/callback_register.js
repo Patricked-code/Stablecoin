@@ -9,13 +9,14 @@ export default function Callback() {
     // On mount, we try to login with a Magic credential in the URL query.
     magic.auth.loginWithCredential().then(async (didToken) => {
       // Validate auth token with server
-      const res = await fetch('api/login', {
+      const res = await fetch('/api/login', {
+        // const res = await axios.get('/api/login', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + didToken,
         },
       });
-      res.status === 200 && Router.push('/profil/dashboard/');
+      res.status === 200 && Router.push('/account/firstEdition');
       setTimeout(() => {
         window.location.reload()
         

@@ -220,17 +220,100 @@ const Navbar = () => {
                   </Link>
                 </li>
 
-                <li className='nav-item'>
+                {/* <li className='nav-item'>
                   <Link href='/casUtilisation/' activeClassName='active'>
                     <a className='nav-link'>Cas d'utilisation</a>
                   </Link>
-                </li>
+                </li> */}
                 
-                <li className='nav-item'>
+                {/* <li className='nav-item'>
                   <Link href='/pourquoi_ewari/' activeClassName='active'>
                     <a className='nav-link'>Pourquoi E-WARI ?</a>
                   </Link>
+                </li> */}
+
+                <ul className=''>
+                <li className='nav-item megamenu '>
+                <div className='others-option'>
+                  <div className='d-flex align-items-center'>
+                    <div className='option-item'>
+                        <a className='dropdown-toggle nav-link'>
+                          Ecosystème
+                        </a>
+                    </div>
+                  </div>
+                </div>
+                  <ul className='dropdown-menu'>
+                    <li className='nav-item'>
+                      <Link href='/profil/ecosysteme/crowdfunding'>
+                        <a className='nav-link'>
+                          Crowdfunding
+                        </a>
+                      </Link>
+                    </li>
+                    <li className='nav-item'>
+                      <Link href='/profil/ecosysteme/investissement'>
+                        <a className='nav-link'>
+                          Investissement
+                        </a>
+                      </Link>
+                    </li>
+                    <li className='nav-item'>
+                      <Link href='/profil/ecosysteme/ecommerces' activeClassName='active'>
+                        <a className='nav-link'>
+                         E-commerce
+                        </a>
+                      </Link>
+                    </li>
+                    
+
+                    
+                  </ul>
                 </li>
+                </ul>
+
+                <li className='nav-item'>
+                  <Link href='/#' activeClassName='active'>
+                    <a className='nav-link'>Actualités</a>
+                  </Link>
+                </li>
+
+                <ul className=''>
+                <li className='nav-item megamenu '>
+                <div className='others-option'>
+                  <div className='d-flex align-items-center'>
+                    <div className='option-item'>
+                        <a className='dropdown-toggle nav-link'>
+                          Stablecoin
+                        </a>
+                    </div>
+                  </div>
+                </div>
+                  <ul className='dropdown-menu'>
+                    <li className='nav-item'>
+                      <Link href='/pourquoi_ewari/'>
+                        <a className='nav-link'>
+                          Pourquoi E-WARI
+                        </a>
+                      </Link>
+                    </li>
+                    <li className='nav-item'>
+                      <Link href='/casUtilisation/'>
+                        <a className='nav-link'>
+                          Cas d'utilisation
+                        </a>
+                      </Link>
+                    </li>
+                    <li className='nav-item'>
+                      <Link href='/#'>
+                        <a className='nav-link'>
+                          Transparence
+                        </a>
+                      </Link>
+                    </li>
+                  </ul>
+                </li>
+                </ul>
 
                
                 {/* <li className='nav-item'>
@@ -241,22 +324,19 @@ const Navbar = () => {
 
 
 
-                <li className='nav-item'>
-                  <Link href='/#' activeClassName='active'>
-                    <a className='nav-link'>Actualités</a>
-                  </Link>
-                </li>
+               
 
-                <li className='nav-item'>
+                {/* <li className='nav-item'>
                   <Link href='/#' activeClassName='active'>
                     <a className='nav-link'>Transparence</a>
                   </Link>
-                </li>
+                </li> */}
                 
               </ul>
 
               {/* Après connexion */}
-              {userMetadata && token ? (
+              {/* {userMetadata && token ? ( */}
+              {userMetadata? (
               <ul className='navbar-nav'>
               <li className='nav-item megamenu '>
                 <div className='others-option'>

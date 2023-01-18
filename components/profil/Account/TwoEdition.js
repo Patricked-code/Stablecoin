@@ -13,6 +13,8 @@ import Swal from 'sweetalert2';
 
 
 function TwoEdition() {
+  // Variable de l'url de l'api
+  const API_URL =process.env.NEXT_PUBLIC_URL_API
 
   const [email, setEmail] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -84,22 +86,8 @@ const handleSubmit = async(event) =>{
     // getter
     const token = localStorage.getItem('tokenEnCours');
     console.log("token Login Update =>", token)
-   
 
-    // fetch("http://localhost:3080/api/user", {
-    // fetch("https://api.stablecoin.wealthtechinnovations.com/api/user", {
-    // fetch("http://localhost:3080/api/session/two-edition", {
-    //     method:"PUT",
-    //     body: JSON.stringify(dataa),
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //         'Authorization':token
-
-    //     }
-    // })
-
-    // const res = await fetch("http://localhost:3080/api/session/two-edition", {
-        const res = await fetch("https://apiv3.liquidity.wealthtechinnovations.com/api/session/two-edition", {
+    const res = await fetch(`${API_URL}/api/session/two-edition`, {
           method:"PUT",
           body: JSON.stringify(dataa),
           headers: {

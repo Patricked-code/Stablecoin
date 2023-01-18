@@ -3212,7 +3212,7 @@ function burnNsia() {
         //execution du transfert
         contractBN.burn(numberOfTokens).then((transferResult) => {
           console.dir(transferResult)
-      //   Router.push('/profil/')
+      //   Router.push('/profil/dashboard')
           setTimeout(()=>{
               window.location.reload()
           },20000) 

@@ -4,7 +4,16 @@ import LoginForm from '../../components/Authentication/LoginForm';
 const Authentication = () => {
   return (
     <>
-      <div className='profile-authentication-area'>
+      <div 
+      className='profile-authentication-area'
+      style={{ 
+        backgroundImage: `url(/images/ecfa/background/bg4.jpg)`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover'
+      }}
+      // style={{ backgroundImage: `url(/images/ecfa/logo/logo_ewari3.jpg)` }}
+
+      >
         <div className='d-table'>
           <div className='d-table-cell'>
             <div className='container'>
@@ -14,11 +23,6 @@ const Authentication = () => {
             </div>
           </div>
         </div>
-        <Link href='/'>
-          <a className='back-icon'>
-            <i className='bx bx-x'></i>
-          </a>
-        </Link>
       </div>
     </>
   );

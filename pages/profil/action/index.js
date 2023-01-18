@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import CardA from '../../components/profil/elements/card_A';
-import SidebarProfil from '../../components/profil/SideBar/Sidebar';
+import Action from '../../../components/profil/Actions/Action';
+import SidebarProfil from '../../../components/profil/SideBar/Sidebar';
 
 
 
@@ -23,7 +23,7 @@ const index = () => {
           </aside>
 
           {/* CONTENU PROFIL */}
-          <CardA />
+          <Action/>
           {/* FIN */}
 
         </main>

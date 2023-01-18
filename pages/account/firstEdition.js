@@ -4,21 +4,24 @@ import FirstEdition from '../../components/Authentication/FirstEdition';
 const First = () => {
   return (
     <>
-      <div className='profile-authentication-area'>
+      <div 
+        className='profile-authentication-area'
+        style={{ 
+          backgroundImage: `url(/images/ecfa/background/bg4.jpg)`,
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover'
+        }}
+        
+      >
         <div className='d-table'>
           <div className='d-table-cell'>
             <div className='container'>
-              <div className='row'>
+              <div className='row py-30'>
                 <FirstEdition/>
               </div>
             </div>
           </div>
         </div>
-        <Link href='/'>
-          <a className='back-icon'>
-            <i className='bx bx-x'></i>
-          </a>
-        </Link>
       </div>
     </>
   );

@@ -14,6 +14,9 @@ const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+
+  const API_URL =process.env.NEXT_PUBLIC_URL_API
 
   
 
@@ -34,11 +37,11 @@ const LoginForm = () => {
 
     console.log("email1 =>",email)
     console.log("password =>",password)
+    console.log("API_URL =>",API_URL)
 
     
       // Pour connexion simple
-    // const res = await fetch("http://localhost:3080/api/session/login", {
-      const res = await fetch("https://apiv3.liquidity.wealthtechinnovations.com/api/session/login", {
+    const res = await fetch(`${API_URL}/api/session/login`, {
         method:"POST",
         body: JSON.stringify(dataa),
         headers: {
@@ -70,14 +73,12 @@ const LoginForm = () => {
           window.location.reload()
       
       }, 1000)
-      Router.push("/profil"); 
+      Router.push("/profil/dashboard/"); 
     } catch {
       setIsLoggingIn(false);
     }
   }, [email, password]);
   // Fin
-
-
 
 
   return (
@@ -86,45 +87,61 @@ const LoginForm = () => {
       <div className='col-lg-3 col-md-12'></div>
       <div className='col-lg-6 col-md-12'>
         <div className='login-form'>
-          <h2 className='text-center'>Connexion</h2>
-          <form >
-            <div className='form-group'>
-            <input
-              type='email'
-              name='email'
-              required='required'
-              placeholder='Email'
-              className="form-control"
-              defaultValue={email} 
-              onChange={(event)=>setEmail(event.target.value)}
-            />
-            </div>
-            <div className='form-group'>
-              <input
-                type='password'
-                className='form-control'
-                placeholder='Mot de passe'
-                defaultValue={password} 
-                onChange={(event)=>setPassword(event.target.value)}
-              />
-            </div>
-            {/* <div className='form-group'>
-              <input
-                type='password'
-                className='form-control'
-                placeholder='Mot de passe'
-              />
-            </div> */}
-            <div className='row align-items-center'>
-              <div className='col-lg-12 col-md-6 col-sm-6 lost-your-password-wrap text-center'>
-                Pas de compte ?  
-                <a href='/auth/enregistrer/'className='lost-your-password mx-2'>Créer un compte
-                </a>
-              </div>
-            </div>
+          <h2 className='text-center'>Se connecter ou s'inscrire</h2>
 
-              <button className="btn btn-primary mx-3" onClick={login} disabled={isLoggingIn}>Connecter</button>
-          </form>
+          {showForm==false ? (
+            <>
+              <div className='col-lg-12 col-md-12 row'>
+                <button 
+                  className="btn btn-primary mx-3"
+                  onClick={()=>setShowForm(true)}
+                >Se connecter</button>
+              </div>
+              <p className='text-center'>ou</p>
+              <a href='/auth/enregistrer/' className='col-lg-12 col-md-12 row'>
+                <button className="btn btn-primary mx-3">S'inscrire</button>
+              </a>
+            </>
+          ):(
+            <form >
+              <div className='form-group'>
+              <input
+                type='email'
+                name='email'
+                required='required'
+                placeholder='Email'
+                className="form-control"
+                defaultValue={email} 
+                onChange={(event)=>setEmail(event.target.value)}
+              />
+              </div>
+              <div className='form-group'>
+                <input
+                  type='password'
+                  className='form-control'
+                  placeholder='Mot de passe'
+                  defaultValue={password} 
+                  onChange={(event)=>setPassword(event.target.value)}
+                />
+              </div>
+              {/* <div className='form-group'>
+                <input
+                  type='password'
+                  className='form-control'
+                  placeholder='Mot de passe'
+                />
+              </div> */}
+              <div className='row align-items-center'>
+                <div className='col-lg-12 col-md-6 col-sm-6 lost-your-password-wrap text-center'>
+                  Pas de compte ?  
+                  <a href='/auth/enregistrer/'className='lost-your-password mx-2'>Créer un compte
+                  </a>
+                </div>
+              </div>
+
+                <button className="btn btn-primary mx-3" onClick={login} disabled={isLoggingIn}>Connecter</button>
+            </form>
+          )}
         </div>
       </div>
       <div className='col-lg-3 col-md-12'></div>

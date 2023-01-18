@@ -39,12 +39,27 @@ const Layout = ({ children }) => {
       </Head>
 
       {/* {pathname === "/auth/authentication"||pathname ==="/auth/enregistrer"||pathname ==="/account/activated"?'' : <Navbar />} */}
-      <Navbar />
+      {pathname === "/profil" || 
+      pathname === "/profil/dashboard" ||
+      pathname === "/profil/kyc"||
+      pathname === "/profil/action"
+
+      ? '' : <Navbar />}
+      {/* <Navbar /> */}
 
       {children}
 
-      {/* {pathname === "/auth/authentication" || pathname === "/auth/enregistrer" || pathname === "/account/activated" || pathname ==="/account/twoEdition" ?'' : <Footer />} */}
-        <Footer />
+      {pathname === "/profil"|| 
+      pathname === "/profil/dashboard" || 
+      pathname === "/profil/kyc" ||
+      pathname === "/profil/action"||
+
+      pathname === "/auth/authentication" || 
+      pathname === "/auth/enregistrer" || 
+      pathname === "/account/activated" || 
+      pathname ==="/account/twoEdition" || 
+      pathname ==="/account/firstEdition"?'' : <Footer />}
+        {/* <Footer /> */}
 
       
     </>

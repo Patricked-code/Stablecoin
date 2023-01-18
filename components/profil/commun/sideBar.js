@@ -19,6 +19,21 @@ const SideBar = () => {
                 <li className="nav-item">
                     <a className="nav-link active" href="/profil/ecosysteme">Ecosysteme</a>
                 </li>
+
+                <li className="nav-item">
+                    <a className="nav-link active" href="/#">Kyc</a>
+                </li>
+                <li className="nav-item">
+                    <a className="nav-link active" href="/profil/ecosysteme/crowdfunding">Crowdfunding</a>
+                </li>
+                <li className="nav-item">
+                    <a className="nav-link active" href="/profil/ecosysteme/investissement">Investissement</a>
+                </li>
+                <li className="nav-item">
+                    <a className="nav-link active" href="/profil/ecosysteme/ecommerces">E-commerce</a>
+                </li>
+                
+
                 <li className="nav-item">
                     <a className="nav-link active" href="/#">Transactions</a>
                 </li>
