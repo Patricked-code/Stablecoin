@@ -103,8 +103,8 @@ function RegisterForm() {
           //Pour magic Grab auth token from loginWithMagicLink
           const didToken = await magic.auth.loginWithMagicLink({
             email,
-            redirectURI: new URL('/account/firstEdition', window.location.origin).href,
-            // redirectURI: new URL('/callback', window.location.origin).href,
+            // redirectURI: new URL('/account/firstEdition', window.location.origin).href,
+            redirectURI: new URL('/callback_register', window.location.origin).href,
           }); 
           // Fin
 
