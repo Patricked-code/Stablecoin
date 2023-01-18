@@ -8,7 +8,7 @@ import { Icon } from '@iconify/react';
 // Pour Magic
 import { magic } from "../../../magic";
 import { ethers } from "ethers";
-import Loading from "../../../components/loading";
+import Loading from "../../loading";
 import Router from "next/router";
 import Swal from 'sweetalert2';
 import Web3 from "web3";
@@ -37,7 +37,7 @@ import {
 
 // FIN
 
-const CardA = () => {
+const Compte = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
@@ -1333,4 +1333,4 @@ function watchToken() {
   );
 };
 
-export default CardA;
+export default Compte;

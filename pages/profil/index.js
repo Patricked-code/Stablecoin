@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import CardA from '../../components/profil/elements/card_A';
+import Compte from '../../components/profil/elements/compte';
 import SidebarProfil from '../../components/profil/SideBar/Sidebar';
 
 
@@ -23,7 +23,7 @@ const index = () => {
           </aside>
 
           {/* CONTENU PROFIL */}
-          <CardA />
+          <Compte/>
           {/* FIN */}
 
         </main>
