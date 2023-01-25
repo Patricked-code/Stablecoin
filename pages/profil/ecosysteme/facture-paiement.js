@@ -12,16 +12,12 @@ function FacturePaiement() {
   return (
     <div>
 
+      
       <div className="row col-lg-12 row col-md-12 justify-content-between">
-        <div className="row col-lg-2 row col-md-2">
-        <SideBar/>
-
-        </div>
-        <div className="row col-lg-10 row col-md-12">
         <CardFacture/>
         <CardPaiement/>
-        </div>
       </div>
+     
     </div>
 
     

@@ -12,6 +12,8 @@ export default function CardProduit() {
 
 
     const [provider, setProvider] = useState(null);
+    const [currentAdresse, setCurrentAdresse] = useState();
+
  
     const [magicTest, setMagicTest] = useState(null);
     const [providerTest, setProviderTest] = useState(null);
@@ -454,6 +456,21 @@ export default function CardProduit() {
         }
     }, [magic]);
 
+    useEffect(() => {
+        (async () => {
+             if (!!magic && !!provider) {
+                 const userMetadata = await magic.user.getMetadata();
+                 const signer = provider.getSigner();
+                 const network = await provider.getNetwork();
+                 const userAddress = await signer.getAddress();
+                 setCurrentAdresse(userAddress);
+                
+                 
+ 
+             }
+         })();
+     }, [provider, magic]);
+
 
     //  *************************************************
       // FONCTION POUR PAYER LA FACTURE IMPOT
@@ -461,59 +478,71 @@ export default function CardProduit() {
 
     const  payerImpot = async () => {
         setIsLoggingIn(true);
-        try {
-            // Connect web3
-        const provider = await new ethers.providers.Web3Provider(magic.rpcProvider);
-        const signer = await provider.getSigner();
-        const contract = await new ethers.Contract(
-            adresseEcfa,
-            AbiEcfa,
-            signer
-        );
-    
-        // Call a state-change method
-        const montantParse = ethers.utils.parseUnits(montantImpot, 2);
-        await contract.transfer(adresseToImpot, montantParse).then((transferResult) => {
-            // PARTIE SWITCH ALERT
-            let timerInterval
-            Swal.fire({
-              title: 'Veuillez patienter svp',
-              html: '<p>Votre transaction est en cours...</p>',
-              timer: 20000,
-              timerProgressBar: true,
-              didOpen: () => {
-                Swal.showLoading()
-                timerInterval = setInterval(() => {
-                }, 1)
-              },
-              willClose: () => {
-                clearInterval(timerInterval)
-              }
-            }).then((result) => {
-              if (result.dismiss === Swal.DismissReason.timer) {
-                //   Affiche après le rechargement
+        if (currentAdresse && !currentAdresse=="") {
+
+            try {
+                // Connect web3
+            const provider = await new ethers.providers.Web3Provider(magic.rpcProvider);
+            const signer = await provider.getSigner();
+            const contract = await new ethers.Contract(
+                adresseEcfa,
+                AbiEcfa,
+                signer
+            );
+        
+            // Call a state-change method
+            const montantParse = ethers.utils.parseUnits(montantImpot, 2);
+            await contract.transfer(adresseToImpot, montantParse).then((transferResult) => {
+                // PARTIE SWITCH ALERT
+                let timerInterval
                 Swal.fire({
-                    position: 'top-center',
-                    icon: 'success',
-                    title: `Succès`,
-                    html:`<p>Le hash est : ${transferResult.hash}</p>`,
-                    showConfirmButton: false,
-                    timer: 20000
+                title: 'Veuillez patienter svp',
+                html: '<p>Votre transaction est en cours...</p>',
+                timer: 20000,
+                timerProgressBar: true,
+                didOpen: () => {
+                    Swal.showLoading()
+                    timerInterval = setInterval(() => {
+                    }, 1)
+                },
+                willClose: () => {
+                    clearInterval(timerInterval)
+                }
+                }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    //   Affiche après le rechargement
+                    Swal.fire({
+                        position: 'top-center',
+                        icon: 'success',
+                        title: `Succès`,
+                        html:`<p>Le hash est : ${transferResult.hash}</p>`,
+                        showConfirmButton: false,
+                        timer: 20000
+                    })
+                    // Fin
+        
+                    // Actualiser après l'affichage 
+                    setTimeout(() => {
+                    window.location.reload()
+                    }, 15000)
+                    // Fin
+                }
                 })
-                // Fin
-    
-                // Actualiser après l'affichage 
-                setTimeout(() => {
-                 window.location.reload()
-                }, 15000)
-                // Fin
-              }
+                // FIN PARTIE SWITCH ALERT
+            });
+                
+            } catch (error) {
+                setIsLoggingIn(false);
+            }
+        }else{
+            Swal.fire({
+                position: 'top-center',
+                icon: 'error',
+                title: `Pas connecté`,
+                html:`<p>Désolé, merci de vous connecter pour effectuer cette action.</p>`,
+                showConfirmButton: false,
+                timer: 20000
             })
-            // FIN PARTIE SWITCH ALERT
-        });
-            
-        } catch (error) {
-            setIsLoggingIn(false);
         }
       };
 
@@ -531,59 +560,72 @@ export default function CardProduit() {
     const  payerDouane = async () => {
         // Connect web3
         setIsLoggingIn(true);
-       try {
-        const provider = await new ethers.providers.Web3Provider(magic.rpcProvider);
-        
-        const signer = await provider.getSigner();
-        const contract = await new ethers.Contract(
-            adresseEcfa,
-            AbiEcfa,
-            signer
-        );
-    
-        // Call a state-change method
-        const montantParse = ethers.utils.parseUnits(montantDouane, 2);
-        await contract.transfer(adresseToDouane, montantParse).then((transferResult) => {
-            // PARTIE SWITCH ALERT
-            let timerInterval
+        if (currentAdresse && !currentAdresse=="") {
+
+            try {
+                const provider = await new ethers.providers.Web3Provider(magic.rpcProvider);
+                
+                const signer = await provider.getSigner();
+                const contract = await new ethers.Contract(
+                    adresseEcfa,
+                    AbiEcfa,
+                    signer
+                );
+            
+                // Call a state-change method
+                const montantParse = ethers.utils.parseUnits(montantDouane, 2);
+                await contract.transfer(adresseToDouane, montantParse).then((transferResult) => {
+                    // PARTIE SWITCH ALERT
+                    let timerInterval
+                    Swal.fire({
+                    title: 'Veuillez patienter svp',
+                    html: '<p>Votre transaction est en cours...</p>',
+                    timer: 20000,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading()
+                        timerInterval = setInterval(() => {
+                        }, 1)
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval)
+                    }
+                    }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        //   Affiche après le rechargement
+                        Swal.fire({
+                            position: 'top-center',
+                            icon: 'success',
+                            title: `Succès`,
+                            html:`<p>Le hash est : ${transferResult.hash}</p>`,
+                            showConfirmButton: false,
+                            timer: 20000
+                        })
+                        // Fin
+            
+                        // Actualiser après l'affichage 
+                        setTimeout(() => {
+                        window.location.reload()
+                        }, 15000)
+                        // Fin
+                    }
+                    })
+                    // FIN PARTIE SWITCH ALERT
+                });
+            } catch (error) {
+                setIsLoggingIn(false);
+            }
+
+        }else{
             Swal.fire({
-              title: 'Veuillez patienter svp',
-              html: '<p>Votre transaction est en cours...</p>',
-              timer: 20000,
-              timerProgressBar: true,
-              didOpen: () => {
-                Swal.showLoading()
-                timerInterval = setInterval(() => {
-                }, 1)
-              },
-              willClose: () => {
-                clearInterval(timerInterval)
-              }
-            }).then((result) => {
-              if (result.dismiss === Swal.DismissReason.timer) {
-                //   Affiche après le rechargement
-                Swal.fire({
-                    position: 'top-center',
-                    icon: 'success',
-                    title: `Succès`,
-                    html:`<p>Le hash est : ${transferResult.hash}</p>`,
-                    showConfirmButton: false,
-                    timer: 20000
-                })
-                // Fin
-    
-                // Actualiser après l'affichage 
-                setTimeout(() => {
-                 window.location.reload()
-                }, 15000)
-                // Fin
-              }
+                position: 'top-center',
+                icon: 'error',
+                title: `Pas connecté`,
+                html:`<p>Désolé, merci de vous connecter pour effectuer cette action.</p>`,
+                showConfirmButton: false,
+                timer: 20000
             })
-            // FIN PARTIE SWITCH ALERT
-        });
-       } catch (error) {
-        setIsLoggingIn(false);
-       }
+        }
       };
 
     //  *************************************************
@@ -599,62 +641,75 @@ export default function CardProduit() {
 
     const  payerAmende = async () => {
         setIsLoggingIn(true);
-        try {
-            // Connect web3
-        const provider = await new ethers.providers.Web3Provider(magic.rpcProvider);
-        
-        const signer = await provider.getSigner();
+        if (currentAdresse && !currentAdresse=="") {
 
-        // let signer = wallet.connect(provider)
-        const contract = await new ethers.Contract(
-            adresseEcfa,
-            AbiEcfa,
-            signer
-        );
-    
-        // Call a state-change method
-        const montantParse = ethers.utils.parseUnits(montantAmende, 2);
-        await contract.transfer(adresseToAmende, montantParse).then((transferResult) => {
-            // PARTIE SWITCH ALERT
-            let timerInterval
-            Swal.fire({
-              title: 'Veuillez patienter svp',
-              html: '<p>Votre transaction est en cours...</p>',
-              timer: 20000,
-              timerProgressBar: true,
-              didOpen: () => {
-                Swal.showLoading()
-                timerInterval = setInterval(() => {
-                }, 1)
-              },
-              willClose: () => {
-                clearInterval(timerInterval)
-              }
-            }).then((result) => {
-              if (result.dismiss === Swal.DismissReason.timer) {
-                //   Affiche après le rechargement
+            try {
+                // Connect web3
+            const provider = await new ethers.providers.Web3Provider(magic.rpcProvider);
+            
+            const signer = await provider.getSigner();
+
+            // let signer = wallet.connect(provider)
+            const contract = await new ethers.Contract(
+                adresseEcfa,
+                AbiEcfa,
+                signer
+            );
+        
+            // Call a state-change method
+            const montantParse = ethers.utils.parseUnits(montantAmende, 2);
+            await contract.transfer(adresseToAmende, montantParse).then((transferResult) => {
+                // PARTIE SWITCH ALERT
+                let timerInterval
                 Swal.fire({
-                    position: 'top-center',
-                    icon: 'success',
-                    title: `Succès`,
-                    html:`<p>Le hash est : ${transferResult.hash}</p>`,
-                    showConfirmButton: false,
-                    timer: 20000
+                title: 'Veuillez patienter svp',
+                html: '<p>Votre transaction est en cours...</p>',
+                timer: 20000,
+                timerProgressBar: true,
+                didOpen: () => {
+                    Swal.showLoading()
+                    timerInterval = setInterval(() => {
+                    }, 1)
+                },
+                willClose: () => {
+                    clearInterval(timerInterval)
+                }
+                }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    //   Affiche après le rechargement
+                    Swal.fire({
+                        position: 'top-center',
+                        icon: 'success',
+                        title: `Succès`,
+                        html:`<p>Le hash est : ${transferResult.hash}</p>`,
+                        showConfirmButton: false,
+                        timer: 20000
+                    })
+                    // Fin
+        
+                    // Actualiser après l'affichage 
+                    setTimeout(() => {
+                    window.location.reload()
+                    }, 15000)
+                    // Fin
+                }
                 })
-                // Fin
-    
-                // Actualiser après l'affichage 
-                setTimeout(() => {
-                 window.location.reload()
-                }, 15000)
-                // Fin
-              }
+                // FIN PARTIE SWITCH ALERT
+            });
+            } catch (error) {
+                setIsLoggingIn(false);
+            }
+        }else{
+            Swal.fire({
+                position: 'top-center',
+                icon: 'error',
+                title: `Pas connecté`,
+                html:`<p>Désolé, merci de vous connecter pour effectuer cette action.</p>`,
+                showConfirmButton: false,
+                timer: 20000
             })
-            // FIN PARTIE SWITCH ALERT
-        });
-        } catch (error) {
-            setIsLoggingIn(false);
         }
+        
       };
 
     //  *************************************************

@@ -41,8 +41,18 @@ const Layout = ({ children }) => {
       {/* {pathname === "/auth/authentication"||pathname ==="/auth/enregistrer"||pathname ==="/account/activated"?'' : <Navbar />} */}
       {pathname === "/profil" || 
       pathname === "/profil/dashboard" ||
-      pathname === "/profil/kyc"||
-      pathname === "/profil/action"
+      pathname === "/profil/kyc/particulier"||
+      pathname === "/profil/kyc/particulier/seconde-phase"||
+      pathname === "/profil/action"||
+      pathname === "/profil/achat/achat-carte"||
+      pathname === "/profil/retrait/retrait-carte"||
+      pathname === "/profil/achat/achat-mobile"||
+      pathname === "/profil/retrait/retrait-mobile"||
+      pathname === "/profil/kyc/particulier/justificatif-domicile"||
+      pathname === "/profil/kyc/commun/selfie"||
+      pathname === "/profil/kyc/commun/signature"||
+      pathname === "/profil/kyc/entreprise/questionnaire"||
+      pathname === "/profil/kyc/entreprise/documents-legaux"
 
       ? '' : <Navbar />}
       {/* <Navbar /> */}
@@ -51,8 +61,20 @@ const Layout = ({ children }) => {
 
       {pathname === "/profil"|| 
       pathname === "/profil/dashboard" || 
-      pathname === "/profil/kyc" ||
+      pathname === "/profil/kyc/particulier" ||
+      pathname === "/profil/kyc/particulier/seconde-phase"||
       pathname === "/profil/action"||
+      pathname === "/profil/achat/achat-carte"||
+      pathname === "/profil/retrait/retrait-carte"||
+      pathname === "/profil/achat/achat-mobile"||
+      pathname === "/profil/retrait/retrait-mobile"||
+      pathname === "/profil/kyc/particulier/justificatif-domicile"||
+      pathname === "/profil/kyc/commun/selfie"||
+      pathname === "/profil/kyc/commun/signature"||
+      pathname === "/profil/kyc/entreprise/questionnaire"||
+      pathname === "/profil/kyc/entreprise/documents-legaux"||
+
+
 
       pathname === "/auth/authentication" || 
       pathname === "/auth/enregistrer" || 

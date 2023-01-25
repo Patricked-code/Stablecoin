@@ -1,0 +1,403 @@
+import { useState, useEffect } from 'react';
+import React from "react";
+import axios from 'axios';
+import Link from 'next/link';
+import { Icon } from '@iconify/react';
+
+
+// Pour Magic
+import { magic } from "../../../../magic";
+import { ethers } from "ethers";
+import Loading from "../../../loading";
+import Router from "next/router";
+import Swal from 'sweetalert2';
+import Web3 from "web3";
+
+// FIN
+
+const CQuestionnaire = () => {
+    // Variable de l'url de l'api
+    const API_URL =process.env.NEXT_PUBLIC_URL_API
+
+    const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+   
+
+
+  return (
+    <>
+
+        <div className='' >
+            <div className=' mx-15'>
+                <div className='py-10'>
+                    <h1 className='text-center'>Questionnaires</h1>
+                </div>
+            </div>
+
+            {/* Les images de fond */}
+            <div className='shape1'>
+            {/* <img src='/images/shape/shape1.png' alt='image' /> */}
+            </div>
+            <div className='shape2 mb-5'><br/>
+            <img src='/images/shape/shape2.png' alt='image' />
+            </div>
+            <div className='shape3'>
+            {/* <img src='/images/shape/shape3.png' alt='image' /> */}
+            </div>
+            <div className='shape4'>
+                <img src='/images/shape/shape4.png' alt='image' />
+            </div>
+            {/* Fin des images de fond */}
+
+            {/* Les cards */}
+            <div className='row'>
+                <div className='col-lg-3 col-md-12'></div>
+
+                    <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
+                        <form className=''>
+                            {/* Question 1 */}
+                            <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="Q1"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Q1) Avez-vous des dépenses ou payer vous des charges récurrentes mensuelles ou annuelles dans le cadre des activités de votre entreprises ( Assurances, loyers, abonnement "internet, eau, courant, transports", remboursement de crédit, salaires, cotisations, fournisseurs )
+                                </label>
+                                <select 
+                                className="form-control"
+                                id="Q1"
+                                required
+                                // defaultValue={sex} 
+                                // onChange={(event)=>setSex(event.target.value)}
+                                >
+                                <option defaultValue="">Choisissez</option>
+                                    <optgroup className='single-cryptocurrency-box'>
+                                    <option  value="Oui">Oui</option>
+                                    <option  value="Non">Non</option>
+                                    </optgroup>
+                                </select>
+                            </div >
+                            {/* Fin */}
+
+                            {/* Question 2 */}
+                            <label
+                                htmlFor="Q1"
+                                className="text-blackish-blue mb-2"
+                            >
+                                Q2) Choisissez vos dépenses récurrentes parmi les catégories ci-dessous : (choix multiples)
+                            </label>
+                            {/* Loyer */}
+                            <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="terms-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="transport"
+                                    id='terms-check' 
+                                    //   checked={formData.transport}
+                                    //   onChange={handleChange}
+                                    />
+                                <p className=" mx-2 mb-0 text-center">
+                                    Loyer
+                                </p>
+                                </label>
+                            </div>
+                            {/* Assurances */}
+                            <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="Assurances-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="transport"
+                                    id='Assurances-check' 
+                                    //   checked={formData.transport}
+                                    //   onChange={handleChange}
+                                    />
+                                <p className=" mx-2 mb-0 text-center">
+                                    Assurances
+                                </p>
+                                </label>
+                            </div>
+                            {/* Crédit bancaire */}
+                            <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="bancaire-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="transport"
+                                    id='bancaire-check' 
+                                    //   checked={formData.transport}
+                                    //   onChange={handleChange}
+                                    />
+                                <p className=" mx-2 mb-0 text-center">
+                                    Crédit bancaire
+                                </p>
+                                </label>
+                            </div>
+                            {/* Transport */}
+                            <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="Transport-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="transport"
+                                    id='Transport-check' 
+                                    //   checked={formData.transport}
+                                    //   onChange={handleChange}
+                                    />
+                                <p className=" mx-2 mb-0 text-center">
+                                    Transport
+                                </p>
+                                </label>
+                            </div>
+                            {/* Abonnement & factures */}
+                            <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="factures-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="transport"
+                                    id='terms-check' 
+                                    //   checked={formData.transport}
+                                    //   onChange={handleChange}
+                                    />
+                                <p className=" mx-2 mb-0 text-center">
+                                    Abonnement & factures
+                                </p>
+                                </label>
+                            </div>
+                            {/* Fin Q2 */}
+
+                            {/* Question 3 */}
+                            <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="Q1"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Q3) Avez-vous des clients ou des fournisseurs dans en dehors du pays dans lequel votre entreprise en située?
+                                </label>
+                                <select 
+                                className="form-control"
+                                id="Q1"
+                                required
+                                // defaultValue={sex} 
+                                // onChange={(event)=>setSex(event.target.value)}
+                                >
+                                <option defaultValue="">Choisissez</option>
+                                    <optgroup className='single-cryptocurrency-box'>
+                                    <option  value="Oui">Oui </option>
+                                    <option  value="Non">Non </option>
+                                    </optgroup>
+                                </select>
+                            </div >
+                            {/* Fin Q3 */}
+
+                            {/* Question 4 */}
+                            <label
+                                htmlFor="Q1"
+                                className="text-blackish-blue mb-2"
+                            >
+                                Q4) Les opérations financières transfrontalières dans le cadre des activités de votre entreprise concernent ? 
+                            </label>
+                           
+                            {/* operationA*/}
+                            <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="operationA-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="operationA"
+                                    id='operationA-check' 
+                                    //   checked={formData.transport}
+                                    //   onChange={handleChange}
+                                    />
+                                <p className=" mx-2 mb-0">
+                                    Vos clients Afrique-hors UEMOA: Réception de Fonds facturés aux clients africains-Hors CFA)
+                                </p>
+                                </label>
+                            </div>
+                            {/* operationB */}
+                            <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="operationA-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="operationB"
+                                    id='operationA-check' 
+                                    //   checked={formData.transport}
+                                    //   onChange={handleChange}
+                                    />
+                                <p className=" mx-2 mb-0 ">
+                                    Vos clients ZONE EURO : Réception de Fonds facturés aux clients qui résident dans la zone EURO
+                                </p>
+                                </label>
+                            </div>
+                            {/* operationC */}
+                            <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="operationC-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="operationC"
+                                    id='operationC-check' 
+                                    //   checked={formData.transport}
+                                    //   onChange={handleChange}
+                                    />
+                                <p className=" mx-2 mb-0">
+                                    Vos clients AUTRES : Réception de Fonds facturés aux clients qui ne sont ni en Afrique, ni dans la zone euro
+                                </p>
+                                </label>
+                            </div>
+                            {/* operationD */}
+                            <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="operationD-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="operationD"
+                                    id='operationD-check' 
+                                    //   checked={formData.transport}
+                                    //   onChange={handleChange}
+                                    />
+                                <p className=" mx-2 mb-0">
+                                    Vos Fournisseurs UEMOA : Envoi de Fonds Pour payer vos Fournisseurs dans les pays de la zone CFA UEMOA)
+                                </p>
+                                </label>
+                            </div>
+                            {/* operationE */}
+                            <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="operationE-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="operationE"
+                                    id='operationE-check' 
+                                    //   checked={formData.transport}
+                                    //   onChange={handleChange}
+                                    />
+                                <p className=" mx-2 mb-0">
+                                    Vos Fournisseurs Afrique-hors UEMOA: Envoi de Fonds Pour payer vos Fournisseurs africains-Hors CFA)
+                                </p>
+                                </label>
+                            </div>
+                            {/* operationF */}
+                            <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="operationF-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="operationF"
+                                    id='operationF-check' 
+                                    //   checked={formData.transport}
+                                    //   onChange={handleChange}
+                                    />
+                                <p className=" mx-2 mb-0">
+                                    Vos Fournisseurs ZONE EURO : Envoi de Fonds Pour payer vos Fournisseurs qui résident dans la zone EURO
+                                </p>
+                                </label>
+                            </div>
+                            {/* operationG */}
+                            <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="operationG-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="operationG"
+                                    id='operationG-check' 
+                                    //   checked={formData.transport}
+                                    //   onChange={handleChange}
+                                    />
+                                <p className=" mx-2 mb-0 ">
+                                    Vos Fournisseurs AUTRES : Envoi de Fonds Pour payer vos Fournisseurs qui ne sont ni en Afrique, ni dans la zone euro
+                                </p>
+                                </label>
+                            </div>
+                            {/* Fin Q4 */}
+
+                            {/* Question 5 */}
+                            <label
+                                htmlFor="Q1"
+                                className="text-blackish-blue mb-2"
+                            >
+                                Q5) Avez-vous une boutique en ligne ?
+                            </label>
+                            <select 
+                                className="form-control"
+                                id="Q5"
+                                required
+                                // defaultValue={sex} 
+                                // onChange={(event)=>setSex(event.target.value)}
+                                >
+                                <option defaultValue="">Choisissez</option>
+                                    <optgroup className='single-cryptocurrency-box'>
+                                    <option  value="Oui - J'ai boutique en ligne">Oui</option>
+                                    <option  value="Non - Je n'ai pas de boutique en ligne">Non</option>
+                                    </optgroup>
+                                </select>
+                                {/* Fin Q5 */}
+
+                                {/* Question 6 */}
+                                {/* Question 5 */}
+                            <label
+                                htmlFor="Q1"
+                                className="text-blackish-blue mb-2"
+                            >
+                                Q6) Seriez intéressés par une solution digitale (paiement/ encaissement) qui vous permettra de recevoir et d'effectuer des paiements instantanés de vos clients et à vos fournisseurs, quelque soit leur pays de résidence, les moyens de paiements que ces derniers utilisent ?
+                            </label>
+                            <select 
+                                className="form-control"
+                                id="Q5"
+                                required
+                                // defaultValue={sex} 
+                                // onChange={(event)=>setSex(event.target.value)}
+                                >
+                                <option defaultValue="">Choisissez</option>
+                                    <optgroup className='single-cryptocurrency-box'>
+                                    <option  value="Oui - Je suis intéressé par une solution digitale (paiement/ encaissement)">Oui</option>
+                                    <option  value="Non - Je ne suis pas intéressé par une solution digitale (paiement/ encaissement)">Non</option>
+                                    </optgroup>
+                                </select>
+                            <br/>
+                            <Link href='/profil/kyc/entreprise/documents-legaux'>
+                                <a
+                                className=""
+                                >
+                                    <button className="btn btn-primary " type='button'  disabled={isLoggingIn}>Suivant</button>
+                                </a>
+                            </Link>
+                       
+                            {/* <button className="btn btn-primary "  disabled={isLoggingIn}>Suivant</button> */}
+                        </form>       
+                    </div>
+                <div className='col-lg-3 col-md-12'></div>
+            </div>
+        </div>
+    </>
+  );
+};
+
+export default CQuestionnaire;

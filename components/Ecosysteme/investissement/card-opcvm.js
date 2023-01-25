@@ -2628,6 +2628,7 @@ const [provider, setProvider] = useState(null);
             const network = await provider.getNetwork();
             const userAddress = await signer.getAddress();
             setCurrentAdresse(userAddress);
+
             //const userBalance = ethers.utils.formatEther(await provider.getBalance(userAddress))
             
             const web3 = new Web3(Rpcweb3)
@@ -2697,95 +2698,107 @@ const [provider, setProvider] = useState(null);
     // **************************************************************************
     // fonction: Prendre les E-WARI du client pour envoyer vers notre adresse
     async function sell_tokenEcfa() {
-        if (montantSaisiForNsia > 0 && balance >= montantSaisiForNsia) {
-            
-            const provider = new ethers.providers.Web3Provider(magic.rpcProvider);
-            
-            const signer = await provider.getSigner();
-            console.log("signer", await signer.getBalance())
+        if (currentAdresse && !currentAdresse=="") {
         
-            const contract = new ethers.Contract(
-                adresseEcfa,
-                AbiEcfa,
-                signer
-            );
-         
-            const montantParseNsia = ethers.utils.parseUnits(montantSaisiForNsia, 2);
-            console.log("montant parse",montantParseNsia);
-            await contract.transfer(adresseRecepNsia, montantParseNsia);
-            // Fin
+            if (montantSaisiForNsia > 0 && balance >= montantSaisiForNsia) {
+                
+                const provider = new ethers.providers.Web3Provider(magic.rpcProvider);
+                
+                const signer = await provider.getSigner();
+                console.log("signer", await signer.getBalance())
+            
+                const contract = new ethers.Contract(
+                    adresseEcfa,
+                    AbiEcfa,
+                    signer
+                );
+            
+                const montantParseNsia = ethers.utils.parseUnits(montantSaisiForNsia, 2);
+                console.log("montant parse",montantParseNsia);
+                await contract.transfer(adresseRecepNsia, montantParseNsia);
+                // Fin
 
 
 
-            // fonction: Prendre nos Tokens Nsia  pour envoyer vers client
-            let wallet = new ethers.Wallet(priv_key)
-            // const provider = new ethers.providers.JsonRpcProvider(Rpcprovider);
-            let walletSigner = await wallet.connect(provider)
+                // fonction: Prendre nos Tokens Nsia  pour envoyer vers client
+                let wallet = new ethers.Wallet(priv_key)
+                // const provider = new ethers.providers.JsonRpcProvider(Rpcprovider);
+                let walletSigner = await wallet.connect(provider)
+            
+            if (Adresse_NSIA) {
+                //instanciation du contract (erc20 custom)
+                let contractNsia = new ethers.Contract(
+                    Adresse_NSIA,
+                    ABINsia,
+                    walletSigner
+                )
         
-          if (Adresse_NSIA) {
-            //instanciation du contract (erc20 custom)
-            let contractNsia = new ethers.Contract(
-                Adresse_NSIA,
-                ABINsia,
-                walletSigner
-            )
-      
-            //on parse le montant recuperé dans le champ
-            let numberOfTokens = await ethers.utils.parseUnits(quantiteNsia, 2)
-            console.log(`numberOfTokens: ${numberOfTokens}`)
+                //on parse le montant recuperé dans le champ
+                let numberOfTokens = await ethers.utils.parseUnits(quantiteNsia, 2)
+                console.log(`numberOfTokens: ${numberOfTokens}`)
 
-            // Minter
-            await contractNsia.mint(numberOfTokens);
+                // Minter
+                await contractNsia.mint(numberOfTokens);
 
-            //execution du transfert
-            await contractNsia.transfer(currentAdresse, numberOfTokens).then((transferResult) => {
-                // PARTIE SWITCH ALERT
-                let timerInterval
-                Swal.fire({
-                  title: 'Veuillez patienter svp',
-                  html: '<p>Votre transaction est en cours...</p>',
-                  timer: 20000,
-                  timerProgressBar: true,
-                  didOpen: () => {
-                    Swal.showLoading()
-                    timerInterval = setInterval(() => {
-                    }, 1)
-                  },
-                  willClose: () => {
-                    clearInterval(timerInterval)
-                  }
-                }).then((result) => {
-                  if (result.dismiss === Swal.DismissReason.timer) {
-                    //   Affiche après le rechargement
+                //execution du transfert
+                await contractNsia.transfer(currentAdresse, numberOfTokens).then((transferResult) => {
+                    // PARTIE SWITCH ALERT
+                    let timerInterval
                     Swal.fire({
-                        position: 'top-center',
-                        icon: 'success',
-                        title: `Succès`,
-                        html:`<p>Le hash est : ${transferResult.hash}</p>`,
-                        showConfirmButton: false,
-                        timer: 20000
+                    title: 'Veuillez patienter svp',
+                    html: '<p>Votre transaction est en cours...</p>',
+                    timer: 20000,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading()
+                        timerInterval = setInterval(() => {
+                        }, 1)
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval)
+                    }
+                    }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        //   Affiche après le rechargement
+                        Swal.fire({
+                            position: 'top-center',
+                            icon: 'success',
+                            title: `Succès`,
+                            html:`<p>Le hash est : ${transferResult.hash}</p>`,
+                            showConfirmButton: false,
+                            timer: 20000
+                        })
+                        // Fin
+            
+                        // Actualiser après l'affichage 
+                        setTimeout(() => {
+                        window.location.reload()
+                        }, 15000)
+                        // Fin
+                    }
                     })
-                    // Fin
-        
-                    // Actualiser après l'affichage 
-                    setTimeout(() => {
-                     window.location.reload()
-                    }, 15000)
-                    // Fin
-                  }
+                    // FIN PARTIE SWITCH ALERT
+                });
+            }else{
+                console.log("l'adress nexiste pas");
+            }
+            // Fin
+            }else{
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Votre solde insuffissant',
                 })
-                // FIN PARTIE SWITCH ALERT
-            });
-          }else{
-            console.log("l'adress nexiste pas");
-          }
-        // Fin
+            }
         }else{
             Swal.fire({
+                position: 'top-center',
                 icon: 'error',
-                title: 'Oops...',
-                text: 'Votre solde insuffissant',
-              })
+                title: `Pas connecté`,
+                html:`<p>Désolé, merci de vous connecter pour effectuer cette action.</p>`,
+                showConfirmButton: false,
+                timer: 20000
+            })
         }
         
 
@@ -3218,103 +3231,115 @@ const [provider, setProvider] = useState(null);
     // **************************************************************************
     // fonction: Prendre les NSIA du client pour envoyer vers adresse 0 ET lui ramène l'equivalence en E-WARI
     async function sell_tokenRachatEcfa() {
-        if (quantiteRachatNsia > 0 && balance >= quantiteRachatNsia) {
-            const provider = new ethers.providers.Web3Provider(magic.rpcProvider);
-            const signer = await provider.getSigner();
-            console.log("signer", await signer.getBalance())
-                //instanciation du contract (erc20 custom)
-                let contractNsia = new ethers.Contract(
+        if (currentAdresse && !currentAdresse=="") {
+        
+            if (quantiteRachatNsia > 0 && balance >= quantiteRachatNsia) {
+                const provider = new ethers.providers.Web3Provider(magic.rpcProvider);
+                const signer = await provider.getSigner();
+                console.log("signer", await signer.getBalance())
+                    //instanciation du contract (erc20 custom)
+                    let contractNsia = new ethers.Contract(
+                        Adresse_NSIA,
+                        ABINsia,
+                        signer
+                    )
+            
+                const numberOfTokensRachat = ethers.utils.parseUnits(quantiteRachatNsia, 2);
+                console.log("montant parse",numberOfTokensRachat);
+                await contractNsia.transfer(adresseWealtech, numberOfTokensRachat);
+
+                // Fin
+
+                // fonction: Prendre nos Tokens Nsia  pour envoyer vers client
+                let walletECFA = new ethers.Wallet(priv_key)
+                // const provider = new ethers.providers.JsonRpcProvider(Rpcprovider);
+                let walletSignerECFA = await walletECFA.connect(provider)
+
+                let contractBurNsia = new ethers.Contract(
                     Adresse_NSIA,
                     ABINsia,
-                    signer
+                    walletSignerECFA
                 )
-         
-            const numberOfTokensRachat = ethers.utils.parseUnits(quantiteRachatNsia, 2);
-            console.log("montant parse",numberOfTokensRachat);
-            await contractNsia.transfer(adresseWealtech, numberOfTokensRachat);
 
-            // Fin
-
-            // fonction: Prendre nos Tokens Nsia  pour envoyer vers client
-            let walletECFA = new ethers.Wallet(priv_key)
-            // const provider = new ethers.providers.JsonRpcProvider(Rpcprovider);
-            let walletSignerECFA = await walletECFA.connect(provider)
-
-            let contractBurNsia = new ethers.Contract(
-                Adresse_NSIA,
-                ABINsia,
-                walletSignerECFA
-            )
-
-            // Burn
-            await contractBurNsia.burn(numberOfTokensRachat);
+                // Burn
+                await contractBurNsia.burn(numberOfTokensRachat);
+            
+                if (adresseEcfa) {
+                    //instanciation du contract (erc20 custom)
+                    let contract = new ethers.Contract(
+                        adresseEcfa ,
+                        AbiEcfa ,
+                        walletSignerECFA
+                    )
         
-            if (adresseEcfa) {
-                //instanciation du contract (erc20 custom)
-                let contract = new ethers.Contract(
-                      adresseEcfa ,
-                      AbiEcfa ,
-                      walletSignerECFA
-                )
-      
-            //on parse le montant recuperé dans le champ
-            const montantParseRachatNsia = ethers.utils.parseUnits(montantSaisiForRachatNsia, 2);
-            console.log("montant parse",montantParseRachatNsia);
+                //on parse le montant recuperé dans le champ
+                const montantParseRachatNsia = ethers.utils.parseUnits(montantSaisiForRachatNsia, 2);
+                console.log("montant parse",montantParseRachatNsia);
 
-            // Burn
-            await contract.mint(montantParseRachatNsia);
+                // Burn
+                await contract.mint(montantParseRachatNsia);
 
-            //execution du transfert
-            await contract.transfer(currentAdresse, montantParseRachatNsia).then((transferResult) => {
-                // PARTIE SWITCH ALERT
-                let timerInterval
-                Swal.fire({
-                  title: 'Veuillez patienter svp',
-                  html: '<p>Votre transaction est en cours...</p>',
-                  timer: 20000,
-                  timerProgressBar: true,
-                  didOpen: () => {
-                    Swal.showLoading()
-                    timerInterval = setInterval(() => {
-                    }, 1)
-                  },
-                  willClose: () => {
-                    clearInterval(timerInterval)
-                  }
-                }).then((result) => {
-                  if (result.dismiss === Swal.DismissReason.timer) {
-                    //   Affiche après le rechargement
+                //execution du transfert
+                await contract.transfer(currentAdresse, montantParseRachatNsia).then((transferResult) => {
+                    // PARTIE SWITCH ALERT
+                    let timerInterval
                     Swal.fire({
-                        position: 'top-center',
-                        icon: 'success',
-                        title: `Succès`,
-                        html:`<p>Le hash est : ${transferResult.hash}</p>`,
-                        showConfirmButton: false,
-                        timer: 20000
+                    title: 'Veuillez patienter svp',
+                    html: '<p>Votre transaction est en cours...</p>',
+                    timer: 20000,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading()
+                        timerInterval = setInterval(() => {
+                        }, 1)
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval)
+                    }
+                    }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        //   Affiche après le rechargement
+                        Swal.fire({
+                            position: 'top-center',
+                            icon: 'success',
+                            title: `Succès`,
+                            html:`<p>Le hash est : ${transferResult.hash}</p>`,
+                            showConfirmButton: false,
+                            timer: 20000
+                        })
+                        // Fin
+            
+                        // Actualiser après l'affichage 
+                        setTimeout(() => {
+                        window.location.reload()
+                        }, 15000)
+                        // Fin
+                    }
                     })
-                    // Fin
-        
-                    // Actualiser après l'affichage 
-                    setTimeout(() => {
-                     window.location.reload()
-                    }, 15000)
-                    // Fin
-                  }
+                    // FIN PARTIE SWITCH ALERT
+                });
+            }else{
+                console.log("l'adress nexiste pas");
+            }
+            // Fin
+            }else{
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Votre solde insuffissant',
                 })
-                // FIN PARTIE SWITCH ALERT
-            });
-          }else{
-            console.log("l'adress nexiste pas");
-          }
-        // Fin
+            }
+            // Fin
         }else{
             Swal.fire({
+                position: 'top-center',
                 icon: 'error',
-                title: 'Oops...',
-                text: 'Votre solde insuffissant',
-              })
+                title: `Pas connecté`,
+                html:`<p>Désolé, merci de vous connecter pour effectuer cette action.</p>`,
+                showConfirmButton: false,
+                timer: 20000
+            })
         }
-        // Fin
         
 
     };
@@ -3574,9 +3599,12 @@ const [provider, setProvider] = useState(null);
             
             <div className='banner-content'>
             <p className='my-5 col-lg-6'>
-                Utiliser vos E-WARI pour investir dans la zone EUMOA, sur les marchés financiers 
-                ou éventuellement dans des entreprises africaines via crowfunding.
-                Une expérience d'investissement complètement réinventée.
+            Utilisez vos E-WARI pour investir dans des produits financiers 
+            de la zone UMOA, notamment dans les fonds d'investissement (OPCVM). 
+            Nous vous donnons l'accès à une large gamme d'OPCVM et de SICAV investis 
+            dans les titres financiers (actions, obligations, monétaires) des pays 
+            et entreprises de l'union monétaire ouest africaine.
+
             </p>
                 <div className='text-center'>
                     <a className='default-btn'>

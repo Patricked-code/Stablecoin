@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import FirsKyc from '../../../components/profil/Kyc/FirstKyc';
-import SidebarProfil from '../../../components/profil/SideBar/Sidebar';
+import FirsKyc from '../../../../components/profil/Kyc/Particulier/FirstKyc';
+import SidebarProfil from '../../../../components/profil/SideBar/Sidebar';
 
 
 

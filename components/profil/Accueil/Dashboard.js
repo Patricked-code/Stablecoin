@@ -1223,9 +1223,9 @@ function watchToken() {
 
         <div className='cryptocurrency-search-box '>
             <div className='row'>
-            <div className='col-lg-7 col-md-7'>
+            <div className='col-lg-6 col-md-6'>
                         <div className='currency-selection text-center'>
-                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
                                 <div className='cryptocurrency-slides'>
                                     <div className='single-cryptocurrency-box'>
                                         <div className='d-flex align-items-center'>
@@ -1253,7 +1253,7 @@ function watchToken() {
                         </div>
                     </div>
             {/* Demander des E-WARI */}
-            <div className='col-lg-5 col-md-5'>
+            <div className='col-lg-6 col-md-6'>
                 <div className='currency-selection text-center'>
                     <div className=" bg-white ">
                     {/* <div className="mb-3 ml-3"> */}
@@ -1326,7 +1326,7 @@ function watchToken() {
                             onClick={() => setModalFormOpenMobile(true)}
                             type="button"
                         >
-                            Compte mobile money
+                            Ajouter un compte de monnaie électronique (mobile money)
                         </Button>
                         {/* Fin */}
 
@@ -1383,7 +1383,7 @@ function watchToken() {
                     onClick={() => setModalFormOpen(true)}
                     type="button"
                     >
-                        Compte Bancaire
+                        Ajouter un compte bancaire
                     </Button>
                     {/* Fin */}
 
@@ -1600,8 +1600,14 @@ function watchToken() {
               onChange={(event)=>setIban(event.target.value)}
             />
             </div>
-              <button type='submit'  className="btn btn-primary " disabled={isLoggingIn}>Ajouter</button>
-                  {/* <button onClick={execute()} ></button> */}
+            <div className='row'>
+                <div className='col-lg-6 col-md-6'>
+                    <button type='button' onClick={() => setModalFormOpen(false)}  className="btn btn-danger " disabled={isLoggingIn}>Fermer</button>
+                </div>
+                <div className='col-lg-6 col-md-6'>
+                    <button type='submit'  className="btn btn-primary " disabled={isLoggingIn}>Ajouter</button>
+                </div>
+            </div>
                 </div>
 
                   </Form>
@@ -1622,7 +1628,7 @@ function watchToken() {
               <Card className=" bg-secondary shadow border-0">
     <CardBody className=" px-lg-5 py-lg-5">
                   <div className=" text-center text-muted mb-4">
-                  <h3 className='text-center text-white'>Ajouter un compte mobile</h3>
+                  <h3 className='text-center text-white'>Ajouter un compte de monnaie électronique </h3>
                   </div>
                   <Form role="form" onSubmit={addAccountMobile}>
                    
@@ -1685,8 +1691,15 @@ function watchToken() {
               onChange={(event)=>setNumberMobile(event.target.value)}
             />
             </div>
+            <div className='row'>
+                <div className='col-lg-6 col-md-6'>
+                    <button type='button' onClick={() => setModalFormOpenMobile(false)}  className="btn btn-danger " disabled={isLoggingIn}>Fermer</button>
+                </div>
+                <div className='col-lg-6 col-md-6'>
+                    <button type='submit'  className="btn btn-primary" disabled={isLoggingIn}>Ajouter</button>
+                </div>
+            </div>
             
-              <button type='submit'  className="btn btn-primary" disabled={isLoggingIn}>Ajouter</button>
 
                 </div>
 
@@ -1702,189 +1715,85 @@ function watchToken() {
         
 
         {/* ************************************************************************************************** */}
-            {/* PARTIE ACHAT*/}
+            {/* PARTIE POUR FAIRE UN MOYEN DE PAIEMENT */}
         {/* ************************************************************************************************** */}
 
-    <Modal isOpen={modalFormOpenAchat} toggle={() => setModalFormOpenAchat(false)}>
+        <Modal isOpen={modalFormOpenAchat} toggle={() => setModalFormOpenAchat(false)}>
             <div className=" modal-body p-0">
-              <Card className=" bg-secondary shadow border-0">
-    <CardBody className=" px-lg-5 py-lg-5">
-                  <div className=" text-center text-muted mb-4">
-                  <h3 className='text-center text-white'>Effectuer un achat</h3>
-                  </div>
-                  <Form role="form">
-                   
-
-                    <div className='col-lg-12 col-md-12 row justify-content-between'>
-
-                        <div className='input-group-alternative my-3'>
-                        <input
-                        type='number'
-                        name='mo'
-                        required='required'
-                        placeholder="Numero mobile"
-                        className="form-control"
-                        defaultValue={montantAchat} 
-                        onChange={(event)=>setMontantAchat(event.target.value)}
-                        />
+                <Card className=" bg-secondary shadow border-0">
+                    <CardBody className=" px-lg-5 py-lg-5">
+                        <div className=" text-center text-muted mb-4">
+                            <h4 className='text-center text-white'>
+                                Choisissez un moyen d'achat'
+                            </h4>
+                            <div className="form-group row mt-3">
+                                    <div className="form-group col-lg-6 ">
+                                        <a className='' href='/profil/achat/achat-mobile'>
+                                            <button className="btn btn-primary " type='button'  disabled={isLoggingIn}>
+                                                Mobile Money
+                                            </button>
+                                        </a>
+                                    </div>
+                                    <div className="form-group col-lg-6">
+                                        <a className='' href='/profil/achat/achat-carte'>
+                                            <button className="btn btn-primary " type='button'  disabled={isLoggingIn}>
+                                                Carte bancaire
+                                            </button>
+                                        </a>
+                                    </div>
+                            </div>
                         </div>
-                        <h5 className='text-center text-white'>{montantAchat} CFA</h5>
-
-                        <div className='input-group-alternative my-3'>
-                        <select 
-                        placeholder='Pays'
-                        className='form-control'
-                        defaultValue={countrie} 
-                        onChange={(event)=>setCountrie(event.target.value)}
-                        >
-                        <option>Choisissez le moyen de retrait</option>
-                        {/* Parcourir les pays */}
-
-                        <optgroup className='single-cryptocurrency-box'>
-                        <option value="Mobile money">Mobile money</option>
-                        <option value="Compte bancaire">Compte bancaire</option>
-                        </optgroup>
-                        </select>
+                        <div className='row text-center'>
+                            <button type='button' onClick={() => setModalFormOpenAchat(false)}  className="btn btn-danger " disabled={isLoggingIn}>Fermer</button>
                         </div>
-
-                        <div className='input-group-alternative my-3'>
-                        <select 
-                        placeholder='Reseau'
-                        className='form-control'
-                        defaultValue={networkMobile} 
-                        onChange={(event)=>setNetworkMobile(event.target.value)}
-                        >
-                        <option>Choisissez un numero</option>
-                        <optgroup >
-                        <option value="Orange">0998787687</option>
-                        <option value="MTN">4563365555</option>
-                        <option value="MOOV">0987786667</option>
-                        </optgroup>
-                        </select>
-                        </div>
-
-                        <div className='input-group-alternative my-3'>
-                        <select 
-                        placeholder='Reseau'
-                        className='form-control'
-                        defaultValue={networkMobile} 
-                        onChange={(event)=>setNetworkMobile(event.target.value)}
-                        >
-                        <option>Choisissez une banque</option>
-                        <optgroup >
-                        <option value="Orange">Conseil Nationale du Crédit</option>
-                        <option value="MTN">ECOBANK-Togo</option>
-                        <option value="MOOV">Bank Of Africa-Bénin</option>
-                        </optgroup>
-                        </select>
-                        </div>
-
-
-
-                        <button type='submit'  className="btn btn-primary" disabled={isLoggingIn}>Ajouter</button>
-
-                    </div>
-
-                  </Form>
-                </CardBody>
+                    </CardBody>
                 </Card>
-                </div>
-                </Modal>
+            </div>
+        </Modal>
+        {/* *********************************FIN****************************************************************/}
 
+
+        {/* ************************************************************************************************** */}
+            {/* PARTIE POUR FAIRE UN MOYEN DE RETRAIT */}
+        {/* ************************************************************************************************** */}
+        <Modal isOpen={modalFormOpenRetrait} toggle={() => setModalFormOpenRetrait(false)}>
+            <div className=" modal-body p-0">
+                <Card className=" bg-secondary shadow border-0">
+                    <CardBody className=" px-lg-5 py-lg-5">
+                        <div className=" text-center text-muted mb-4">
+                            <h4 className='text-center text-white'>
+                                Choisissez un moyen de retrait
+                            </h4>
+                            <div className="form-group row mt-3">
+                                    <div className="form-group col-lg-6 ">
+                                        <a href='/profil/retrait/retrait-mobile'>
+
+                                            <button className="btn btn-primary " type='button'  disabled={isLoggingIn}>
+                                                Mobile Money
+                                            </button>
+                                        </a>
+                                    </div>
+                                    <div className="form-group col-lg-6">
+                                        <a href='/profil/retrait/retrait-carte'>
+                                            <button className="btn btn-primary " type='button'  disabled={isLoggingIn}>
+                                                Carte bancaire
+                                            </button>
+                                        </a>
+                                    </div>
+                            </div>
+                        </div>
+                        <div className='row text-center'>
+                            <button type='button' onClick={() => setModalFormOpenRetrait(false)}  className="btn btn-danger " disabled={isLoggingIn}>Fermer</button>
+                        </div>
+                    </CardBody>
+                </Card>
+            </div>
+        </Modal>
         {/* *********************************FIN****************************************************************/}
 
 
         
-        {/* ************************************************************************************************** */}
-            {/* PARTIE RETRAIT*/}
-        {/* ************************************************************************************************** */}
-
-    <Modal isOpen={modalFormOpenRetrait} toggle={() => setModalFormOpenRetrait(false)}>
-            <div className=" modal-body p-0">
-              <Card className=" bg-secondary shadow border-0">
-    <CardBody className=" px-lg-5 py-lg-5">
-                  <div className=" text-center text-muted mb-4">
-                  <h3 className='text-center text-white'>Effectuer un retrait</h3>
-                  </div>
-                  <Form role="form">
-                  <div className='col-lg-12 col-md-12 row justify-content-between'>
-
-                  <div className='input-group-alternative my-3'>
-            <input
-              type='number'
-              name='mo'
-              required='required'
-              placeholder="Numero mobile"
-              className="form-control"
-              defaultValue={montantRetrait} 
-              onChange={(event)=>setMontantRetrait(event.target.value)}
-            />
-            </div>
-            <h5 className='text-center text-white'>{montantRetrait} CFA</h5>
-            
-            <div className='input-group-alternative my-3'>
-                <select 
-                    placeholder='Pays'
-                    className='form-control'
-                    defaultValue={countrie} 
-                    onChange={(event)=>setCountrie(event.target.value)}
-                    >
-                <option>Choisissez le moyen de retait</option>
-                {/* Parcourir les pays */}
-                
-                <optgroup className='single-cryptocurrency-box'>
-                  <option value="Mobile money">Mobile money</option>
-                  <option value="Compte bancaire">Compte bancaire</option>
-                </optgroup>
-              </select>
-            </div>
-
-            <div className='input-group-alternative my-3'>
-                <select 
-                    placeholder='Reseau'
-                    className='form-control'
-                    defaultValue={networkMobile} 
-                    onChange={(event)=>setNetworkMobile(event.target.value)}
-                    >
-                <option>Choisissez un numero</option>
-                <optgroup >
-                  <option value="Orange">0998787687</option>
-                  <option value="MTN">4563365555</option>
-                  <option value="MOOV">0987786667</option>
-                </optgroup>
-              </select>
-            </div>
-
-            <div className='input-group-alternative my-3'>
-                <select 
-                    placeholder='Reseau'
-                    className='form-control'
-                    defaultValue={networkMobile} 
-                    onChange={(event)=>setNetworkMobile(event.target.value)}
-                    >
-                <option>Choisissez une banque</option>
-                <optgroup >
-                  <option value="Orange">Conseil Nationale du Crédit</option>
-                  <option value="MTN">ECOBANK-Togo</option>
-                  <option value="MOOV">Bank Of Africa-Bénin</option>
-                </optgroup>
-              </select>
-            </div>
-
-            
-            
-              <button type='submit'  className="btn btn-primary" disabled={isLoggingIn}>Ajouter</button>
-
-                </div>
-
-                  </Form>
-                </CardBody>
-                </Card>
-                </div>
-                </Modal>
-
-        {/* *********************************FIN****************************************************************/}
-
+        
 
 
 

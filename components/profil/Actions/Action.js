@@ -113,7 +113,7 @@ const Action = () => {
         {/* Fin des images de fond */}
 
         {/* Les cards */}
-        {!currentUser?.codeTypeProfil==="entCom"? (
+        {currentUser?.codeTypeProfil==="entCom"? (
             <div className='cryptocurrency-search-box'>
                 <div className='row'>
                         <div className='col-lg-6 col-md-6'>
@@ -282,7 +282,7 @@ const Action = () => {
             </div>
         ) : ('')}
 
-        {!currentUser?.codeTypeProfil==="insti" ? (
+        {currentUser?.codeTypeProfil==="insti" ? (
             <div className='cryptocurrency-search-box'>
                 <div className='row'>
                         <div className='col-lg-6 col-md-6'>

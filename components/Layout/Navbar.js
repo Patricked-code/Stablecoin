@@ -253,7 +253,7 @@ const Navbar = () => {
                     </li>
                     <li className='nav-item'>
                       <Link href='/profil/ecosysteme/investissement'>
-                        <a className='nav-link'>
+                        <a className='nav-link '>
                           Investissement
                         </a>
                       </Link>

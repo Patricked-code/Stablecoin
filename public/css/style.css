@@ -7657,7 +7657,7 @@ main {
 }
 
 .nav-logo,
-.nav-link {
+.nav-link-sidebar {
   display: grid;
   grid-template-columns: max-content max-content;
   column-gap: 2rem;
@@ -7685,24 +7685,24 @@ main {
   padding-left: 3rem;
 }
 
-.nav-link {
+.nav-link-sidebar {
   position: relative;
   color: var(--first-color-alt);
   transition: 0.5s;
   margin-bottom: 1.5rem;
 }
 
-.nav-link:hover {
+.nav-link-sidebar:hover {
   color: var(--white-color);
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-.active {
+.active-sidebar {
   color: var(--white-color);
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-.active::before {
+.active-sidebar::before {
   content: '';
   position: absolute;
   left: 0;
