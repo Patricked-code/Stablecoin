@@ -128,7 +128,7 @@ const CarteRetrait = () => {
         <div className='' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                    <h3 className='text-center'>Retrait avec carte bancaire</h3>
+                    <h3 className='text-center'>Retrait avec compte bancaire</h3>
                 </div>
             </div>
 

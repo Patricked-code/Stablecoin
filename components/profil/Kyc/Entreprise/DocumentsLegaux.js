@@ -90,7 +90,7 @@ const CDocumentLegaux = () => {
         <div className='' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                    <h1 className='text-center'>Documents legaux de l'entreprise</h1>
+                    <h1 className='text-center'>Documents légaux de l'entreprise</h1>
                 </div>
             </div>
 

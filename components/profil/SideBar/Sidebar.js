@@ -58,6 +58,9 @@ const [provider, setProvider] = useState(null);
                   .then((result) => result.json())
                   .then((user) => {
                   setCurrentUser(user)
+
+                  localStorage.setItem('currentTypeProfil', user?.codeTypeProfil); //Pour stocker le code du type de profil dans la variable local
+
                   }) 
               };
               await getUser();
@@ -127,7 +130,7 @@ const logaout = useCallback(() => {
             ) :('')}
 
             {currentUser?.activated && currentUser?.codeTypeProfil==="entCom"? (
-              <Link to='/profil/kyc/entreprise/questionnaire' className={pathname == "/profil/kyc/particulier/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+              <Link to='/profil/kyc/entreprise/questionnaire' className={pathname == "/profil/kyc/entreprise/questionnaire" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                   <i className='fas fa-tachometer-alt nav-link-icon'></i>
                   <span className='nav-link-name'>KYC</span>
               </Link>
@@ -148,10 +151,10 @@ const logaout = useCallback(() => {
                 <span className='nav-link-name '>Investissement</span>
               </Link> */}
               
-              <Link to='/#' className={pathname == "/#" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+              {/* <Link to='/#' className={pathname == "/#" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                 <i className='fas fa-vote-yea nav-link-icon'></i>
                 <span className='nav-link-name'>Mes services</span>
-              </Link>
+              </Link> */}
 
               <Link to='/profil/portefeuille' className={pathname == "/profil/portefeuille" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                 <i className='fas fa-wallet nav-link-icon'></i>
@@ -161,7 +164,7 @@ const logaout = useCallback(() => {
                 {currentUser?.entreprise? (
                     <Link to='/profil/action/' className={pathname == "/profil/action/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                         <i className='fas fa-vote-yea nav-link-icon'></i>
-                        <span className='nav-link-name'>Mes actions</span>
+                        <span className='nav-link-name'>Mes services</span>
                     </Link>
                 ) :('')}
              

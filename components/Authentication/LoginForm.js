@@ -34,11 +34,6 @@ const LoginForm = () => {
         password:password
   
       }
-
-    console.log("email1 =>",email)
-    console.log("password =>",password)
-    console.log("API_URL =>",API_URL)
-
     
       // Pour connexion simple
     const res = await fetch(`${API_URL}/api/session/login`, {
@@ -49,31 +44,40 @@ const LoginForm = () => {
         }
     })
     const data = await res.json();
-    console.log("data", data)
-    // setter
-    localStorage.setItem('tokenEnCours', data.token);
-
-    // setter userId
-    localStorage.setItem('idEnCours', data.auth);
-
-
-    // getter
-    const ok = localStorage.getItem('tokenEnCours');
-    console.log("tokenEnCours", ok)
-
-    console.log("email",email)
-      //Pour magic Grab auth token from loginWithMagicLink
-      const didToken = await magic.auth.loginWithMagicLink({
-        email,
-        redirectURI: new URL('/callback', window.location.origin).href,
-      });
-      console.log("email 2",email)
-      setTimeout(() => {
+      if (data?.message) {
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          html: `<p>${data?.message}</p>` ,
+          showConfirmButton: false,
+          timer: 15000
+        })
+      setIsLoggingIn(false);
+      }else{
         
-          window.location.reload()
-      
-      }, 1000)
-      Router.push("/profil/dashboard/"); 
+        if (data?.auth==1) {
+          //Pour magic Grab auth token from loginWithMagicLink
+          const didToken = await magic.auth.loginWithMagicLink({
+            email,
+            redirectURI: new URL('/callback', window.location.origin).href,
+          });
+          setTimeout(() => {
+              window.location.reload()
+          }, 1000)
+          // Router.push("/profil/dashboard/"); 
+        }else{
+          //Pour magic Grab auth token from loginWithMagicLink
+          const didToken = await magic.auth.loginWithMagicLink({
+            email,
+            redirectURI: new URL('/callback_register', window.location.origin).href,
+          });
+          setTimeout(() => {
+              window.location.reload()
+          }, 1000)
+          // Router.push("/profil/dashboard/"); 
+        }
+        
+      }
     } catch {
       setIsLoggingIn(false);
     }

@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { Container, Row, Col, Modal } from "react-bootstrap";
+
 import React from "react";
 import axios from 'axios';
 import Link from 'next/link';
@@ -30,9 +32,9 @@ import {
     InputGroupAddon,
     InputGroupText,
     InputGroup,
-    Modal,
-    Row,
-    Col,
+    // Modal,
+    // Row,
+    // Col,
   } from "reactstrap";
 
 // FIN
@@ -614,7 +616,8 @@ const [montantAchat, setMontantAchat] = useState(0)
                 setBalance(balanceECFA / 10 ** 2)
 
                 // FIN
-            
+
+                const currentTypeProfil = localStorage.getItem('currentTypeProfil'); //Pour recuperer le code du type de profil dans la variable local
                
 
         }
@@ -1146,6 +1149,32 @@ function watchToken() {
 
 
 
+    // Modal d'ajout d'un compte bancaire
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    // Fin
+
+    // Modal d'ajout d'un compte mobile money
+    const [showAjoutMobile, setShowAjoutMobile] = useState(false);
+    const handleCloseAjoutMobile = () => setShowAjoutMobile(false);
+    const handleShowAjoutMobile = () => setShowAjoutMobile(true);
+    // Fin
+
+    // Modal d'achat
+    const [showAchat, setShowAchat] = useState(false);
+    const handleCloseAchat = () => setShowAchat(false);
+    const handleShowAchat = () => setShowAchat(true);
+    // Fin
+
+    // Modal de retreit
+    const [showRetrait, setShowRetrait] = useState(false);
+    const handleCloseRetrait = () => setShowRetrait(false);
+    const handleShowRetrait = () => setShowRetrait(true);
+    // Fin
+
+
+
 
 
 
@@ -1171,7 +1200,8 @@ function watchToken() {
       <div className='' >
         <div className=' mx-15'>
           <div className='py-10'>
-            <h1 className='text-center'>Dashboard</h1>
+          {/* currentTypeProfil */}
+            <h1 className='text-center'>Dashboard </h1>
 
             <div className='cryptocurrency-search-box'>
               <div className='row'>
@@ -1323,7 +1353,7 @@ function watchToken() {
                         <Button
                             block
                             color="primary"
-                            onClick={() => setModalFormOpenMobile(true)}
+                            onClick={handleShowAjoutMobile}
                             type="button"
                         >
                             Ajouter un compte de monnaie électronique (mobile money)
@@ -1380,7 +1410,8 @@ function watchToken() {
                     <Button
                     block
                     color="primary"
-                    onClick={() => setModalFormOpen(true)}
+                    // onClick={() => setModalFormOpen(true)}
+                    onClick={handleShow}
                     type="button"
                     >
                         Ajouter un compte bancaire
@@ -1460,7 +1491,7 @@ function watchToken() {
                                         <Button
                                             block
                                             color="success"
-                                            onClick={() => setModalFormOpenAchat(true)}
+                                            onClick={handleShowAchat}
                                             type="button"
                                         >
                                             Achat
@@ -1500,7 +1531,7 @@ function watchToken() {
                                     <Button
                                         block
                                         color="danger"
-                                        onClick={() => setModalFormOpenRetrait(true)}
+                                        onClick={handleShowRetrait}
                                         type="button"
                                     >
                                         Retrait
@@ -1528,278 +1559,244 @@ function watchToken() {
 
 
 
-
-
-
-
-
-
-    {/* ************************************************************************************************** */}
-        {/* PARTIE COMPTE BANCAIRE */}
-    {/* ****************************************************************************************************/}
-        
-    {/* Modal Banque */}
-    <Modal isOpen={modalFormOpen} toggle={() => setModalFormOpen(false)}>
-            <div className=" modal-body p-0">
-              <Card className=" bg-secondary shadow border-0">
-    <CardBody className=" px-lg-5 py-lg-5">
-                  <div className=" text-center text-muted mb-4">
-                  <h3 className='text-center text-white'>Ajouter un compte bancaire</h3>
-                  </div>
-                  <Form role="form" onSubmit={addAccountBank}>
-                  <div className='col-lg-12 col-md-12 row justify-content-between'>
-            <div className='input-group-alternative my-3'>
-                <select 
-                    placeholder='Pays'
-                    className='form-control'
-                    defaultValue={countrieBank} 
-                    onChange={(event)=>setCountrieBank(event.target.value)}
-                    >
-                <option>Choisissez un pays</option>
-                {/* Parcourir les pays */}
-                {allCountry? (
-                allCountry.map((data) => (
-                <optgroup className='single-cryptocurrency-box'
-                        key={data.id}>
-                  <option  value={data.code}>{data.libelle}</option>
-                </optgroup>
-                    ))):("")}
-                    
-              </select>
-              {/* Fin */}
-            </div>
-
-            <div className='input-group-alternative my-3'>
-                <select 
-                    placeholder='Banque'
-                    className='form-control'
-                    defaultValue={bankName} 
-                    onChange={(event)=>setBankName(event.target.value)}
-                >
-                    <option>Choisissez une banque</option>
-                    {/* Afficher les Banques d'un pays */}
-                    {allBank.map((data) => (
-                        data.countryIso===countrieBank?
-                            <optgroup className='single-cryptocurrency-box' key={data.id}>
-                                <option value={data.bankName}>{data.bankName}</option>
-                            </optgroup>
-                        :""
-                    ))}
-                    {/* Fin */}
-              </select>
-            </div>
-
-            <div className='input-group-alternative my-3'>
-            <input
-              type='text'
-              name='birthday'
-              required='required'
-              placeholder="Iban"
-              className="form-control"
-              defaultValue={iban} 
-              onChange={(event)=>setIban(event.target.value)}
-            />
-            </div>
-            <div className='row'>
-                <div className='col-lg-6 col-md-6'>
-                    <button type='button' onClick={() => setModalFormOpen(false)}  className="btn btn-danger " disabled={isLoggingIn}>Fermer</button>
-                </div>
-                <div className='col-lg-6 col-md-6'>
-                    <button type='submit'  className="btn btn-primary " disabled={isLoggingIn}>Ajouter</button>
-                </div>
-            </div>
-                </div>
-
-                  </Form>
-                </CardBody>
-                </Card>
-                </div>
-                </Modal>
-
-        {/* *********************************FIN****************************************************************/}
-
-        
-        {/* ************************************************************************************************** */}
-            {/* PARTIE COMPTE MOBILE */}
-        {/* ************************************************************************************************** */}
-
-    <Modal isOpen={modalFormOpenMobile} toggle={() => setModalFormOpenMobile(false)}>
-            <div className=" modal-body p-0">
-              <Card className=" bg-secondary shadow border-0">
-    <CardBody className=" px-lg-5 py-lg-5">
-                  <div className=" text-center text-muted mb-4">
-                  <h3 className='text-center text-white'>Ajouter un compte de monnaie électronique </h3>
-                  </div>
-                  <Form role="form" onSubmit={addAccountMobile}>
-                   
-
-                  <div className='col-lg-12 col-md-12 row justify-content-between'>
-            
-            <div className='input-group-alternative my-3'>
-                <select 
-                    placeholder='Pays'
-                    className='form-control'
-                    defaultValue={countrieMobile} 
-                    onChange={(event)=>setCountrieMobile(event.target.value)}
-                    >
+            {/* ********************************************************************************** */}
+                {/* MODAL D'AJOUT D'UN COMPTE BANCAIRE'*/}
+            {/* ********************************************************************************** */}
+            <Modal show={show} className="mt-15" onHide={handleClose}>
+                <Modal.Header closeButton id="bgcolor">
+                    <Modal.Title className="" >Ajouter un compte bancaire</Modal.Title>                
+                </Modal.Header>
+                <Form role="form" onSubmit={addAccountBank}>
+                    <Modal.Body>
+                        <div className="input-group flex-nowrap">
+                        {/* <p className="gr-text-8 pt-3 pb-0 text-center text-green">{currentAdresse} </p> */}
                         
-                <option>Choisissez un pays</option>
-                {/* Parcourir les pays */}
-                {allCountry? (
-                allCountry.map((data) => (
-                <optgroup className='single-cryptocurrency-box'
-                        key={data.id}>
-                  <option  value={data.code}>{data.libelle}</option>
-                </optgroup>
-                    ))):("")}
-              </select>
-            </div>
+                                <div className='col-lg-12 col-md-12 row justify-content-between'>
+                                    <div className='input-group-alternative my-3'>
+                                <select 
+                                    placeholder='Pays'
+                                    className='form-control'
+                                    defaultValue={countrieBank} 
+                                    onChange={(event)=>setCountrieBank(event.target.value)}
+                                    >
+                                <option>Choisissez un pays</option>
+                                {/* Parcourir les pays */}
+                                {allCountry? (
+                                allCountry.map((data) => (
+                                <optgroup className='single-cryptocurrency-box'
+                                        key={data.id}>
+                                <option  value={data.code}>{data.libelle}</option>
+                                </optgroup>
+                                    ))):("")}
+                                    
+                            </select>
+                            {/* Fin */}
+                            </div>
 
-            <div className='input-group-alternative my-3'>
-                <select 
-                    placeholder='Reseau'
-                    className='form-control'
-                    defaultValue={networkMobile} 
-                    onChange={(event)=>setNetworkMobile(event.target.value)}
-                    >
-                <option>Choisissez un reseau</option>
-                {/* Afficher les Operateurs d'un pays */}
-                {allOperators.map((data) => (
-                        data.countryIso===countrieMobile?
-                            <optgroup className='single-cryptocurrency-box' key={data.id}>
-                                <option value={data.operatorName}>{data.operatorName}</option>
-                            </optgroup>
-                        :""
-                    ))}
-                    {/* Fin */}
-                {/* <optgroup >
-                  <option value="Orange">Orange</option>
-                  <option value="MTN">MTN</option>
-                  <option value="MOOV">MOOV</option>
-                </optgroup> */}
-              </select>
-            </div>
+                            <div className='input-group-alternative my-3'>
+                                <select 
+                                    placeholder='Banque'
+                                    className='form-control'
+                                    defaultValue={bankName} 
+                                    onChange={(event)=>setBankName(event.target.value)}
+                                >
+                                    <option>Choisissez une banque</option>
+                                    {/* Afficher les Banques d'un pays */}
+                                    {allBank.map((data) => (
+                                        data.countryIso===countrieBank?
+                                            <optgroup className='single-cryptocurrency-box' key={data.id}>
+                                                <option value={data.bankName}>{data.bankName}</option>
+                                            </optgroup>
+                                        :""
+                                    ))}
+                                    {/* Fin */}
+                            </select>
+                            </div>
 
-            <div className='input-group-alternative my-3'>
-            <input
-              type='text'
-              name='numberMobile'
-              required='required'
-              placeholder="Numero mobile"
-              className="form-control"
-              defaultValue={numberMobile} 
-              onChange={(event)=>setNumberMobile(event.target.value)}
-            />
-            </div>
-            <div className='row'>
-                <div className='col-lg-6 col-md-6'>
-                    <button type='button' onClick={() => setModalFormOpenMobile(false)}  className="btn btn-danger " disabled={isLoggingIn}>Fermer</button>
-                </div>
-                <div className='col-lg-6 col-md-6'>
-                    <button type='submit'  className="btn btn-primary" disabled={isLoggingIn}>Ajouter</button>
-                </div>
-            </div>
+                            <div className='input-group-alternative my-3'>
+                            <input
+                            type='text'
+                            name='birthday'
+                            required='required'
+                            placeholder="Iban"
+                            className="form-control"
+                            defaultValue={iban} 
+                            onChange={(event)=>setIban(event.target.value)}
+                            />
+                            </div>
+                            
+                            </div>
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                                <Button className="text-white" color="danger" onClick={handleClose}>
+                                    Fermer
+                                </Button>
+                                <Button  type='submit' color="success" disabled={isLoggingIn}>
+                                    Ajouter
+                                </Button>
+                    </Modal.Footer>
+                </Form>
+            </Modal>
+            {/* *****************************************FIN****************************************** */}
             
 
-                </div>
-
-                  </Form>
-                </CardBody>
-                </Card>
-                </div>
-                </Modal>
-
-        {/* *********************************FIN****************************************************************/}
 
 
-        
+            {/* ********************************************************************************** */}
+                {/* MODAL D'AJOUT D'UN COMPTE MOBILE '*/}
+            {/* ********************************************************************************** */}
+            <Modal show={showAjoutMobile} className="mt-15" onHide={handleCloseAjoutMobile}>
+                <Modal.Header closeButton id="bgcolor">
+                    <Modal.Title className="" >Ajouter un compte de monnaie électronique</Modal.Title>                
+                </Modal.Header>
+                <Form role="form" onSubmit={addAccountMobile}>
+                    <Modal.Body>
+                        <div className="input-group flex-nowrap">
+                            <div className='col-lg-12 col-md-12 row justify-content-between'>
+                        
+                                <div className='input-group-alternative my-3'>
+                                    <select 
+                                        placeholder='Pays'
+                                        className='form-control'
+                                        defaultValue={countrieMobile} 
+                                        onChange={(event)=>setCountrieMobile(event.target.value)}
+                                        >
+                                            
+                                    <option>Choisissez un pays</option>
+                                    {/* Parcourir les pays */}
+                                    {allCountry? (
+                                    allCountry.map((data) => (
+                                    <optgroup className='single-cryptocurrency-box'
+                                            key={data.id}>
+                                    <option  value={data.code}>{data.libelle}</option>
+                                    </optgroup>
+                                        ))):("")}
+                                </select>
+                                </div>
 
-        {/* ************************************************************************************************** */}
-            {/* PARTIE POUR FAIRE UN MOYEN DE PAIEMENT */}
-        {/* ************************************************************************************************** */}
+                                <div className='input-group-alternative my-3'>
+                                    <select 
+                                        placeholder='Reseau'
+                                        className='form-control'
+                                        defaultValue={networkMobile} 
+                                        onChange={(event)=>setNetworkMobile(event.target.value)}
+                                        >
+                                    <option>Choisissez un reseau</option>
+                                    {/* Afficher les Operateurs d'un pays */}
+                                    {allOperators.map((data) => (
+                                            data.countryIso===countrieMobile?
+                                                <optgroup className='single-cryptocurrency-box' key={data.id}>
+                                                    <option value={data.operatorName}>{data.operatorName}</option>
+                                                </optgroup>
+                                            :""
+                                        ))}
+                                        {/* Fin */}
+                                    {/* <optgroup >
+                                    <option value="Orange">Orange</option>
+                                    <option value="MTN">MTN</option>
+                                    <option value="MOOV">MOOV</option>
+                                    </optgroup> */}
+                                </select>
+                                </div>
 
-        <Modal isOpen={modalFormOpenAchat} toggle={() => setModalFormOpenAchat(false)}>
-            <div className=" modal-body p-0">
-                <Card className=" bg-secondary shadow border-0">
-                    <CardBody className=" px-lg-5 py-lg-5">
-                        <div className=" text-center text-muted mb-4">
-                            <h4 className='text-center text-white'>
-                                Choisissez un moyen d'achat'
-                            </h4>
-                            <div className="form-group row mt-3">
-                                    <div className="form-group col-lg-6 ">
-                                        <a className='' href='/profil/achat/achat-mobile'>
-                                            <button className="btn btn-primary " type='button'  disabled={isLoggingIn}>
-                                                Mobile Money
-                                            </button>
-                                        </a>
-                                    </div>
-                                    <div className="form-group col-lg-6">
-                                        <a className='' href='/profil/achat/achat-carte'>
-                                            <button className="btn btn-primary " type='button'  disabled={isLoggingIn}>
-                                                Carte bancaire
-                                            </button>
-                                        </a>
-                                    </div>
+                                <div className='input-group-alternative my-3'>
+                                <input
+                                type='text'
+                                name='numberMobile'
+                                required='required'
+                                placeholder="Numero mobile"
+                                className="form-control"
+                                defaultValue={numberMobile} 
+                                onChange={(event)=>setNumberMobile(event.target.value)}
+                                />
+                                </div>
+
                             </div>
                         </div>
-                        <div className='row text-center'>
-                            <button type='button' onClick={() => setModalFormOpenAchat(false)}  className="btn btn-danger " disabled={isLoggingIn}>Fermer</button>
+                    </Modal.Body>
+                    <Modal.Footer>
+                                <Button className="text-white" color="danger" onClick={handleCloseAjoutMobile}>
+                                    Fermer
+                                </Button>
+                                <Button  type='submit' color="success" disabled={isLoggingIn}>
+                                    Ajouter
+                                </Button>
+                    </Modal.Footer>
+                </Form>
+            </Modal>
+            {/* *****************************************FIN****************************************** */}
+            
+
+
+             {/* ********************************************************************************** */}
+                {/* MODAL  MOYEN D'ACHAT '*/}
+            {/* ********************************************************************************** */}
+            <Modal show={showAchat} className="mt-15" onHide={handleCloseAchat}>
+                <Modal.Header closeButton id="bgcolor">
+                    <Modal.Title className="" >Choisissez un moyen d'achat</Modal.Title>                
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="form-group row mt-3">
+                        <div className="form-group col-lg-6 col-md-6 col-sm-6 ">
+                            <a className='' href='/profil/achat/achat-mobile'>
+                                <button className="btn btn-primary " type='button'  disabled={isLoggingIn}>
+                                    Mobile Money
+                                </button>
+                            </a>
                         </div>
-                    </CardBody>
-                </Card>
-            </div>
-        </Modal>
-        {/* *********************************FIN****************************************************************/}
-
-
-        {/* ************************************************************************************************** */}
-            {/* PARTIE POUR FAIRE UN MOYEN DE RETRAIT */}
-        {/* ************************************************************************************************** */}
-        <Modal isOpen={modalFormOpenRetrait} toggle={() => setModalFormOpenRetrait(false)}>
-            <div className=" modal-body p-0">
-                <Card className=" bg-secondary shadow border-0">
-                    <CardBody className=" px-lg-5 py-lg-5">
-                        <div className=" text-center text-muted mb-4">
-                            <h4 className='text-center text-white'>
-                                Choisissez un moyen de retrait
-                            </h4>
-                            <div className="form-group row mt-3">
-                                    <div className="form-group col-lg-6 ">
-                                        <a href='/profil/retrait/retrait-mobile'>
-
-                                            <button className="btn btn-primary " type='button'  disabled={isLoggingIn}>
-                                                Mobile Money
-                                            </button>
-                                        </a>
-                                    </div>
-                                    <div className="form-group col-lg-6">
-                                        <a href='/profil/retrait/retrait-carte'>
-                                            <button className="btn btn-primary " type='button'  disabled={isLoggingIn}>
-                                                Carte bancaire
-                                            </button>
-                                        </a>
-                                    </div>
-                            </div>
+                        <div className="form-group col-lg-6 col-lg-6 col-md-6 col-sm-6">
+                            <a className='' href='/profil/achat/achat-carte'>
+                                <button className="btn btn-primary " type='button'  disabled={isLoggingIn}>
+                                    Carte bancaire
+                                </button>
+                            </a>
                         </div>
-                        <div className='row text-center'>
-                            <button type='button' onClick={() => setModalFormOpenRetrait(false)}  className="btn btn-danger " disabled={isLoggingIn}>Fermer</button>
+                    </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button className="text-white" color="danger" onClick={handleCloseAchat}>
+                            Fermer
+                        </Button>
+                               
+                    </Modal.Footer>
+            </Modal>
+            {/* *****************************************FIN****************************************** */}
+
+
+            
+            {/* ********************************************************************************** */}
+                {/* MODAL  MOYEN DE RETRAIRE '*/}
+            {/* ********************************************************************************** */}
+            <Modal show={showRetrait} className="mt-15" onHide={handleCloseRetrait}>
+                <Modal.Header closeButton id="bgcolor">
+                    <Modal.Title className="" >Choisissez un moyen de retrait</Modal.Title>                
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="form-group row mt-3">
+                        <div className="form-group col-lg-6 ">
+                            <a href='/profil/retrait/retrait-mobile'>
+                                <button className="btn btn-primary " type='button'  disabled={isLoggingIn}>
+                                    Mobile Money
+                                </button>
+                            </a>
                         </div>
-                    </CardBody>
-                </Card>
-            </div>
-        </Modal>
-        {/* *********************************FIN****************************************************************/}
-
-
-        
-        
-
-
-
-
-
-
+                        <div className="form-group col-lg-6">
+                            <a href='/profil/retrait/retrait-carte'>
+                                <button className="btn btn-primary " type='button'  disabled={isLoggingIn}>
+                                    Compte bancaire
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button className="text-white" color="danger" onClick={handleCloseRetrait}>
+                        Fermer
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            {/* *****************************************FIN****************************************** */}
     </>
   );
 };
