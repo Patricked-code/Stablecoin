@@ -61,7 +61,7 @@ const FirsKyc = () => {
                                     htmlFor="Q1"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Q1) Avez-vous des dépenses ou payer vous des charges récurrentes mensuelles ou annuelles ?( Assurances, loyers, abonnement "internet, eau, courant, transports" remboursement crédit)
+                                   Avez-vous des dépenses ou payer vous des charges récurrentes mensuelles ou annuelles ?( Assurances, loyers, abonnement "internet, eau, courant, transports" remboursement crédit)
                                 </label>
                                 <select 
                                 className="form-control"
@@ -84,7 +84,7 @@ const FirsKyc = () => {
                                 htmlFor="Q1"
                                 className="text-blackish-blue mb-2"
                             >
-                                Q2) Choisissez vos dépenses récurrentes parmi les catégories ci-dessous
+                                Choisissez vos dépenses récurrentes parmi les catégories ci-dessous
                             </label>
                             {/* Loyer */}
                             <div className="form-group  mt-3 ">
@@ -225,7 +225,7 @@ const FirsKyc = () => {
                                 htmlFor="Q1"
                                 className="text-blackish-blue mb-2"
                             >
-                                Q4) Choisissez la ou les fréquences de vos revenus
+                               Choisissez la ou les fréquences de vos revenus
                             </label>
                             {/* Revenus mensuels*/}
                             <div className="form-group  mt-3 ">
@@ -288,7 +288,7 @@ const FirsKyc = () => {
                                 htmlFor="Q1"
                                 className="text-blackish-blue mb-2"
                             >
-                                Q5) Dans quel cadre touchez vous ces revenus ?
+                                Dans quel cadre touchez vous ces revenus ?
                             </label>
                             {/* Salaire mensuels*/}
                             <div className="form-group  mt-3 ">

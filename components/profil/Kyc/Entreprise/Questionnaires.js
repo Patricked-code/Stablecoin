@@ -61,7 +61,7 @@ const CQuestionnaire = () => {
                                     htmlFor="Q1"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Q1) Avez-vous des dépenses ou payer vous des charges récurrentes mensuelles ou annuelles dans le cadre des activités de votre entreprises ( Assurances, loyers, abonnement "internet, eau, courant, transports", remboursement de crédit, salaires, cotisations, fournisseurs )
+                                   Avez-vous des dépenses ou payer vous des charges récurrentes mensuelles ou annuelles dans le cadre des activités de votre entreprises ( Assurances, loyers, abonnement "internet, eau, courant, transports", remboursement de crédit, salaires, cotisations, fournisseurs )
                                 </label>
                                 <select 
                                 className="form-control"
@@ -84,7 +84,7 @@ const CQuestionnaire = () => {
                                 htmlFor="Q1"
                                 className="text-blackish-blue mb-2"
                             >
-                                Q2) Choisissez vos dépenses récurrentes parmi les catégories ci-dessous : (choix multiples)
+                                Choisissez vos dépenses récurrentes parmi les catégories ci-dessous : (choix multiples)
                             </label>
                             {/* Loyer */}
                             <div className="form-group  mt-3 ">
@@ -184,7 +184,7 @@ const CQuestionnaire = () => {
                                     htmlFor="Q1"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Q3) Avez-vous des clients ou des fournisseurs dans en dehors du pays dans lequel votre entreprise en située?
+                                    Avez-vous des clients ou des fournisseurs dans en dehors du pays dans lequel votre entreprise en située?
                                 </label>
                                 <select 
                                 className="form-control"
@@ -207,7 +207,7 @@ const CQuestionnaire = () => {
                                 htmlFor="Q1"
                                 className="text-blackish-blue mb-2"
                             >
-                                Q4) Les opérations financières transfrontalières dans le cadre des activités de votre entreprise concernent ? 
+                                Les opérations financières transfrontalières dans le cadre des activités de votre entreprise concernent ? 
                             </label>
                            
                             {/* operationA*/}
@@ -343,7 +343,7 @@ const CQuestionnaire = () => {
                                 htmlFor="Q1"
                                 className="text-blackish-blue mb-2"
                             >
-                                Q5) Avez-vous une boutique en ligne ?
+                                Avez-vous une boutique en ligne ?
                             </label>
                             <select 
                                 className="form-control"
@@ -366,7 +366,7 @@ const CQuestionnaire = () => {
                                 htmlFor="Q1"
                                 className="text-blackish-blue mb-2"
                             >
-                                Q6) Seriez intéressés par une solution digitale (paiement/ encaissement) qui vous permettra de recevoir et d'effectuer des paiements instantanés de vos clients et à vos fournisseurs, quelque soit leur pays de résidence, les moyens de paiements que ces derniers utilisent ?
+                                Seriez intéressés par une solution digitale (paiement/ encaissement) qui vous permettra de recevoir et d'effectuer des paiements instantanés de vos clients et à vos fournisseurs, quelque soit leur pays de résidence, les moyens de paiements que ces derniers utilisent ?
                             </label>
                             <select 
                                 className="form-control"

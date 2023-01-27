@@ -1207,13 +1207,15 @@ function watchToken() {
                                         </div>
                                         </div>
                                         <div className='btn-box'>
-                                        <Button
-                                            block
-                                            color="primary"
-                                            type="button"
-                                        >
-                                            Voir plus
-                                        </Button>
+                                            <Link href='/profil/informations/connexion' className="align-right">
+                                                <Button
+                                                    block
+                                                    color="primary"
+                                                    type="button"
+                                                >
+                                                    Voir plus
+                                                </Button>
+                                            </Link>
                                         {/* Fin */}
                                         </div>
                                     </div>
@@ -1233,13 +1235,15 @@ function watchToken() {
                                     </div>
                                     </div>
                                     <div className='btn-box'>
-                                    <Button
-                                        block
-                                        color="primary"
-                                        type="button"
-                                    >
-                                        Vois plus
-                                    </Button>
+                                        <Link href='/profil/informations/utilisateur' className="align-right">
+                                            <Button
+                                                block
+                                                color="primary"
+                                                type="button"
+                                            >
+                                                Vois plus
+                                            </Button>
+                                        </Link>
                                     {/* Fin */}
                                     </div>
                                 </div>

@@ -65,6 +65,12 @@ const [provider, setProvider] = useState(null);
               };
               await getUser();
               // Fin
+
+              if (!userAddress) {
+                Router.push("/auth/authentication/")
+              }
+            }else{
+              
             }
         })();
     }, [provider, magic]);

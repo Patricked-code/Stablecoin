@@ -52,7 +52,10 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/commun/selfie"||
       pathname === "/profil/kyc/commun/signature"||
       pathname === "/profil/kyc/entreprise/questionnaire"||
-      pathname === "/profil/kyc/entreprise/documents-legaux"
+      pathname === "/profil/kyc/entreprise/documents-legaux"||
+      pathname === "/profil/informations/connexion"||
+      pathname === "/profil/informations/utilisateur"
+
 
       ? '' : <Navbar />}
       {/* <Navbar /> */}
@@ -73,6 +76,9 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/commun/signature"||
       pathname === "/profil/kyc/entreprise/questionnaire"||
       pathname === "/profil/kyc/entreprise/documents-legaux"||
+      pathname === "/profil/informations/connexion"||
+      pathname === "/profil/informations/utilisateur"||
+
 
 
 
