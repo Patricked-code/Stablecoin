@@ -58,14 +58,25 @@ const CDocumentLegaux = () => {
     // Fin
     const [selected, setSelected] = useState('file');
 
-    
-
     // State Pour Camera photo
     const webcamRefRecto = useRef(null)
     const webcamRefVerso = useRef(null)
     const [imageRecto, setImageRecto] = useState(null)
     const [imageVerso, setImageVerso] = useState(null)
     // Fin
+
+    // State de l'envoie des fichiers dans la base de donnée
+    const [tradeRegistry, setTradeRegistry] = useState(null)
+    const [fiscalExistence, setFiscalExistence] = useState(null)
+
+    
+
+
+
+
+
+
+
 
     // Fonction pour prendre photo du Recto
     const captureRecto = () => {
@@ -82,6 +93,85 @@ const CDocumentLegaux = () => {
         console.log("image=>",image)
     }
     // Fin
+
+
+// ***************************************************************************************
+
+// FONCTION POUR UPLOADER LES FICHIERS
+    // const [image, setImage] = useState(null);
+    const [createObjectURL, setCreateObjectURL] = useState(null);
+
+    const uploadToClientRegistre = (event) => {
+        if (event.target.files && event.target.files[0]) {
+        const i = event.target.files[0];
+
+        setTradeRegistry(i);
+        setCreateObjectURL(URL.createObjectURL(i));
+        }
+    };
+
+
+    const uploadToClientFiscal = (event) => {
+        if (event.target.files && event.target.files[0]) {
+        const i = event.target.files[0];
+
+        setFiscalExistence(i);
+        setCreateObjectURL(URL.createObjectURL(i));
+        }
+    };
+    // FIN
+
+
+    // FONCTION D'AJOUT DES FICHIERS DE LA RESIDENSE DANS LA BASE DE DONNEE
+    const addDocumentsLegaux = async () => {
+        setIsLoggingIn(true)
+        const token = localStorage.getItem('tokenEnCours')
+
+        const body = new FormData();
+        
+        body.append("tradeRegistry", tradeRegistry);
+        body.append("fiscalExistence", fiscalExistence);
+        
+        const result = await fetch(`${API_URL}/api/kyc/entreprise/add-kyc-legal-documents`, {
+            method:"PUT",
+            body,
+            headers: {
+            // 'Content-Type': 'application/json',
+            Authorization:  `Bearer ${token}`,
+            },
+        }) 
+        
+        /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                * sinon on affiche le message de succès
+                */
+        if (result?.status===200) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Vos fichers des documents legaux ont été sauvegardés avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 5000
+            }),
+            setTimeout(() => {
+            // Router.push("/profil/kyc/entreprise/justificatif-identite"); 
+            Router.push("/profil/kyc/entreprise/justificatif-domicile"); 
+            }, 5000)
+
+            
+            }else{
+                // setMessageError(data.message)
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> Désolé une erreur s'est produite,Veuillez réessayer svp. </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+            }
+            // Fin condition 
+    }
+    // FIN
 
 
   return (
@@ -118,22 +208,7 @@ const CDocumentLegaux = () => {
 
                             {/* Si selected est file on affiche ce formulaire pour importer des fichiers */}
                                 <div className="form-group row mt-3">
-                                <form>
-                                    <div className="form-group my-6">
-                                        <label
-                                            htmlFor="nom"
-                                            className='mb-6'
-                                        >
-                                            Nom du dirigeant de l'entreprise
-                                        </label>
-                                        <input
-                                            className="form-control border mt-3 bg-white"
-                                            type="text" 
-                                            name="nom"
-                                            id='nom'
-                                            // onChange={uploadToClient}
-                                        /> 
-                                    </div>
+                                    
                                     <div className="form-group my-6">
                                         <label
                                             htmlFor="picture"
@@ -154,7 +229,7 @@ const CDocumentLegaux = () => {
                                             name="myImage"
                                             id='picture'
                                             accept="application/pdf, image/*"
-                                            // onChange={uploadToClient}
+                                            onChange={uploadToClientRegistre}
                                         />
                                     </div>
                                     <div className="form-group mb-6">
@@ -169,20 +244,19 @@ const CDocumentLegaux = () => {
                                             name="myImage"
                                             id='picture'
                                             accept="application/pdf, image/*"
-                                            // onChange={uploadToClient}
+                                            onChange={uploadToClientFiscal}
                                         />
                                     </div>
-                                </form>
                             </div>
                             {/* Fin */}
 
-                                <Link href='/profil/kyc/commun/selfie' className="align-right">
+                                {/* <Link href='/profil/kyc/commun/selfie' className="align-right"> */}
                                     <a
                                     className=""
                                     >
-                                        <button className="btn btn-primary " type='button'  disabled={isLoggingIn}>Suivant</button>
+                                        <button className="btn btn-primary " type='button' onClick={addDocumentsLegaux}  disabled={isLoggingIn}>Suivant</button>
                                     </a>
-                                </Link>
+                                {/* </Link> */}
 
                         </form>  
                              

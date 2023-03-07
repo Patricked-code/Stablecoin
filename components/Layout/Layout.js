@@ -54,7 +54,11 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/questionnaire"||
       pathname === "/profil/kyc/entreprise/documents-legaux"||
       pathname === "/profil/informations/connexion"||
-      pathname === "/profil/informations/utilisateur"
+      pathname === "/profil/informations/utilisateur"||
+      pathname === "/profil/kyc/entreprise/justificatif-identite"||
+      pathname === "/profil/kyc/entreprise/justificatif-domicile"
+      
+
 
 
       ? '' : <Navbar />}
@@ -78,6 +82,10 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/documents-legaux"||
       pathname === "/profil/informations/connexion"||
       pathname === "/profil/informations/utilisateur"||
+      pathname === "/profil/kyc/entreprise/justificatif-identite"||
+      pathname === "/profil/kyc/entreprise/justificatif-domicile"||
+
+      
 
 
 

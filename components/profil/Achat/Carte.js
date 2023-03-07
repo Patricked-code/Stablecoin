@@ -43,9 +43,10 @@ const Carte = () => {
     const [networkMobile, setNetworkMobile] = useState()
     const [allOperators, setAllOperators] = useState()
     const [allCountry , setAllCountry ] = useState()
-    const [allBank , setAllBank ] = useState()
     
-    
+    // Banques
+    const [allBank, setAllBank] = useState([])
+
 
 
         // RECUPERER TOUS LES PAYS
@@ -117,6 +118,29 @@ const Carte = () => {
                 await getAllOperators();
         }, []);
         // FIN
+
+
+        // RECUPERER TOUTES LES BANQUES 
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+        console.log("token me=>",token)
+        
+            const getAllBank = async () => {
+            const resBank = await fetch(`${API_URL}/api/bank/find-all`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((resBank) => resBank.json())
+                .then((data) => {
+                setAllBank(data)
+                }) 
+            };
+            // console.log("Banques =>",allBank)
+            await getAllBank();
+    }, []);
+    // FIN
 
 
    
@@ -224,12 +248,14 @@ const Carte = () => {
                             // defaultValue={networkMobile} 
                             // onChange={(event)=>setNetworkMobile(event.target.value)}
                             >
-                            <option>Choisissez une banque</option>
-                            <optgroup >
-                            <option value="Orange">Conseil Nationale du Crédit</option>
-                            <option value="MTN">ECOBANK-Togo</option>
-                            <option value="MOOV">Bank Of Africa-Bénin</option>
-                            </optgroup>
+                                <option>Choisissez une banque</option>
+                                {allBank.map((data) => (
+                                    data.countryIso===countrieBank?
+                                        <optgroup className='single-cryptocurrency-box' key={data.id}>
+                                            <option value={data.bankName}>{data.bankName}</option>
+                                        </optgroup>
+                                    :""
+                                ))}
                             </select>
                             </div>
                             </div>

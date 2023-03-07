@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
+import { Container, Row, Col, Modal } from "react-bootstrap";
 import React from "react";
 import axios from 'axios';
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
+import moment from 'moment';
+import copy from "copy-to-clipboard"; 
+
 
 
 // Pour Magic
@@ -30,9 +34,9 @@ import {
     InputGroupAddon,
     InputGroupText,
     InputGroup,
-    Modal,
-    Row,
-    Col,
+    // Modal,
+    // Row,
+    // Col,
   } from "reactstrap";
 
 // FIN
@@ -43,6 +47,12 @@ const InfosUtilisateur = () => {
 
     const [currentUser, setCurrentUser] = useState();
     const [provider, setProvider] = useState(null);
+    const [dataCountryOfUser, setDataCountryOfUser] = useState(null);
+
+    // State de copy
+    const [successCopy, setSuccessCopy] = useState();
+
+    
     
     
     
@@ -83,6 +93,27 @@ const InfosUtilisateur = () => {
             })();
         }, [provider, magic]);
         //  Fin
+
+
+        // Obtenir le pays en fontion de l'utilisateur connecté
+        if (currentUser?.countryId) {
+            const getCountryOfUser = async (_idCountry) => {
+                const res = await fetch(`${API_URL}/api/country/find-one/${_idCountry}`, {
+                
+                    headers: {
+                    'Content-Type': 'application/json',
+                    },
+                })
+                    .then((res) => res.json())
+                    .then((dataCountryOfUser) => {
+                    setDataCountryOfUser(dataCountryOfUser)
+                            
+                    }) 
+                
+            };
+            getCountryOfUser(currentUser?.countryId)
+        }
+        // FIN
  
 
     // const [currentTypeProfil, setCurrentTypeProfil] =useState()
@@ -92,6 +123,31 @@ const InfosUtilisateur = () => {
     //         setCurrentTypeProfil(currentTypeProfil)
     //     }
     // }, []);
+
+
+    // FONCTION POUR COPIER LE CODE DU PARRAINNAGE
+  const copyToClipboard = () => {
+    copy(currentUser?.code);
+    setSuccessCopy("Code copié avec succès !");
+
+    setTimeout(() => {
+      setSuccessCopy("");
+    }, 1000)
+  }
+  // FIN
+
+    // FONCTION POUR FORMATER LA DATE
+    const formatDate = (_updatedAt) =>{
+        const maDate = moment(_updatedAt).format('DD/MM/YYYY');
+        return  maDate
+    }
+    //  FIN
+
+    // Modal du code personnel
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    // Fin
 
 
   return (
@@ -161,6 +217,25 @@ const InfosUtilisateur = () => {
                                     </div>
                                 </div>
                             </div>
+
+
+                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                <div className='cryptocurrency-slides'>
+                                    <div className='single-cryptocurrency-box'>
+                                        <div className='btn-box'>
+                                        <Button
+                                            block
+                                            color="primary"
+                                            type="button"
+                                            onClick={handleShow}
+                                        >
+                                            Mon code personnel
+                                        </Button>
+                                        {/* Fin */}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     {/* INFORMATIONS DU PROFIL PATICULIER */}
@@ -171,45 +246,67 @@ const InfosUtilisateur = () => {
                                 <div className='cryptocurrency-slides'>
                                         <div className='single-cryptocurrency-box'>
                                             <div className='row '>
-                                                <div className='col-lg-6 col-md-6 mb-3'>
-                                                    <h5>Nom</h5>
-                                                    <p>Koné</p>
-                                                </div>
+                                                {currentUser?.firstName ? (
+                                                    <div className='col-lg-6 col-md-6 mb-3'>
+                                                        <h5>Nom</h5>
+                                                        <p>{currentUser?.firstName}</p>
+                                                    </div>
+                                                ) : ('')}
 
-                                                <div className='col-lg-6 col-md-6 mb-3'>
-                                                    <h5>Prénom</h5>
-                                                    <p>Zié Arouna</p>
-                                                </div>
+                                                {currentUser?.lastName ? (
+                                                    <div className='col-lg-6 col-md-6 mb-3'>
+                                                        <h5>Prénom</h5>
+                                                        <p>{currentUser?.lastName}</p>
+                                                    </div>
+                                                ) : ('')}
 
-                                                <div className='col-lg-6 col-md-6 mb-3'>
-                                                    <h5>Pays</h5>
-                                                    <p>Côte d'Ivoire</p>
-                                                </div>
+                                                {dataCountryOfUser?.libelle ? (
+                                                <Col
+                                                    xs="6"
+                                                    md="6"
+                                                    lg="6"
+                                                >
+                                                    <div>
+                                                        <h5>Pays</h5>
+                                                        <p>{dataCountryOfUser?.libelle}</p>
+                                                    </div>
+                                                </Col>
+                                                ) : ("")}   
 
-                                                <div className='col-lg-6 col-md-6 mb-3'>
-                                                    <h5>Ville</h5>
-                                                    <p>Abidjan</p>
-                                                </div>
+                                                {currentUser?.city ? (
+                                                    <div className='col-lg-6 col-md-6 mb-3'>
+                                                        <h5>Ville</h5>
+                                                        <p>{currentUser?.city}</p>
+                                                    </div>
+                                                ) : ('')}
 
-                                                <div className='col-lg-6 col-md-6 mb-3'>
-                                                    <h5>Date de naissance</h5>
-                                                    <p>27/01/2023</p>
-                                                </div>
+                                                {currentUser?.birthday ? (
+                                                    <div className='col-lg-6 col-md-6 mb-3'>
+                                                        <h5>Date de naissance</h5>
+                                                        <p>{formatDate(currentUser?.birthday)}</p>
+                                                    </div>
+                                                ) : ('')}
+                                                {currentUser?.sex ? (
+                                                    <div className='col-lg-6 col-md-6 mb-3'>
+                                                        <h5>Date de naissance</h5>
+                                                        <p>{currentUser?.sex}</p>
+                                                    </div>
+                                                ) : ('')}
 
-                                                <div className='col-lg-6 col-md-6 mb-3'>
-                                                    <h5>Sexe</h5>
-                                                    <p>Homme</p>
-                                                </div>
+                                                
+                                                {currentUser?.mobile && dataCountryOfUser?.indicator ? (
+                                                    <div className='col-lg-6 col-md-6 mb-3'>
+                                                        <h5>Numéro de téléphone</h5>
+                                                        <p>{dataCountryOfUser?.indicator} {currentUser?.mobile}</p>
+                                                    </div>
+                                                ) : ('')}
 
-                                                <div className='col-lg-6 col-md-6 mb-3'>
-                                                    <h5>Numéro de téléphone</h5>
-                                                    <p>+225 0171070784</p>
-                                                </div>
-
-                                                <div className='col-lg-6 col-md-6 mb-3'>
-                                                    <h5>Email</h5>
-                                                    <p>arouna.kone@wealthtechinnovations.com</p>
-                                                </div>
+                                                {currentUser?.email ? (
+                                                    <div className='col-lg-6 col-md-6 mb-3'>
+                                                        <h5>Email</h5>
+                                                        <p>{currentUser?.email}</p>
+                                                    </div>
+                                                ) : ('')}
                                             </div>
                                         </div>
                                     </div>
@@ -227,56 +324,82 @@ const InfosUtilisateur = () => {
                             <div className='cryptocurrency-slides'>
                                     <div className='single-cryptocurrency-box'>
                                         <div className='row '>
-                                            <div className='col-lg-6 col-md-6 mb-3'>
-                                                <h5>L'entreprise</h5>
-                                                <p>Wealthtech</p>
-                                            </div>
+                                            {currentUser?.entreprise ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Nom de l'entreprise</h5>
+                                                    <p>{currentUser?.entreprise}</p>
+                                                </div>
+                                            ) : ('')}
 
-                                            <div className='col-lg-6 col-md-6 mb-3'>
-                                                <h5>Pays</h5>
-                                                <p>Côte d'Ivoire</p>
-                                            </div>
+                                            {dataCountryOfUser?.libelle ? (
+                                                <Col
+                                                    xs="6"
+                                                    md="6"
+                                                    lg="6"
+                                                >
+                                                    <div>
+                                                        <h5>Pays</h5>
+                                                        <p>{dataCountryOfUser?.libelle}</p>
+                                                    </div>
+                                                </Col>
+                                            ) : ("")}   
 
-                                            <div className='col-lg-6 col-md-6 mb-3'>
-                                                <h5>Ville</h5>
-                                                <p>Abidjan</p>
-                                            </div>
+                                            {currentUser?.city ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Ville</h5>
+                                                    <p>{currentUser?.city}</p>
+                                                </div>
+                                            ) : ('')}
 
-                                            <div className='col-lg-6 col-md-6 mb-3'>
-                                                <h5>Site internet</h5>
-                                                <p>google.com</p>
-                                            </div>
+                                            {currentUser?.site ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Site internet</h5>
+                                                    <p>{currentUser?.site}</p>
+                                                </div>
+                                            ) : ('')}
 
-                                            <div className='col-lg-6 col-md-6 mb-3'>
-                                                <h5>Secteur d'activité</h5>
-                                                <p>Secteur d'activité ici</p>
-                                            </div>
+                                            {currentUser?.sector ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Secteur d'activité</h5>
+                                                    <p>{currentUser?.sector}</p>
+                                                </div>
+                                            ) : ('')}
 
-                                            <div className='col-lg-6 col-md-6 mb-3'>
-                                                <h5>Numéro de téléphone</h5>
-                                                <p>+225 0171070784</p>
-                                            </div>
+                                            {currentUser?.mobile && dataCountryOfUser?.indicator ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Numéro de téléphone</h5>
+                                                    <p>{dataCountryOfUser?.indicator} {currentUser?.mobile}</p>
+                                                </div>
+                                            ) : ('')}
 
-                                            <div className='col-lg-6 col-md-6 mb-3'>
-                                                <h5>Nombre d'employés</h5>
-                                                <p>10 à 20</p>
-                                            </div>
+                                            {currentUser?.employee ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Nombre d'employés</h5>
+                                                    <p>{currentUser?.employee}</p>
+                                                </div>
+                                            ) : ('')}
 
-                                            <div className='col-lg-6 col-md-6 mb-3'>
-                                                <h5>type d'entreprise</h5>
-                                                <p>Personne physique</p>
-                                            </div>
+                                            {currentUser?.user_type ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Type de l'entreprise</h5>
+                                                    <p>{currentUser?.user_type}</p>
+                                                </div>
+                                            ) : ('')}
 
-                                            <div className='col-lg-6 col-md-6 mb-3'>
-                                                <h5>Numéro du régistre</h5>
-                                                <p>2345679865456780965847</p>
-                                            </div>
+                                            {currentUser?.numberRegister ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Numéro du régistre</h5>
+                                                    <p>{currentUser?.numberRegister}</p>
+                                                </div>
+                                            ) : ('')}
                                             
 
-                                            <div className='col-lg-6 col-md-6 mb-3'>
-                                                <h5>Email</h5>
-                                                <p>arouna.kone@wealthtechinnovations.com</p>
-                                            </div>
+                                            {currentUser?.email ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Email</h5>
+                                                    <p>{currentUser?.email}</p>
+                                                </div>
+                                            ) : ('')}
                                         </div>
                                     </div>
                                 </div>
@@ -293,47 +416,70 @@ const InfosUtilisateur = () => {
                             <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
                             <div className='cryptocurrency-slides'>
                                     <div className='single-cryptocurrency-box'>
-                                    <div className='row '>
-                                            <div className='col-lg-6 col-md-6 mb-3'>
-                                                <h5>L'institution</h5>
-                                                <p>Wealthtech</p>
-                                            </div>
+                                        <div className='row '>
+                                            {currentUser?.entreprise ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Nom de l'institution</h5>
+                                                    <p>{currentUser?.entreprise}</p>
+                                                </div>
+                                            ) : ('')}
 
-                                            <div className='col-lg-6 col-md-6 mb-3'>
-                                                <h5>Pays</h5>
-                                                <p>Côte d'Ivoire</p>
-                                            </div>
+                                            {dataCountryOfUser?.libelle ? (
+                                                <Col
+                                                    xs="6"
+                                                    md="6"
+                                                    lg="6"
+                                                >
+                                                    <div>
+                                                        <h5>Pays</h5>
+                                                        <p>{dataCountryOfUser?.libelle}</p>
+                                                    </div>
+                                                </Col>
+                                            ) : ("")}   
 
-                                            <div className='col-lg-6 col-md-6 mb-3'>
-                                                <h5>Ville</h5>
-                                                <p>Abidjan</p>
-                                            </div>
+                                            {currentUser?.city ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Ville</h5>
+                                                    <p>{currentUser?.city}</p>
+                                                </div>
+                                            ) : ('')}
 
-                                            <div className='col-lg-6 col-md-6 mb-3'>
-                                                <h5>Site internet</h5>
-                                                <p>google.com</p>
-                                            </div>
+                                            {currentUser?.site ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Site internet</h5>
+                                                    <p>{currentUser?.site}</p>
+                                                </div>
+                                            ) : ('')}
 
-                                            <div className='col-lg-6 col-md-6 mb-3'>
-                                                <h5>Numéro de téléphone</h5>
-                                                <p>+225 0171070784</p>
-                                            </div>
+                                            {currentUser?.mobile && dataCountryOfUser?.indicator ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Numéro de téléphone</h5>
+                                                    <p>{dataCountryOfUser?.indicator} {currentUser?.mobile}</p>
+                                                </div>
+                                            ) : ('')}
 
-                                            <div className='col-lg-6 col-md-6 mb-3'>
-                                                <h5>type d'institution</h5>
-                                                <p>Personne physique</p>
-                                            </div>
+                                            {currentUser?.user_type ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Type de l'institution</h5>
+                                                    <p>{currentUser?.user_type}</p>
+                                                </div>
+                                            ) : ('')}
 
-                                            <div className='col-lg-6 col-md-6 mb-3'>
-                                                <h5>Abréviation</h5>
-                                                <p>Abréviation ic</p>
-                                            </div>
                                             
+                                            {currentUser?.abbreviation ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Abréviation</h5>
+                                                    <p>{currentUser?.abbreviation}</p>
+                                                </div>
+                                            ) : ('')}
 
-                                            <div className='col-lg-6 col-md-6 mb-3'>
-                                                <h5>Email</h5>
-                                                <p>arouna.kone@wealthtechinnovations.com</p>
-                                            </div>
+                                            {currentUser?.email ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Email de l'institution</h5>
+                                                    <p>{currentUser?.email}</p>
+                                                </div>
+                                            ) : ('')}
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -348,6 +494,40 @@ const InfosUtilisateur = () => {
        
       </div>
 
+
+
+
+
+
+     
+            { /* ********************************************************************************** */}
+                {/* MODAL DU CODE DE PARRAINAGE'*/}
+            {/* ********************************************************************************** */}
+            <Modal show={show} className="mt-15" onHide={handleClose}>
+                <Modal.Header closeButton id="bgcolor">
+                <Modal.Title className="" >Copiez votre code personnel</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <div className="input-group flex-nowrap">
+                    <input
+                      className="form-control gr-text-8 border py-0 mt-3 bg-white"
+                      type="text" 
+                      disabled
+                      value={currentUser?.code}
+                    />
+                      <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
+                        <button><Icon onClick={copyToClipboard} icon="bx:copy"  width="30" /></button>
+                      </span>
+                  </div>
+                  <p className="gr-text-8 pt-3 pb-0 text-center colorGreen">{successCopy} </p>
+                </Modal.Body>
+            </Modal>
+            {/* *****************************************FIN****************************************** */}
+
+
+
+
+      
     </>
   );
 };

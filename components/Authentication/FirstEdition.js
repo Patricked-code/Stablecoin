@@ -47,6 +47,8 @@ const FirstEdition = () => {
 
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [provider, setProvider] = useState(null);
+  const [messageError, setMessageError] = useState();
+  
 
   // USER
   const [userMetadata, setUserMetadata] = useState();
@@ -96,9 +98,26 @@ const FirstEdition = () => {
       })();
   }, [provider, magic]);
 
-  
+  // FONCTION DE LA DECONNEXION
+  const logaout = useCallback(() => {
+    try {
+    magic.user.logout().then(() => {
+      // Actualisation et redirection
+      setTimeout(() => {
+        window.location.reload()
+      }, 20000)
+      Router.push("/auth/authentication");
+
+    });
+  } catch (error) {
+    console.log("une erreur s'est produit =>", error)
+  }
+  }, [Router]);
+  // FIN
+
   // Fonction de mise à jour des informations du profil particulier
   const EditProfilParticulier= useCallback(async () => {
+    console.log("currentUser?.id=>",currentUser?.id)
     setIsLoggingIn(true);
     /* Vérifier si l'utilisateur a choisi un pays et le sexe 
     *sinon il reçoit une alerte pour choisir
@@ -114,6 +133,7 @@ const FirstEdition = () => {
           city:city,
           birthday:birthday,
           sex:sex,
+          userId:currentUser?.id,
           email:userMetadata.email
         }
         const result = await fetch(`${API_URL}/api/session/first-edition`, {
@@ -142,13 +162,17 @@ const FirstEdition = () => {
           Swal.fire({
             position: 'center',
             icon: 'success',
-            html: `<p> Les informations ont été ajoutées avec succès.</p>` ,
+            html: `<p> Les informations ont été ajoutées avec succès. Merci de vous connecter pour accéder à l’espace de votre profil.</p>` ,
             showConfirmButton: false,
-            timer: 5000
+            timer: 20000
           }),
-          setTimeout(() => {
-            Router.push("/profil/dashboard/"); 
-          }, 5000)
+          // setTimeout(() => {
+          //   Router.push("/profil/dashboard/"); 
+          // }, 5000)
+
+          //Appel de la fonction logaout Pour se deconnecter de magic
+          logaout()
+          // Fin
         }
         // Fin condition 
     
@@ -186,6 +210,7 @@ const FirstEdition = () => {
           userType:userType,
           site:site,
           abbreviation:abbreviation,
+          userId:currentUser?.id,
           email:userMetadata.email
         }
                    
@@ -215,13 +240,17 @@ const FirstEdition = () => {
           Swal.fire({
             position: 'center',
             icon: 'success',
-            html: `<p> Les informations ont été ajoutées avec succès.</p>` ,
+            html: `<p> Les informations ont été ajoutées avec succès. Merci de vous connecter pour accéder à l’espace de votre profil.</p>` ,
             showConfirmButton: false,
-            timer: 5000
+            timer: 20000
           }),
-          setTimeout(() => {
-            Router.push("/profil/dashboard/"); 
-          }, 5000)
+          // setTimeout(() => {
+          //   Router.push("/profil/dashboard/"); 
+          // }, 5000)
+
+          //Appel de la fonction logaout Pour se deconnecter de magic
+          logaout()
+          // Fin
         }
         // Fin condition 
     
@@ -271,6 +300,7 @@ const FirstEdition = () => {
           site:site,
           employee:employee,
           numberRegister:numberRegister,
+          userId:currentUser?.id,
           email:userMetadata.email
         }
                    
@@ -300,13 +330,17 @@ const FirstEdition = () => {
           Swal.fire({
             position: 'center',
             icon: 'success',
-            html: `<p> Les informations ont été ajoutées avec succès.</p>` ,
+            html: `<p> Les informations ont été ajoutées avec succès. Merci de vous connecter pour accéder à l’espace de votre profil.</p>` ,
             showConfirmButton: false,
-            timer: 5000
+            timer: 20000
           }),
-          setTimeout(() => {
-            Router.push("/profil/dashboard/"); 
-          }, 5000)
+          // setTimeout(() => {
+          //   Router.push("/profil/dashboard/"); 
+          // }, 5000)
+          
+          //Appel de la fonction logaout Pour se deconnecter de magic
+          logaout()
+          // Fin
         }
         // Fin condition 
     

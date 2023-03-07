@@ -56,6 +56,9 @@ const LoginForm = () => {
       }else{
         
         if (data?.auth==1) {
+          
+            // setter Token
+            localStorage.setItem('tokenEnCours', data.token);
           //Pour magic Grab auth token from loginWithMagicLink
           const didToken = await magic.auth.loginWithMagicLink({
             email,

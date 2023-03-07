@@ -335,8 +335,8 @@ const Navbar = () => {
               </ul>
 
               {/* Après connexion */}
-              {/* {userMetadata && token ? ( */}
-              {userMetadata? (
+              {/* {userMetadata? ( */}
+              {userMetadata && token ? (
               <ul className='navbar-nav'>
               <li className='nav-item megamenu '>
                 <div className='others-option'>

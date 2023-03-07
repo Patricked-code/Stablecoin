@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import CQuestionnaire from '../../../../components/profil/Kyc/Entreprise/Questionnaires';
+import CJtifDomicile from '../../../../components/profil/Kyc/Entreprise/JustificatifDomicile';
 import SidebarProfil from '../../../../components/profil/SideBar/Sidebar';
 
 
 
-const questionnaire = () => {
+const JustificatifResidence = () => {
   const [showSidebar, setShowSidebar] = useState(false);
 
   return (
@@ -23,7 +23,7 @@ const questionnaire = () => {
           </aside>
 
           {/* CONTENU PROFIL */}
-          <CQuestionnaire />
+          <CJtifDomicile />
           {/* FIN */}
 
         </main>
@@ -31,4 +31,4 @@ const questionnaire = () => {
   );
 };
 
-export default questionnaire;
+export default JustificatifResidence;

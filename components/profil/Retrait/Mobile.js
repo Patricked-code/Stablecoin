@@ -36,14 +36,23 @@ const MobileRetrait = () => {
     const [countrieBank, setCountrieBank] = useState("")
     const [isoPays, setIsoPays] = useState("")
 
-    // Mobile
+    // States Mobile Money
     const [accountName, setAccountName] = useState()
+    const [userDataMobile, setUserDataMobile] = useState()
+    const [dataWayPayment, setDataWayPayment] = useState();
+    const [mobileLenght, setMobileLength] = useState()
     const [numberMobile, setNumberMobile] = useState()
 
     const [networkMobile, setNetworkMobile] = useState()
     const [allOperators, setAllOperators] = useState()
     const [allCountry , setAllCountry ] = useState()
     const [allBank , setAllBank ] = useState()
+
+    // Les states des operateurs
+    const [allOperatorsOfUser, setAllOperatorsOfUser]=useState()
+    const [countryIso, setCountryIso]=useState()
+    const [operatorLength, setOperatorLength]=useState()
+    const [operatorName, setOperatorName]=useState()
     
     
 
@@ -119,6 +128,54 @@ const MobileRetrait = () => {
         // FIN
 
 
+        // FONCTION D'OBTENTION DES OPERATEURS EN FONCTION DE L'UTILISATEUR CONNECTE
+     useEffect(() => {
+        const token = localStorage.getItem('tokenEnCours')
+            const getAllOperatorsOfUser = async () => {
+            const res = await fetch(`${API_URL}/api/user/find-all-operator-for-user`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                setAllOperatorsOfUser(data)
+                setOperatorLength(data.length)
+                }) 
+            };
+            getAllOperatorsOfUser();
+    }, []);
+    // FIN
+
+
+    // Obtenir mes numéros mobile money
+    useEffect(() => {
+        const token = localStorage.getItem('tokenEnCours')
+        // console.log("token Mobile",token)
+        
+            const getMobiles = async () => {
+            const res = await fetch(`${API_URL}/api/user/find-all-mobile-for-user`, {
+
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((res) => res.json())
+                .then((userDataMobile) => {
+                    setUserDataMobile(userDataMobile)
+                    setMobileLength(userDataMobile.length)
+                }) 
+
+                
+            };
+            
+            getMobiles();
+    }, []);
+    // Fin
+
+
    
 
 
@@ -150,8 +207,8 @@ const MobileRetrait = () => {
             {/* Les cards */}
             <div className='row'>
                 <div className='col-lg-3 col-md-12'></div>
-
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
+
                         <form className=''>
                         <div className='col-lg-12 col-md-12 row justify-content-between'>
 
@@ -201,16 +258,18 @@ const MobileRetrait = () => {
                             <select 
                             placeholder='Pays'
                             className='form-control'
-                            defaultValue={countrie} 
-                            onChange={(event)=>setCountrie(event.target.value)}
+                            defaultValue={operatorName} 
+                            onChange={(event)=>setOperatorName(event.target.value)}
                             >
                             <option>Choisissez operateur</option>
-                            {/* Parcourir les pays */}
-                            <optgroup className='single-cryptocurrency-box'>
-                                <option value="MOOV money">MOOV money</option>
-                                <option value="MTN money">MTN money</option>
-                                <option value="Orange money">Orange money</option>
-                            </optgroup>
+                            {/* Parcourir les operateurs*/}
+                            {!operatorLength=="0"? (
+                                allOperatorsOfUser.map((data) => (
+                                    <optgroup className='single-cryptocurrency-box' key={data.id}>
+                                        <option value={data.operatorName}>{data.operatorName}</option>
+                                    </optgroup>
+                                ))
+                            ):('')}
                             </select>
                             </div>
 
@@ -222,17 +281,22 @@ const MobileRetrait = () => {
                             onChange={(event)=>setNetworkMobile(event.target.value)}
                             >
                                 <option>Choisissez un numero</option>
-                                <optgroup >
-                                    <option value="Orange">0998787687</option>
-                                    <option value="MTN">4563365555</option>
-                                    <option value="MOOV">0987786667</option>
-                                </optgroup>
+
+                                {!mobileLenght=="0"?(
+                                userDataMobile.map((data) => (
+                                    data.networkMobile===operatorName?
+                                        <optgroup className='single-cryptocurrency-box' key={data.id}>
+                                            <option value={data.numberMobile}>{data.numberMobile}</option>
+                                        </optgroup>
+                                    :"Non"
+                                ))
+                                ):('')}
                                 </select>
                             </div>
                             
                             </div>
                             <button type='submit'  className="btn btn-primary" disabled={isLoggingIn}>Retirer</button>
-                        </form>       
+                        </form>  
                     </div>
                 <div className='col-lg-3 col-md-12'></div>
             </div>

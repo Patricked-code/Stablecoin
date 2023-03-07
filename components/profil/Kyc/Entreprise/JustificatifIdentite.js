@@ -39,7 +39,7 @@ import {
 
 // FIN
 
-const SecondKyc = () => {
+const CJustificatifIdentity = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
@@ -61,15 +61,17 @@ const SecondKyc = () => {
     const [selected, setSelected] = useState('file');
 
     // State du type de justificatif et pour les fichiers
-    const [receiptType, setReceiptType] = useState(); //Type du justificatif
-    //const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
-    const [backReceipt, setBackReceipt] = useState(null); //Recto du justificatif
+    const [firstNameLeader, setFirstNameLeader] = useState(); // Nom du dirigeant
+    const [lastNameLeader, setLastNameLeader] = useState(); //Prenom du dirigeant
+    const [cniFrontLeader, setCniFrontLeader] = useState(null); //Recto du justificatif
+    const [cniBackLeader, setCniBackLeader] = useState(null); //Verso du justificatif
 
-    // State des fichiers en photo
-    const [frontReceiptPhoto, setFrontReceiptPhoto] = useState(); //Verso du justificatif en photo
-    const [backReceiptPhoto, setBackReceiptPhoto] = useState(); //Verso du justificatif en photo
+    
 
-
+    
+    
+    
+    
     
     
     
@@ -104,30 +106,24 @@ const SecondKyc = () => {
 
 
     
- // FONCTION DE LA MODIFICATION DE LA PHOTO
-//  const [imageRecto, setImageRecto] = useState(null);
-const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
-
+ // FONCTION DE L'ENVOIE DES INFORMATIONS DU JUSTICATIF DANS LA DB
  const [createObjectURL, setCreateObjectURL] = useState(null);
 
  const uploadToClientRecto = (event) => {
      if (event.target.files && event.target.files[0]) {
      const i = event.target.files[0];
 
-     setFrontReceipt(i);
+     setCniFrontLeader(i);
      setCreateObjectURL(URL.createObjectURL(i));
      }
  };
 
 
-//  const [imageVerso, setImageVerso] = useState(null);
-//  const [createObjectURL, setCreateObjectURLVerso] = useState(null);
-
  const uploadToClientVerso = (event) => {
      if (event.target.files && event.target.files[0]) {
      const i = event.target.files[0];
 
-     setBackReceipt(i);
+     setCniBackLeader(i);
      setCreateObjectURL(URL.createObjectURL(i));
      }
  };
@@ -137,11 +133,12 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
       const token = localStorage.getItem('tokenEnCours')
 
       const body = new FormData();
-      body.append("receiptType", typeJustificatif);
-      body.append("frontReceipt", frontReceipt);
-      body.append("backReceipt", backReceipt);
+      body.append("firstNameLeader", firstNameLeader);
+      body.append("lastNameLeader", lastNameLeader);
+      body.append("cniFrontLeader", cniFrontLeader);
+      body.append("cniBackLeader", cniBackLeader);
       
-      const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-identity`, {
+      const result = await fetch(`${API_URL}/api/kyc/entreprise/add-kyc-identity`, {
           method:"PUT",
           body,
           headers: {
@@ -161,7 +158,7 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
             timer: 5000
         }),
         setTimeout(() => {
-        Router.push("/profil/kyc/particulier/justificatif-domicile"); 
+        Router.push("/profil/kyc/commun/selfie"); 
         }, 5000)
         
         }else{
@@ -182,66 +179,7 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
   // FIN
 
 
-  // Fonction d'envoie des informations du fichiers en photo
-  const addFichierPhoto= useCallback(async () => {
-    setIsLoggingIn(true);
-    try {
-        
-        const dataa = {
-            receiptType:typeJustificatif,
-            frontReceiptPhoto:imageRecto,
-            backReceiptPhoto:imageVerso
-        }
 
-        const token = localStorage.getItem('tokenEnCours') //Le token récuperé
-
-        const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-identity-photo`, {
-        method:"PUT",
-        body: JSON.stringify(dataa),
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization:  `Bearer ${token}`
-        }
-        })
-        const data = await result.json();
-        console.log("data=>",data)
-    
-        /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-        * sinon on affiche le message de succès
-        */
-        if (data.message===200) {
-        Swal.fire({
-            position: 'center',
-            icon: 'success',
-            html: `<p> Vos fichiers ont été sauvegardés avec succès.</p>` ,
-            showConfirmButton: false,
-            timer: 5000
-        }),
-        setTimeout(() => {
-        Router.push("/profil/kyc/particulier/justificatif-domicile"); 
-        }, 5000)
-        
-        }else{
-            setMessageError(data.message)
-
-            setIsLoggingIn(false);
-            Swal.fire({
-                position: 'center',
-                icon: 'error',
-                html: `<p> ${messageError} </p>` ,
-                showConfirmButton: false,
-                timer: 10000
-            })
-            
-        }
-        // Fin condition 
-    
-        } catch {
-        setIsLoggingIn(false);
-        }
-    
-}, [frontReceiptPhoto,backReceiptPhoto]);
-// Fin
 
 
 
@@ -251,7 +189,7 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
         <div className='' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                    <h1 className='text-center'>Justificatif d'identité</h1>
+                    <h1 className='text-center'>Justificatif d'identité du dirigeant</h1>
                 </div>
             </div>
 
@@ -415,9 +353,9 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
                             </div >
                               {/* Les bouton de choix  */}
                             {statut==="0" ? (
-                            <div className="form-group row mt-3">
+                            <div  className="form-group row mt-3">
 
-                                <div className="form-group ">
+                                <div  className="form-group ">
                                     <label
                                         htmlFor="trimestriels-check"
                                         className="gr-check-input d-flex"
@@ -436,7 +374,7 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
                                     </label>
                                 </div>
 
-                                <div className="form-group">
+                                {/* <div className="form-group">
                                     <label
                                         htmlFor="trimestriels-check"
                                         className="gr-check-input mb-3 d-flex"
@@ -453,7 +391,7 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
                                         Prendre les photos du justificatif
                                     </p>
                                     </label>
-                                </div>
+                                </div> */}
                             </div>
                             
                             ) :('') }
@@ -463,9 +401,47 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
 
 
                             {/* Si selected est file on affiche ce formulaire pour importer des fichiers */}
+                            {/* {selected==="file" && statut==="1" ? ( */}
                             {selected==="file" && statut==="1" ? (
+
                                 <div className="form-group row mt-3">
                                 <form>
+                                    <div className="form-group my-6">
+                                        <label
+                                            htmlFor="nom"
+                                            className='mb-6'
+                                        >
+                                            Nom du dirigeant de l'entreprise
+                                        </label>
+                                        <input
+                                            className="form-control border mt-3 bg-white"
+                                            type="text" 
+                                            name="firstNameLeader"
+                                            id='firstNameLeader'
+                                            defaultValue={firstNameLeader} 
+                                            onChange={(event)=>setFirstNameLeader(event.target.value)}
+                                        /> 
+                                    </div>
+
+                                    <div className="form-group my-6">
+                                        <label
+                                            htmlFor="nom"
+                                            className='mb-6'
+                                        >
+                                            Prénom du dirigeant de l'entreprise
+                                        </label>
+                                        <input
+                                            className="form-control border mt-3 bg-white"
+                                            type="text" 
+                                            name="lastNameLeader"
+                                            id='lastNameLeader' 
+                                            defaultValue={lastNameLeader} 
+                                            onChange={(event)=>setLastNameLeader(event.target.value)}
+                                            
+                                        /> 
+                                    </div>
+
+
                                     <div className="form-group mb-6">
                                         <label
                                             htmlFor="picture"
@@ -510,149 +486,8 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
                             </div>
                             ) :("")}
                             {/* Fin */}
-
-                            {/* Si selected est photo on affiche ce formulaire pour prendre photos des fichiers */}
-                            {selected==="photo" && statut==="1" ? (
-                                <>
-                                <form>
-                                    {/* Recto */}
-                                    <div className="form-group row mt-3">
-                                        <div className="form-group col-lg-3 col-md-3"></div>
-
-                                        <div className="form-group col-lg-6 col-md-6 ">
-                                            {statutRecto==="0" ? (
-                                                <button className="btn btn-primary "
-                                                    type='button'  
-                                                    disabled={isLoggingIn}
-                                                    onClick={()=>setStatutRecto("1")}
-                                                >
-                                                    Déclencher la caméra pour prendre la photo du Recto 
-                                                </button>
-                                            ) : ("")}
-
-
-                                            {/* Cette partie s'affciche lorsqu'on clique sur le bouton ci-dessus */}
-                                            {statutRecto==="1" ? (
-                                            <>
-                                            <label
-                                                htmlFor="picture"
-                                            >
-                                                Recto de votre justificatif d'identité
-                                            </label>
-                                             {/* Si on a pas encore pris la photo on affiche la camera */}
-                                            {!imageRecto ? (
-                                            <Webcam
-                                                audio={false}
-                                                height={350}
-                                                ref={webcamRefRecto}
-                                                screenshotFormat="image/jpeg"
-                                                width={350}
-                                            />
-                                            ) : ("")}
-                                            {/* Fin */}
-
-                                            {/* Si on a pas encore pris la photo on affiche ce bouton */}
-                                            {!imageRecto ? (
-                                                <button type='button' onClick={captureRecto}>Sauvegarder</button>
-                                            ) : ("")}
-                                            {/* Fin */}
-                                            
-
-                                            {/* Si on a pris la photo et qu'on veut reprende on affiche on clique sur ce bouton */}
-                                            {imageRecto ? (
-                                                <button type='button' onClick={()=>setImageRecto("")}>Reprendre la photo</button>
-                                            ) : ("")}
-                                            {/* Fin */}
-
-                                            {/* Pour afficher l'image qui a été prise        */}
-                                            {imageRecto && <img src={imageRecto} alt="Selfie" />}
-                                            {/* Fin*/}
-                                            </>
-                                        ) : ("")}
-                                        </div>
-                                        
-                                        
-                                        <div className="form-group col-lg-3 col-md-3"></div>
-                                         
-                                        
-                                    </div>
-                                    
-                                    {/* Fin Recto */}
-
-                                    {/* Verso */}
-                                    <div className="form-group row mt-3">
-                                        <div className="form-group col-lg-3 col-md-3"></div>
-                                        
-                                        <div className="form-group col-lg-6 col-md-6 ">
-                                            {imageRecto ? (
-                                                statutVerso ==="0"? (
-
-                                                    <button className="btn btn-primary "
-                                                        type='button'  
-                                                        disabled={isLoggingIn}
-                                                        onClick={()=>setStatutVerso("1")}
-                                                    >
-                                                        Déclencher la caméra pour prendre la photo du verso 
-                                                    </button>
-                                                ) : ("")
-                                            ) : ("")}
-
-                                            {statutVerso ==="1"? (
-                                                <>
-                                            <label
-                                                htmlFor="picture"
-                                            >
-                                                Verso de votre justificatif d'identité
-                                            </label>
-                                            {/* Si on a pas encore pris la photo on affiche la camera */}
-                                            {!imageVerso ? (
-                                            <Webcam
-                                                audio={false}
-                                                height={350}
-                                                ref={webcamRefVerso}
-                                                screenshotFormat="image/jpeg"
-                                                width={350}
-                                            />
-                                            ) : ("")}
-                                            {/* Fin */}
-
-                                            {/* Si on a pas encore pris la photo on affiche ce bouton */}
-                                            {!imageVerso  ? (
-                                                <button type='button' onClick={captureVerso}>Sauvegarder</button>
-                                            ) : ("")}
-                                            {/* Fin */}
-                                            
-
-                                            {/* Si on a pris la photo et qu'on veut reprende on affiche on clique sur ce bouton */}
-                                            {imageVerso ? (
-                                                <button type='button' onClick={()=>setImageVerso("")}>Reprendre la photo</button>
-                                            ) : ("")}
-                                            {/* Fin */}
-
-                                            {/* Pour afficher l'image qui a été prise        */}
-                                            {imageVerso && <img src={imageVerso} alt="Selfie" />}
-                                            {/* Fin*/}
-                                            </>
-                                        ) : ("")}
-
-                                        </div>
-                                        
-                                        <div className="form-group col-lg-3 col-md-3"></div>
-                                    </div>
-                                    {/* Fin verso */}
-                                    {statut==="1" ? (
-                                    // <Link href='/profil/kyc/particulier/justificatif-domicile' className="align-right">
-                                        <a
-                                        className=""
-                                        >
-                                            <button className="btn btn-primary " type='button' onClick={addFichierPhoto}  disabled={isLoggingIn}>Suivant</button>
-                                        </a>
-                                    // </Link>
-                                    ) :("")}
-                                    </form>
-                                </>
-                            ) :("")}
-                            {/* Fin */}
+                            <form>
+                            
                             {statut==="0" ? (
                                 <button className="btn btn-primary "
                                     type='button'  
@@ -662,6 +497,7 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
                                     Suivant
                                 </button>
                             ) :("")}
+                            </form>
                             {statut==="1" ? (''
                                 // <Link href='/profil/kyc/particulier/justificatif-domicile' className="align-right">
                                     // <a
@@ -697,10 +533,44 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
                     <CardBody className=" px-lg-5 py-lg-5">
                         <div className="  text-muted mb-4">
                             <h4 className='text-center'>
-                                Justificatif d'identité 
+                                Justificatif d'identité du dirigéant de l'entreprise
                             </h4>
                             <div className="form-group row mt-3">
                                 <form>
+                                    <div className="form-group my-6">
+                                        <label
+                                            htmlFor="nom"
+                                            className='mb-6'
+                                        >
+                                            Nom du dirigeant de l'entreprise
+                                        </label>
+                                        <input
+                                            className="form-control border mt-3 bg-white"
+                                            type="text" 
+                                            name="firstNameLeader"
+                                            id='firstNameLeader'
+                                            defaultValue={firstNameLeader} 
+                                            onChange={(event)=>setfirstNameLeader(event.target.value)}
+                                        /> 
+                                    </div>
+
+                                    <div className="form-group my-6">
+                                        <label
+                                            htmlFor="nom"
+                                            className='mb-6'
+                                        >
+                                            Prénom du dirigeant de l'entreprise
+                                        </label>
+                                        <input
+                                            className="form-control border mt-3 bg-white"
+                                            type="text" 
+                                            name="lastNameLeader"
+                                            id='lastNameLeader' 
+                                            defaultValue={firstNameLeader} 
+                                            onChange={(event)=>setFirstNameLeader(event.target.value)}
+                                            
+                                        /> 
+                                    </div>
                                     <div className="form-group mb-6">
                                         <label
                                             htmlFor="picture"
@@ -710,10 +580,11 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
                                         <input
                                             className="form-control border mt-3 bg-white"
                                             type="file" 
-                                            name="myImage"
-                                            accept="image/*" 
-                                            id='picture'
-                                            // onChange={uploadToClient}
+                                            name="lastNameLeader"
+                                            id='lastNameLeader'
+                                            defaultValue={lastNameLeader} 
+                                            onChange={(event)=>setLastNameLeader(event.target.value)}
+                                           
                                         />
                                     </div>
                                     <div className="form-group mb-6">
@@ -755,4 +626,4 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
   );
 };
 
-export default SecondKyc;
+export default CJustificatifIdentity;

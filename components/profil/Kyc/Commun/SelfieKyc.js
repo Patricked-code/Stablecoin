@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef  } from 'react';
+import { useCallback, useState, useEffect, useRef  } from 'react';
 import React from "react";
 import axios from 'axios';
 import Link from 'next/link';
@@ -23,14 +23,21 @@ const SelfieKyc = () => {
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
+    const [messageError, setMessageError] = useState();
 
    // State Pour Camera photo
    const webcamRef = useRef(null)
    const [imageSrc, setImageSrc] = useState(null)
    // Fin
 
+    //    State de l'envoie du selfie
+    const [userPicture, setUserPicture] = useState()
+
+
+
    const [currentUser, setCurrentUser] = useState();
    const [provider, setProvider] = useState(null);
+
    
    
    
@@ -77,9 +84,128 @@ const SelfieKyc = () => {
    const capture = () => {
        const image = webcamRef.current.getScreenshot()
        setImageSrc(image)
-       console.log("image=>",image)
    }
    // Fin
+
+
+    // Fonction d'envoie des informations du fichiers en photo pour le profil particulier
+    const addUserPicture= useCallback(async () => {
+        setIsLoggingIn(true);
+        try {
+            
+            const dataa = {
+                userPicture:imageSrc,
+            }
+
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+            const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-selfie`, {
+            method:"PUT",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+            })
+            const data = await result.json();
+            console.log("data=>",data)
+        
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message===200) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Votre photo a été sauvegardée avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 5000
+            }),
+            setTimeout(() => {
+            Router.push("/profil/kyc/commun/signature"); 
+            }, 5000)
+            
+            }else{
+                setMessageError(data.message)
+
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+                
+            }
+            // Fin condition 
+        
+            } catch {
+            setIsLoggingIn(false);
+            }
+        
+    }, [userPicture,imageSrc]);
+    // Fin
+
+
+    // Fonction d'envoie des informations du fichiers en photo pour le profil entreprise
+    const addUserPictureLeader= useCallback(async () => {
+        setIsLoggingIn(true);
+        try {
+            
+            const dataa = {
+                userPictureLeader:imageSrc,
+            }
+
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+            const result = await fetch(`${API_URL}/api/kyc/entreprise/add-kyc-selfie`, {
+            method:"PUT",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+            })
+            const data = await result.json();
+            console.log("data=>",data)
+        
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message===200) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Votre photo a été sauvegardée avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 5000
+            }),
+            setTimeout(() => {
+            Router.push("/profil/kyc/commun/signature"); 
+            }, 5000)
+            
+            }else{
+                setMessageError(data.message)
+
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+                
+            }
+            // Fin condition 
+        
+            } catch {
+            setIsLoggingIn(false);
+            }
+        
+    }, [userPicture,imageSrc]);
+    // Fin
 
 
   return (
@@ -167,14 +293,16 @@ const SelfieKyc = () => {
 
                             </div>
                             {/* Fin */}
+                            {currentUser?.activated && currentUser?.codeTypeProfil==="entCom"? (
+                                <button className="btn btn-primary " onClick={addUserPictureLeader} type='button'  disabled={isLoggingIn}>Suivant</button>
 
-                            <Link href='/profil/kyc/commun/signature' className="align-right">
-                                <a
-                                className=""
-                                >
-                                    <button className="btn btn-primary " type='button'  disabled={isLoggingIn}>Suivant</button>
-                                </a>
-                            </Link>
+                            ):(
+                                <button className="btn btn-primary " onClick={addUserPicture} type='button'  disabled={isLoggingIn}>Suivant</button>
+
+                            )}
+
+                                
+                            {/* </Link> */}
                         </form>  
                              
                     </div>

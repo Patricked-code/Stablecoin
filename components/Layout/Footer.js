@@ -100,7 +100,7 @@ const Footer = () => {
               <div className='single-footer-widget'>
                 <h3>Info Contact </h3>
                 <ul className='footer-contact-info'>
-                  <li>Adresse: Abidjan, Cocody Café de versailles</li>
+                  {/* <li>Adresse: Abidjan, Cocody Café de versailles</li> */}
                   <li>
                     Email: <a href='mailto:hello@Novis.com'>contact@wealthtechinnovations.com</a>
                   </li>

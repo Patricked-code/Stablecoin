@@ -39,7 +39,7 @@ import {
 
 // FIN
 
-const JtifDomicile = () => {
+const CJtifDomicile = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
@@ -68,9 +68,9 @@ const JtifDomicile = () => {
     // Fin
 
     
-// State pour les fichiers du justificatif de domicile
-const [frontProofResidence, setFrontProofResidence] = useState(null)
-const [backProofResidence, setBackProofResidence] = useState()
+    // State pour les fichiers du justificatif de domicile
+    const [frontProofResidence, setFrontProofResidence] = useState(null)
+    const [backProofResidence, setBackProofResidence] = useState()
 
 
 
@@ -123,7 +123,7 @@ const [backProofResidence, setBackProofResidence] = useState()
         body.append("frontProofResidence", frontProofResidence);
         body.append("backProofResidence", backProofResidence);
         
-        const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-domicile`, {
+        const result = await fetch(`${API_URL}/api/kyc/entreprise/add-kyc-domicile`, {
             method:"PUT",
             body,
             headers: {
@@ -144,7 +144,7 @@ const [backProofResidence, setBackProofResidence] = useState()
                 timer: 5000
             }),
             setTimeout(() => {
-            Router.push("/profil/kyc/commun/selfie"); 
+            Router.push("/profil/kyc/entreprise/justificatif-identite"); 
             }, 5000)
 
             
@@ -171,7 +171,7 @@ const [backProofResidence, setBackProofResidence] = useState()
         <div className='' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                    <h1 className='text-center'>Justificatif de domicile</h1>
+                    <h1 className='text-center'>Justificatif de domicile du bureau</h1>
                 </div>
             </div>
 
@@ -204,14 +204,14 @@ const [backProofResidence, setBackProofResidence] = useState()
                                         htmlFor="picture"
                                         className='mb-6'
                                     >
-                                        Merci de joindre soit (votre facture de l'électricité ou votre attestation de résidence ou votre relevé de compte bancaire)
+                                        Merci de joindre soit (votre facture de l'électricité du bureau ou votre facture de location)
                                     </label> 
                                     </div><br/>
                                     <div className="form-group my-6">
                                         <label
                                             htmlFor="picture"
                                         >
-                                            Recto de votre justificatif d'identité
+                                            Recto de votre justificatif de domicile du bureau
                                         </label>
                                         <input
                                             className="form-control border mt-3 bg-white"
@@ -226,7 +226,7 @@ const [backProofResidence, setBackProofResidence] = useState()
                                         <label
                                             htmlFor="picture"
                                         >
-                                            Verso de votre justificatif d'identité (Facultatif si le fichier ne contient pas de verso)
+                                            Verso de votre justificatif de domicile du bureau
                                         </label>
                                         <input
                                             className="form-control  border mt-3"
@@ -261,4 +261,4 @@ const [backProofResidence, setBackProofResidence] = useState()
   );
 };
 
-export default JtifDomicile;
+export default CJtifDomicile;

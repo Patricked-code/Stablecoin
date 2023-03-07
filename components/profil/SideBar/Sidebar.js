@@ -102,9 +102,7 @@ const logaout = useCallback(() => {
             
             <div className="brand-logo ">
               <img src={"/images/ecfa/logo/logo_ewari1.jpg"} width={'120'} alt="" />
-              {/* width={'120'} */}
             </div>
-              {/* <span className='nav-logo-name text-white mx-18'>OOOO</span> */}
             </Link>
 
             <div className='nav-list'>
@@ -142,26 +140,6 @@ const logaout = useCallback(() => {
               </Link>
             ) :('')}
 
-            
-              
-              {/* <Link to='/#' className={pathname == "/profil/portefeuille" ? "active-sidebar nav-link my-1" : "nav-link my-1"}>
-                <i className='fas fa-wallet nav-link-icon'></i>
-                <span className='nav-link-name '>E-commerce</span>
-              </Link>
-              <Link to='/#' className={pathname == "/profil/portefeuille" ? "active-sidebar nav-link my-1" : "nav-link my-1"}>
-                <i className='fas fa-wallet nav-link-icon'></i>
-                <span className='nav-link-name '>Crowdfunding</span>
-              </Link>
-              <Link to='/#' className={pathname == "/profil/portefeuille" ? "active-sidebar nav-link my-1" : "nav-link my-1"}>
-                <i className='fas fa-wallet nav-link-icon'></i>
-                <span className='nav-link-name '>Investissement</span>
-              </Link> */}
-              
-              {/* <Link to='/#' className={pathname == "/#" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
-                <i className='fas fa-vote-yea nav-link-icon'></i>
-                <span className='nav-link-name'>Mes services</span>
-              </Link> */}
-
               <Link to='/profil/portefeuille' className={pathname == "/profil/portefeuille" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                 <i className='fas fa-wallet nav-link-icon'></i>
                 <span className='nav-link-name '>Mes actifs</span>
@@ -177,7 +155,6 @@ const logaout = useCallback(() => {
 
              <Dropdown>
                 <Dropdown.Toggle variant="" className='text-white' id="dropdown-basic">
-                    {/* <img className=' nav-link-icon rounded-circle bg-white ' src={"/image/lysfc/token_lys/nft.png"} alt="" width={20} height={20}  /> */}
                   <i className='fas fa-tachometer-alt nav-link-icon mr-1 ml-0'></i> {" "}
                   <span className='nav-link-name  mx-4'>{" "}Ecosystème</span>
                 </Dropdown.Toggle>
@@ -190,29 +167,6 @@ const logaout = useCallback(() => {
                     <Dropdown.Item href="/profil/ecosysteme/facture-paiement">Facture & Paiments</Dropdown.Item>
                 </Dropdown.Menu>
             </Dropdown>
-
-              {/* <Link 
-                to='/profil/en-cours/' 
-                className={pathname == "/profil/en-cours/" ? "active-sidebar nav-link my-1" : "nav-link my-1"}
-              >
-                <i className='fas fa-shopping-cart nav-link-icon'></i>
-                <span className='nav-link-name'></span>
-              </Link>
-              <Link 
-                to='/profil/recompenses/' 
-                className={pathname == "/profil/recompenses/" ? "active-sidebar nav-link my-1" : "nav-link my-1"}
-              >
-                <i className='fas fa-trophy nav-link-icon'></i>
-                <span className='nav-link-name'>Récompenses</span>
-              </Link> */}
-
-              {/* <Link 
-                to='/admin/votes/allScrutin' 
-                className={pathname == "/" ? "active-sidebar nav-link my-1" : "nav-link my-1"}
-              >
-                <i className='fas fa-chalkboard-teacher nav-link-icon'></i>
-                <span className='nav-link-name'>Espace lys</span>
-              </Link> */}
 
               {/* Bouton de deconnexion */}
                 <Link  onClick={logaout} className='nav-link-sidebar'>

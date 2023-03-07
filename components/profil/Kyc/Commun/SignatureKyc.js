@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import React from "react";
 import axios from 'axios';
 import Link from 'next/link';
@@ -23,13 +23,20 @@ const SignatureKyc = () => {
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
+    const [messageError, setMessageError] = useState(false);
 
     // Pour la signature
     const signatureRef = useRef(null)
     const [signatureData, setSignatureData] = useState(null)
 
     const [currentUser, setCurrentUser] = useState();
-   const [provider, setProvider] = useState(null);
+    const [provider, setProvider] = useState(null);
+
+    //    State d'envoie des données de la signature
+    const [userSignature, setUserSignature] = useState();
+
+
+
    
    
    
@@ -82,7 +89,123 @@ const SignatureKyc = () => {
     }
     // Fin
 
+
+    // Fonction d'envoie des informations de la signature pour le profil particulier
+    const addUserSignature= useCallback(async () => {
+        setIsLoggingIn(true);
+        try {
+            
+            const dataa = {
+                userSignature:signatureData,
+            }
+
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+            const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-signature`, {
+            method:"PUT",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+            })
+            const data = await result.json();
+        
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message===200) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Votre signature a été sauvegardée avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 5000
+            }),
+            setTimeout(() => {
+            Router.push("/profil/"); 
+            }, 5000)
+            
+            }else{
+                setMessageError(data.message)
+
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+                
+            }
+            // Fin condition 
+        
+            } catch {
+            setIsLoggingIn(false);
+            }
+        
+    }, [userSignature,signatureData]);
+    // Fin
    
+
+    // Fonction d'envoie des informations de la signature pour le profil entreprise
+    const addUserSignatureLeader= useCallback(async () => {
+        setIsLoggingIn(true);
+        try {
+            
+            const dataa = {
+                userSignatureLeader:signatureData,
+            }
+
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+            const result = await fetch(`${API_URL}/api/kyc/entreprise/add-kyc-signature`, {
+            method:"PUT",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+            })
+            const data = await result.json();
+        
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message===200) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Votre signature a été sauvegardée avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 5000
+            }),
+            setTimeout(() => {
+            Router.push("/profil/"); 
+            }, 5000)
+            
+            }else{
+                setMessageError(data.message)
+
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+                
+            }
+            // Fin condition 
+        
+            } catch {
+            setIsLoggingIn(false);
+            }
+        
+    }, [userSignature,signatureData]);
+    // Fin
 
 
   return (
@@ -171,16 +294,14 @@ const SignatureKyc = () => {
 
                             </div>
                             {/* Fin */}
+                            {currentUser?.activated && currentUser?.codeTypeProfil==="entCom"? (
+                                <button className="btn btn-primary " type='button' onClick={addUserSignatureLeader}  disabled={isLoggingIn}>Envoyer</button>
+                            ):(
+                                <button className="btn btn-primary " type='button' onClick={addUserSignature}  disabled={isLoggingIn}>Envoyer</button>
+                            )}
 
-                            <button className="btn btn-primary " type='button'  disabled={isLoggingIn}>Envoyer</button>
 
-                            {/* <Link href='/profil/kyc/particulier/seconde-phase'>
-                                <a
-                                className=""
-                                >
-                                    <button className="btn btn-primary " type='button'  disabled={isLoggingIn}>Suivant</button>
-                                </a>
-                            </Link> */}
+                            
                         </form>  
                              
                     </div>
