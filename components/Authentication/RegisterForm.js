@@ -94,7 +94,7 @@ function RegisterForm() {
           Swal.fire({
             position: 'center',
             icon: 'info',
-            html: "<p  class='card text-red'>Ce compte existe déjà mais n'est pas activé.<br/>Merci de vous connecter pour l'activer </p>" ,
+            html: "<p   class='colorRed card text-red'>Ce compte existe déjà mais n'est peut-être pas activé.<br/>Merci de vous connecter pour l'activer si c'est pas encore fait. </p>" ,
             showConfirmButton: false,
             timer: 15000
           })
@@ -184,7 +184,7 @@ function RegisterForm() {
                 <div className="pricing-card bg-red gr-hover-shadow-1 border text-left pt-9 pb-9 pe-3 px-3 rounded-10">
                 <div className="price-content">
                     <div className="text">
-                        <p className="gr-text-10 mx-2 text-red">
+                        <p className="gr-text-10 mx-2 colorRed">
                         {messageError}
                         </p>
                     </div>

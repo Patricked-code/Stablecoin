@@ -1,5 +1,5 @@
 import React, { useState,useCallback,useEffect, useContext } from 'react';
-import Link from "../../../components/Link";
+import Link from "../../Link";
 import { Icon } from '@iconify/react';
 import { useRouter } from "next/router";
 import { magic } from "../../../magic";
@@ -14,7 +14,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 
 
 
-const SidebarProfil = () => {
+const SidebarWealthtech = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
@@ -124,56 +124,16 @@ const logaout = useCallback(() => {
                 <i className='fas fa-user nav-link-icon'></i>
                 <span className='nav-link-name'>Mon compte</span>
             </Link>
-            <Link to='/#' className={pathname == "/#" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+            <Link to='/admin/wealthtech/stablecoin' className={pathname == "/admin/wealthtech/stablecoin" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                 <i className='fas fa-address-card nav-link-icon'></i>
-                <span className='nav-link-name'>Mes cartes</span>
+                <span className='nav-link-name'>Stablecoin</span>
             </Link>
-            {currentUser?.activated && currentUser?.codeTypeProfil==="part"? (
-              <Link to='/profil/kyc/particulier/' className={pathname == "/profil/kyc/particulier/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
-                  <i className='fas fa-tasks nav-link-icon'></i>
-                  <span className='nav-link-name'>KYC</span>
-              </Link>
-            ) :('')}
 
-            {currentUser?.activated && currentUser?.codeTypeProfil==="entCom"? (
-              <Link to='/profil/kyc/entreprise/questionnaire' className={pathname == "/profil/kyc/entreprise/questionnaire" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
-                  <i className='fas fa-tasks nav-link-icon'></i>
-                  <span className='nav-link-name'>KYC</span>
-              </Link>
-            ) :('')}
-
-              <Link to='/profil/portefeuille' className={pathname == "/profil/portefeuille" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
-                <i className='fas fa-wallet nav-link-icon'></i>
-                <span className='nav-link-name '>Mes actifs</span>
-              </Link>
-
-              {/* <Link to='/profil/wallet/' className={pathname == "/profil/portefeuille" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
-                <i className='fas fa-wallet nav-link-icon'></i>
-                <span className='nav-link-name '>Portefeuille</span>
-              </Link> */}
-
-                {currentUser?.codeTypeProfil==="entCom" || currentUser?.codeTypeProfil==="insti"? (
-                    <Link to='/profil/action/' className={pathname == "/profil/action/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
-                        <i className='fas fa-splotch nav-link-icon'></i>
-                        <span className='nav-link-name'>Mes actions</span>
-                    </Link>
-                ) :('')}
-             
-
-             <Dropdown>
-                <Dropdown.Toggle variant="" className='text-white' id="dropdown-basic">
-                  <i className='fas fa-archive nav-link-icon mr-1 ml-0'></i> {" "}
-                  <span className='nav-link-name  mx-4'>{" "}Ecosystème</span>
-                </Dropdown.Toggle>
-
-                <Dropdown.Menu>
-                    <Dropdown.Item href="/profil/ecosysteme/ecommerces">E-commerce</Dropdown.Item>
-                    <Dropdown.Item href="/profil/ecosysteme/crowdfunding">Crowdfunding</Dropdown.Item>
-                    <Dropdown.Item href="/profil/ecosysteme/investissement">Investissement</Dropdown.Item>
-                    <Dropdown.Item href="/profil/ecosysteme/demarches-administ">Administratives</Dropdown.Item>
-                    <Dropdown.Item href="/profil/ecosysteme/facture-paiement">Facture & Paiments</Dropdown.Item>
-                </Dropdown.Menu>
-            </Dropdown>
+            <Link to='/#' className={pathname == "/#" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+              <i className='fas fa-tasks nav-link-icon'></i>
+              <span className='nav-link-name'>Kyc</span>
+            </Link>
+            
 
               {/* Bouton de deconnexion */}
                 <Link  onClick={logaout} className='nav-link-sidebar'>
@@ -192,4 +152,4 @@ const logaout = useCallback(() => {
   );
 };
 
-export default SidebarProfil;
+export default SidebarWealthtech;

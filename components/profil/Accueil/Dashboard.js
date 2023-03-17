@@ -787,6 +787,8 @@ const [montantAchat, setMontantAchat] = useState(0)
     }
   }
 
+  
+
     //  ******************************************
         // FONCTION OBTENIR DES JETONS
     // ******************************************

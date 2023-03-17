@@ -1,0 +1,34 @@
+import React, { useState } from 'react';
+import SidebarWealthtech from '../../../../../components/admin/Sidebar/Sidebarwti';
+import AssignRole from '../../../../../components/admin/Wealthtech/Stablecoin/Roles/AssignRole';
+
+
+
+const index = () => {
+  const [showSidebar, setShowSidebar] = useState(false);
+
+  return (
+    <>
+        <main className={showSidebar ? 'space-toggle' : null}>
+          <header className={`header ${showSidebar ? 'space-toggle' : null}`}>
+            <div className='header-toggle mx-30' onClick={() => setShowSidebar(!showSidebar)}>
+              <i className={`fas fa-bars text-white  ${showSidebar == "true"? 'fa-solid fa-xmark text-white ' : null}`}></i>
+            </div>
+          </header>
+
+          <aside className={`sidebar ${showSidebar ? 'showSidebar' : null} z-index-1`}>
+            {/* SIDEBAR */}
+            <SidebarWealthtech/>
+            {/* FIN */}
+          </aside>
+
+          {/* CONTENU PROFIL */}
+          <AssignRole/>
+          {/* FIN */}
+
+        </main>
+    </>
+  );
+};
+
+export default index;

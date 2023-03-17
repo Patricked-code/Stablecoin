@@ -56,7 +56,26 @@ const Layout = ({ children }) => {
       pathname === "/profil/informations/connexion"||
       pathname === "/profil/informations/utilisateur"||
       pathname === "/profil/kyc/entreprise/justificatif-identite"||
-      pathname === "/profil/kyc/entreprise/justificatif-domicile"
+      pathname === "/profil/kyc/entreprise/justificatif-domicile"||
+      pathname === "/profil/wallet"||
+      pathname === "/profil/institution/depot-cash"||
+      pathname === "/profil/institution/retrait-cash"||
+      pathname === "/profil/institution/verifier-documents"||
+      pathname === "/profil/institution/autre-verification-documents"||
+      pathname === "/profil/institution/verifier-documents-retrait"||
+
+      // LES ROUTES DE LA PARTIE ADMIN WWEALTHTECH
+      pathname === "/admin/wealthtech"||
+      pathname === "/admin/wealthtech/stablecoin"||
+      pathname === "/admin/wealthtech/stablecoin/roles/attribuer-roles"||
+      pathname === "/admin/wealthtech/stablecoin/mintBurn"
+
+
+
+
+      
+
+
       
 
 
@@ -84,6 +103,20 @@ const Layout = ({ children }) => {
       pathname === "/profil/informations/utilisateur"||
       pathname === "/profil/kyc/entreprise/justificatif-identite"||
       pathname === "/profil/kyc/entreprise/justificatif-domicile"||
+      pathname === "/profil/kyc/entreprise/justificatif-domicile"||
+      pathname === "/profil/wallet"||
+      pathname === "/profil/institution/depot-cash"||
+      pathname === "/profil/institution/retrait-cash"||
+      pathname === "/profil/institution/verifier-documents"||
+      pathname === "/profil/institution/verifier-documents-retrait"||
+      pathname === "/profil/institution/autre-verification-documents"||
+
+      // LES ROUTES DE LA PARTIE ADMIN WEALTHTECH
+      pathname === "/admin/wealthtech"||
+      pathname === "/admin/wealthtech/stablecoin"||
+      pathname === "/admin/wealthtech/stablecoin/roles/attribuer-roles"||
+      pathname === "/admin/wealthtech/stablecoin/mintBurn"||
+
 
       
 

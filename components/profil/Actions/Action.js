@@ -45,6 +45,12 @@ const Action = () => {
     const [currentUser, setCurrentUser] = useState();
     const [provider, setProvider] = useState(null);
 
+    //state qui contient other user pour des conditions sur la page de vérification
+    const [acteur, setActeur] = useState(); 
+
+
+
+    
 
 
     useEffect(() => {
@@ -83,8 +89,20 @@ const Action = () => {
               // Fin
             }
         })();
+
+       
+
+
     }, [provider, magic]);
     //  Fin
+
+    if (typeof window !== 'undefined') {
+        localStorage.setItem('acteurOfDepot',acteur);
+
+        const actor = localStorage.getItem('acteurOfDepot');
+
+        console.log("Acteur=>",actor)
+    }
 
 
   return (
@@ -116,34 +134,62 @@ const Action = () => {
         {currentUser?.codeTypeProfil==="entCom"? (
             <div className='cryptocurrency-search-box'>
                 <div className='row'>
-                        <div className='col-lg-6 col-md-6'>
-                            <div className='currency-selection text-center'>
-                                <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                    <div className='cryptocurrency-slides'>
-                                        <div className='single-cryptocurrency-box'>
-                                            <div className='d-flex align-items-center'>
-                                            {/* <div className='bestseller-coin-image'>
-                                                <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
-                                            </div> */}
-                                            <div className='title'>
-                                                <h3>Financer mon projet </h3>
-                                            </div>
-                                            </div>
-                                            <div className='btn-box'>
-                                            <Button
-                                                block
-                                                color="primary"
-                                                type="button"
-                                            >
-                                                Voir plus
-                                            </Button>
-                                            {/* Fin */}
-                                            </div>
+                    <div className='col-lg-6 col-md-6'>
+                        <div className='currency-selection text-center'>
+                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                <div className='cryptocurrency-slides'>
+                                    <div className='single-cryptocurrency-box'>
+                                        <div className='d-flex align-items-center'>
+                                        {/* <div className='bestseller-coin-image'>
+                                            <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
+                                        </div> */}
+                                        <div className='title'>
+                                            <h3>Demande d'encaissement</h3>
+                                        </div>
+                                        </div>
+                                        <div className='btn-box'>
+                                        <Button
+                                            block
+                                            color="primary"
+                                            type="button"
+                                        >
+                                            Voir plus
+                                        </Button>
+                                        {/* Fin */}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div className='col-lg-6 col-md-6'>
+                        <div className='currency-selection text-center'>
+                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                <div className='cryptocurrency-slides'>
+                                    <div className='single-cryptocurrency-box'>
+                                        <div className='d-flex align-items-center'>
+                                        {/* <div className='bestseller-coin-image'>
+                                            <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
+                                        </div> */}
+                                        <div className='title'>
+                                            <h3>Financer mon projet </h3>
+                                        </div>
+                                        </div>
+                                        <div className='btn-box'>
+                                        <Button
+                                            block
+                                            color="primary"
+                                            type="button"
+                                        >
+                                            Voir plus
+                                        </Button>
+                                        {/* Fin */}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                                 
                     <div className='col-lg-6 col-md-6'>
                         <div className='currency-selection text-center'>
@@ -285,6 +331,84 @@ const Action = () => {
         {currentUser?.codeTypeProfil==="insti" ? (
             <div className='cryptocurrency-search-box'>
                 <div className='row'>
+                    <div className='col-lg-6 col-md-6'>
+                        <div className='currency-selection text-center'>
+                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className='cryptocurrency-slides'>
+                                    <div className='single-cryptocurrency-box'>
+                                        <div className='d-flex align-items-center'>
+                                        <div className='title'>
+                                            <h3>Dépôt cash </h3>
+                                        </div>
+                                        </div>
+
+                                        <div className='row'>
+                                        <div className='btn-box col-lg-6 col-md-6'>
+                                        {/* /profil/institution/depot-cash/ */}
+                                            <a href='/profil/institution/verifier-documents/'>
+                                                {/* <a> */}
+                                                <Button
+                                                    block
+                                                    color="primary"
+                                                    type="button"
+                                                >
+                                                    Titulaire du compte
+                                                </Button>
+                                            </a>
+                                            
+                                        {/* Fin */}
+                                        </div>
+
+                                        <div className='btn-box col-lg-6 col-md-6'>
+                                        {/* /profil/institution/depot-cash/ */}
+                                            <a href='/profil/institution/autre-verification-documents/'>
+                                                {/* <a> */}
+                                                <Button
+                                                    block
+                                                    color="primary"
+                                                    type="button"
+                                                >
+                                                    Autre utilisateur
+                                                </Button>
+                                            </a>
+                                            
+                                        {/* Fin */}
+                                        </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='col-lg-6 col-md-6'>
+                        <div className='currency-selection text-center'>
+                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className='cryptocurrency-slides'>
+                                    <div className='single-cryptocurrency-box'>
+                                        <div className='d-flex align-items-center'>
+                                        <div className='title'>
+                                            <h3>Retrait cash </h3>
+                                        </div>
+                                        </div>
+                                        <div className='btn-box'>
+                                        {/* /profil/institution/retrait-cash/ */}
+                                        <a href='/profil/institution/verifier-documents-retrait/'>
+                                        <Button
+                                            block
+                                            color="primary"
+                                            type="button"
+                                        >
+                                            Titulaire du compte
+                                        </Button>
+                                        </a>
+                                        {/* Fin */}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                         <div className='col-lg-6 col-md-6'>
                             <div className='currency-selection text-center'>
                                 <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
@@ -339,6 +463,7 @@ const Action = () => {
                             </div>
                         </div>
                     </div>
+                    
                 </div>
             </div>
         ) : ('')}

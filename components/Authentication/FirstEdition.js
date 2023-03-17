@@ -154,7 +154,7 @@ const FirstEdition = () => {
           Swal.fire({
             position: 'center',
             icon: 'error',
-            html: `<p> ${messageError} </p>` ,
+            html: `<p class='colorRed'> ${messageError} </p>` ,
             showConfirmButton: false,
             timer: 10000
           })
@@ -166,9 +166,6 @@ const FirstEdition = () => {
             showConfirmButton: false,
             timer: 20000
           }),
-          // setTimeout(() => {
-          //   Router.push("/profil/dashboard/"); 
-          // }, 5000)
 
           //Appel de la fonction logaout Pour se deconnecter de magic
           logaout()
@@ -244,9 +241,6 @@ const FirstEdition = () => {
             showConfirmButton: false,
             timer: 20000
           }),
-          // setTimeout(() => {
-          //   Router.push("/profil/dashboard/"); 
-          // }, 5000)
 
           //Appel de la fonction logaout Pour se deconnecter de magic
           logaout()

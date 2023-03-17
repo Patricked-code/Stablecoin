@@ -48,7 +48,7 @@ const LoginForm = () => {
         Swal.fire({
           position: 'center',
           icon: 'error',
-          html: `<p>${data?.message}</p>` ,
+          html: `<p class='colorRed'>${data?.message}</p>` ,
           showConfirmButton: false,
           timer: 15000
         })
