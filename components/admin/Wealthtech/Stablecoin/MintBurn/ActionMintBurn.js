@@ -16,7 +16,7 @@ import Web3 from "web3";
 // FIN
 
 // Importer ABI de E-WARI
-import ABI_TOKEN_EWARI from "../../../../../Components/Contrats/Abi/AbiStablecoin.json";
+import ABI_TOKEN_EWARI from "../../../../../components/Contrats/Abi/AbiStablecoin.json";
 
 
 
