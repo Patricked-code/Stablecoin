@@ -278,27 +278,52 @@ const SignatureKyc = () => {
                                     {!signatureData? (
                                     <button type='button' onClick={save}>Sauvegarder</button>
                                     ) : ('')}
-                                    {/* <div className="form-group row mt-3 text-center">
-                                        <div className="form-group col-lg-6 col-md-6 ">
-                                            <button type='button' onClick={()=>setSignatureData("")}>Effacer</button>
-                                        </div>
-
-                                        <div className="form-group col-lg-6 col-md-6 ">
-                                            <button type='button' onClick={save}>Sauvegarder</button>
-                                        </div>
                                     
-                                    </div> */}
                                     {signatureData && <img src={signatureData} alt="Signature" className='mt-3' />}
                                 </div>
                             <div className="form-group col-lg-3 col-md-3"></div>
 
                             </div>
                             {/* Fin */}
-                            {currentUser?.activated && currentUser?.codeTypeProfil==="entCom"? (
-                                <button className="btn btn-primary " type='button' onClick={addUserSignatureLeader}  disabled={isLoggingIn}>Envoyer</button>
-                            ):(
-                                <button className="btn btn-primary " type='button' onClick={addUserSignature}  disabled={isLoggingIn}>Envoyer</button>
-                            )}
+                            {signatureData?(
+                                <>
+                                    {currentUser?.activated && currentUser?.codeTypeProfil==="entCom"? (
+
+                                        <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                            <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                                <Link href='/profil/kyc/commun/selfie/' className="align-right">
+                                                    <a
+                                                    className=""
+                                                    >
+                                                        <button className="btn btn-primary " type='button'  > Précèdente </button>
+                                                    </a>   
+                                                </Link>                          
+                                            </div> 
+
+                                            <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                                <button className="btn btn-primary " type='button' onClick={addUserSignatureLeader}  disabled={isLoggingIn}>Envoyer</button>
+                                            </div> 
+                                        </div>
+
+                                    ):(
+                                        <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                            <Link href='/profil/kyc/commun/selfie/' className="align-right">
+                                                <a
+                                                className=""
+                                                >
+                                                    <button className="btn btn-primary " type='button'  > Précèdente </button>
+                                                </a>   
+                                            </Link>                          
+                                        </div> 
+
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                            <button className="btn btn-primary " type='button' onClick={addUserSignature}  disabled={isLoggingIn}>Envoyer</button>
+                                        </div> 
+                                    </div>
+                                    )}
+                                </>
+                            ):("")}
 
 
                             

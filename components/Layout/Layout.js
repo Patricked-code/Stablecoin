@@ -45,7 +45,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/particulier/seconde-phase"||
       pathname === "/profil/action"||
       pathname === "/profil/achat/achat-carte"||
-      pathname === "/profil/retrait/retrait-carte"||
+      pathname === "/profil/retrait/retrait-compte-bancaire"||
       pathname === "/profil/achat/achat-mobile"||
       pathname === "/profil/retrait/retrait-mobile"||
       pathname === "/profil/kyc/particulier/justificatif-domicile"||
@@ -58,11 +58,23 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/justificatif-identite"||
       pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/wallet"||
+      pathname === "/profil/paiements/paiements-attente"||
+
+      // LES ROUTES DE LA PARTIE DU PROFIL INSTITUTION
       pathname === "/profil/institution/depot-cash"||
       pathname === "/profil/institution/retrait-cash"||
       pathname === "/profil/institution/verifier-documents"||
       pathname === "/profil/institution/autre-verification-documents"||
       pathname === "/profil/institution/verifier-documents-retrait"||
+
+      // FIN
+
+      // LES ROUTES DE LA PARTIE DU PROFIL ENTREPRISE / COMMERCANT
+      pathname === "/profil/entreprise/actions/demande-paiement"||
+
+      // FIN
+
+      
 
       // LES ROUTES DE LA PARTIE ADMIN WWEALTHTECH
       pathname === "/admin/wealthtech"||
@@ -70,7 +82,7 @@ const Layout = ({ children }) => {
       pathname === "/admin/wealthtech/stablecoin/roles/attribuer-roles"||
       pathname === "/admin/wealthtech/stablecoin/mintBurn"
 
-
+      // FIN
 
 
       
@@ -91,7 +103,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/particulier/seconde-phase"||
       pathname === "/profil/action"||
       pathname === "/profil/achat/achat-carte"||
-      pathname === "/profil/retrait/retrait-carte"||
+      pathname === "/profil/retrait/retrait-compte-bancaire"||
       pathname === "/profil/achat/achat-mobile"||
       pathname === "/profil/retrait/retrait-mobile"||
       pathname === "/profil/kyc/particulier/justificatif-domicile"||
@@ -103,19 +115,31 @@ const Layout = ({ children }) => {
       pathname === "/profil/informations/utilisateur"||
       pathname === "/profil/kyc/entreprise/justificatif-identite"||
       pathname === "/profil/kyc/entreprise/justificatif-domicile"||
-      pathname === "/profil/kyc/entreprise/justificatif-domicile"||
+      // pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/wallet"||
+      pathname === "/profil/paiements/paiements-attente"||
+
+      // LES ROUTES DE LA PARTIE DU PROFIL INSTITUTION
       pathname === "/profil/institution/depot-cash"||
       pathname === "/profil/institution/retrait-cash"||
       pathname === "/profil/institution/verifier-documents"||
       pathname === "/profil/institution/verifier-documents-retrait"||
       pathname === "/profil/institution/autre-verification-documents"||
 
+      // FIN
+
+      // LES ROUTES DE LA PARTIE DU PROFIL ENTREPRISE / COMMERCANT
+      pathname === "/profil/entreprise/actions/demande-paiement"||
+
+      // FIN
+
       // LES ROUTES DE LA PARTIE ADMIN WEALTHTECH
       pathname === "/admin/wealthtech"||
       pathname === "/admin/wealthtech/stablecoin"||
       pathname === "/admin/wealthtech/stablecoin/roles/attribuer-roles"||
       pathname === "/admin/wealthtech/stablecoin/mintBurn"||
+
+
 
 
       

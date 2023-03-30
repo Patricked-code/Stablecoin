@@ -7766,14 +7766,25 @@ main {
   color: green;
 }
 
+/* Backgroud verte */
+.bgColorGreen{
+  background-color: #208454;
+}
+
 /* text rouge */
 .colorRed{
   color: red;
 }
 
-/* text rouge */
+/* backgroung rouge */
 .bgColorRed{
-  background-color: rgb(216, 23, 23);
+  /* background-color: rgb(203, 17, 17); */
+  background-color: #dc3545;
+}
+
+/* text rouge */
+.bgColorblue{
+  background-color: #3b83e1;
 }
 
 /* **********************FIN****************************************************** */

@@ -293,13 +293,46 @@ const SelfieKyc = () => {
 
                             </div>
                             {/* Fin */}
-                            {currentUser?.activated && currentUser?.codeTypeProfil==="entCom"? (
-                                <button className="btn btn-primary " onClick={addUserPictureLeader} type='button'  disabled={isLoggingIn}>Suivant</button>
+                            {imageSrc? (
+                                <>
+                                    
+                                    {currentUser?.activated && currentUser?.codeTypeProfil==="entCom"? (
+                                        <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                            <Link href='/profil/kyc/entreprise/justificatif-identite/' className="align-right">
+                                                <a
+                                                className=""
+                                                >
+                                                    <button className="btn btn-primary " type='button'  > Précèdente </button>
+                                                </a>   
+                                            </Link>                          
+                                        </div> 
 
-                            ):(
-                                <button className="btn btn-primary " onClick={addUserPicture} type='button'  disabled={isLoggingIn}>Suivant</button>
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                            <button className="btn btn-primary " onClick={addUserPictureLeader} type='button'  disabled={isLoggingIn}>Suivant</button>
+                                        </div> 
+                                        </div>
 
-                            )}
+                                    ):(
+                                        <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                            <Link href='/profil/kyc/particulier/justificatif-domicile/' className="align-right">
+                                                <a
+                                                className=""
+                                                >
+                                                    <button className="btn btn-primary " type='button'  > Précèdentee </button>
+                                                </a>   
+                                            </Link>                          
+                                        </div> 
+
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                            <button className="btn btn-primary " onClick={addUserPicture} type='button'  disabled={isLoggingIn}>Suivant</button>
+                                        </div> 
+                                        </div>
+
+                                    )}
+                                </>
+                            ) : ("")}
 
                                 
                             {/* </Link> */}

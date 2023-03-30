@@ -229,7 +229,7 @@ const InfosUtilisateur = () => {
                                             type="button"
                                             onClick={handleShow}
                                         >
-                                            Mon code personnel
+                                            Mon Identifiant
                                         </Button>
                                         {/* Fin */}
                                         </div>
@@ -505,7 +505,7 @@ const InfosUtilisateur = () => {
             {/* ********************************************************************************** */}
             <Modal show={show} className="mt-15" onHide={handleClose}>
                 <Modal.Header closeButton id="bgcolor">
-                <Modal.Title className="" >Copiez votre code personnel</Modal.Title>
+                <Modal.Title className="" >Copiez votre Identifiant</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                   <div className="input-group flex-nowrap">

@@ -211,50 +211,7 @@ const MobileRetrait = () => {
 
                         <form className=''>
                         <div className='col-lg-12 col-md-12 row justify-content-between'>
-
-                            <div className='input-group-alternative my-3'>
-                            <input
-                            type='number'
-                            name='mo'
-                            required='required'
-                            placeholder="Numero mobile"
-                            className="form-control"
-                            defaultValue={montantAchat} 
-                            onChange={(event)=>setMontantAchat(event.target.value)}
-                            />
-                            </div>
-                            <div className='row'>
-                                <div className='input-group-alternative my-3 col-lg-6 col-md-6'>
-                                    <label className="mx-2">Montant en CFA</label>
-                                    
-                                    <input
-                                    type='number'
-                                    name='mo'
-                                    disabled
-
-                                    required='required'
-                                    placeholder="Numero mobile"
-                                    className="form-control"
-                                    value={montantAchat} 
-                                    // onChange={(event)=>setMontantAchat(event.target.value)}
-                                    />
-                                </div>
-                                <div className='input-group-alternative my-3 col-lg-6 col-md-6'>
-                                    <label className="mx-2">Total à recevoir</label>
-                                    
-                                    <input
-                                    type='number'
-                                    name='mo'
-                                    disabled
-                                    required='required'
-                                    placeholder="Numero mobile"
-                                    className="form-control"
-                                    value={montantAchat} 
-                                    // onChange={(event)=>setMontantAchat(event.target.value)}
-                                    />
-                                </div>
-                            </div>
-                            <div className='input-group-alternative my-3'>
+                        <div className='input-group-alternative my-3'>
                             <select 
                             placeholder='Pays'
                             className='form-control'
@@ -273,6 +230,9 @@ const MobileRetrait = () => {
                             </select>
                             </div>
 
+                           
+                            { operatorName ? (
+                                <>
                             <div className='input-group-alternative my-3'>
                             <select 
                             placeholder='Reseau'
@@ -293,9 +253,64 @@ const MobileRetrait = () => {
                                 ):('')}
                                 </select>
                             </div>
+                            </>
+                            ) : ("")}
+
+                            {networkMobile ? (
+                                <>
+                                    <div className='input-group-alternative my-3'>
+                                    <input
+                                    type='number'
+                                    name='mo'
+                                    required='required'
+                                    placeholder="Numero mobile"
+                                    className="form-control"
+                                    defaultValue={montantAchat} 
+                                    onChange={(event)=>setMontantAchat(event.target.value)}
+                                    />
+                                    </div>
+                                
+                                    <div className='row'>
+                                        <div className='input-group-alternative my-3 col-lg-6 col-md-6'>
+                                            <label className="mx-2">Montant en CFA</label>
+                                            
+                                            <input
+                                            type='number'
+                                            name='mo'
+                                            disabled
+
+                                            required='required'
+                                            placeholder="Numero mobile"
+                                            className="form-control"
+                                            value={montantAchat} 
+                                            // onChange={(event)=>setMontantAchat(event.target.value)}
+                                            />
+                                        </div>
+                                        <div className='input-group-alternative my-3 col-lg-6 col-md-6'>
+                                            <label className="mx-2">Total à retirer</label>
+                                            
+                                            <input
+                                            type='number'
+                                            name='mo'
+                                            disabled
+                                            required='required'
+                                            placeholder="Numero mobile"
+                                            className="form-control"
+                                            value={montantAchat} 
+                                            // onChange={(event)=>setMontantAchat(event.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                              
+                                </>
+
+                            ) : ("")}
                             
                             </div>
-                            <button type='submit'  className="btn btn-primary" disabled={isLoggingIn}>Retirer</button>
+                            {networkMobile ? (
+                                <button type='submit'  className="btn btn-primary" disabled={isLoggingIn}>Retirer</button>
+                            ) : ("")}
+                        
                         </form>  
                     </div>
                 <div className='col-lg-3 col-md-12'></div>

@@ -86,46 +86,58 @@ const CQuestionnaire = () => {
                 multiplePayment:multiplePayment
             }
 
-            console.log("data=>",dataa)
-            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.operationA||dataa?.operationB||dataa?.operationC||dataa?.operationD||dataa?.operationE||dataa?.operationF||dataa?.operationG||dataa?.eShop||dataa?.multiplePayment) {
+                
+                
+                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
 
-            const result = await fetch(`${API_URL}/api/kyc/entreprise/add-kyc-questionnaires`, {
-            method:"POST",
-            body: JSON.stringify(dataa),
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization:  `Bearer ${token}`
-            }
-            })
-            const data = await result.json();
-        
-            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-            * sinon on affiche le message de succès
-            */
-            if (data.message) {
-            setMessageError(data.message)
-            setIsLoggingIn(false);
-            Swal.fire({
-                position: 'center',
-                icon: 'error',
-                html: `<p> ${messageError} </p>` ,
-                showConfirmButton: false,
-                timer: 10000
-            })
-            }else{
+                const result = await fetch(`${API_URL}/api/kyc/entreprise/add-kyc-questionnaires`, {
+                method:"POST",
+                body: JSON.stringify(dataa),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`
+                }
+                })
+                const data = await result.json();
+            
+                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                * sinon on affiche le message de succès
+                */
+                if (data.message) {
+                setMessageError(data.message)
+                setIsLoggingIn(false);
                 Swal.fire({
                     position: 'center',
-                    icon: 'success',
-                    html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>` ,
                     showConfirmButton: false,
-                    timer: 5000
-                }),
-                setTimeout(() => {
-                Router.push("/profil/kyc/entreprise/documents-legaux"); 
-                }, 5000)
+                    timer: 10000
+                })
+                }else{
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                        showConfirmButton: false,
+                        timer: 5000
+                    }),
+                    setTimeout(() => {
+                    Router.push("/profil/kyc/entreprise/documents-legaux"); 
+                    }, 5000)
+                }
+                // Fin condition 
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
             }
-            // Fin condition 
-        
+            
             } catch {
             setIsLoggingIn(false);
             }
@@ -654,15 +666,15 @@ const CQuestionnaire = () => {
                                     </optgroup>
                                 </select>
                             <br/>
-                            {/* <Link href='/profil/kyc/entreprise/documents-legaux'> */}
+
+                            <p className="colorRed mb-7 ">
+                                NB : Aucun retour n'est permis sur cette page donc, répondez correctement aux questions
+                            </p>
                                 <a
                                 className=""
                                 >
                                     <button className="btn btn-primary " type='button' onClick={addQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
                                 </a>
-                            {/* </Link> */}
-                       
-                            {/* <button className="btn btn-primary "  disabled={isLoggingIn}>Suivant</button> */}
                         </form>       
                     </div>
                 <div className='col-lg-3 col-md-12'></div>

@@ -153,7 +153,6 @@ const AssignRole = () => {
                 setAsyncRole(asyncRole)
                 // Fin
 
-
               // Obtenir un utilisateur en fonction de son email 
               const getUser = async () => {
                 const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
@@ -196,7 +195,6 @@ const AssignRole = () => {
             "byteRole":currentRole,
             "address":addressBcOtherUser,
         }
-
         try {
             if(magicCurrentAddress){
 

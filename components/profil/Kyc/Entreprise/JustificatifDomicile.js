@@ -240,13 +240,25 @@ const CJtifDomicile = () => {
                             </div>
                             {/* Fin */}
 
-                                {/* <Link href='/profil/kyc/commun/selfie' className="align-right"> */}
+                            <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                    <Link href='/profil/kyc/entreprise/documents-legaux/' className="align-right">
+                                        <a
+                                                className=""
+                                        >
+                                            <button className="btn btn-primary " type='button'  > Précèdente </button>
+                                        </a> 
+                                    </Link> 
+                                </div> 
+
+                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
                                     <a
                                     className=""
                                     >
                                         <button className="btn btn-primary " type='button' onClick={AddJustificationDomicile}  disabled={isLoggingIn}>Suivant</button>
                                     </a>
-                                {/* </Link> */}
+                                </div> 
+                            </div>
 
                         </form>  
                              

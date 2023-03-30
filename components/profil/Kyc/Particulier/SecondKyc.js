@@ -89,7 +89,6 @@ const SecondKyc = () => {
     const captureRecto = () => {
         const image = webcamRefRecto.current.getScreenshot()
         setImageRecto(image)
-        console.log("image=>",image)
     }
     // Fin
 
@@ -97,7 +96,6 @@ const SecondKyc = () => {
     const captureVerso = () => {
         const image = webcamRefVerso.current.getScreenshot()
         setImageVerso(image)
-        console.log("image=>",image)
     }
     // Fin
 
@@ -242,6 +240,13 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
     
 }, [frontReceiptPhoto,backReceiptPhoto]);
 // Fin
+
+// actualiser la page
+const actualiser = ()=>{
+    setTimeout(() => {
+        window.location.reload()
+    }, 1000)
+}
 
 
 
@@ -498,13 +503,26 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
                                     </div>
 
                                     {statut==="1" ? (
-                                // <Link href='/profil/kyc/particulier/justificatif-domicile' className="align-right">
-                                    <a
-                                    className=""
-                                    >
-                                        <button className="btn btn-primary " type='button' onClick={AddReceipt}  disabled={isLoggingIn}>Suivant</button>
-                                    </a>
-                                // </Link>
+
+                                    <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                    <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                        <a
+                                            className=""
+                                        >
+                                            <button className="btn btn-primary " onClick={actualiser} type='button'  > Précèdente </button>
+                                        </a>  
+                                    </div> 
+
+                                    <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                        <a
+                                        className=""
+                                        >
+                                            <button className="btn btn-primary " type='button' onClick={AddReceipt}  disabled={isLoggingIn}>Suivant</button>
+                                        </a>
+                                    </div> 
+                                    </div>
+
+                                       
                             ) :("")}
                                 </form>
                             </div>
@@ -641,27 +659,54 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
                                     </div>
                                     {/* Fin verso */}
                                     {statut==="1" ? (
-                                    // <Link href='/profil/kyc/particulier/justificatif-domicile' className="align-right">
                                         <a
                                         className=""
                                         >
                                             <button className="btn btn-primary " type='button' onClick={addFichierPhoto}  disabled={isLoggingIn}>Suivant</button>
-                                        </a>
-                                    // </Link>
+                                        </a> 
                                     ) :("")}
                                     </form>
                                 </>
                             ) :("")}
                             {/* Fin */}
-                            {statut==="0" ? (
-                                <button className="btn btn-primary "
-                                    type='button'  
-                                    disabled={isLoggingIn}
-                                    onClick={()=>setStatut("1")}
-                                >
-                                    Suivant
-                                </button>
+                            {statut==="0"&&typeJustificatif==="Passeport"  || typeJustificatif==="Permis de conduire" || typeJustificatif==="Titre de séjour" || typeJustificatif==="Carte d'identité" || typeJustificatif==="Autre"? 
+                            (
+                                <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                    {/* <Link href='/profil/kyc/particulier/seconde-phase/' className="align-right"> */}
+                                    <form>
+                                       
+                                        <a
+                                         onClick={actualiser}
+                                        className=""
+                                        >
+                                            <button className="btn btn-primary " type='button'  > Précèdente </button>
+                                        </a>  
+                                    </form> 
+                                    {/* </Link>                           */}
+                                </div> 
+
+                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                <form>
+                                    <a
+                                    className=""
+                                    >
+                                        <button className="btn btn-primary "
+                                            type='button'  
+                                            disabled={isLoggingIn}
+                                            onClick={()=>setStatut("1")}
+                                        >
+                                            Suivant
+                                        </button>
+                                    </a> 
+                                 </form>                         
+                                </div> 
+                                </div>
+
+                                
                             ) :("")}
+
+                           
                             {statut==="1" ? (''
                                 // <Link href='/profil/kyc/particulier/justificatif-domicile' className="align-right">
                                     // <a

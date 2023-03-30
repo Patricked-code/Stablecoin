@@ -99,7 +99,7 @@ const RetraitCash = () => {
                     className={toggleState === 3 ? "tabs active-tabs  gr-text-8 text-color-opacity" : "tabs  gr-text-8 text-color-opacity"}
                     onClick={() => toggleTab(3)}
                     >
-                      Code personnel
+                      Identifiant
                     </button>
                   </div>
 
@@ -313,13 +313,13 @@ const RetraitCash = () => {
                           htmlFor="addressTo"
                           className="gr-text-8 fw-bold text-blackish-blue "
                         >
-                          Code personnel du bénéficiaire <sup className="text-red">*</sup>
+                          Identifiant du bénéficiaire <sup className="text-red">*</sup>
                         </label>
                         <input
                           className="form-control gr-text-11 border mt-3 bg-white"
                           type="text"
                           id="addressTo"
-                          placeholder="Code personnel du bénéficiaire"
+                          placeholder="Identifiant du bénéficiaire"
                           required
                           defaultValue={addressTo} 
                           onChange={(event)=>setAddressTo(event.target.value)}

@@ -236,7 +236,7 @@ const CDocumentLegaux = () => {
                                         <label
                                             htmlFor="picture"
                                         >
-                                            Déclaration d'existence fiscale de l'entreprise (Facultatif)
+                                            Déclaration d'existence fiscale de l'entreprise.
                                         </label>
                                         <input
                                             className="form-control  border mt-3"

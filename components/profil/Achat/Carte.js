@@ -47,6 +47,11 @@ const Carte = () => {
     // Banques
     const [allBank, setAllBank] = useState([])
 
+    // Compte bancaire
+    const [userDataAccountBank, setUserDataAccountBank] = useState()
+    const [accountBankLength, setAccountBankLength] = useState()
+    const [accountBankId, setAccountBankId] = useState()
+
 
 
         // RECUPERER TOUS LES PAYS
@@ -142,7 +147,30 @@ const Carte = () => {
     }, []);
     // FIN
 
+    // Obtenir mes comptes bancaires
+    useEffect(() => {
+        const token = localStorage.getItem('tokenEnCours')
+            const getAccountBank = async () => {
+            const res = await fetch(`${API_URL}/api/acount-bank/find-all-account-bank-for-user`, {
 
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((res) => res.json())
+                .then((dataAccountBank) => {
+                    console.log("dataAccountBank=>",dataAccountBank)
+                setUserDataAccountBank(dataAccountBank)
+                setAccountBankLength(dataAccountBank.length)
+                }) 
+
+                
+            };
+            
+            getAccountBank();
+    }, []);
+    // Fin
    
 
 
@@ -179,49 +207,7 @@ const Carte = () => {
                         <form className=''>
                         <div className='col-lg-12 col-md-12 row justify-content-between'>
 
-                            <div className='input-group-alternative my-3'>
-                            <input
-                            type='number'
-                            name='mo'
-                            required='required'
-                            placeholder="Numero mobile"
-                            className="form-control"
-                            defaultValue={montantAchat} 
-                            onChange={(event)=>setMontantAchat(event.target.value)}
-                            />
-                            </div>
-                            <div className='row'>
-                                <div className='input-group-alternative my-3 col-lg-6 col-md-6'>
-                                    <label className="mx-2">Montant en CFA</label>
-                                    
-                                    <input
-                                    type='number'
-                                    name='mo'
-                                    disabled
-
-                                    required='required'
-                                    placeholder="Numero mobile"
-                                    className="form-control"
-                                    value={montantAchat} 
-                                    // onChange={(event)=>setMontantAchat(event.target.value)}
-                                    />
-                                </div>
-                                <div className='input-group-alternative my-3 col-lg-6 col-md-6'>
-                                    <label className="mx-2">Total à acheter</label>
-                                    
-                                    <input
-                                    type='number'
-                                    name='mo'
-                                    disabled
-                                    required='required'
-                                    placeholder="Numero mobile"
-                                    className="form-control"
-                                    value={montantAchat} 
-                                    // onChange={(event)=>setMontantAchat(event.target.value)}
-                                    />
-                                </div>
-                            </div>
-                            <div className='input-group-alternative my-3'>
+                        <div className='input-group-alternative my-3'>
                                 <select 
                                     placeholder='Pays'
                                     className='form-control'
@@ -241,25 +227,84 @@ const Carte = () => {
                                 </select>
                                 {/* Fin */}
                             </div>
+                            {countrieBank? (
                             <div className='input-group-alternative my-3'>
-                            <select 
-                            placeholder='Reseau'
-                            className='form-control'
-                            // defaultValue={networkMobile} 
-                            // onChange={(event)=>setNetworkMobile(event.target.value)}
-                            >
-                                <option>Choisissez une banque</option>
-                                {allBank.map((data) => (
-                                    data.countryIso===countrieBank?
-                                        <optgroup className='single-cryptocurrency-box' key={data.id}>
-                                            <option value={data.bankName}>{data.bankName}</option>
-                                        </optgroup>
-                                    :""
-                                ))}
-                            </select>
+                                <select 
+                                    placeholder='Reseau'
+                                    className='form-control'
+                                    defaultValue={accountBankId} 
+                                    onChange={(event)=>setAccountBankId(event.target.value)}
+                                >
+                                    <option>Choisissez un compte</option>
+                                    {userDataAccountBank? (
+                                        userDataAccountBank.map((dataa) => (
+                                            <>
+                                                {/* Parcourir les pays */}
+                                                {dataa?.countrie==countrieBank ? (
+                                                    <optgroup className='single-cryptocurrency-box' key={dataa.id}>
+                                                        <option  value={dataa.id}>{dataa?.bankName}</option>
+                                                    </optgroup>
+                                                ):("")}
+                                            </>
+                                        ))
+                                    ):("")}
+                                </select>
                             </div>
+                            ) : ("")}
+
+                            {accountBankId? (
+                                <>
+                                
+                                    <div className='input-group-alternative my-3'>
+                                    <input
+                                    type='number'
+                                    name='mo'
+                                    required='required'
+                                    placeholder="Numero mobile"
+                                    className="form-control"
+                                    defaultValue={montantAchat} 
+                                    onChange={(event)=>setMontantAchat(event.target.value)}
+                                    />
+                                    </div>
+                                    <div className='row'>
+                                        <div className='input-group-alternative my-3 col-lg-6 col-md-6'>
+                                            <label className="mx-2">Montant en CFA</label>
+                                            
+                                            <input
+                                            type='number'
+                                            name='mo'
+                                            disabled
+
+                                            required='required'
+                                            placeholder="Numero mobile"
+                                            className="form-control"
+                                            value={montantAchat} 
+                                            // onChange={(event)=>setMontantAchat(event.target.value)}
+                                            />
+                                        </div>
+                                        <div className='input-group-alternative my-3 col-lg-6 col-md-6'>
+                                            <label className="mx-2">Total à acheter</label>
+                                            
+                                            <input
+                                            type='number'
+                                            name='mo'
+                                            disabled
+                                            required='required'
+                                            placeholder="Numero mobile"
+                                            className="form-control"
+                                            value={montantAchat} 
+                                            // onChange={(event)=>setMontantAchat(event.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                </>
+                            ) : ("")}
+
                             </div>
-                            <button type='submit'  className="btn btn-primary" disabled={isLoggingIn}>Acheter</button>
+                            {accountBankId? (
+                                <button type='submit'  className="btn btn-primary" disabled={isLoggingIn}>Acheter</button>
+                            ) : ("")}
+                        
                         </form>       
                     </div>
                 <div className='col-lg-3 col-md-12'></div>

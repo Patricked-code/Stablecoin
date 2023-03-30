@@ -81,46 +81,59 @@ const FirsKyc = () => {
                 incomeTypeB:dataTable?.incomeTypeB[0],
                 incomeTypeC:dataTable?.incomeTypeC[0]
             }
+            // Condition pour forcer l'utilisateur à choisir au moins une reponse
+            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
+                
+                
+                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
 
-            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
-
-            const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-questionnaires`, {
-            method:"POST",
-            body: JSON.stringify(dataa),
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization:  `Bearer ${token}`
-            }
-            })
-            const data = await result.json();
-        
-            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-            * sinon on affiche le message de succès
-            */
-            if (data.message) {
-            setMessageError(data.message)
-            setIsLoggingIn(false);
-            Swal.fire({
-                position: 'center',
-                icon: 'error',
-                html: `<p> ${messageError} </p>` ,
-                showConfirmButton: false,
-                timer: 10000
-            })
-            }else{
+                const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-questionnaires`, {
+                method:"POST",
+                body: JSON.stringify(dataa),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`
+                }
+                })
+                const data = await result.json();
+            
+                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                * sinon on affiche le message de succès
+                */
+                if (data.message) {
+                setMessageError(data.message)
+                setIsLoggingIn(false);
                 Swal.fire({
                     position: 'center',
-                    icon: 'success',
-                    html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>` ,
                     showConfirmButton: false,
-                    timer: 5000
-                }),
-                setTimeout(() => {
-                Router.push("/profil/kyc/particulier/seconde-phase"); 
-                }, 5000)
+                    timer: 10000
+                })
+                }else{
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                        showConfirmButton: false,
+                        timer: 5000
+                    }),
+                    setTimeout(() => {
+                    Router.push("/profil/kyc/particulier/seconde-phase"); 
+                    }, 5000)
+                }
+                // Fin condition 
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
             }
-            // Fin condition 
-        
+            
             } catch {
             setIsLoggingIn(false);
             }
@@ -612,14 +625,15 @@ const handleOptionIncomeTypeC = (event) => {
                             {/* Fin Q5 */}
 
 
+                            <p className="colorRed mb-7 ">
+                                NB : Aucun retour n'est permis sur cette page donc, répondez correctement aux questions
+                            </p>
 
-                            {/* <Link href='/profil/kyc/particulier/seconde-phase'> */}
-                                <a
+                            <a
                                 className=""
-                                >
+                            >
                                     <button className="btn btn-primary " type='button' onClick={addQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
-                                </a>
-                            {/* </Link> */}
+                            </a>  
                        
                             {/* <button className="btn btn-primary "  disabled={isLoggingIn}>Suivant</button> */}
                         </form>       

@@ -144,17 +144,20 @@ const Action = () => {
                                             <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
                                         </div> */}
                                         <div className='title'>
-                                            <h3>Demande d'encaissement</h3>
+                                            <h3>Demande de paiement</h3>
                                         </div>
                                         </div>
                                         <div className='btn-box'>
-                                        <Button
-                                            block
-                                            color="primary"
-                                            type="button"
-                                        >
-                                            Voir plus
-                                        </Button>
+                                            <a href='/profil/entreprise/actions/demande-paiement/'>
+                                                <Button
+                                                block
+                                                color="primary"
+                                                type="button"
+                                                >
+                                                    Voir plus
+                                                </Button>
+                                            </a>
+                                        
                                         {/* Fin */}
                                         </div>
                                     </div>

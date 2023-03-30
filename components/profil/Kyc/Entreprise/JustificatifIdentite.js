@@ -178,6 +178,13 @@ const CJustificatifIdentity = () => {
   }
   // FIN
 
+    // actualiser la page
+    const actualiser = ()=>{
+        setTimeout(() => {
+            window.location.reload()
+        }, 1000)
+    }
+
 
 
 
@@ -215,8 +222,8 @@ const CJustificatifIdentity = () => {
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
                         {/* <form className=''> */}
                             {/* Question 0 */}
-                            {typeJustificatif==="Passeport"  || typeJustificatif==="Permis de conduire" || typeJustificatif==="Titre de séjour" || typeJustificatif==="Carte d'identité" || typeJustificatif==="Autre"? ("") :(
-
+                            {/* {typeJustificatif==="Passeport"  || typeJustificatif==="Permis de conduire" || typeJustificatif==="Titre de séjour" || typeJustificatif==="Carte d'identité" || typeJustificatif==="Autre"? ("") :( */}
+                            {statut=="0"?(
                                 <div className="form-group mb-6 mt-3">
                                     <label
                                         htmlFor="Q1"
@@ -274,7 +281,7 @@ const CJustificatifIdentity = () => {
                                         </p>
                                         </label>
                                     </div>
-                                    {/* Permis de conduire */}
+                                    {/* Permis de conduire */} 
                                     <div className="form-group  mt-3 ">
                                         <label
                                             htmlFor="permis-check"
@@ -293,7 +300,6 @@ const CJustificatifIdentity = () => {
                                         </p>
                                         </label>
                                     </div>
-
                                     {/* Titre de séjour */}
                                     <div className="form-group  mt-3 ">
                                         <label
@@ -334,7 +340,7 @@ const CJustificatifIdentity = () => {
                                         </label>
                                     </div>
                                 </div >
-                            )}
+                            ):("")}
                             {/* Fin Q0 */}
 
                             
@@ -343,16 +349,16 @@ const CJustificatifIdentity = () => {
                             {typeJustificatif==="Passeport"  || typeJustificatif==="Permis de conduire" || typeJustificatif==="Titre de séjour" || typeJustificatif==="Carte d'identité" || typeJustificatif==="Autre"? (
                                 <>
                                 <div className="form-group mb-6 mt-3">
-                                <label
+                                {/* <label
                                     htmlFor="Q1"
                                     className="text-blackish-blue mb-2"
                                 >
                                      Choisissez une option pour soumettre les fichiers de votre Justificatif d'identité
                                 <br/>
-                                </label>
+                                </label> */}
                             </div >
                               {/* Les bouton de choix  */}
-                            {statut==="0" ? (
+                            {/* {statut==="0" ? (
                             <div  className="form-group row mt-3">
 
                                 <div  className="form-group ">
@@ -374,27 +380,10 @@ const CJustificatifIdentity = () => {
                                     </label>
                                 </div>
 
-                                {/* <div className="form-group">
-                                    <label
-                                        htmlFor="trimestriels-check"
-                                        className="gr-check-input mb-3 d-flex"
-                                    >
-                                        <input 
-                                        type="radio" 
-                                        name="trimestriels"
-                                        value="photo"
-                                        id='trimestriels-check' 
-                                        checked={selected === 'photo'}
-                                        onChange={() => setSelected('photo')}
-                                        />
-                                    <p className=" mx-2 mb-0 text-center">
-                                        Prendre les photos du justificatif
-                                    </p>
-                                    </label>
-                                </div> */}
+                                
                             </div>
                             
-                            ) :('') }
+                            ) :('') } */}
                             </>
                             ) : ("")}
                             {/* Fin */}
@@ -402,7 +391,7 @@ const CJustificatifIdentity = () => {
 
                             {/* Si selected est file on affiche ce formulaire pour importer des fichiers */}
                             {/* {selected==="file" && statut==="1" ? ( */}
-                            {selected==="file" && statut==="1" ? (
+                            {statut==="1" ? (
 
                                 <div className="form-group row mt-3">
                                 <form>
@@ -474,19 +463,61 @@ const CJustificatifIdentity = () => {
                                     </div>
 
                                     {statut==="1" ? (
-                                // <Link href='/profil/kyc/particulier/justificatif-domicile' className="align-right">
-                                    <a
-                                    className=""
-                                    >
-                                        <button className="btn btn-primary " type='button' onClick={AddReceipt}  disabled={isLoggingIn}>Suivant</button>
-                                    </a>
-                                // </Link>
+                                        <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                        
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                            <a
+                                                className=""
+                                            >
+                                                <button className="btn btn-primary " onClick={actualiser} type='button'  > Précèdente </button>
+                                            </a> 
+                                        </div> 
+
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                            <a
+                                            className=""
+                                            >
+                                                <button className="btn btn-primary " type='button' onClick={AddReceipt}  disabled={isLoggingIn}>Suivant</button>
+                                            </a>
+                                        </div> 
+                                    </div>
+                                    
                             ) :("")}
                                 </form>
                             </div>
                             ) :("")}
                             {/* Fin */}
-                            <form>
+                            {/* {typeJustificatif==="Passeport"  || typeJustificatif==="Permis de conduire" || typeJustificatif==="Titre de séjour" || typeJustificatif==="Carte d'identité" || typeJustificatif==="Autre"? ("") :( */}
+
+                            {statut==="0"&& typeJustificatif==="Passeport"  || typeJustificatif==="Permis de conduire" || typeJustificatif==="Titre de séjour" || typeJustificatif==="Carte d'identité" || typeJustificatif==="Autre" ? (
+                                <form>
+                                    <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                        
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                            <Link href='/profil/kyc/entreprise/justificatif-domicile/' className="align-right">
+                                                <a
+                                                    className=""
+                                                >
+                                                    <button className="btn btn-primary " type='button'  > Précèdente </button>
+                                                </a> 
+                                            </Link> 
+                                        </div> 
+
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                            <button className="btn btn-primary "
+                                                type='button'  
+                                                disabled={isLoggingIn}
+                                                onClick={()=>setStatut("1")}
+                                            >
+                                                Suivant
+                                            </button>
+                                        </div> 
+                                    </div>
+                                </form>
+
+                            ) :("")}
+
+                            {/* <form>
                             
                             {statut==="0" ? (
                                 <button className="btn btn-primary "
@@ -497,7 +528,8 @@ const CJustificatifIdentity = () => {
                                     Suivant
                                 </button>
                             ) :("")}
-                            </form>
+                            </form> */}
+
                             {statut==="1" ? (''
                                 // <Link href='/profil/kyc/particulier/justificatif-domicile' className="align-right">
                                     // <a

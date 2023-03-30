@@ -182,7 +182,14 @@ const [montantAchat, setMontantAchat] = useState(0)
     const [dataBankOfCountry, setDataBankOfCountry] = useState('');
     // Fin
 
-    
+           
+    // BANQUE 
+    const [codeBank, setCodeBank] = useState();
+    const [codeGuichet, setCodeGuichet] = useState();
+    const [numberCompte, setNumberCompte] = useState();
+    const [cleRib, setCleRib] = useState();
+    const [residence, setResidence] = useState();
+    // FIN
 
     // Pour afficher les informations venant de la base dedonnée
     // const [userData, setUserData] = useState();
@@ -1103,12 +1110,17 @@ const [montantAchat, setMontantAchat] = useState(0)
 
     // AJOUT D'UN COMPTE BANCAIRE
     const addAccountBank= async(event) =>{
-
+        setIsLoggingIn(true)
         event.preventDefault();
         const dataa = {
             bankName:bankName,
             iban:iban,
             countrie:countrieBank,
+            codeBank:codeBank,
+            codeGuichet:codeGuichet,
+            numberCompte:numberCompte,
+            cleRib:cleRib,
+            residence:residence,
             status:true
         }
 
@@ -1125,15 +1137,7 @@ const [montantAchat, setMontantAchat] = useState(0)
           })
           .then(res=>{
             const data =  res.json();
-            if (data?.message) {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p>${data?.message} </p>` ,
-                    showConfirmButton: false,
-                    timer: 5000
-                  })
-            }else{
+            if (res?.status==200) {
                 Swal.fire({
                     position: 'center',
                     icon: 'success',
@@ -1148,6 +1152,16 @@ const [montantAchat, setMontantAchat] = useState(0)
                 }, 5000) 
                 // Fin
 
+            }else{
+                setIsLoggingIn(false)
+
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p>${data?.message} </p>` ,
+                    showConfirmButton: false,
+                    timer: 5000
+                  })
             }
             
             })
@@ -1449,94 +1463,121 @@ const [montantAchat, setMontantAchat] = useState(0)
 
         <div className='cryptocurrency-search-box '>
             <div className='row'>
-            <div className='col-lg-6 col-md-6'>
-                        <div className='currency-selection text-center'>
-                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                <div className='cryptocurrency-slides'>
-                                    <div className='single-cryptocurrency-box'>
-                                        <div className='d-flex align-items-center'>
-                                        <div className='bestseller-coin-image'>
-                                            <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
-                                        </div>
-                                        <div className='title'>
-                                            <h3>Stablecoin E-WARI</h3>
-                                            <p>Mon solde : {balance} E-WARI</p>
-                                        </div>
-                                        </div>
-                                        <div className='btn-box'>
-                                        <Button
-                                            block
-                                            color="success"
-                                            type="button"
-                                        >
-                                            Voir plus
-                                        </Button>
-                                        {/* Fin */}
-                                        </div>
+                {/* Infos sur stablecoin */}
+                <div className='col-lg-6 col-md-6'>
+                    <div className='currency-selection text-center'>
+                        <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className='cryptocurrency-slides'>
+                                <div className='single-cryptocurrency-box'>
+                                    <div className='d-flex align-items-center'>
+                                    <div className='bestseller-coin-image'>
+                                        <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
+                                    </div>
+                                    <div className='title'>
+                                        <h3>Stablecoin E-WARI</h3>
+                                        <p>Mon solde : {balance} E-WARI</p>
+                                    </div>
+                                    </div>
+                                    <div className='btn-box'>
+                                    <Button
+                                        block
+                                        color="success"
+                                        type="button"
+                                    >
+                                        Voir plus
+                                    </Button>
+                                    {/* Fin */}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-            {/* Demander des E-WARI */}
-            <div className='col-lg-6 col-md-6'>
-                <div className='currency-selection text-center'>
-                    <div className=" bg-white ">
-                    {/* <div className="mb-3 ml-3"> */}
-                      <br/>
-                      <form className="" onSubmit={handleSubmit}>
-                          <div className="row ml-2 my-3">
-                              <div className="col-lg-6 col-md-6 mb-3 ml-2">
-                                  <div className="input-group flex-nowrap">
-                                      {/* <span className="input-group-text" id="addon-wrapping">E-WARI</span> */}
-                                      <input type="number" defaultValue={montantSaisi} onChange={(e) => setMontantSaisi(e.target.value)} placeholder="Montant E-WARI" aria-describedby="addon-wrapping  autoFocus" className="input input-sm input-bordered form-control" />
-                                  </div>
-                              </div>
-                              <div className="col-lg-6 col-md-6">
-                                  <button type="submit" onClick={send_token} className="btn btn-success">Demander des E-WARI</button>
-                              </div>
-                          </div>
-                      </form>
-
-                  {/* </div> */}
-                    </div>
                 </div>
 
-                {/* PARTIE Transferer des E-WARI */}
-                <div className='currency-selection text-center'>
-                    <div className=" bg-white">
-                    {/* <div className="mb-3 ml-3"> */}
-                      <br/>
-                      <form onSubmit={handleSubmitTwo}>
-                                    <div className="row  mx-3">
-                                        {/* <div className="col-lg-12 col-md-12 mx-3 "> */}
-
-                                        <div className="col-lg-6 col-md-6 text-center my-2 ">
-                                            <div className="input-group ">
-                                                <input type="number" defaultValue={montantSaisiForTo} onChange={(e) => setMontantSaisiForTo(e.target.value)} placeholder="Montant E-WARI" aria-describedby="addon-wrapping  autoFocus" className="input input-sm input-bordered form-control" />
-                                            </div>
-                                        </div>
-                                        <div className="col-lg-6 col-md-6 my-2 text-center">
-                                            <div className="input-group flex-nowrap">
-                                                <input type="text" defaultValue={adresseTo} onChange={(e) => setAdresseTo(e.target.value)} placeholder="Adresse bénéfiaire" aria-describedby="addon-wrapping  autoFocus" className="input input-sm input-bordered form-control" />
-                                            </div>
-                                        </div>
-
-                                        {/* </div> */}
-                                        <div className="col-lg-12 col-md-12   mb-3">
-                                            <button type="submit" className="btn btn-success" onClick={sell_tokenThree}>Transferer des E-WARI</button>
-                                        </div>
+                {/* Paiement en cours */}
+                <div className='col-lg-6 col-md-6'>
+                    <div className='currency-selection text-center'>
+                        <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className='cryptocurrency-slides'>
+                                <div className='single-cryptocurrency-box'>
+                                    <div className='d-flex align-items-center mb-3'>
+                                    <div className='bestseller-coin-image'>
+                                        <img src="/images/ecfa/icons/icon1.jpg" className="rounded-circle"  alt='image' />
                                     </div>
-                                </form>
-
-                  {/* </div> */}
+                                    <h4>
+                                        <p className='rounded-circle bgColorblue text-white'><i>2</i></p>
+                                        Paiements en attente
+                                    </h4>
+                                    </div><br/>
+                                    <div className='btn-box mt-3'>
+                                        <a className='nav-link' href='/profil/paiements/paiements-attente'>
+                                            <Button
+                                            block
+                                            color="success"
+                                            type="button"
+                                            >
+                                                Voir plus
+                                            </Button>
+                                        </a>
+                                    
+                                    {/* Fin */}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
+                {/* Demander des E-WARI */}
+                {/* <div className='col-lg-6 col-md-6'> */}
 
-            </div>
+
+                    {/* <div className='currency-selection text-center'>
+                        <div className=" bg-white ">
+                        <br/>
+                        <form className="" onSubmit={handleSubmit}>
+                            <div className="row ml-2 my-3">
+                                <div className="col-lg-6 col-md-6 mb-3 ml-2">
+                                    <div className="input-group flex-nowrap">
+                                        <input type="number" defaultValue={montantSaisi} onChange={(e) => setMontantSaisi(e.target.value)} placeholder="Montant E-WARI" aria-describedby="addon-wrapping  autoFocus" className="input input-sm input-bordered form-control" />
+                                    </div>
+                                </div>
+                                <div className="col-lg-6 col-md-6">
+                                    <button type="submit" onClick={send_token} className="btn btn-success">Demander des E-WARI</button>
+                                </div>
+                            </div>
+                        </form>
+                        </div>
+                    </div> */}
+
+                    {/* PARTIE Transferer des E-WARI */}
+
+                    {/* <div className='currency-selection text-center'>
+                        <div className=" bg-white">
+                        <br/>
+                        <form onSubmit={handleSubmitTwo}>
+                                        <div className="row  mx-3">
+                                            <div className="col-lg-6 col-md-6 text-center my-2 ">
+                                                <div className="input-group ">
+                                                    <input type="number" defaultValue={montantSaisiForTo} onChange={(e) => setMontantSaisiForTo(e.target.value)} placeholder="Montant E-WARI" aria-describedby="addon-wrapping  autoFocus" className="input input-sm input-bordered form-control" />
+                                                </div>
+                                            </div>
+                                            <div className="col-lg-6 col-md-6 my-2 text-center">
+                                                <div className="input-group flex-nowrap">
+                                                    <input type="text" defaultValue={adresseTo} onChange={(e) => setAdresseTo(e.target.value)} placeholder="Adresse bénéfiaire" aria-describedby="addon-wrapping  autoFocus" className="input input-sm input-bordered form-control" />
+                                                </div>
+                                            </div>
+
+                                            <div className="col-lg-12 col-md-12   mb-3">
+                                                <button type="submit" className="btn btn-success" onClick={sell_tokenThree}>Transferer des E-WARI</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                        </div>
+                    </div> */}
 
 
+                {/* </div> */}
             </div>
         </div>
 
@@ -1560,10 +1601,6 @@ const [montantAchat, setMontantAchat] = useState(0)
                         <div className="mt-4 ">
                         
                             {!mobileLenght=="0"?(
-                                <div
-                                id="bgcolor"
-                                className={toggleState === 3 ? "content  active-content" : "content"}
-                                >
                                     <div  className="card">
                                         <Table
                                         
@@ -1612,7 +1649,6 @@ const [montantAchat, setMontantAchat] = useState(0)
                                         />
                                         </Table>
                                     </div>
-                                </div>
 
                             ):(
                                 <div className="text-center mt-5">
@@ -1643,10 +1679,7 @@ const [montantAchat, setMontantAchat] = useState(0)
 
 
                         {!accountBankLength=="0"?(
-                            <div
-                                id="bgcolor"
-                                className={toggleState === 3 ? "content  active-content" : "content"}
-                            >
+                            
                                 <div  className="card">
                                     <Table
                                         aria-label="Example table with static content"
@@ -1694,13 +1727,11 @@ const [montantAchat, setMontantAchat] = useState(0)
                                     />
                                     </Table>
                                 </div>
-                            </div>
-
-                        ):(
+                         ):(
                             <div className="text-center mt-5">
                                 Vous n'avez ajouté aucun compte bancaire
                             </div>
-                        )}
+                        )} 
                     </div>
                   </div>
                 </div>
@@ -1805,32 +1836,32 @@ const [montantAchat, setMontantAchat] = useState(0)
                         <div className="input-group flex-nowrap">
                         {/* <p className="gr-text-8 pt-3 pb-0 text-center text-green">{currentAdresse} </p> */}
                         
-                                <div className='col-lg-12 col-md-12 row justify-content-between'>
-                                    <div className='input-group-alternative my-3'>
+                        <div className='col-lg-12 col-md-12 row justify-content-between'>
+                            <div className='input-group-alternative my-3 col-lg-6 col-md-6'>
                                 <select 
                                     placeholder='Pays'
                                     className='form-control'
                                     defaultValue={countrieBank} 
                                     onChange={(event)=>setCountrieBank(event.target.value)}
-                                    >
-                                <option>Choisissez un pays</option>
-                                {/* Parcourir les pays */}
-                                {allCountry? (
-                                allCountry.map((data) => (
-                                <optgroup className='single-cryptocurrency-box'
-                                        key={data.id}>
-                                <option  value={data.code}>{data.libelle}</option>
-                                </optgroup>
-                                    ))):("")}
-                                    
-                            </select>
-                            {/* Fin */}
+                                >
+                                    <option>Choisissez un pays</option>
+                                    {/* Parcourir les pays */}
+                                    {allCountry? (
+                                    allCountry.map((data) => (
+                                    <optgroup className='single-cryptocurrency-box'
+                                            key={data.id}>
+                                    <option  value={data.code}>{data.libelle}</option>
+                                    </optgroup>
+                                        ))):("")}
+                                        
+                                </select>
+                                {/* Fin */}
                             </div>
 
                             {/* Ce champ s'affiche quand l'iso du pays choisi ne correspond pas à un iso dans la table banque */}
                             {!dataBankOfCountry?.length ? (
                                 
-                                <div className='input-group-alternative my-3'>
+                                <div className='input-group-alternative my-3 col-lg-6 col-md-6'>
                                     <input
                                     type='text'
                                     name='bankName'
@@ -1843,7 +1874,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                                 </div>
                                 // Sinon on affiche le champ suivant
                             ) : (
-                                <div className='input-group-alternative my-3'>
+                                <div className='input-group-alternative my-3 col-lg-6 col-md-6'>
 
                                 <select 
                                     placeholder='Banque'
@@ -1865,16 +1896,76 @@ const [montantAchat, setMontantAchat] = useState(0)
                             </div>
                             )} 
 
-                            <div className='input-group-alternative my-3'>
-                            <input
-                            type='text'
-                            name='birthday'
-                            required='required'
-                            placeholder="Iban"
-                            className="form-control"
-                            defaultValue={iban} 
-                            onChange={(event)=>setIban(event.target.value)}
-                            />
+                            <div className='input-group-alternative my-3 col-lg-6 col-md-6'>
+                                <input
+                                    type='text'
+                                    name='birthday'
+                                    required='required'
+                                    placeholder="Iban"
+                                    className="form-control"
+                                    defaultValue={iban} 
+                                    onChange={(event)=>setIban(event.target.value)}
+                                />
+                            </div>
+
+                            <div className='input-group-alternative my-3 col-lg-6 col-md-6'>
+                                <input
+                                    type='text'
+                                    name='codeBank'
+                                    required='required'
+                                    placeholder="Code banque"
+                                    className="form-control"
+                                    defaultValue={codeBank} 
+                                    onChange={(event)=>setCodeBank(event.target.value)}
+                                />
+                            </div>
+
+                            <div className='input-group-alternative my-3 col-lg-6 col-md-6'>
+                                <input
+                                    type='text'
+                                    name='codeGuichet'
+                                    required='required'
+                                    placeholder="Code guichet"
+                                    className="form-control"
+                                    defaultValue={codeGuichet} 
+                                    onChange={(event)=>setCodeGuichet(event.target.value)}
+                                />
+                            </div>
+
+                            <div className='input-group-alternative my-3 col-lg-6 col-md-6'>
+                                <input
+                                    type='text'
+                                    name='numberCompte'
+                                    required='required'
+                                    placeholder="Numéro de Compte"
+                                    className="form-control"
+                                    defaultValue={numberCompte} 
+                                    onChange={(event)=>setNumberCompte(event.target.value)}
+                                />
+                            </div>
+
+                            <div className='input-group-alternative my-3 col-lg-6 col-md-6'>
+                                <input
+                                    type='text'
+                                    name='cleRib'
+                                    required='required'
+                                    placeholder="Clé RIB"
+                                    className="form-control"
+                                    defaultValue={cleRib} 
+                                    onChange={(event)=>setCleRib(event.target.value)}
+                                />
+                            </div>
+
+                            <div className='input-group-alternative my-3 col-lg-6 col-md-6'>
+                                <input
+                                    type='text'
+                                    name='residence'
+                                    required='required'
+                                    placeholder="Domiciliation (agence bancaire)"
+                                    className="form-control"
+                                    defaultValue={residence} 
+                                    onChange={(event)=>setResidence(event.target.value)}
+                                />
                             </div>
                             
                             </div>
@@ -2049,7 +2140,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                             </a>
                         </div>
                         <div className="form-group col-lg-6">
-                            <a href='/profil/retrait/retrait-carte'>
+                            <a href='/profil/retrait/retrait-compte-bancaire'>
                                 <button className="btn btn-primary " type='button'  disabled={isLoggingIn}>
                                     Compte bancaire
                                 </button>
