@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ProgressBar = ({ steps, activeStep }) => {
+const DemoProgressBar = ({ steps, activeStep }) => {
   const progressBarStyles = {
     display: 'flex',
     alignItems: 'center',
@@ -48,4 +48,4 @@ const ProgressBar = ({ steps, activeStep }) => {
   );
 };
 
-export default ProgressBar;
+export default DemoProgressBar;

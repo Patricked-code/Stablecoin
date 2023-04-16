@@ -1,5 +1,5 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Users\Koné ZIé Arouna\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add core-js/core/array
+  C:\Program Files\nodejs\node.exe C:\Users\Koné ZIé Arouna\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add defender-relay-client
 
 PATH: 
   C:\Users\Koné ZIé Arouna\AppData\Local\cloud-code\installer\google-cloud-sdk\bin;C:\Program Files\Microsoft\jdk-11.0.12.7-hotspot\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\Geth;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\dotnet\;C:\Program Files\nodejs\;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Users\Koné ZIé Arouna\AppData\Local\Programs\Python\Python310\Scripts\;C:\Users\Koné ZIé Arouna\AppData\Local\Programs\Python\Python310\;C:\Users\Koné ZIé Arouna\AppData\Local\Microsoft\WindowsApps;C:\Users\Koné ZIé Arouna\.local\share\solana\install\active_release\bin;C:\Users\Koné ZIé Arouna\.dotnet\tools;C:\Users\Koné ZIé Arouna\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\MongoDB\Server\5.0\bin;C:\Users\Koné ZIé Arouna\AppData\Roaming\npm
@@ -14,17 +14,7 @@ Platform:
   win32 x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/core-js%2fcore/array: Request "https://registry.yarnpkg.com/core-js%2fcore/array" returned a 405
-      at Request.params.callback [as _callback] (C:\Users\Koné ZIé Arouna\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:66147:18)
-      at Request.self.callback (C:\Users\Koné ZIé Arouna\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:140883:22)
-      at Request.emit (node:events:527:28)
-      at Request.<anonymous> (C:\Users\Koné ZIé Arouna\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141855:10)
-      at Request.emit (node:events:527:28)
-      at IncomingMessage.<anonymous> (C:\Users\Koné ZIé Arouna\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141777:12)
-      at Object.onceWrapper (node:events:641:28)
-      at IncomingMessage.emit (node:events:539:35)
-      at endReadableNT (node:internal/streams/readable:1345:12)
-      at processTicksAndRejections (node:internal/process/task_queues:83:21)
+  Error: EPERM: operation not permitted, unlink 'D:\Projets\WTI\STABLECOIN\FRONTEND\GITLAB\stablecoin\node_modules\bufferutil\prebuilds\win32-x64\node.napi.node'
 
 npm manifest: 
   {

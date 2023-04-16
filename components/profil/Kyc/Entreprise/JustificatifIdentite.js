@@ -33,6 +33,7 @@ import {
     Row,
     Col,
   } from "reactstrap";
+import ProgressBar from '../ProgressBar';
 
 // FIN
 
@@ -69,7 +70,13 @@ const CJustificatifIdentity = () => {
     
 
     
-    
+    const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
+
+    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+        const kycStatut = localStorage.getItem('currentKycEntrepriseStatut')  
+        setCurrentKycEntrepriseStatut(kycStatut)
+    }, [currentKycEntrepriseStatut]);
     
     
     
@@ -158,7 +165,12 @@ const CJustificatifIdentity = () => {
             timer: 5000
         }),
         setTimeout(() => {
-        Router.push("/profil/kyc/commun/selfie"); 
+            if (currentKycEntrepriseStatut==="1") {
+                Router.push("/profil/kyc/entreprise/resultat-kyc"); 
+
+            }else{
+                Router.push("/profil/kyc/commun/selfie"); 
+            }
         }, 5000)
         
         }else{
@@ -186,17 +198,21 @@ const CJustificatifIdentity = () => {
     }
 
 
-
+    // La barre de progression de KYC du profil particulier
+    const stepsEntreprise = ["Questionnaires","Documents légaux","Justificatif de domicile", "Justificatif d'identité","Photo", "Signature"];
+    const activeStepEntreprise = 2;
+    // Fin
 
 
 
   return (
     <>
-
+        <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />
+        
         <div className='' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                    <h1 className='text-center'>Justificatif d'identité du dirigeant</h1>
+                    <br/><br/><h1 className='text-center'>Justificatif d'identité du dirigeant</h1>
                 </div>
             </div>
 
@@ -469,7 +485,7 @@ const CJustificatifIdentity = () => {
                                             <a
                                                 className=""
                                             >
-                                                <button className="btn btn-primary " onClick={actualiser} type='button'  > Précèdente </button>
+                                                <button className="btn btn-primary " onClick={actualiser} type='button'  > Précédente </button>
                                             </a> 
                                         </div> 
 
@@ -488,34 +504,37 @@ const CJustificatifIdentity = () => {
                             ) :("")}
                             {/* Fin */}
                             {/* {typeJustificatif==="Passeport"  || typeJustificatif==="Permis de conduire" || typeJustificatif==="Titre de séjour" || typeJustificatif==="Carte d'identité" || typeJustificatif==="Autre"? ("") :( */}
+                            {statut==="0" ? (
+                                <>
+                                    {typeJustificatif==="Passeport"  || typeJustificatif==="Permis de conduire" || typeJustificatif==="Titre de séjour" || typeJustificatif==="Carte d'identité" || typeJustificatif==="Autre" ? (
+                                        <form>
+                                            <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                                
+                                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                                    <Link href='/profil/kyc/entreprise/justificatif-domicile/' className="align-right">
+                                                        <a
+                                                            className=""
+                                                        >
+                                                            <button className="btn btn-primary " type='button'  > Précédente </button>
+                                                        </a> 
+                                                    </Link> 
+                                                </div> 
 
-                            {statut==="0"&& typeJustificatif==="Passeport"  || typeJustificatif==="Permis de conduire" || typeJustificatif==="Titre de séjour" || typeJustificatif==="Carte d'identité" || typeJustificatif==="Autre" ? (
-                                <form>
-                                    <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
-                                        
-                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                            <Link href='/profil/kyc/entreprise/justificatif-domicile/' className="align-right">
-                                                <a
-                                                    className=""
-                                                >
-                                                    <button className="btn btn-primary " type='button'  > Précèdente </button>
-                                                </a> 
-                                            </Link> 
-                                        </div> 
+                                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                                    <button className="btn btn-primary "
+                                                        type='button'  
+                                                        disabled={isLoggingIn}
+                                                        onClick={()=>setStatut("1")}
+                                                    >
+                                                        Suivant
+                                                    </button>
+                                                </div> 
+                                            </div>
+                                        </form>
 
-                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                            <button className="btn btn-primary "
-                                                type='button'  
-                                                disabled={isLoggingIn}
-                                                onClick={()=>setStatut("1")}
-                                            >
-                                                Suivant
-                                            </button>
-                                        </div> 
-                                    </div>
-                                </form>
-
-                            ) :("")}
+                                    ) :("")}
+                                </>
+                            ) : ("")}
 
                             {/* <form>
                             

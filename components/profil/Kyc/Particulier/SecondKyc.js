@@ -33,6 +33,7 @@ import {
     Row,
     Col,
   } from "reactstrap";
+import ProgressBar from '../ProgressBar';
 
 // FIN
 
@@ -71,7 +72,14 @@ const SecondKyc = () => {
 
 
     
-    
+    const [currentKycStatut, setCurrentKycStatut] = useState();
+
+    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+        const kycStatut = localStorage.getItem('currentUpdateKycStatut')  
+        setCurrentKycStatut(kycStatut)
+    }, [currentKycStatut]);
+    // Fin
     
     
  
@@ -159,7 +167,11 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
             timer: 5000
         }),
         setTimeout(() => {
-        Router.push("/profil/kyc/particulier/justificatif-domicile"); 
+            if (currentKycStatut==="1") {
+                Router.push("/profil/kyc/particulier/resultat-kyc"); 
+            }else{
+                Router.push("/profil/kyc/particulier/justificatif-domicile"); 
+            }
         }, 5000)
         
         }else{
@@ -181,8 +193,9 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
 
 
   // Fonction d'envoie des informations du fichiers en photo
-  const addFichierPhoto= useCallback(async () => {
+    const addFichierPhoto= async () => {
     setIsLoggingIn(true);
+
     try {
         
         const dataa = {
@@ -202,7 +215,6 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
         }
         })
         const data = await result.json();
-        console.log("data=>",data)
     
         /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
         * sinon on affiche le message de succès
@@ -237,8 +249,7 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
         } catch {
         setIsLoggingIn(false);
         }
-    
-}, [frontReceiptPhoto,backReceiptPhoto]);
+    }
 // Fin
 
 // actualiser la page
@@ -248,15 +259,19 @@ const actualiser = ()=>{
     }, 1000)
 }
 
-
+// La barre de progression de KYC
+const steps = ["Questionnaires", "Justificatif d'identité", "Justificatif de domicile", "Photo", "Signature"];
+const activeStep = 0;
+// Fin
 
   return (
     <>
+      <ProgressBar className="mb-15" steps={steps} activeStep={activeStep} />
 
         <div className='' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                    <h1 className='text-center'>Justificatif d'identité</h1>
+                    <br/><br/><h1 className='text-center'>Justificatif d'identité</h1>
                 </div>
             </div>
 
@@ -283,127 +298,138 @@ const actualiser = ()=>{
                         {/* <form className=''> */}
                             {/* Question 0 */}
                             {typeJustificatif==="Passeport"  || typeJustificatif==="Permis de conduire" || typeJustificatif==="Titre de séjour" || typeJustificatif==="Carte d'identité" || typeJustificatif==="Autre"? ("") :(
+                                <>
+                                    <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="Q1"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Quel type de Justificatif d'identité souhaiterez-vous nous envoyer?
+                                        <br/>
+                                        </label>
+                                        {/* Default */}
+                                        <input 
+                                            type="radio" 
+                                            name="default"
+                                            value='default'
+                                            hidden
+                                            checked={typeJustificatif==="default"}
+                                            onChange={()=>setTypeJustificatif("default")}
+                                        />
+                                        {/* Fin default */}
 
-                                <div className="form-group mb-6 mt-3">
-                                    <label
-                                        htmlFor="Q1"
-                                        className="text-blackish-blue mb-2"
-                                    >
-                                        Quel type de Justificatif d'identité souhaiterez-vous nous envoyer?
-                                    <br/>
-                                    </label>
-                                    {/* Default */}
-                                    <input 
-                                        type="radio" 
-                                        name="default"
-                                        value='default'
-                                        hidden
-                                        checked={typeJustificatif==="default"}
-                                        onChange={()=>setTypeJustificatif("default")}
-                                    />
-                                    {/* Fin default */}
+                                        {/* Passeport*/}
+                                        <div className="form-group  mt-3 ">
+                                            <label
+                                                htmlFor="passeport-check"
+                                                className="gr-check-input mb-7 d-flex"
+                                            >
+                                                <input 
+                                                type="radio" 
+                                                name="passeport"
+                                                value='Passeport'
+                                                id='passeport-check' 
+                                                checked={typeJustificatif==="Passeport"}
+                                                onChange={()=>setTypeJustificatif("Passeport")}
+                                                />
+                                            <p className=" mx-2 mb-0 text-center">
+                                                Passeport
+                                            </p>
+                                            </label>
+                                        </div>
+                                        {/* Carte d'identité */}
+                                        <div className="form-group  mt-3 ">
+                                            <label
+                                                htmlFor="carte-check"
+                                                className="gr-check-input mb-7 d-flex"
+                                            >
+                                                <input 
+                                                type="radio" 
+                                                name="carte"
+                                                value="Carte d'identité"
+                                                id='carte-check' 
+                                                checked={typeJustificatif==="Carte d'identité"}
+                                                onChange={()=>setTypeJustificatif("Carte d'identité")}
+                                                />
+                                            <p className=" mx-2 mb-0 text-center">
+                                                Carte d'identité
+                                            </p>
+                                            </label>
+                                        </div>
+                                        {/* Permis de conduire */}
+                                        <div className="form-group  mt-3 ">
+                                            <label
+                                                htmlFor="permis-check"
+                                                className="gr-check-input mb-7 d-flex"
+                                            >
+                                                <input 
+                                                type="radio" 
+                                                name="permis"
+                                                value="Permis de conduire"
+                                                id='permis-check' 
+                                                checked={typeJustificatif==="Permis de conduire"}
+                                                onChange={()=>setTypeJustificatif("Permis de conduire")}
+                                                />
+                                            <p className=" mx-2 mb-0 text-center">
+                                                Permis de conduire
+                                            </p>
+                                            </label>
+                                        </div>
 
-                                    {/* Passeport*/}
-                                    <div className="form-group  mt-3 ">
-                                        <label
-                                            htmlFor="passeport-check"
-                                            className="gr-check-input mb-7 d-flex"
-                                        >
-                                            <input 
-                                            type="radio" 
-                                            name="passeport"
-                                            value='Passeport'
-                                            id='passeport-check' 
-                                            checked={typeJustificatif==="Passeport"}
-                                            onChange={()=>setTypeJustificatif("Passeport")}
-                                            />
-                                        <p className=" mx-2 mb-0 text-center">
-                                            Passeport
-                                        </p>
-                                        </label>
-                                    </div>
-                                    {/* Carte d'identité */}
-                                    <div className="form-group  mt-3 ">
-                                        <label
-                                            htmlFor="carte-check"
-                                            className="gr-check-input mb-7 d-flex"
-                                        >
-                                            <input 
-                                            type="radio" 
-                                            name="carte"
-                                            value="Carte d'identité"
-                                            id='carte-check' 
-                                            checked={typeJustificatif==="Carte d'identité"}
-                                            onChange={()=>setTypeJustificatif("Carte d'identité")}
-                                            />
-                                        <p className=" mx-2 mb-0 text-center">
-                                            Carte d'identité
-                                        </p>
-                                        </label>
-                                    </div>
-                                    {/* Permis de conduire */}
-                                    <div className="form-group  mt-3 ">
-                                        <label
-                                            htmlFor="permis-check"
-                                            className="gr-check-input mb-7 d-flex"
-                                        >
-                                            <input 
-                                            type="radio" 
-                                            name="permis"
-                                            value="Permis de conduire"
-                                            id='permis-check' 
-                                            checked={typeJustificatif==="Permis de conduire"}
-                                            onChange={()=>setTypeJustificatif("Permis de conduire")}
-                                            />
-                                        <p className=" mx-2 mb-0 text-center">
-                                            Permis de conduire
-                                        </p>
-                                        </label>
-                                    </div>
+                                        {/* Titre de séjour */}
+                                        <div className="form-group  mt-3 ">
+                                            <label
+                                                htmlFor="sejour-check"
+                                                className="gr-check-input mb-7 d-flex"
+                                            >
+                                                <input 
+                                                type="radio" 
+                                                name="sejour"
+                                                value="Titre de séjour"
+                                                id='sejour-check' 
+                                                checked={typeJustificatif==="Titre de séjour"}
+                                                onChange={()=>setTypeJustificatif("Titre de séjour")}
+                                                />
+                                            <p className=" mx-2 mb-0 text-center">
+                                                Titre de séjour
+                                            </p>
+                                            </label>
+                                        </div>
 
-                                    {/* Titre de séjour */}
-                                    <div className="form-group  mt-3 ">
-                                        <label
-                                            htmlFor="sejour-check"
-                                            className="gr-check-input mb-7 d-flex"
-                                        >
-                                            <input 
-                                            type="radio" 
-                                            name="sejour"
-                                            value="Titre de séjour"
-                                            id='sejour-check' 
-                                            checked={typeJustificatif==="Titre de séjour"}
-                                            onChange={()=>setTypeJustificatif("Titre de séjour")}
-                                            />
-                                        <p className=" mx-2 mb-0 text-center">
-                                            Titre de séjour
-                                        </p>
-                                        </label>
-                                    </div>
+                                        {/* Autre */}
+                                        <div className="form-group  mt-3 ">
+                                            <label
+                                                htmlFor="autre-check"
+                                                className="gr-check-input mb-7 d-flex"
+                                            >
+                                                <input 
+                                                type="radio" 
+                                                name="autre"
+                                                value="Autre"
+                                                id='autre-check' 
+                                                checked={typeJustificatif==="Autre"}
+                                                onChange={()=>setTypeJustificatif("Autre")}
+                                                />
+                                            <p className=" mx-2 mb-0 text-center">
+                                                Autre
+                                            </p>
+                                            </label>
+                                        </div>
+                                    </div >
 
-                                    {/* Autre */}
-                                    <div className="form-group  mt-3 ">
-                                        <label
-                                            htmlFor="autre-check"
-                                            className="gr-check-input mb-7 d-flex"
-                                        >
-                                            <input 
-                                            type="radio" 
-                                            name="autre"
-                                            value="Autre"
-                                            id='autre-check' 
-                                            checked={typeJustificatif==="Autre"}
-                                            onChange={()=>setTypeJustificatif("Autre")}
-                                            />
-                                        <p className=" mx-2 mb-0 text-center">
-                                            Autre
-                                        </p>
-                                        </label>
-                                    </div>
-                                </div >
+                                    <form>
+                                    <Link href='/profil/kyc/particulier/' className="align-right">
+                                        <a >
+                                            <button className="btn btn-primary "type='button' >
+                                            Précédente
+                                            </button>
+                                        </a>
+                                    </Link>
+                                    </form>
+                                </>
                             )}
                             {/* Fin Q0 */}
-
+                            
                             
 
                             {/* Question 1 */}
@@ -509,7 +535,7 @@ const actualiser = ()=>{
                                         <a
                                             className=""
                                         >
-                                            <button className="btn btn-primary " onClick={actualiser} type='button'  > Précèdente </button>
+                                            <button className="btn btn-primary " onClick={actualiser} type='button'  > Précédente </button>
                                         </a>  
                                     </div> 
 
@@ -517,7 +543,7 @@ const actualiser = ()=>{
                                         <a
                                         className=""
                                         >
-                                            <button className="btn btn-primary " type='button' onClick={AddReceipt}  disabled={isLoggingIn}>Suivant</button>
+                                            <button className="btn btn-primary " type='button' onClick={AddReceipt}  disabled={isLoggingIn}>Suivant </button>
                                         </a>
                                     </div> 
                                     </div>
@@ -658,53 +684,72 @@ const actualiser = ()=>{
                                         <div className="form-group col-lg-3 col-md-3"></div>
                                     </div>
                                     {/* Fin verso */}
-                                    {statut==="1" ? (
-                                        <a
-                                        className=""
-                                        >
-                                            <button className="btn btn-primary " type='button' onClick={addFichierPhoto}  disabled={isLoggingIn}>Suivant</button>
-                                        </a> 
+                                    {statut==="1" && imageVerso && imageRecto ? (
+
+                                        <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                            <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                                <a
+                                                    className=""
+                                                >
+                                                    <button className="btn btn-primary " onClick={actualiser} type='button'  > Précédente </button>
+                                                </a>  
+                                            </div> 
+
+                                            <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                                <button className="btn btn-primary " type='button' onClick={addFichierPhoto}  disabled={isLoggingIn}>Suivant</button>
+                                            </div> 
+                                        </div>
+
+                                        // <a
+                                        // className=""
+                                        // >
+                                        //     <button className="btn btn-primary " type='button' onClick={addFichierPhoto}  disabled={isLoggingIn}>Suivant</button>
+                                        // </a> 
                                     ) :("")}
                                     </form>
                                 </>
                             ) :("")}
                             {/* Fin */}
-                            {statut==="0"&&typeJustificatif==="Passeport"  || typeJustificatif==="Permis de conduire" || typeJustificatif==="Titre de séjour" || typeJustificatif==="Carte d'identité" || typeJustificatif==="Autre"? 
-                            (
-                                <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
-                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                    {/* <Link href='/profil/kyc/particulier/seconde-phase/' className="align-right"> */}
-                                    <form>
-                                       
-                                        <a
-                                         onClick={actualiser}
-                                        className=""
-                                        >
-                                            <button className="btn btn-primary " type='button'  > Précèdente </button>
-                                        </a>  
-                                    </form> 
-                                    {/* </Link>                           */}
-                                </div> 
-
-                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                <form>
-                                    <a
-                                    className=""
-                                    >
-                                        <button className="btn btn-primary "
-                                            type='button'  
-                                            disabled={isLoggingIn}
-                                            onClick={()=>setStatut("1")}
-                                        >
-                                            Suivant
-                                        </button>
-                                    </a> 
-                                 </form>                         
-                                </div> 
-                                </div>
-
+                            {statut==="0" ? (
+                                <>
                                 
-                            ) :("")}
+                                    {typeJustificatif==="Passeport"  || typeJustificatif==="Permis de conduire" || typeJustificatif==="Titre de séjour" || typeJustificatif==="Carte d'identité" || typeJustificatif==="Autre"? 
+                                    (
+                                        <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                            {/* <Link href='/profil/kyc/particulier/seconde-phase/' className="align-right"> */}
+                                            <form>
+                                            
+                                                <a
+                                                onClick={actualiser}
+                                                className=""
+                                                >
+                                                    <button className="btn btn-primary " type='button'  > Précédente </button>
+                                                </a>  
+                                            </form> 
+                                            {/* </Link>                           */}
+                                        </div> 
+
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                        <form>
+                                            <a
+                                            className=""
+                                            >
+                                                <button className="btn btn-primary "
+                                                    type='button'  
+                                                    disabled={isLoggingIn}
+                                                    onClick={()=>setStatut("1")}
+                                                >
+                                                    Suivant
+                                                </button>
+                                            </a> 
+                                        </form>                         
+                                        </div> 
+                                        </div>
+                                        
+                                    ) :("")}
+                                </>
+                            ) : ("")}
 
                            
                             {statut==="1" ? (''

@@ -43,6 +43,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/dashboard" ||
       pathname === "/profil/kyc/particulier"||
       pathname === "/profil/kyc/particulier/seconde-phase"||
+      pathname === "/profil/kyc/particulier/resultat-kyc"||
       pathname === "/profil/action"||
       pathname === "/profil/achat/achat-carte"||
       pathname === "/profil/retrait/retrait-compte-bancaire"||
@@ -57,6 +58,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/informations/utilisateur"||
       pathname === "/profil/kyc/entreprise/justificatif-identite"||
       pathname === "/profil/kyc/entreprise/justificatif-domicile"||
+      pathname === "/profil/kyc/entreprise/resultat-kyc"||
       pathname === "/profil/wallet"||
       pathname === "/profil/paiements/paiements-attente"||
 
@@ -74,13 +76,20 @@ const Layout = ({ children }) => {
 
       // FIN
 
-      
 
       // LES ROUTES DE LA PARTIE ADMIN WWEALTHTECH
       pathname === "/admin/wealthtech"||
       pathname === "/admin/wealthtech/stablecoin"||
       pathname === "/admin/wealthtech/stablecoin/roles/attribuer-roles"||
-      pathname === "/admin/wealthtech/stablecoin/mintBurn"
+      pathname === "/admin/wealthtech/stablecoin/mintBurn"||
+      pathname === "/admin/wealthtech/kyc"||
+      pathname === "/admin/wealthtech/kyc/validation/particular"||
+      pathname === "/admin/wealthtech/kyc/validation/entreprise"||
+      pathname === "/admin/wealthtech/roles/attribution"
+
+
+
+
 
       // FIN
 
@@ -101,6 +110,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/dashboard" || 
       pathname === "/profil/kyc/particulier" ||
       pathname === "/profil/kyc/particulier/seconde-phase"||
+      pathname === "/profil/kyc/particulier/resultat-kyc"||
       pathname === "/profil/action"||
       pathname === "/profil/achat/achat-carte"||
       pathname === "/profil/retrait/retrait-compte-bancaire"||
@@ -115,6 +125,8 @@ const Layout = ({ children }) => {
       pathname === "/profil/informations/utilisateur"||
       pathname === "/profil/kyc/entreprise/justificatif-identite"||
       pathname === "/profil/kyc/entreprise/justificatif-domicile"||
+      pathname === "/profil/kyc/entreprise/resultat-kyc"||
+
       // pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/wallet"||
       pathname === "/profil/paiements/paiements-attente"||
@@ -138,6 +150,13 @@ const Layout = ({ children }) => {
       pathname === "/admin/wealthtech/stablecoin"||
       pathname === "/admin/wealthtech/stablecoin/roles/attribuer-roles"||
       pathname === "/admin/wealthtech/stablecoin/mintBurn"||
+      pathname === "/admin/wealthtech/kyc"||
+      pathname === "/admin/wealthtech/kyc/validation/particular"||
+      pathname === "/admin/wealthtech/kyc/validation/entreprise"||
+      pathname === "/admin/wealthtech/roles/attribution"||
+
+
+
 
 
 

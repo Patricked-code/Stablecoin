@@ -72,17 +72,26 @@ const DasbaordWti = () => {
               //const userBalance = ethers.utils.formatEther(await provider.getBalance(userAddress))
               // FIN
 
-              // Obtenir un utilisateur en fonction de son email 
-              const getUser = async () => {
-                const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
-                    headers: {
-                    'Content-Type': 'application/json',
-                    },
-                })
+              // Obtenir l'utilisateur connecté 
+                const token = localStorage.getItem('tokenEnCours')
+
+                const getUser = async () => {
+                    const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
+                        headers: {
+                        'Content-Type': 'application/json',
+                        Authorization:  `Bearer ${token}`,
+
+                        },
+                    })
                   .then((result) => result.json())
                   .then((user) => {
-                  setCurrentUser(user)
-                  console.log("User=>",user)
+
+                    if (user?.profileId==2 || user?.profileId==3) {
+                        setCurrentUser(user)
+                    }else{
+                        Router.push("/profil/"); 
+                        
+                    }
                   }) 
               };
               await getUser();
@@ -96,22 +105,19 @@ const DasbaordWti = () => {
     }, [provider, magic]);
     //  Fin
 
-    if (typeof window !== 'undefined') {
-        localStorage.setItem('acteurOfDepot',acteur);
-
-        const actor = localStorage.getItem('acteurOfDepot');
-
-        console.log("Acteur=>",actor)
-    }
+   
 
 
   return (
+      <>
+    {currentUser?.profileId==2 || currentUser?.profileId==3?(
+
     <>
 
       <div className='' >
         <div className=' mx-15'>
             <div className='py-10'>
-                <h1 className='text-center'>Dasbaord de Welthtech</h1>
+                <h1 className='text-center'>Dasbaord de Wealthtech</h1>
             </div>
         </div>
 
@@ -133,27 +139,28 @@ const DasbaordWti = () => {
         {/* Les cards */}
             <div className='cryptocurrency-search-box'>
                 <div className='row'>
+                    {currentUser?.profileId==2 ? (
                         <div className='col-lg-6 col-md-6'>
                             <div className='currency-selection text-center'>
                                 <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
                                     <div className='cryptocurrency-slides'>
                                         <div className='single-cryptocurrency-box'>
                                             <div className='d-flex align-items-center'>
-                                            {/* <div className='bestseller-coin-image'>
-                                                <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
-                                            </div> */}
+                                            
                                             <div className='title'>
-                                                <h3>Mint </h3>
+                                                <h3>Attribuer des rôles</h3>
                                             </div>
                                             </div>
                                             <div className='btn-box'>
-                                            <Button
-                                                block
-                                                color="primary"
-                                                type="button"
-                                            >
-                                                Voir plus
-                                            </Button>
+                                                <a href='/admin/wealthtech/roles/attribution/'>
+                                                    <Button
+                                                        block
+                                                        color="primary"
+                                                        type="button"
+                                                    >
+                                                        Voir plus
+                                                    </Button>
+                                                </a>
                                             {/* Fin */}
                                             </div>
                                         </div>
@@ -161,7 +168,7 @@ const DasbaordWti = () => {
                                 </div>
                             </div>
                         </div>
-                                
+                    ) : ("")}         
                     <div className='col-lg-6 col-md-6'>
                         <div className='currency-selection text-center'>
                             <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
@@ -191,6 +198,12 @@ const DasbaordWti = () => {
             </div>
       </div>
 
+    </>
+    ):(
+        <span className="text-center bg-default-2 btn-bottom-text  d-block gr-text-5 text-blackish-blue gr-opacity-10 my-35">
+            <Loading/>
+        </span>
+    )}
     </>
   );
 };

@@ -33,6 +33,7 @@ import {
     Row,
     Col,
   } from "reactstrap";
+import ProgressBar from '../ProgressBar';
 
 // FIN
 
@@ -58,7 +59,13 @@ const CJtifDomicile = () => {
     // Fin
     const [selected, setSelected] = useState('file');
 
-    
+    const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
+
+    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+        const kycStatut = localStorage.getItem('currentKycEntrepriseStatut')  
+        setCurrentKycEntrepriseStatut(kycStatut)
+    }, [currentKycEntrepriseStatut]);
 
     // State Pour Camera photo
     const webcamRefRecto = useRef(null)
@@ -144,7 +151,13 @@ const CJtifDomicile = () => {
                 timer: 5000
             }),
             setTimeout(() => {
-            Router.push("/profil/kyc/entreprise/justificatif-identite"); 
+                if (currentKycEntrepriseStatut==="1") {
+                    Router.push("/profil/kyc/entreprise/resultat-kyc"); 
+
+                }else{
+                    Router.push("/profil/kyc/entreprise/justificatif-identite"); 
+
+                }
             }, 5000)
 
             
@@ -163,15 +176,19 @@ const CJtifDomicile = () => {
     }
     // FIN
 
-
+    // La barre de progression de KYC du profil particulier
+    const stepsEntreprise = ["Questionnaires","Documents légaux","Justificatif de domicile", "Justificatif d'identité","Photo", "Signature"];
+    const activeStepEntreprise = 1;
+    // Fin
 
   return (
     <>
+        <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />
 
         <div className='' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                    <h1 className='text-center'>Justificatif de domicile du bureau</h1>
+                    <br/><br/><h1 className='text-center'>Justificatif de domicile du bureau</h1>
                 </div>
             </div>
 
@@ -246,7 +263,7 @@ const CJtifDomicile = () => {
                                         <a
                                                 className=""
                                         >
-                                            <button className="btn btn-primary " type='button'  > Précèdente </button>
+                                            <button className="btn btn-primary " type='button'  > Précédente </button>
                                         </a> 
                                     </Link> 
                                 </div> 

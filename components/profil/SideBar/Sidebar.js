@@ -14,6 +14,9 @@ import Dropdown from 'react-bootstrap/Dropdown';
 
 
 
+
+
+
 const SidebarProfil = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
@@ -27,6 +30,9 @@ const { pathname } = router;
 const [currentUser, setCurrentUser] = useState();
 const [provider, setProvider] = useState(null);
 
+
+const [kycForEntreprise, setKycForEntreprise] = useState();
+const [kycForParticular, setKycForParticular] = useState();
 
 
     useEffect(() => {
@@ -75,6 +81,54 @@ const [provider, setProvider] = useState(null);
         })();
     }, [provider, magic]);
     //  Fin
+
+
+
+  // RECUPERER KYC DE L'UTILISATEUR
+  useEffect(async() => {
+    const token = localStorage.getItem('tokenEnCours')
+    
+        const getKycForParticular = async () => {
+        const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-kyc-particular-for-user`, {
+            headers: {
+            'Content-Type': 'application/json',
+            Authorization:  `Bearer ${token}`,
+            },
+        })
+            .then((resKyc) => resKyc.json())
+            .then((data) => {
+            setKycForParticular(data)
+            }) 
+        };
+        // console.log("Banques =>",allBank)
+        await getKycForParticular();
+  }, []);
+  // FIN
+
+
+
+
+
+    // RECUPERER KYC DE L'ENTREPRISE
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+        
+            const getKycForEntreprise = async () => {
+            const resKyc = await fetch(`${API_URL}/api/kyc/entreprise/find-kyc-entreprise-for-user`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((resKyc) => resKyc.json())
+                .then((data) => {
+                setKycForEntreprise(data)
+                }) 
+            };
+            // console.log("Banques =>",allBank)
+            await getKycForEntreprise();
+    }, []);
+    // FIN
 
 // FONCTION DE LA DECONNEXION
 const logaout = useCallback(() => {
@@ -128,31 +182,108 @@ const logaout = useCallback(() => {
                 <i className='fas fa-address-card nav-link-icon'></i>
                 <span className='nav-link-name'>Mes cartes</span>
             </Link>
+
             {currentUser?.activated && currentUser?.codeTypeProfil==="part"? (
-              <Link to='/profil/kyc/particulier/' className={pathname == "/profil/kyc/particulier/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+              <>
+              {kycForParticular?.status==1 ? (
+                <Link to='/profil/kyc/particulier/resultat-kyc/' className={pathname == "/profil/kyc/particulier/resultat-kyc/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                <i className='fas fa-tasks nav-link-icon'></i>
+                <span className='nav-link-name'>KYC en attente</span>
+              </Link>
+              ) : (
+                <>
+                
+              {kycForParticular?.quiz==1 && !kycForParticular?.identity==1 && !kycForParticular?.residence==1 && !kycForParticular?.photo==1 ? (
+                 <Link to='/profil/kyc/particulier/seconde-phase/' className={pathname == "/profil/kyc/particulier/seconde-phase/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                   <i className='fas fa-tasks nav-link-icon'></i>
                   <span className='nav-link-name'>KYC</span>
-              </Link>
+                </Link>
+              ) : kycForParticular?.quiz==1 && kycForParticular?.identity==1 && !kycForParticular?.residence==1 && !kycForParticular?.photo==1? (
+                <Link to='/profil/kyc/particulier/justificatif-domicile/' className={pathname == "/profil/kyc/particulier/justificatif-domicile/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                  <i className='fas fa-tasks nav-link-icon'></i>
+                  <span className='nav-link-name'>KYC</span>
+                </Link>
+              ) : kycForParticular?.quiz==1 && kycForParticular?.identity==1 && kycForParticular?.residence==1 && !kycForParticular?.photo==1? (
+                <Link to='/profil/kyc/commun/selfie/' className={pathname == "/profil/kyc/commun/selfie/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                  <i className='fas fa-tasks nav-link-icon'></i>
+                  <span className='nav-link-name'>KYC</span>
+                </Link>
+                ) : kycForParticular?.quiz==1 && kycForParticular?.identity==1 && kycForParticular?.residence==1 && kycForParticular?.photo==1? (
+                  <Link to='/profil/kyc/commun/signature/' className={pathname == "/profil/kyc/commun/signature/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                    <i className='fas fa-tasks nav-link-icon'></i>
+                    <span className='nav-link-name'>KYC</span>
+                  </Link>
+              ) : (
+                <Link to='/profil/kyc/particulier/' className={pathname == "/profil/kyc/particulier/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                  <i className='fas fa-tasks nav-link-icon'></i>
+                  <span className='nav-link-name'>KYC</span>
+                </Link>
+              )}
+              
+              </>
+              )}
+              </>
+
             ) :('')}
 
             {currentUser?.activated && currentUser?.codeTypeProfil==="entCom"? (
-              <Link to='/profil/kyc/entreprise/questionnaire' className={pathname == "/profil/kyc/entreprise/questionnaire" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+              <>
+                {kycForEntreprise?.status==1 ? (
+                  <Link to='/profil/kyc/entreprise/resultat-kyc/' className={pathname == "/profil/kyc/entreprise/resultat-kyc/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                   <i className='fas fa-tasks nav-link-icon'></i>
-                  <span className='nav-link-name'>KYC</span>
-              </Link>
+                  <span className='nav-link-name'>KYC en attente</span>
+                </Link>
+                ) : (
+                  <>
+                  
+                {kycForEntreprise?.quiz==1 && !kycForEntreprise?.legalDocuments==1 && !kycForEntreprise?.identity==1 && !kycForEntreprise?.residence==1 && !kycForEntreprise?.photo==1 && !kycForEntreprise?.signature==1 ? (
+                  <Link to='/profil/kyc/entreprise/documents-legaux/' className={pathname == "/profil/kyc/entreprise/documents-legaux/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                    <i className='fas fa-tasks nav-link-icon'></i>
+                    <span className='nav-link-name'>KYC</span>
+                  </Link>
+                ):kycForEntreprise?.quiz==1 && !kycForEntreprise?.identity==1 && !kycForEntreprise?.residence==1 && kycForEntreprise?.legalDocuments==1 && !kycForEntreprise?.photo==1 && !kycForEntreprise?.signature==1 ? (
+                    <Link to='/profil/kyc/entreprise/justificatif-domicile/' className={pathname == "/profil/kyc/entreprise/justificatif-domicile/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                      <i className='fas fa-tasks nav-link-icon'></i>
+                      <span className='nav-link-name'>KYC</span>
+                    </Link>
+                ):kycForEntreprise?.quiz==1 && kycForEntreprise?.legalDocuments==1 && kycForEntreprise?.residence==1 && !kycForEntreprise?.identity==1  && !kycForEntreprise?.photo==1 && !kycForEntreprise?.signature==1 ? (
+                  <Link to='/profil/kyc/entreprise/justificatif-identite/' className={pathname == "/profil/kyc/entreprise/justificatif-identite/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                    <i className='fas fa-tasks nav-link-icon'></i>
+                    <span className='nav-link-name'>KYC</span>
+                  </Link>
+                
+                ):kycForEntreprise?.quiz==1 && kycForEntreprise?.legalDocuments==1 && kycForEntreprise?.identity==1 && kycForEntreprise?.residence==1 && !kycForEntreprise?.photo==1 && !kycForEntreprise?.signature==1 ? (
+                  <Link to='/profil/kyc/commun/selfie/' className={pathname == "/profil/kyc/commun/selfie/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                    <i className='fas fa-tasks nav-link-icon'></i>
+                    <span className='nav-link-name'>KYC</span>
+                  </Link>
+                ):kycForEntreprise?.quiz==1 && kycForEntreprise?.legalDocuments==1 && kycForEntreprise?.identity==1 && kycForEntreprise?.residence==1 && kycForEntreprise?.photo==1 && !kycForEntreprise?.signature==1 ? (
+                  <Link to='/profil/kyc/commun/signature/' className={pathname == "/profil/kyc/commun/signature/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                    <i className='fas fa-tasks nav-link-icon'></i>
+                    <span className='nav-link-name'>KYC</span>
+                  </Link>
+                ) : (
+                  <Link to='/profil/kyc/entreprise/questionnaire' className={pathname == "/profil/kyc/entreprise/questionnaire" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                    <i className='fas fa-tasks nav-link-icon'></i>
+                    <span className='nav-link-name'>KYC</span>
+                  </Link>
+                )}
+                </>
+                )}
+              </>
             ) :('')}
 
-              <Link to='/profil/portefeuille' className={pathname == "/profil/portefeuille" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+              {/* <Link to='/profil/portefeuille' className={pathname == "/profil/portefeuille" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                 <i className='fas fa-wallet nav-link-icon'></i>
                 <span className='nav-link-name '>Mes actifs</span>
-              </Link>
-
-              {/* <Link to='/profil/wallet/' className={pathname == "/profil/portefeuille" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
-                <i className='fas fa-wallet nav-link-icon'></i>
-                <span className='nav-link-name '>Portefeuille</span>
               </Link> */}
 
-                {currentUser?.codeTypeProfil==="entCom" || currentUser?.codeTypeProfil==="insti"? (
+              <Link to='/profil/wallet/' className={pathname == "/profil/portefeuille" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                <i className='fas fa-wallet nav-link-icon'></i>
+                <span className='nav-link-name '>Portefeuille</span>
+              </Link>
+
+                {currentUser?.codeTypeProfil=="entCom" || currentUser?.codeTypeProfil=="insti"? (
                     <Link to='/profil/action/' className={pathname == "/profil/action/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                         <i className='fas fa-splotch nav-link-icon'></i>
                         <span className='nav-link-name'>Mes actions</span>

@@ -115,7 +115,7 @@ const logaout = useCallback(() => {
             <br/><span className='nav-link-icon text-white mx-18'>{currentUser?.email}</span>
             
             
-            <Link to='/profil/dashboard/' className={pathname == "/profil/dashboard/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+            <Link to='/admin/wealthtech/' className={pathname == "/admin/wealthtech/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                 <i className='fas fa-tachometer-alt nav-link-icon'></i>
                 <span className='nav-link-name'>Dashboard</span>
             </Link>
@@ -129,7 +129,8 @@ const logaout = useCallback(() => {
                 <span className='nav-link-name'>Stablecoin</span>
             </Link>
 
-            <Link to='/#' className={pathname == "/#" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+      
+            <Link to='/admin/wealthtech/kyc/' className={pathname == "/admin/wealthtech/kyc/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
               <i className='fas fa-tasks nav-link-icon'></i>
               <span className='nav-link-name'>Kyc</span>
             </Link>

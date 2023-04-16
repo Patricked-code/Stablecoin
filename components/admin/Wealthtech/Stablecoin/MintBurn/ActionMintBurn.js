@@ -85,20 +85,29 @@ const ActionMintBurn = () => {
               //const userBalance = ethers.utils.formatEther(await provider.getBalance(userAddress))
               // FIN
 
-              // Obtenir un utilisateur en fonction de son email 
+              // Obtenir l'utilisateur connecté 
+              const token = localStorage.getItem('tokenEnCours')
+
               const getUser = async () => {
-                const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
-                    headers: {
-                    'Content-Type': 'application/json',
-                    },
-                })
-                  .then((result) => result.json())
-                  .then((user) => {
-                  setCurrentUser(user)
-                //   console.log("User=>",user)
-                  }) 
-              };
-              await getUser();
+                  const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
+                      headers: {
+                      'Content-Type': 'application/json',
+                      Authorization:  `Bearer ${token}`,
+
+                      },
+                  })
+                .then((result) => result.json())
+                .then((user) => {
+
+                  if (user?.profileId==2 || user?.profileId==3) {
+                      setCurrentUser(user)
+                  }else{
+                      Router.push("/profil/"); 
+                      
+                  }
+                }) 
+            };
+            await getUser();
               // Fin
 
 

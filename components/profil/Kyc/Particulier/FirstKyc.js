@@ -12,6 +12,7 @@ import Loading from "../../../loading";
 import Router from "next/router";
 import Swal from 'sweetalert2';
 import Web3 from "web3";
+import ProgressBar from '../ProgressBar';
 
 // FIN
 
@@ -46,6 +47,47 @@ const FirsKyc = () => {
     
     // FIN
 
+    const [kycForParticular, setKycForParticular] = useState();
+
+
+
+    const [currentKycStatut, setCurrentKycStatut] = useState();
+
+    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+        const kycStatut = localStorage.getItem('currentUpdateKycStatut')  
+        setCurrentKycStatut(kycStatut)
+    }, [currentKycStatut]);
+    // Fin
+
+
+    // RECUPERER KYC DE L'UTILISATEUR
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+        
+            const getKycForParticular = async () => {
+            const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-kyc-particular-for-user`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((resKyc) => resKyc.json())
+                .then((data) => {
+                setKycForParticular(data)
+                }) 
+            };
+            // console.log("Banques =>",allBank)
+            await getKycForParticular();
+    }, []);
+    // FIN
+
+
+
+
+
+
+
 
     // Fonction d'envoie des informations du questionnaire
     const addQuestionnaire= useCallback(async () => {
@@ -79,7 +121,8 @@ const FirsKyc = () => {
                 frequencyC:dataTable?.frequencyC[0],
                 incomeTypeA:dataTable?.incomeTypeA[0],
                 incomeTypeB:dataTable?.incomeTypeB[0],
-                incomeTypeC:dataTable?.incomeTypeC[0]
+                incomeTypeC:dataTable?.incomeTypeC[0],
+                
             }
             // Condition pour forcer l'utilisateur à choisir au moins une reponse
             if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
@@ -120,6 +163,107 @@ const FirsKyc = () => {
                     }),
                     setTimeout(() => {
                     Router.push("/profil/kyc/particulier/seconde-phase"); 
+                    }, 5000)
+                }
+                // Fin condition 
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+            }
+            
+            } catch {
+            setIsLoggingIn(false);
+            }
+        
+    }, [spentA,spentB,spentC,spentD,spentE,spentF,frequencyA,frequencyB,frequencyC,incomeTypeA,incomeTypeB,incomeTypeC]);
+    // Fin
+
+
+     // Fonction d'envoie des informations du questionnaire
+     const updateQuestionnaire= useCallback(async () => {
+        setIsLoggingIn(true);
+        
+        try {
+            const dataTable = {
+                spentA:Object.assign({},spentA),
+                spentB:Object.assign({},spentB),
+                spentC:Object.assign({},spentC),
+                spentD:Object.assign({},spentD),
+                spentE:Object.assign({},spentE),
+                spentF:Object.assign({},spentF),
+                frequencyA:Object.assign({},frequencyA),
+                frequencyB:Object.assign({},frequencyB),
+                frequencyC:Object.assign({},frequencyC),
+                incomeTypeA:Object.assign({}, incomeTypeA),
+                incomeTypeB:Object.assign({},incomeTypeB),
+                incomeTypeC:Object.assign({},incomeTypeC)
+            }
+
+            const dataa = {
+                spentA:dataTable?.spentA[0],
+                spentB:dataTable?.spentB[0],
+                spentC:dataTable?.spentC[0],
+                spentD:dataTable?.spentD[0],
+                spentE:dataTable?.spentE[0],
+                spentF:dataTable?.spentF[0],
+                frequencyA:dataTable?.frequencyA[0],
+                frequencyB:dataTable?.frequencyB[0],
+                frequencyC:dataTable?.frequencyC[0],
+                incomeTypeA:dataTable?.incomeTypeA[0],
+                incomeTypeB:dataTable?.incomeTypeB[0],
+                incomeTypeC:dataTable?.incomeTypeC[0],
+                
+            }
+            // Condition pour forcer l'utilisateur à choisir au moins une reponse
+            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
+                
+                
+                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+                const result = await fetch(`${API_URL}/api/kyc/particular/update-kyc-questionnaires`, {
+                method:"PUT",
+                body: JSON.stringify(dataa),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`
+                }
+                })
+                const data = await result.json();
+            
+                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                * sinon on affiche le message de succès
+                */
+                if (data.message) {
+                setMessageError(data.message)
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+                }else{
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                        showConfirmButton: false,
+                        timer: 5000
+                    }),
+                    setTimeout(() => {
+                        if (currentKycStatut==="1") {
+                            Router.push("/profil/kyc/particulier/resultat-kyc"); 
+        
+                        }else{
+                            Router.push("/profil/kyc/particulier/seconde-phase"); 
+                        }
                     }, 5000)
                 }
                 // Fin condition 
@@ -280,13 +424,19 @@ const handleOptionIncomeTypeC = (event) => {
     }
 };
 
+    // La barre de progression de KYC
+    const steps = ["Questionnaires", "Justificatif d'identité", "Justificatif de domicile", "Photo", "Signature"];
+    const activeStep = -1;
+    // Fin
+
   return (
     <>
+      <ProgressBar className="mb-15" steps={steps} activeStep={activeStep} />
 
-        <div className='' >
+        <div className='mt-15' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                    <h1 className='text-center'>Questionnaires</h1>
+                <br/><br/><h1 className='text-center '>Questionnaires</h1>
                 </div>
             </div>
 
@@ -625,16 +775,15 @@ const handleOptionIncomeTypeC = (event) => {
                             {/* Fin Q5 */}
 
 
-                            <p className="colorRed mb-7 ">
+                            {/* <p className="colorRed mb-7 ">
                                 NB : Aucun retour n'est permis sur cette page donc, répondez correctement aux questions
-                            </p>
+                            </p> */}
 
-                            <a
-                                className=""
-                            >
-                                    <button className="btn btn-primary " type='button' onClick={addQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
-                            </a>  
-                       
+                            {kycForParticular?.userId ? (
+                                <button className="btn btn-primary " type='button' onClick={updateQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
+                            ) : (
+                                <button className="btn btn-primary " type='button' onClick={addQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
+                            )}
                             {/* <button className="btn btn-primary "  disabled={isLoggingIn}>Suivant</button> */}
                         </form>       
                     </div>

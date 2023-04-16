@@ -49,6 +49,15 @@ const Dashboard = () => {
 
     const [successCopy, setSuccessCopy] = useState();
 
+    const [currentUser, setCurrentUser] = useState();
+    const [dataPaymentPending, setDataPaymentPending] = useState(); //state des données de paiement en entente
+    const [paymentPendingLength, setPaymentPendingLength] = useState();
+
+
+
+
+
+
 
     // MODALS
     const [modalDefaultOpen, setModalDefaultOpen] = React.useState(false);
@@ -685,11 +694,14 @@ const [montantAchat, setMontantAchat] = useState(0)
 
     // Obtenir un utilisateur en fonction de son email 
     useEffect(async () => {
+        const token = localStorage.getItem('tokenEnCours')
+
         if (userMetadata?.email) {
             const getUser = async () => {
-                const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadata?.email}`, {
+                const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`,
                     },
                 })
                   .then((result) => result.json())
@@ -908,6 +920,58 @@ const [montantAchat, setMontantAchat] = useState(0)
     // Fin Obtenir mes infos
 
 
+    useEffect(() => {
+        (async () => {
+    
+        // Obtenir un utilisateur en fonction de son email 
+        const getUser = async () => {
+            // Obtenir le token en cours
+            const token = localStorage.getItem('tokenEnCours');
+        // const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
+            const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
+            headers: {
+            'Content-Type': 'application/json',
+            Authorization:  `Bearer ${token}`
+    
+            },
+        })
+            .then((result) => result.json())
+            .then((user) => {
+            setCurrentUser(user)
+    
+            }) 
+        };
+        await getUser();
+        // Fin
+    
+    
+        // Obtenir les données de la demande de paiement en fonction de l'utilisateur connecté 
+        if (currentUser?.id) {
+        const getPaymentPendingOfUser = async () => {
+            
+            // Obtenir le token en cours
+            const token = localStorage.getItem('tokenEnCours');
+            const result = await fetch(`${API_URL}/api/payment-request/find-all-payment-request-for-receiver?receiverId=${currentUser.id}`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+    
+                },
+            })
+                .then((result) => result.json())
+                .then((data) => {
+                setDataPaymentPending(data)
+                setPaymentPendingLength(data?.length)
+                }) 
+            };
+            await getPaymentPendingOfUser();
+        }
+        // Fin
+    })();
+    
+    }, [currentUser, dataPaymentPending]);
+
+
 
     // RECUPERER TOUS LES PAYS
     useEffect(async() => {
@@ -957,7 +1021,6 @@ const [montantAchat, setMontantAchat] = useState(0)
     // RECUPERER TOUS LES OPERATEURS
     useEffect(async() => {
         const token = localStorage.getItem('tokenEnCours')
-        console.log("token me=>",token)
         
             const getAllOperators = async () => {
             const resOperator = await fetch(`${API_URL}/api/operator/find-all-Operators`, {
@@ -971,7 +1034,6 @@ const [montantAchat, setMontantAchat] = useState(0)
                 setAllOperators(data)
                 }) 
             };
-            console.log("Operator =>",allOperators)
             await getAllOperators();
     }, []);
     // FIN
@@ -1014,7 +1076,6 @@ const [montantAchat, setMontantAchat] = useState(0)
             })
                 .then((res) => res.json())
                 .then((dataAccountBank) => {
-                    console.log("dataAccountBank=>",dataAccountBank)
                 setUserDataAccountBank(dataAccountBank)
                 setAccountBankLength(dataAccountBank.length)
                 }) 
@@ -1166,8 +1227,15 @@ const [montantAchat, setMontantAchat] = useState(0)
             
             })
         .catch(error => {
-          //handle error
-          console.log(error);
+            setIsLoggingIn(false)
+
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p>Une erreur est survenue </p>` ,
+                showConfirmButton: false,
+                timer: 5000
+              })
     
         });
     }
@@ -1295,10 +1363,9 @@ const [montantAchat, setMontantAchat] = useState(0)
         chainId: 1287,                  
         type: 0x2
         };
-        console.log("tx", tx)
     
         const signedTx = await web3.eth.accounts.signTransaction(tx, signer.privateKey)
-        console.log("Raw transaction data: " + signedTx.rawTransaction)
+    
     
         // Sending the transaction to the network
         const receipt = await web3.eth
@@ -1504,10 +1571,10 @@ const [montantAchat, setMontantAchat] = useState(0)
                                     <div className='bestseller-coin-image'>
                                         <img src="/images/ecfa/icons/icon1.jpg" className="rounded-circle"  alt='image' />
                                     </div>
-                                    <h4>
-                                        <p className='rounded-circle bgColorblue text-white'><i>2</i></p>
+                                    <h3>
+                                        <p className='rounded-circle bgColorblue text-white'><i>{paymentPendingLength?(paymentPendingLength):("0")}</i></p>
                                         Paiements en attente
-                                    </h4>
+                                    </h3>
                                     </div><br/>
                                     <div className='btn-box mt-3'>
                                         <a className='nav-link' href='/profil/paiements/paiements-attente'>

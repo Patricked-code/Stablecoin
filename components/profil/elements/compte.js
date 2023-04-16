@@ -904,7 +904,6 @@ const [montantAchat, setMontantAchat] = useState(0)
                 setAllOperators(data)
                 }) 
             };
-            console.log("Operator =>",allOperators)
             await getAllOperators();
     }, []);
     // FIN
@@ -942,9 +941,7 @@ const [montantAchat, setMontantAchat] = useState(0)
           })
           .then(res=>{
           const data =  res.json();
-          console.log("data", data)
-        
-            console.log("Succès update=>",dataa)
+          
     
             Swal.fire({
               position: 'center',
@@ -984,11 +981,8 @@ const [montantAchat, setMontantAchat] = useState(0)
     
         }
     
-        console.log("city =>",dataa.city)
-    
         // getter
         const token = localStorage.getItem('tokenEnCours');
-        console.log("token Login Update =>", token)
 
         const res = await fetch(`${API_URL}/api/mobile/add-mobile`, {
               method:"POST",
@@ -1000,9 +994,6 @@ const [montantAchat, setMontantAchat] = useState(0)
           })
           .then(res=>{
           const data =  res.json();
-          console.log("data", data)
-        
-            console.log("Succès update=>",dataa)
     
             Swal.fire({
               position: 'center',
@@ -1108,7 +1099,6 @@ async function getJetonDev() {
 	console.log("tx", tx)
   
 	const signedTx = await web3.eth.accounts.signTransaction(tx, signer.privateKey)
-	console.log("Raw transaction data: " + signedTx.rawTransaction)
   
 	// Sending the transaction to the network
 	const receipt = await web3.eth

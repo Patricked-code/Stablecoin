@@ -57,7 +57,7 @@ const AssignRole = () => {
     //***************************************************************** *
         // LES STATES DU STABLECOIN
     // ******************************************************************
-    const [contractTokenEwari, setContractTokenEwari] = useState();
+    const [contractTokenEwari, setContractTokenEwari] = useState(); //Pour le contrat
 
     // States des rôles
     const [defaultRole, setDefaultRole] = useState();
@@ -153,19 +153,29 @@ const AssignRole = () => {
                 setAsyncRole(asyncRole)
                 // Fin
 
-              // Obtenir un utilisateur en fonction de son email 
+              // Obtenir l'utilisateur connecté 
+              const token = localStorage.getItem('tokenEnCours')
+
               const getUser = async () => {
-                const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
-                    headers: {
-                    'Content-Type': 'application/json',
-                    },
-                })
-                  .then((result) => result.json())
-                  .then((user) => {
-                  setCurrentUser(user)
-                  }) 
-              };
-              await getUser();
+                  const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
+                      headers: {
+                      'Content-Type': 'application/json',
+                      Authorization:  `Bearer ${token}`,
+
+                      },
+                  })
+                .then((result) => result.json())
+                .then((user) => {
+
+                  if (user?.profileId==2 || user?.profileId==3) {
+                      setCurrentUser(user)
+                  }else{
+                      Router.push("/profil/"); 
+                      
+                  }
+                }) 
+            };
+            await getUser();
               // Fin
             }
         })();
@@ -461,6 +471,9 @@ const AssignRole = () => {
                                                                     </Table.Cell>
                                                                     <Table.Cell>
                                                                         <div className="d-flex py-0 ">
+
+                                                                            {currentUser?.profileId==2 ? (
+                                                                            
                                                                             <p className="text-center">
                                                                             
                                                                                 <button onClick={()=>setCurrentRole(defaultRole)}>
@@ -475,6 +488,9 @@ const AssignRole = () => {
                                                                                     </p>
                                                                                 </button>
                                                                             </p>
+                                                                            ):(
+                                                                                <Icon icon="bx:block" width="30"/>
+                                                                            )}
                                                                         </div>
                                                                     </Table.Cell>
                                                                 </Table.Row >
@@ -489,6 +505,8 @@ const AssignRole = () => {
                                                                     </Table.Cell>
                                                                     <Table.Cell>
                                                                         <div className="d-flex py-0 ">
+                                                                            {currentUser?.profileId==2 ? (
+
                                                                             <p className="text-center">
                                                                             
                                                                                 <button onClick={()=>setCurrentRole(pauseRole)}>
@@ -503,6 +521,9 @@ const AssignRole = () => {
                                                                                     </p>
                                                                                 </button>
                                                                             </p>
+                                                                            ):(
+                                                                                <Icon icon="bx:block" width="30"/>
+                                                                            )}
                                                                         </div>
                                                                     </Table.Cell>
                                                                 </Table.Row >
@@ -518,6 +539,8 @@ const AssignRole = () => {
 
                                                                     <Table.Cell>
                                                                         <div className="d-flex py-0 ">
+                                                                            {currentUser?.profileId==2 ? (
+
                                                                             <p className="text-center">
                                                                             
                                                                                 <button onClick={()=>setCurrentRole(mintRole)}>
@@ -532,6 +555,9 @@ const AssignRole = () => {
                                                                                     </p>
                                                                                 </button>
                                                                             </p>
+                                                                            ):(
+                                                                                <Icon icon="bx:block" width="30"/>
+                                                                            )}
                                                                         </div>
                                                                     </Table.Cell>
                                                                 </Table.Row >
@@ -546,6 +572,8 @@ const AssignRole = () => {
                                                                     </Table.Cell>
                                                                     <Table.Cell>
                                                                         <div className="d-flex py-0 ">
+                                                                            {currentUser?.profileId==2 ? (
+                                                                           
                                                                             <p className="text-center">
                                                                             
                                                                                 <button onClick={()=>setCurrentRole(burnRole)}>
@@ -560,6 +588,9 @@ const AssignRole = () => {
                                                                                     </p>
                                                                                 </button>
                                                                             </p>
+                                                                            ):(
+                                                                                <Icon icon="bx:block" width="30"/>
+                                                                            )}
                                                                         </div>
                                                                     </Table.Cell>
                                                                 </Table.Row >
@@ -574,6 +605,8 @@ const AssignRole = () => {
                                                                     </Table.Cell>
                                                                     <Table.Cell>
                                                                         <div className="d-flex py-0 ">
+                                                                            {currentUser?.profileId==2 ? (
+                                                                            
                                                                             <p className="text-center">
                                                                             
                                                                                 <button onClick={()=>setCurrentRole(permitRole)}>
@@ -588,6 +621,9 @@ const AssignRole = () => {
                                                                                     </p>
                                                                                 </button>
                                                                             </p>
+                                                                            ):(
+                                                                                <Icon icon="bx:block" width="30"/>
+                                                                            )}
                                                                         </div>
                                                                     </Table.Cell>
                                                                 </Table.Row >

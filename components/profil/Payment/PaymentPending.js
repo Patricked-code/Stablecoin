@@ -708,7 +708,6 @@ const formatDate = (_updatedAt) =>{
         {/* ********************************************************************************** */}
             {/* MODAL DE VALIDATION DE PAIEMENT  '*/}
         {/* ********************************************************************************** */}
-        {/* {idPaymentPending ? ( */}
         <Modal show={showPayer} className="mt-15" onHide={handleClosePayer}>
             <Modal.Header closeButton className='bgColorGreen'>
                 <Modal.Title className="text-white" >Validation de paiement</Modal.Title>                
@@ -733,7 +732,6 @@ const formatDate = (_updatedAt) =>{
                 </Modal.Footer>
             {/* </Form> */}
         </Modal>
-        {/* ) : ("")} */}
         {/* *****************************************FIN****************************************** */}
             
 

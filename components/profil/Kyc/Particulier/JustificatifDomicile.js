@@ -33,6 +33,7 @@ import {
     Row,
     Col,
   } from "reactstrap";
+import ProgressBar from '../ProgressBar';
 
 // FIN
 
@@ -68,11 +69,18 @@ const JtifDomicile = () => {
     // Fin
 
     
-// State pour les fichiers du justificatif de domicile
-const [frontProofResidence, setFrontProofResidence] = useState(null)
-const [backProofResidence, setBackProofResidence] = useState()
+    // State pour les fichiers du justificatif de domicile
+    const [frontProofResidence, setFrontProofResidence] = useState(null)
+    const [backProofResidence, setBackProofResidence] = useState()
 
+    const [currentKycStatut, setCurrentKycStatut] = useState();
 
+    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+        const kycStatut = localStorage.getItem('currentUpdateKycStatut')  
+        setCurrentKycStatut(kycStatut)
+    }, [currentKycStatut]);
+    // Fin
 
     // Fonction pour prendre photo du Recto
     const captureRecto = () => {
@@ -144,7 +152,11 @@ const [backProofResidence, setBackProofResidence] = useState()
                 timer: 5000
             }),
             setTimeout(() => {
-            Router.push("/profil/kyc/commun/selfie"); 
+                if (currentKycStatut==="1") {
+                    Router.push("/profil/kyc/particulier/resultat-kyc"); 
+                }else{
+                    Router.push("/profil/kyc/commun/selfie"); 
+                }
             }, 5000)
 
             
@@ -163,15 +175,19 @@ const [backProofResidence, setBackProofResidence] = useState()
     }
     // FIN
 
-
+// La barre de progression de KYC
+const steps = ["Questionnaires", "Justificatif d'identité", "Justificatif de domicile", "Photo", "Signature"];
+const activeStep = 1;
+// Fin
 
   return (
     <>
+      <ProgressBar className="mb-15" steps={steps} activeStep={activeStep} />
 
         <div className='' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                    <h1 className='text-center'>Justificatif de domicile</h1>
+                    <br/><br/><h1 className='text-center'>Justificatif de domicile</h1>
                 </div>
             </div>
 
@@ -245,7 +261,7 @@ const [backProofResidence, setBackProofResidence] = useState()
                                         <a
                                         className=""
                                         >
-                                            <button className="btn btn-primary " type='button'  > Précèdente </button>
+                                            <button className="btn btn-primary " type='button'  > Précédente </button>
                                         </a>   
                                     </Link>                          
                                 </div> 

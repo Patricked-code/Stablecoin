@@ -33,6 +33,7 @@ import {
     Row,
     Col,
   } from "reactstrap";
+import ProgressBar from '../ProgressBar';
 
 // FIN
 
@@ -71,7 +72,13 @@ const CDocumentLegaux = () => {
 
     
 
+    const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
 
+    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+        const kycStatut = localStorage.getItem('currentKycEntrepriseStatut')  
+        setCurrentKycEntrepriseStatut(kycStatut)
+    }, [currentKycEntrepriseStatut]);
 
 
 
@@ -82,7 +89,6 @@ const CDocumentLegaux = () => {
     const captureRecto = () => {
         const image = webcamRefRecto.current.getScreenshot()
         setImageRecto(image)
-        console.log("image=>",image)
     }
     // Fin
 
@@ -90,7 +96,6 @@ const CDocumentLegaux = () => {
     const captureVerso = () => {
         const image = webcamRefVerso.current.getScreenshot()
         setImageVerso(image)
-        console.log("image=>",image)
     }
     // Fin
 
@@ -153,8 +158,12 @@ const CDocumentLegaux = () => {
                 timer: 5000
             }),
             setTimeout(() => {
-            // Router.push("/profil/kyc/entreprise/justificatif-identite"); 
-            Router.push("/profil/kyc/entreprise/justificatif-domicile"); 
+                if (currentKycEntrepriseStatut==="1") {
+                    Router.push("/profil/kyc/entreprise/resultat-kyc"); 
+
+                }else{
+                    Router.push("/profil/kyc/entreprise/justificatif-domicile"); 
+                }
             }, 5000)
 
             
@@ -173,14 +182,19 @@ const CDocumentLegaux = () => {
     }
     // FIN
 
+    // La barre de progression de KYC du profil particulier
+    const stepsEntreprise = ["Questionnaires","Documents légaux","Justificatif de domicile", "Justificatif d'identité","Photo", "Signature"];
+    const activeStepEntreprise = 0;
+    // Fin
 
   return (
     <>
+        <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />
 
         <div className='' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                    <h1 className='text-center'>Documents légaux de l'entreprise</h1>
+                <br/><br/><h1 className='text-center'>Documents légaux de l'entreprise</h1>
                 </div>
             </div>
 
@@ -249,14 +263,22 @@ const CDocumentLegaux = () => {
                                     </div>
                             </div>
                             {/* Fin */}
+                            <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                            <Link href='/profil/kyc/entreprise/questionnaire/' className="align-right">
+                                                <a
+                                                className=""
+                                                >
+                                                    <button className="btn btn-primary " type='button'  > Précédente </button>
+                                                </a>   
+                                            </Link>                          
+                                        </div> 
 
-                                {/* <Link href='/profil/kyc/commun/selfie' className="align-right"> */}
-                                    <a
-                                    className=""
-                                    >
-                                        <button className="btn btn-primary " type='button' onClick={addDocumentsLegaux}  disabled={isLoggingIn}>Suivant</button>
-                                    </a>
-                                {/* </Link> */}
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                            <button className="btn btn-primary " type='button' onClick={addDocumentsLegaux}  disabled={isLoggingIn}>Suivant</button>
+                                        </div> 
+                                        </div>
+                               
 
                         </form>  
                              

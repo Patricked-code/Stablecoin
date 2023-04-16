@@ -12,6 +12,7 @@ import Loading from "../../../loading";
 import Router from "next/router";
 import Swal from 'sweetalert2';
 import Web3 from "web3";
+import ProgressBar from '../ProgressBar';
 
 // FIN
 
@@ -47,7 +48,45 @@ const CQuestionnaire = () => {
     const [statutQ1, setStatutQ1] = useState();
     const [statutQ3, setStatutQ3] = useState();
 
+    const [kycForEntreprise, setKycForEntreprise] = useState();
+
+
     
+
+
+    const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
+
+    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+        const kycStatut = localStorage.getItem('currentKycEntrepriseStatut')  
+        setCurrentKycEntrepriseStatut(kycStatut)
+    }, [currentKycEntrepriseStatut]);
+
+
+
+
+
+
+    // RECUPERER KYC DE L'ENTREPRISE
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+        
+            const getKycForEntreprise = async () => {
+            const resKyc = await fetch(`${API_URL}/api/kyc/entreprise/find-kyc-entreprise-for-user`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((resKyc) => resKyc.json())
+                .then((data) => {
+                setKycForEntreprise(data)
+                }) 
+            };
+            // console.log("Banques =>",allBank)
+            await getKycForEntreprise();
+    }, []);
+    // FIN
 
     // Fonction d'envoie des informations du questionnaire
     const addQuestionnaire= useCallback(async () => {
@@ -124,6 +163,108 @@ const CQuestionnaire = () => {
                     }),
                     setTimeout(() => {
                     Router.push("/profil/kyc/entreprise/documents-legaux"); 
+                    }, 5000)
+                }
+                // Fin condition 
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+            }
+            
+            } catch {
+            setIsLoggingIn(false);
+            }
+        
+    }, [spentA,spentB,spentC,spentD,spentE,operationA,operationB,operationC,operationD,operationE,operationF,operationG,eShop,multiplePayment]);
+    // Fin
+
+
+    // Fonction d'envoie des informations du questionnaire
+    const updateQuestionnaire= useCallback(async () => {
+        // setIsLoggingIn(true);
+        
+        try {
+            const dataTable = {
+                spentA:Object.assign({},spentA),
+                spentB:Object.assign({},spentB),
+                spentC:Object.assign({},spentC),
+                spentD:Object.assign({},spentD),
+                spentE:Object.assign({},spentE),
+                operationA:Object.assign({},operationA),
+                operationB:Object.assign({},operationB),
+                operationC:Object.assign({},operationC),
+                operationD:Object.assign({},operationD),
+                operationE:Object.assign({},operationE),
+                operationF:Object.assign({},operationF),
+                operationG:Object.assign({},operationG)
+            }
+
+            const dataa = {
+                spentA:dataTable?.spentA[0],
+                spentB:dataTable?.spentB[0],
+                spentC:dataTable?.spentC[0],
+                spentD:dataTable?.spentD[0],
+                spentE:dataTable?.spentE[0],
+                operationA:dataTable?.operationA[0],
+                operationB:dataTable?.operationB[0],
+                operationC:dataTable?.operationC[0],
+                operationD:dataTable?.operationD[0],
+                operationE:dataTable?.operationE[0],
+                operationF:dataTable?.operationF[0],
+                operationG:dataTable?.operationG[0],
+                eShop:eShop,
+                multiplePayment:multiplePayment
+            }
+
+            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.operationA||dataa?.operationB||dataa?.operationC||dataa?.operationD||dataa?.operationE||dataa?.operationF||dataa?.operationG||dataa?.eShop||dataa?.multiplePayment) {
+                
+                
+                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+                const result = await fetch(`${API_URL}/api/kyc/entreprise/update-kyc-questionnaires`, {
+                method:"PUT",
+                body: JSON.stringify(dataa),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`
+                }
+                })
+                const data = await result.json();
+            
+                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                * sinon on affiche le message de succès
+                */
+                if (data.message) {
+                setMessageError(data.message)
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+                }else{
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                        showConfirmButton: false,
+                        timer: 5000
+                    }),
+                    setTimeout(() => {
+                        if (currentKycEntrepriseStatut==="1") {
+                            Router.push("/profil/kyc/entreprise/resultat-kyc"); 
+            
+                        }else{
+                            Router.push("/profil/kyc/entreprise/documents-legaux"); 
+                        }
                     }, 5000)
                 }
                 // Fin condition 
@@ -282,16 +423,21 @@ const CQuestionnaire = () => {
         }
     }
 
-   
+   // La barre de progression de KYC du profil particulier
+   const stepsEntreprise = ["Questionnaires","Documents légaux","Justificatif de domicile", "Justificatif d'identité","Photo", "Signature"];
+   const activeStepEntreprise = -1;
+   // Fin
 
 
   return (
     <>
+        <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />
+    
 
         <div className='' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                    <h1 className='text-center'>Questionnaires</h1>
+                    <br/><br/><h1 className='text-center'>Questionnaires</h1>
                 </div>
             </div>
 
@@ -638,8 +784,8 @@ const CQuestionnaire = () => {
                                 >
                                 <option defaultValue="">Choisissez</option>
                                     <optgroup className='single-cryptocurrency-box'>
-                                    <option  value="Oui - J'ai boutique en ligne">Oui</option>
-                                    <option  value="Non - Je n'ai pas de boutique en ligne">Non</option>
+                                    <option  value="Oui - J'ai une boutique en ligne">Oui</option>
+                                    <option  value="Non - Je n'ai pas une boutique en ligne">Non</option>
                                     </optgroup>
                                 </select>
                                 {/* Fin Q5 */}
@@ -667,13 +813,17 @@ const CQuestionnaire = () => {
                                 </select>
                             <br/>
 
-                            <p className="colorRed mb-7 ">
+                            {/* <p className="colorRed mb-7 ">
                                 NB : Aucun retour n'est permis sur cette page donc, répondez correctement aux questions
-                            </p>
+                            </p> */}
                                 <a
                                 className=""
                                 >
-                                    <button className="btn btn-primary " type='button' onClick={addQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
+                                    {kycForEntreprise?.userId ? (
+                                        <button className="btn btn-primary " type='button' onClick={updateQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
+                                    ) : (
+                                        <button className="btn btn-primary " type='button' onClick={addQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
+                                    )}
                                 </a>
                         </form>       
                     </div>

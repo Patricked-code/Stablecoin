@@ -111,8 +111,6 @@ const PaymentRequest = () => {
                 .then((result) => result.json())
                 .then((user) => {
                   setInfosOtherUser(user)
-                  
-            console.log("infosOtherUser 2=>",infosOtherUser)
         
                 }) 
         

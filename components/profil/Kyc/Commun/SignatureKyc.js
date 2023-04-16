@@ -15,6 +15,7 @@ import Loading from "../../../loading";
 import Router from "next/router";
 import Swal from 'sweetalert2';
 import Web3 from "web3";
+import ProgressBar from '../ProgressBar';
 
 // FIN
 
@@ -37,7 +38,13 @@ const SignatureKyc = () => {
 
 
 
-   
+    const [currentKycStatut, setCurrentKycStatut] = useState();
+
+    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+        const kycStatut = localStorage.getItem('currentUpdateKycStatut')  
+        setCurrentKycStatut(kycStatut)
+    }, [currentKycStatut]);
    
    
        useEffect(() => {
@@ -85,7 +92,6 @@ const SignatureKyc = () => {
     const save = () => {
       const data = signatureRef.current.getTrimmedCanvas().toDataURL('image/png')
       setSignatureData(data)
-      console.log("data=>",data)
     }
     // Fin
 
@@ -182,7 +188,7 @@ const SignatureKyc = () => {
                 timer: 5000
             }),
             setTimeout(() => {
-            Router.push("/profil/"); 
+                Router.push("/profil/"); 
             }, 5000)
             
             }else{
@@ -207,14 +213,26 @@ const SignatureKyc = () => {
     }, [userSignature,signatureData]);
     // Fin
 
+    // La barre de progression de KYC du profil particulier
+    const steps = ["Questionnaires", "Justificatif d'identité", "Justificatif de domicile", "Photo", "Signature"];
+    const activeStep = 3;
+    // Fin
 
+    // La barre de progression de KYC du profil particulier
+    const stepsEntreprise = ["Questionnaires","Documents légaux","Justificatif de domicile", "Justificatif d'identité","Photo", "Signature"];
+    const activeStepEntreprise = 4;
+    // Fin
   return (
     <>
-
+        {currentUser?.activated && currentUser?.codeTypeProfil==="entCom"? (
+            <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />
+        ) : (
+            <ProgressBar className="mb-15" steps={steps} activeStep={activeStep} />
+        )}
         <div className='' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                    <h1 className='text-center'>Signature</h1>
+                    <br/><br/><h1 className='text-center'>Signature</h1>
                 </div>
             </div>
 
@@ -295,7 +313,7 @@ const SignatureKyc = () => {
                                                     <a
                                                     className=""
                                                     >
-                                                        <button className="btn btn-primary " type='button'  > Précèdente </button>
+                                                        <button className="btn btn-primary " type='button'  > Précédente </button>
                                                     </a>   
                                                 </Link>                          
                                             </div> 
@@ -312,7 +330,7 @@ const SignatureKyc = () => {
                                                 <a
                                                 className=""
                                                 >
-                                                    <button className="btn btn-primary " type='button'  > Précèdente </button>
+                                                    <button className="btn btn-primary " type='button'  > Précédente </button>
                                                 </a>   
                                             </Link>                          
                                         </div> 

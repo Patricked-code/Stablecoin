@@ -37,7 +37,7 @@ import {
 
 // FIN
 
-const AccueilStablecoin = () => {
+const DashbaordWtiKyc = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
@@ -104,15 +104,16 @@ const AccueilStablecoin = () => {
     }, [provider, magic]);
     //  Fin
 
-    
 
   return (
     <>
+    {currentUser?.profileId==2 || currentUser?.profileId==3?(
 
+    <>
       <div className='' >
         <div className=' mx-15'>
             <div className='py-10'>
-                <h1 className='text-center'>Stablecoin</h1>
+                <h1 className='text-center'>Validation des Kyc</h1>
             </div>
         </div>
 
@@ -134,7 +135,7 @@ const AccueilStablecoin = () => {
         {/* Les cards */}
             <div className='cryptocurrency-search-box'>
                 <div className='row'>
-                    {currentUser?.profileId==2 ? (
+
                         <div className='col-lg-6 col-md-6'>
                             <div className='currency-selection text-center'>
                                 <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
@@ -145,11 +146,11 @@ const AccueilStablecoin = () => {
                                                 <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
                                             </div> */}
                                             <div className='title'>
-                                                <h3>Mint </h3>
+                                                <h3>Kyc particulier </h3>
                                             </div>
                                             </div>
                                             <div className='btn-box'>
-                                                <a href='/admin/wealthtech/stablecoin/mintBurn'>
+                                                <a href='/admin/wealthtech/kyc/validation/particular/'>
                                                     <Button
                                                         block
                                                         color="primary"
@@ -158,7 +159,6 @@ const AccueilStablecoin = () => {
                                                         Voir plus
                                                     </Button>
                                                 </a>
-                                            
                                             {/* Fin */}
                                             </div>
                                         </div>
@@ -166,8 +166,6 @@ const AccueilStablecoin = () => {
                                 </div>
                             </div>
                         </div>
-                    ):("")}            
-
                     <div className='col-lg-6 col-md-6'>
                         <div className='currency-selection text-center'>
                             <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
@@ -175,11 +173,11 @@ const AccueilStablecoin = () => {
                                     <div className='single-cryptocurrency-box'>
                                         <div className='d-flex align-items-center'>
                                         <div className='title'>
-                                            <h3>Gestion des rôles</h3>
+                                            <h3>Kyc entreprise / commerçant</h3>
                                         </div>
                                         </div>
                                         <div className='btn-box'>
-                                            <a href='/admin/wealthtech/stablecoin/roles/attribuer-roles'>
+                                            <a href='/admin/wealthtech/kyc/validation/entreprise'>
                                                 <Button
                                                     block
                                                     color="primary"
@@ -188,7 +186,6 @@ const AccueilStablecoin = () => {
                                                     Vois plus
                                                 </Button>
                                             </a>
-                                        
                                         {/* Fin */}
                                         </div>
                                     </div>
@@ -201,7 +198,13 @@ const AccueilStablecoin = () => {
       </div>
 
     </>
+    ):(
+        <span className="text-center bg-default-2 btn-bottom-text  d-block gr-text-5 text-blackish-blue gr-opacity-10 my-35">
+            <Loading/>
+        </span>
+    )}
+    </>
   );
 };
 
-export default AccueilStablecoin;
+export default DashbaordWtiKyc;

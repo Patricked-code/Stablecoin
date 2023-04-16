@@ -14,6 +14,7 @@ import Loading from "../../../loading";
 import Router from "next/router";
 import Swal from 'sweetalert2';
 import Web3 from "web3";
+import ProgressBar from '../ProgressBar';
 
 // FIN
 
@@ -38,9 +39,24 @@ const SelfieKyc = () => {
    const [currentUser, setCurrentUser] = useState();
    const [provider, setProvider] = useState(null);
 
-   
-   
-   
+   const [currentKycStatut, setCurrentKycStatut] = useState();
+
+        //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+        useEffect(() => {
+            const kycStatut = localStorage.getItem('currentUpdateKycStatut')  
+            setCurrentKycStatut(kycStatut)
+        }, [currentKycStatut]);
+        // Fin
+
+        const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
+
+    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+        const kycStatutEntreprise = localStorage.getItem('currentKycEntrepriseStatut')  
+        setCurrentKycEntrepriseStatut(kycStatutEntreprise)
+        console.log("CurrentKycEntrepriseStatut=>",kycStatutEntreprise)
+    }, [currentKycEntrepriseStatut]);
+        
        useEffect(() => {
    
            if (!!magic) {
@@ -48,6 +64,8 @@ const SelfieKyc = () => {
                setProvider(pt);
            }
        }, [magic]);
+
+       
    
        // RECUPERATION DES INFORMATIONS QUI CONCERNENT MAGIC
        useEffect(() => {
@@ -59,6 +77,8 @@ const SelfieKyc = () => {
                  const userAddress = await signer.getAddress();
                  //const userBalance = ethers.utils.formatEther(await provider.getBalance(userAddress))
                  // FIN
+
+                
    
                  // Obtenir un utilisateur en fonction de son email 
                  const getUser = async () => {
@@ -108,7 +128,6 @@ const SelfieKyc = () => {
             }
             })
             const data = await result.json();
-            console.log("data=>",data)
         
             /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
             * sinon on affiche le message de succès
@@ -122,7 +141,13 @@ const SelfieKyc = () => {
                 timer: 5000
             }),
             setTimeout(() => {
-            Router.push("/profil/kyc/commun/signature"); 
+                if(currentKycStatut==="1"){
+                    Router.push("/profil/kyc/particulier/resultat-kyc"); 
+    
+                }else{
+                    Router.push("/profil/kyc/commun/signature"); 
+                }
+                
             }, 5000)
             
             }else{
@@ -168,7 +193,6 @@ const SelfieKyc = () => {
             }
             })
             const data = await result.json();
-            console.log("data=>",data)
         
             /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
             * sinon on affiche le message de succès
@@ -182,7 +206,11 @@ const SelfieKyc = () => {
                 timer: 5000
             }),
             setTimeout(() => {
-            Router.push("/profil/kyc/commun/signature"); 
+            if (currentKycEntrepriseStatut==="1") {
+                Router.push("/profil/kyc/entreprise/resultat-kyc"); 
+           }else{
+                Router.push("/profil/kyc/commun/signature"); 
+           }
             }, 5000)
             
             }else{
@@ -207,14 +235,29 @@ const SelfieKyc = () => {
     }, [userPicture,imageSrc]);
     // Fin
 
+    // La barre de progression de KYC du profil particulier
+    const steps = ["Questionnaires", "Justificatif d'identité", "Justificatif de domicile", "Photo", "Signature"];
+    const activeStep = 2;
+    // Fin
+
+    // La barre de progression de KYC du profil particulier
+    const stepsEntreprise = ["Questionnaires","Documents légaux","Justificatif de domicile", "Justificatif d'identité","Photo", "Signature"];
+    const activeStepEntreprise = 3;
+    // Fin
 
   return (
     <>
+        {currentUser?.activated && currentUser?.codeTypeProfil==="entCom"? (
+            <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />
+        ) : (
+            <ProgressBar className="mb-15" steps={steps} activeStep={activeStep} />
+        )}
+
 
         <div className='' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                    <h1 className='text-center'>Photo</h1>
+                    <br/><br/><h1 className='text-center'>Photo</h1>
                 </div>
             </div>
 
@@ -303,7 +346,7 @@ const SelfieKyc = () => {
                                                 <a
                                                 className=""
                                                 >
-                                                    <button className="btn btn-primary " type='button'  > Précèdente </button>
+                                                    <button className="btn btn-primary " type='button'  > Précédente </button>
                                                 </a>   
                                             </Link>                          
                                         </div> 
@@ -320,7 +363,7 @@ const SelfieKyc = () => {
                                                 <a
                                                 className=""
                                                 >
-                                                    <button className="btn btn-primary " type='button'  > Précèdentee </button>
+                                                    <button className="btn btn-primary " type='button'  > Précédente </button>
                                                 </a>   
                                             </Link>                          
                                         </div> 
