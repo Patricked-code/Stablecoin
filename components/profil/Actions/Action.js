@@ -201,7 +201,7 @@ const Action = () => {
                                     <div className='single-cryptocurrency-box'>
                                         <div className='d-flex align-items-center'>
                                         <div className='title'>
-                                            <h3>Créer une boutique</h3>
+                                            <h3>Créer une boutique en ligne</h3>
                                         </div>
                                         </div>
                                         <div className='btn-box'>
@@ -228,7 +228,7 @@ const Action = () => {
                                         <div className='d-flex align-items-center'>
 
                                         <div className='title'>
-                                            <h3>Fond collecter</h3>
+                                            <h3>Fonds collectés "crowdfunding" </h3>
                                         </div>
                                         </div>
                                         <div className='btn-box'>
@@ -282,7 +282,7 @@ const Action = () => {
                                         <div className='d-flex align-items-center'>
 
                                         <div className='title'>
-                                            <h3>Dettes crowdfunding</h3>
+                                            <h3>Ma dette "crowdfunding"</h3>
                                         </div>
                                         </div>
                                         <div className='btn-box'>
@@ -309,7 +309,7 @@ const Action = () => {
                                         <div className='d-flex align-items-center'>
 
                                         <div className='title'>
-                                            <h3>Integrer E-WARI dans mon site comme moyen de paiement</h3>
+                                            <h3>Integrer E-WARI comme moyen de paiement sur mon site en ligne</h3>
                                         </div>
                                         </div>
                                         <div className='btn-box'>

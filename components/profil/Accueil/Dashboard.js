@@ -1719,7 +1719,7 @@ const [montantAchat, setMontantAchat] = useState(0)
 
                             ):(
                                 <div className="text-center mt-5">
-                                    Aucun compte mobile ajouté
+                                    Vous n'avez aucun compte "mobile money" enregistré. Pour acheter ou retirer des E-WARI, vous devez ajouter au moins un compte 
                                 </div>
                             )}
                         </div>
@@ -1796,7 +1796,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                                 </div>
                          ):(
                             <div className="text-center mt-5">
-                                Vous n'avez ajouté aucun compte bancaire
+                                Vous n'avez aucun compte "compte bancaire" enregistré. Pour acheter ou retirer des E-WARI, vous devez ajouter au moins un compte.
                             </div>
                         )} 
                     </div>

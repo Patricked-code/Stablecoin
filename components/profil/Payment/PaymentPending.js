@@ -490,7 +490,7 @@ const transferKorre = async () => {
           Swal.fire({
             position: 'center',
             icon: 'success',
-            html: "<p> La demande de paiement a été annulée avec succès.<br/> Un mail du détail de l'annulation de la demande de paiement vous a été envoyé.</p>" ,
+            html: "<p> La demande de paiement a été annulée avec succès.<br/> Nous vous avons transmis un email de confirmation en ce sens.</p>" ,
             showConfirmButton: false,
             timer: 10000
           })

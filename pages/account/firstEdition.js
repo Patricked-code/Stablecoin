@@ -4,8 +4,9 @@ import FirstEdition from '../../components/Authentication/FirstEdition';
 const First = () => {
   return (
     <>
+      <br/>
       <div 
-        className='profile-authentication-area'
+        className='mb-10 row'
         style={{ 
           backgroundImage: `url(/images/ecfa/background/bg4.jpg)`,
           backgroundRepeat: 'no-repeat',
@@ -13,16 +14,10 @@ const First = () => {
         }}
         
       >
-        <div className='d-table'>
-          <div className='d-table-cell'>
-            <div className='container'>
-              <div className='row py-30'>
-                <FirstEdition/>
-              </div>
-            </div>
-          </div>
-        </div>
+        <FirstEdition/>
       </div>
+      <br/>
+
     </>
   );
 };

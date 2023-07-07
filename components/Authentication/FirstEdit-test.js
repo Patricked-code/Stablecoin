@@ -158,7 +158,6 @@ useEffect(() => {
   // RECUPERER TOUS LES PAYS
   useEffect(async() => {
     const token = localStorage.getItem('tokenEnCours')
-    console.log("token pays=>",token)
 
 
         const getAllCountries = async () => {

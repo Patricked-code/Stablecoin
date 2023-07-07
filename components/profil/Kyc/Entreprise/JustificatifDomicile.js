@@ -228,7 +228,7 @@ const CJtifDomicile = () => {
                                         <label
                                             htmlFor="picture"
                                         >
-                                            Recto de votre justificatif de domicile du bureau
+                                            Facture d'électricité / d'eau / de téléphone / ou adresse postale
                                         </label>
                                         <input
                                             className="form-control border mt-3 bg-white"
@@ -243,7 +243,7 @@ const CJtifDomicile = () => {
                                         <label
                                             htmlFor="picture"
                                         >
-                                            Verso de votre justificatif de domicile du bureau
+                                            Plan de localisation de votre activité / contrat de bail
                                         </label>
                                         <input
                                             className="form-control  border mt-3"

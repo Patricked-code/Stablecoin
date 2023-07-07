@@ -42,6 +42,9 @@ const Layout = ({ children }) => {
       {pathname === "/profil" || 
       pathname === "/profil/dashboard" ||
       pathname === "/profil/kyc/particulier"||
+      pathname === "/profil/kyc/particulier/questionnaires-revenus-two" ||
+      pathname === "/profil/kyc/particulier/questionnaires-fatca" ||
+      pathname === "/profil/kyc/particulier/justificatif-identite-one"||
       pathname === "/profil/kyc/particulier/seconde-phase"||
       pathname === "/profil/kyc/particulier/resultat-kyc"||
       pathname === "/profil/action"||
@@ -56,12 +59,17 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/documents-legaux"||
       pathname === "/profil/informations/connexion"||
       pathname === "/profil/informations/utilisateur"||
+      pathname === "/profil/kyc/entreprise/identite-one"||
       pathname === "/profil/kyc/entreprise/justificatif-identite"||
+      pathname === "/profil/kyc/entreprise/identite-representant-one"||
+      pathname === "/profil/kyc/entreprise/identite-representant-two"||
+      pathname === "/profil/kyc/entreprise/beneficiaire-effectif-one"||
+      pathname === "/profil/kyc/entreprise/beneficiaire-effectif-two"||
       pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/kyc/entreprise/resultat-kyc"||
       pathname === "/profil/wallet"||
       pathname === "/profil/paiements/paiements-attente"||
-
+      
       // LES ROUTES DE LA PARTIE DU PROFIL INSTITUTION
       pathname === "/profil/institution/depot-cash"||
       pathname === "/profil/institution/retrait-cash"||
@@ -108,7 +116,12 @@ const Layout = ({ children }) => {
 
       {pathname === "/profil"|| 
       pathname === "/profil/dashboard" || 
+      // KYC particulier
       pathname === "/profil/kyc/particulier" ||
+      pathname === "/profil/kyc/particulier/questionnaires-revenus-two" ||
+      pathname === "/profil/kyc/particulier/questionnaires-fatca" ||
+      pathname === "/profil/kyc/particulier/justificatif-identite-one"||
+      pathname === "/profil/kyc/particulier/justificatif-domicile"||
       pathname === "/profil/kyc/particulier/seconde-phase"||
       pathname === "/profil/kyc/particulier/resultat-kyc"||
       pathname === "/profil/action"||
@@ -116,17 +129,21 @@ const Layout = ({ children }) => {
       pathname === "/profil/retrait/retrait-compte-bancaire"||
       pathname === "/profil/achat/achat-mobile"||
       pathname === "/profil/retrait/retrait-mobile"||
-      pathname === "/profil/kyc/particulier/justificatif-domicile"||
       pathname === "/profil/kyc/commun/selfie"||
       pathname === "/profil/kyc/commun/signature"||
       pathname === "/profil/kyc/entreprise/questionnaire"||
       pathname === "/profil/kyc/entreprise/documents-legaux"||
       pathname === "/profil/informations/connexion"||
       pathname === "/profil/informations/utilisateur"||
+      pathname === "/profil/kyc/entreprise/identite-one"||
       pathname === "/profil/kyc/entreprise/justificatif-identite"||
+      pathname === "/profil/kyc/entreprise/identite-representant-one"||
+      pathname === "/profil/kyc/entreprise/identite-representant-two"||
+      pathname === "/profil/kyc/entreprise/beneficiaire-effectif-one"||
+      pathname === "/profil/kyc/entreprise/beneficiaire-effectif-two"||
       pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/kyc/entreprise/resultat-kyc"||
-
+      
       // pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/wallet"||
       pathname === "/profil/paiements/paiements-attente"||

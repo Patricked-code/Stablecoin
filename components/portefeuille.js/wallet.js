@@ -4,6 +4,11 @@ import { Container, Row, Col, Collapse, Button, Modal,Form } from "react-bootstr
 // Importer ABI de E-WARI
 import ABI_TOKEN_EWARI from "../../components/Contrats/Abi/AbiStablecoin.json";
 
+
+
+
+
+
 // Pour Magic
 import { magic } from "../../magic";
 import { ethers } from "ethers";
@@ -108,6 +113,7 @@ const [codeOtherUser, setCodeOtherUser] = useState();
       if (!!magic) {
           const pt = new ethers.providers.Web3Provider(magic.rpcProvider);
           setProvider(pt);
+          console.log("Bon Provider=>>",pt)
       }
   }, [magic]);
 
@@ -120,6 +126,7 @@ const [codeOtherUser, setCodeOtherUser] = useState();
               const network = await provider.getNetwork();
               const userAddress = await signer.getAddress();
               setMagicCurrentAddress(userAddress)
+
               //const userBalance = ethers.utils.formatEther(await provider.getBalance(userAddress))
               // FIN
 
@@ -179,7 +186,6 @@ const [codeOtherUser, setCodeOtherUser] = useState();
             .then((result) => result.json())
             .then((user) => {
               setInfosOtherUser(user)
-        console.log("infosOtherUser=>",infosOtherUser)
     
             }) 
     
@@ -430,6 +436,334 @@ const [codeOtherUser, setCodeOtherUser] = useState();
   }
   // Fin
 
+const transfer = async()=>{
+  const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
+  // const { ethers } = require('ethers');
+  // const YOUR_API_KEY = "9J8guXHwAQ5Pg4vv17cnEgH72AhLsTYz"
+  // const YOUR_API_SECRET = "5ghqfeHdMySZ2fBzPy9kB1SkW2rLRSPdKvLfjKLE8qbZY2jZG8QqmSXwTGRrzRep"
+  const credentials = { apiKey: YOUR_API_KEY, apiSecret: YOUR_API_SECRET };
+  const providerlay = new DefenderRelayProvider(credentials);
+  const beneficiary = ""
+  const signer = new DefenderRelaySigner(credentials, providerlay, { speed: 'fast' });
+
+  const erc20 = new ethers.Contract(ADDRESS_CONTRAT_EWARI,ABI_TOKEN_EWARI.abi, signer);
+  // const tx = await erc20.transfer(beneficiary, 1e18.toString());
+  const tosting = String(50)
+      const mountWei = ethers.utils.parseUnits(tosting, decimalStablecoin);
+  const tx = await erc20.transfer(beneficiary, mountWei);
+
+  const mined = await tx.wait();
+  console.log("Mined=>",mined)
+}
+
+
+
+
+
+
+
+const { DefenderRelaySigner } = require('defender-relay-client/lib/ethers');
+// const { Magic } = require('magic-sdk');
+// const { ethers } = require('ethers');
+
+// Adresse Ethereum de l'utilisateur A
+// const userAAddress = '0x...';
+
+// Adresse Ethereum de l'utilisateur B
+// const userBAddress = '0x...';
+
+// Adresse Ethereum du contrat ERC20
+// const erc20Address = '0x...';
+
+// ABI du contrat ERC20
+// const erc20Abi = [...];
+
+// Créer un fournisseur d'accès à la blockchain Ethereum
+// const providerUrl = 'https://mainnet.infura.io/v3/2e3e8279fbe04ecc99f509a65edbc626';
+const providerUrl = 'https://rpc.testnet.moonbeam.network'
+const providerRe = new ethers.providers.JsonRpcProvider(provider);
+console.log("provider=>",provider)
+
+// const YOUR_API_KEY = "9J8guXHwAQ5Pg4vv17cnEgH72AhLsTYz"
+//   const YOUR_API_SECRET = "5ghqfeHdMySZ2fBzPy9kB1SkW2rLRSPdKvLfjKLE8qbZY2jZG8QqmSXwTGRrzRep"
+const YOUR_API_KEY = "GWmEwe1fwV2f383dExKeRUVPL9ZYKKFu"
+const YOUR_API_SECRET = "QXdiWAUUF1PkhAqjJYMBLpxu57cwKwP7XjisUJfj6RQmyTf3d5PURGy9aQ4aXKzC"
+
+// Créer une instance du contrat ERC20 avec le Defender Relayer Signer
+const defenderRelaySigner = new DefenderRelaySigner({ 
+  apiKey: YOUR_API_KEY,
+  apiSecret: YOUR_API_SECRET 
+}, provider, { speed: 'fast' });
+const erc20 = new ethers.Contract(ADDRESS_CONTRAT_EWARI,ABI_TOKEN_EWARI.abi,defenderRelaySigner);
+
+// Initialiser Magic avec votre API key
+// const magic = new Magic('YOUR_MAGIC_API_KEY');
+
+// Créer un Defender Relayer Signer avec Magic
+const createDefenderRelaySignerWithMagic = async (address) => {
+  // const provider = new ethers.providers.Web3Provider(provider);
+  const signer = provider.getSigner();
+  return new DefenderRelaySigner({ 
+    apiKey: YOUR_API_KEY,
+    apiSecret: YOUR_API_SECRET 
+  }, provider, { speed: 'fast', from: address, signer });
+};
+
+// Envoyer des jetons ERC20 de l'utilisateur A à l'utilisateur B
+const sendTokensNO = async () => {
+  try {
+    // Authentifier l'utilisateur A avec Magic
+    // const userAMagic = await magic.auth.loginWithMagicLink({ email: 'USER_A_EMAIL' });
+    // const userAAddress = userAMagic.publicAddress;
+
+    // Créer un Defender Relayer Signer avec Magic pour l'utilisateur A
+    const userADefenderRelaySigner = await createDefenderRelaySignerWithMagic(currentAdresse);
+    // const userADefenderRelaySigner = await createDefenderRelaySignerWithMagic("0x09439864ddaA177C80396353Cd98e6EaDa996a39");
+    
+    console.log('userADefenderRelaySigner=>',userADefenderRelaySigner);
+
+    // Créer une transaction pour envoyer des jetons ERC20 de l'utilisateur A à l'utilisateur B
+    // const amount = ethers.utils.parseEther('0');
+    const tosting = String(montantRecevoir)
+    console.log('tosting=>',tosting);
+
+    const amount = ethers.utils.parseUnits(tosting, decimalStablecoin);
+    console.log('amount=>',amount);
+
+    // const userBAddress = "0x496Dd9744c3a1B0Ec4C2998656BEA67DbCec888B"
+    const userBAddress= "0x09439864ddaA177C80396353Cd98e6EaDa996a39"
+    console.log('tx=>');
+
+    const gasEstimate = await erc20.estimateGas.transfer(userBAddress, amount);
+    console.log('Estimation des frais de gas:', gasEstimate.toString());
+    
+    const tx = await erc20.connect(userADefenderRelaySigner).transfer(userBAddress, amount, {
+      gasLimit: gasEstimate.add(10000)
+    });
+
+
+//     const tx = await erc20.connect(userADefenderRelaySigner).transfer(userBAddress, amount);
+//     console.log('tx=>',tx);
+//     const gasLimit = await erc20.estimateGas.transfer(userBAddress, amount);
+// console.log('Estimation du gas limit :', gasLimit.toString());
+
+    // Envoyer la transaction au Defender Relayer pour qu'il l'envoie à la blockchain Ethereum et paye les frais de transaction
+    const mined = await tx.wait();
+
+    console.log('Transaction envoyée avec succès',mined);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
+
+const sendTokensNOO = async () => {
+  try {
+    // Authentifier l'utilisateur A avec Magic
+    // const userAMagic = await magic.auth.loginWithMagicLink({ email: 'USER_A_EMAIL' });
+    // const userAAddress = userAMagic.publicAddress;
+
+    // Créer un Defender Relayer Signer avec Magic pour l'utilisateur A
+    const addressA="0x09439864ddaA177C80396353Cd98e6EaDa996a39"
+    const userADefenderRelaySigner = await createDefenderRelaySignerWithMagic(addressA);
+    console.log("userADefenderRelaySigner=>",userADefenderRelaySigner)
+    console.log("currentAdresse=>",currentAdresse)
+
+    const userBAddress = "0x496Dd9744c3a1B0Ec4C2998656BEA67DbCec888B"
+    // const userBAddress= "0x09439864ddaA177C80396353Cd98e6EaDa996a39"
+    
+    // Créer une transaction pour envoyer des jetons ERC20 de l'utilisateur A à l'utilisateur B
+    // const amount = ethers.utils.parseEther('2');
+    // console.log('tx=>');
+    const tosting = String(1)
+    const amount = ethers.utils.parseUnits(tosting, decimalStablecoin);
+    console.log('amount=>',amount);
+
+    const gasEstimate = await erc20.estimateGas.transfer(userBAddress, amount);
+    console.log('Estimation des frais de gas:', gasEstimate.toString());
+
+    // const tx = await erc20.connect(userADefenderRelaySigner).transfer(userBAddress, amount, { from: defenderRelaySigner.getAddress() });
+    // console.log('tx=>',tx);
+ const tx = await erc20.connect(userADefenderRelaySigner).transfer(userBAddress, amount, {
+      from: defenderRelaySigner.getAddress(),
+      gasLimit: gasEstimate.add(10000)
+    });
+    // Envoyer la transaction au Defender Relayer pour qu'il l'envoie à la blockchain Ethereum et paye les frais de transaction
+    const mined = await tx.wait();
+
+    console.log('Transaction envoyée avec succès',mined);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
+
+
+
+
+
+
+const sendTokens = async () => {
+// const magic = new Magic('pk_live_F1AB148D6AA92662');
+
+  try {
+    // Authentifier l'utilisateur A avec Magic
+
+    // const userAMagic = await magic.auth.loginWithMagicLink({ email: 'zkone403@gmail.com' });
+    // const userAAddress = userAMagic.publicAddress;
+
+    // Connexion au fournisseur Ethereum (infura ou votre propre nœud)
+
+    // const provider = new ethers.providers.JsonRpcProvider('https://rinkeby.infura.io/v3/YOUR_INFURA_PROJECT_ID');
+
+    // Charger le contrat
+    const contract = new ethers.Contract(ADDRESS_CONTRAT_EWARI,ABI_TOKEN_EWARI.abi, provider);
+
+    // Récupérer le solde de l'utilisateur A
+    // const userABalance = await contract.balanceOf(userAAddress);
+    const userAAddress = "0x09439864ddaA177C80396353Cd98e6EaDa996a39"
+    const userABalance = await contract.balanceOf(userAAddress);
+    
+
+    // Définir l'adresse de l'utilisateur B et le montant à envoyer
+    const userBAddress = '0x496Dd9744c3a1B0Ec4C2998656BEA67DbCec888B';
+    // const amountToSend = ethers.utils.parseEther('10');
+
+    const tosting = String(1)
+    const amountToSend = ethers.utils.parseUnits(tosting, decimalStablecoin);
+
+    // Vérifier si l'utilisateur A a suffisamment de tokens pour envoyer
+    if (userABalance.lt(amountToSend)) {
+      console.log('L\'utilisateur A n\'a pas suffisamment de tokens pour envoyer !');
+      return;
+    }
+
+    const RELAYER_ADDRESS = "0x4bcc9911709eef442d44697c00cce7d5ea1f455f"
+    console.log("Ok 1")
+
+    const gasEstimate = await erc20.estimateGas.transfer(userBAddress, amountToSend);
+    console.log('Estimation des frais de gas:', gasEstimate.toString());
+
+    // Demander à l'utilisateur A d'approuver la transaction
+    const approveTx = await contract.connect(userAAddress).approve(RELAYER_ADDRESS, amountToSend, {
+      gasLimit: gasEstimate.add(10000)
+
+    });
+    console.log("Ok 2")
+
+    // Attendre la confirmation de la transaction d'approbation
+    await approveTx.wait();
+
+    console.log("Ok 3")
+    
+    // Demander au relais de transférer les tokens de l'utilisateur A à l'utilisateur B
+    const transferTx = await contract.connect(provider.getSigner(RELAYER_ADDRESS)).transferFrom(userAAddress, userBAddress, amountToSend, {
+      gasLimit: gasEstimate.add(10000)
+
+    });
+    console.log("Ok 4")
+
+    // Attendre la confirmation de la transaction de transfert
+    await transferTx.wait();
+
+    console.log(`Transfert de ${amountToSend.toString()} tokens de ${userAAddress} à ${userBAddress} réussi !`);
+
+  } catch (error) {
+    console.log(error);
+  }
+  
+}
+
+
+
+
+const transferRelayer = async() =>{
+  // Importez les bibliothèques et les dépendances nécessaires
+// import { ethers } from 'ethers';
+// import { RelayProvider } from '@defender/relay-client';
+// import dotenv from 'dotenv';
+
+// Initialisez les variables d'environnement
+// dotenv.config();
+// const NETWORK = process.env.NETWORK || 'rinkeby';
+// const RELAY_ID = process.env.RELAY_ID;
+// const DEFENDER_API_KEY = process.env.DEFENDER_API_KEY;
+// const TOKEN_ADDRESS = process.env.TOKEN_ADDRESS;
+// const PRIVATE_KEY = process.env.PRIVATE_KEY;
+// const DESTINATION_ADDRESS = '0x...'; 
+// const AMOUNT = 100; 
+
+const NETWORK = 'moonbase';
+const RELAY_ID = "8279505a-ebf4-4265-93e9-c0c47f5c2db0";
+const DEFENDER_API_KEY = "AHP4oU1BzcuKLsaqi9chu1qobgV8zAGr";
+// const TOKEN_ADDRESS = process.env.TOKEN_ADDRESS;
+const PRIVATE_KEY = "36ba8d431646b33e370eac06979af488bdddb6341bd067a676e5d33a8d72a1e1";
+const DESTINATION_ADDRESS = '0x496Dd9744c3a1B0Ec4C2998656BEA67DbCec888B'; // Adresse de destination pour le transfert de jeton
+const AMOUNT = 5; // Montant de jeton à transférer
+
+// Initialisez l'instance de provider Defender Relayer
+const provider = new RelayProvider(NETWORK, RELAY_ID, {
+  apikey: DEFENDER_API_KEY,
+});
+
+// Initialisez l'instance de contrat pour le jeton ERC20
+const tokenContract = new ethers.Contract(ADDRESS_CONTRAT_EWARI, ABI_TOKEN_EWARI.abi, provider);
+
+// Créez un objet TransactionRequest contenant les informations nécessaires pour effectuer la transaction
+const tx = {
+  to: DESTINATION_ADDRESS,
+  value: 0,
+  data: tokenContract.interface.encodeFunctionData('transfer', [DESTINATION_ADDRESS, AMOUNT]),
+};
+
+// Obtenez l'estimation du coût de gaz nécessaire pour exécuter la transaction
+const gasLimit = await tokenContract.estimateGas.transfer(DESTINATION_ADDRESS, AMOUNT);
+
+console.log("currentAdresse=>",currentAdresse)
+// Créez un objet RelayableTransaction contenant les informations nécessaires pour signer la transaction
+const relayableTx = {
+  from: currentAdresse, // Adresse de l'utilisateur
+  to: TOKEN_ADDRESS, // Adresse du contrat de jeton ERC20
+  gasLimit: gasLimit.toNumber(), // Coût estimé de gaz
+  data: tx.data, // Données de la transaction
+  nonce: await provider.getTransactionCount(userAddress), // Numéro de séquence de la transaction
+};
+
+// Signez l'objet RelayableTransaction en utilisant la clé privée du portefeuille qui paiera les frais de gaz
+const signer = new ethers.Wallet(PRIVATE_KEY, provider);
+const signedRelayableTx = await signer.signRelayable(relayableTx);
+console.log("signedRelayableTx=>",signedRelayableTx)
+
+// Envoyez l'objet RelayableTransaction signé à votre smart contract pour traitement de la méta-transaction
+await contract.processMetaTransaction(signedRelayableTx);
+
+}
+
+
+
+
+
+
+
+
+
+// ******************************************************************************
+
+// ******************FIN*************************************************
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -443,8 +777,7 @@ const [codeOtherUser, setCodeOtherUser] = useState();
                         <Col lg="12">
                             <div className="main-block">
                             <div className="form-title text-center">
-                                <h2 className="title gr-text-7 mb-9 heading-color">Mon Portefeuille Numérique</h2>
-                                {/* <button éonClick={transferLysfcRelayer}>Envoyer</button> */}
+                                <h2 className="title gr-text-7 mb-9 heading-color">Mon Portefeuille Numérique </h2>
                             </div>
                             <Row className="justify-content-between">
                                 {/* PARTIE DE E-WARI */}
@@ -488,7 +821,7 @@ const [codeOtherUser, setCodeOtherUser] = useState();
                                         <Button
                                             color="success"
                                             type="button"
-                                            onClick={()=>setContentDepot(`Copiez cette adresse pour envoyer à vos proches afin de recevoir des ${symbolStablecoin} du réseau moonbeam`)}
+                                            onClick={()=>setContentDepot(`Vous pouvez copier et envoyer en toute sécurité cette adresse "publique" qui vous permet de recevoir des actifs numériques.`)}
                                         >
                                             Dépôt 
                                         </Button>
@@ -594,7 +927,7 @@ const [codeOtherUser, setCodeOtherUser] = useState();
                                         <Button
                                             color="success"
                                             type="button"
-                                            onClick={()=>setContentDepot(`Copiez cette adresse pour envoyer à vos proches afin de recevoir des NSIA Epargne du réseau moonbeam`)}
+                                            onClick={()=>setContentDepot(`Vous pouvez copier et envoyer en toute sécurité cette adresse "publique" qui vous permet de recevoir des actifs numériques.`)}
                                         >
                                             Dépôt 
                                         </Button>
@@ -673,7 +1006,7 @@ const [codeOtherUser, setCodeOtherUser] = useState();
                                         <Button
                                             color="success"
                                             type="button"
-                                            onClick={()=>setContentDepot(`Copiez cette adresse pour envoyer à vos proches afin de recevoir des CREPMF Actions du réseau moonbeam`)}
+                                            onClick={()=>setContentDepot(`Vous pouvez copier et envoyer en toute sécurité cette adresse "publique" qui vous permet de recevoir des actifs numériques.`)}
                                         >
                                             Dépôt 
                                         </Button>
@@ -752,7 +1085,7 @@ const [codeOtherUser, setCodeOtherUser] = useState();
                                         <Button
                                             color="success"
                                             type="button"
-                                            onClick={()=>setContentDepot(`Copiez cette adresse pour envoyer à vos proches afin de recevoir des Sicav Abdou Diouf du réseau moonbeam`)}
+                                            onClick={()=>setContentDepot(`Vous pouvez copier et envoyer en toute sécurité cette adresse "publique" qui vous permet de recevoir des actifs numériques.`)}
                                         >
                                             Dépôt 
                                         </Button>
@@ -831,7 +1164,7 @@ const [codeOtherUser, setCodeOtherUser] = useState();
                                         <Button
                                             color="success"
                                             type="button"
-                                            onClick={()=>setContentDepot(`Copiez cette adresse pour envoyer à vos proches afin de recevoir des Sicav Ecobank du réseau moonbeam`)}
+                                            onClick={()=>setContentDepot(`Vous pouvez copier et envoyer en toute sécurité cette adresse "publique" qui vous permet de recevoir des actifs numériques.`)}
                                         >
                                             Dépôt 
                                         </Button>
@@ -910,7 +1243,7 @@ const [codeOtherUser, setCodeOtherUser] = useState();
                                         <Button
                                             color="success"
                                             type="button"
-                                            onClick={()=>setContentDepot(`Copiez cette adresse pour envoyer à vos proches afin de recevoir des FCP Coris du réseau moonbeam`)}
+                                            onClick={()=>setContentDepot(`Vous pouvez copier et envoyer en toute sécurité cette adresse "publique" qui vous permet de recevoir des actifs numériques.`)}
                                         >
                                             Dépôt 
                                         </Button>

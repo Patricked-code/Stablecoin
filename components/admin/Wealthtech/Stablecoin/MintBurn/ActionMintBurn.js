@@ -256,7 +256,7 @@ const ActionMintBurn = () => {
             if (window.ethereum && window.ethereum.isConnected()) {
                 await window.ethereum.request({ method: "eth_requestAccounts" });
                 const amount = ethers.utils.parseUnits(amountMint, 10);
-                // const transaction = await contract.mintFrom("0x496Dd9744c3a1B0Ec4C2998656BEA67DbCec888B",amount);
+                // const transaction = await contract.mintFrom("0x4bcc9911709eef442d44697c00cce7d5ea1f455f",amount);
                 const transaction = await contract.mint(amount);
                 
                 await transaction.wait();

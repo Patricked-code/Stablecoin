@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import SidebarWealthtech from '../../../../../components/admin/Sidebar/Sidebarwti';
 import GestionRole from '../../../../../components/admin/Wealthtech/Roles/AttributionRole';
 

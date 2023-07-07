@@ -203,7 +203,7 @@ function RegisterForm() {
                 onChange={(event)=>setCodeTypeProfil(event.target.value)}
               >
                 <option defaultValue="">Choisissez le type de compte</option>
-                  {/* Parcourir les pays */}
+                  {/* Parcourir les profils */}
                   {allTypeProfil?(
                   allTypeProfil.map((data) => (
                   <optgroup className='single-cryptocurrency-box'

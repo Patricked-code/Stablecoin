@@ -152,6 +152,11 @@ const GestionRole = () => {
     const handleShowAttributeRole = () => setShowAttributeRole(true);
     // Fin
 
+    // Modal de rvocation d'un role
+    const [showDelete, setShowDelete] = useState(false);
+    const handleDeleteClose = () => setShowDelete(false);
+    const handleDeleteCloseShow = () => setShowDelete(true);
+    // Fin
 
 
     // FONCTION D'ATTRIBUTION DE ROLE (grantRole)
@@ -567,12 +572,10 @@ const GestionRole = () => {
 
 
 
-
-
-        {/* ********************************************************************************** */}
+{/* ********************************************************************************** */}
             {/* MODAL DE LA REVOCATION D'UN ROLE*/}
         {/* ********************************************************************************** */}
-        <Modal show={showDelete} className="mt-15" onHide={handleDeleteClose}>
+        {/* <Modal show={showDelete} className="mt-15" onHide={handleDeleteClose}>
             <Modal.Header closeButton className='bgColorRed'>
             <Modal.Title className="text-white">Révocation du rôle <b>{currentNameRole}</b></Modal.Title>
             </Modal.Header>
@@ -608,9 +611,11 @@ const GestionRole = () => {
                     </Button>
                     </Modal.Footer>
                 </Form>
-        </Modal>
+        </Modal> */}
         {/* *****************************************FIN****************************************** */}
 
+
+        
 
 
         {/* ********************************************************************************** */}
@@ -625,7 +630,8 @@ const GestionRole = () => {
                     <div className="input-group flex-nowrap">
                         <div className='col-lg-12 col-md-12 row justify-content-between'>
                         
-                        <form onSubmit={handleSubmit}>
+                        {/* <form onSubmit={handleSubmit}> */}
+                        <form>
                         <div className="form-group my-6 ">
                           <label
                             htmlFor="montant"

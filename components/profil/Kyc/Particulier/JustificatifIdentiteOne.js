@@ -16,12 +16,40 @@ import ProgressBar from '../ProgressBar';
 
 // FIN
 
-const FirsKyc = () => {
+const CJustificatifIdentiteOne = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
+
+    // States du formulaire
+    // civility
+    // fatherName
+    // motherName
+    // familyStatus
+    // language
+    // intermediaryBusiness
+
+    const [civility, setCivility] = useState();
+    const [fatherName, setFatherName] = useState();
+    const [motherName, setMotherName] = useState();
+    const [familyStatus, setFamilyStatus] = useState();
+    const [language, setLanguage] = useState();
+    const [intermediaryBusiness, setIntermediaryBusiness] = useState();
+    
+    
+    
+                            
+                            
+                            
+                            
+                            
+                            
+    
+
+
+
 
     // State de la question 2
     const [spentA, setSpentA] = useState([]);
@@ -436,7 +464,7 @@ const handleOptionIncomeTypeC = (event) => {
         <div className='mt-15' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                <br/><br/><h1 className='text-center '>Questionnaires AML & REVENU 1</h1>
+                <br/><br/><h1 className='text-center '>Justificatif d'identité</h1>
                 </div>
             </div>
 
@@ -461,318 +489,217 @@ const handleOptionIncomeTypeC = (event) => {
 
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
                         <form className=''>
-                            {/* Question 1 */}
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="Q1"
+                                    htmlFor="civility"
                                     className="text-blackish-blue mb-2"
                                 >
-                                   Avez-vous des dépenses ou payez vous des charges récurrentes mensuelles ou annuelles ?( Assurances, loyers, abonnement "internet, eau, courant, transports" remboursement crédit)
+                                    Civilité
                                 </label>
                                 <select 
                                 className="form-control"
-                                id="Q1"
+                                id="civility"
                                 required
-                                defaultValue={statutQ1} 
-                                onChange={(event)=>setStatutQ1(event.target.value)}
+                                defaultValue={civility} 
+                                onChange={(event)=>setCivility(event.target.value)}
                                 >
                                 <option defaultValue="">Choisissez</option>
                                     <optgroup className='single-cryptocurrency-box'>
-                                    <option  value="Oui">Oui</option>
-                                    <option  value="Non">Non</option>
+                                    <option  value="M.">M.</option>
+                                    <option  value="Mme">Mme</option>
+                                    <option  value="Mlle">Mlle</option>
                                     </optgroup>
                                 </select>
                             </div >
-                            {/* Fin */}
-
-                            {/* Question 2 */}
-                            {statutQ1==="Oui" ? (
-                                <>
-                               
-                                    <label
-                                        htmlFor="Q1"
-                                        className="text-blackish-blue mb-2"
-                                    >
-                                        Choisissez vos dépenses récurrentes parmi les catégories ci-dessous
-                                    </label>
-                                    {/* Loyer */}
-                                    <div className="form-group  mt-3 ">
-                                        <label
-                                            htmlFor="terms-check"
-                                            className="gr-check-input mb-7 d-flex"
-                                        >
-                                            <input 
-                                                type="checkbox" 
-                                                name="loyer"
-                                                value="Loyer"
-                                                id='terms-check' 
-                                                checked={spentA.includes("Loyer")}
-                                                onChange={handleOptionSpentA}
-                                            />
-                                        <p className=" mx-2 mb-0 text-center">
-                                            Loyer
-                                        </p>
-                                        </label>
-                                    </div>
-                                    {/* Assurances */}
-                                    <div className="form-group  mt-3 ">
-                                        <label
-                                            htmlFor="Assurances-check"
-                                            className="gr-check-input mb-7 d-flex"
-                                        >
-                                            <input 
-                                            type="checkbox" 
-                                            name="transport"
-                                            id='Assurances-check'
-                                            value='Assurances' 
-                                            checked={spentB.includes("Assurances")}
-                                            onChange={handleOptionSpentB}
-                                            />
-                                        <p className=" mx-2 mb-0 text-center" htmlFor="Assurances-check">
-                                            Assurances
-                                        </p>
-                                        </label>
-                                    </div>
-                                    {/* Crédit bancaire */}
-                                    <div className="form-group  mt-3 ">
-                                        <label
-                                            htmlFor="bancaire-check"
-                                            className="gr-check-input mb-7 d-flex"
-                                        >
-                                            <input 
-                                            type="checkbox" 
-                                            name="transport"
-                                            id='bancaire-check' 
-                                            value='Crédit bancaire' 
-                                            checked={spentC.includes("Crédit bancaire")}
-                                            onChange={handleOptionSpentC}
-                                            />
-                                        <p className=" mx-2 mb-0 text-center">
-                                            Crédit bancaire
-                                        </p>
-                                        </label>
-                                    </div>
-                                    {/* Transport */}
-                                    <div className="form-group  mt-3 ">
-                                        <label
-                                            htmlFor="Transport-check"
-                                            className="gr-check-input mb-7 d-flex"
-                                        >
-                                            <input 
-                                            type="checkbox" 
-                                            name="transport"
-                                            id='Transport-check' 
-                                            value='Transport'
-                                            checked={spentD.includes("Transport")}
-                                            onChange={handleOptionSpentD}
-                                            />
-                                        <p className=" mx-2 mb-0 text-center">
-                                            Transport
-                                        </p>
-                                        </label>
-                                    </div>
-                                    {/* Abonnement & factures */}
-                                    <div className="form-group  mt-3 ">
-                                        <label
-                                            htmlFor="factures-check"
-                                            className="gr-check-input mb-7 d-flex"
-                                        >
-                                            <input 
-                                            type="checkbox" 
-                                            name="transport"
-                                            id='terms-check' 
-                                            value='Abonnement & factures'
-                                            checked={spentE.includes("Abonnement & factures")}
-                                            onChange={handleOptionSpentE}
-                                            />
-                                        <p className=" mx-2 mb-0 text-center">
-                                            Abonnement & factures
-                                        </p>
-                                        </label>
-                                    </div>
-                                    {/* Scolarité */}
-                                    <div className="form-group  mt-3 ">
-                                        <label
-                                            htmlFor="Scolarite-check"
-                                            className="gr-check-input mb-7 d-flex"
-                                        >
-                                            <input 
-                                            type="checkbox" 
-                                            name="scolarite"
-                                            id='terms-check' 
-                                            value='Scolarité'
-                                            checked={spentF.includes('Scolarité')}
-                                            onChange={handleOptionSpentF}
-                                            />
-                                            <p className=" mx-2 mb-0 text-center">
-                                                Scolarité
-                                            </p>
-                                        </label>
-                                    </div>
-                                </>
-                            ) :("")}
-                            {/* Fin Q2 */}
-                            
-                            {/* Question 3 */}
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="Q1"
+                                    htmlFor="firstName"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Avez-vous une source récurrente de revenus financiers ? soit mensuelle, Trimestriels ou annuels ?
+                                    Votre nom
+                                </label>
+                                <div className='form-group'>
+                                    <input
+                                        type='text'
+                                        id='firstName'
+                                        className='form-control'
+                                        placeholder='Votre nom'
+                                        // defaultValue={civility} 
+                                        // onChange={(event)=>setCivility(event.target.value)}
+                                    />
+                                </div>
+                            </div >
+                            <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="lastName"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Vos prénoms
+                                </label>
+                                <div className='form-group'>
+                                    <input
+                                        type='text'
+                                        id='lastName'
+                                        className='form-control'
+                                        placeholder='Vos prénoms'
+                                        // defaultValue={civility} 
+                                        // onChange={(event)=>setCivility(event.target.value)}
+                                    />
+                                </div>
+                            </div >
+                            <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="fatherName"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Nom et prénoms du père
+                                </label>
+                                <div className='form-group'>
+                                    <input
+                                        type='text'
+                                        id='fatherName'
+                                        className='form-control'
+                                        placeholder='Nom et prénoms du père'
+                                        defaultValue={fatherName} 
+                                        onChange={(event)=>setFatherName(event.target.value)}
+                                    />
+                                </div>
+                            </div >
+                            <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="motherName"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Nom et prénoms de la mère
+                                </label>
+                                <div className='form-group'>
+                                    <input
+                                        type='text'
+                                        id='motherName'
+                                        className='form-control'
+                                        placeholder='Nom et prénoms de la mère'
+                                        defaultValue={motherName} 
+                                        onChange={(event)=>setMotherName(event.target.value)}
+                                    />
+                                </div>
+                            </div >
+                            <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="familyStatus"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Situation familiale
                                 </label>
                                 <select 
                                 className="form-control"
-                                id="Q3"
+                                id="familyStatus"
                                 required
-                                defaultValue={statutQ3} 
-                                onChange={(event)=>setStatutQ3(event.target.value)}
+                                defaultValue={familyStatus} 
+                                onChange={(event)=>setFamilyStatus(event.target.value)}
                                 >
                                 <option defaultValue="">Choisissez</option>
                                     <optgroup className='single-cryptocurrency-box'>
-                                    <option  value="Oui">Oui - J'ai des revenus financiers récurrents</option>
-                                    <option  value="Non">Non - mes revenus ne sont pas récurrents</option>
+                                    <option  value="Célibataire">Célibataire</option>
+                                    <option  value="Marié(e)">Marié(e)</option>
+                                    <option  value="Divorcé(e)">Divorcé(e)</option>
+                                    <option  value="Veuf(ve)">Veuf(ve)</option>
                                     </optgroup>
                                 </select>
                             </div >
-                            {/* Fin Q3 */}
-
-                            {/* Question 4 */}
-                            {statutQ3==="Oui" ? (
-                                <>
-                               
-                                    <label
-                                        htmlFor="Q1"
-                                        className="text-blackish-blue mb-2"
-                                    >
-                                    Choisissez la ou les fréquences de vos revenus
-                                    </label>
-                                    {/* Revenus mensuels*/}
-                                    <div className="form-group  mt-3 ">
-                                        <label
-                                            htmlFor="mensuels-check"
-                                            className="gr-check-input mb-7 d-flex"
-                                        >
-                                            <input 
-                                            type="checkbox" 
-                                            name="mensuels"
-                                            id='mensuels-check' 
-                                            value='Revenus mensuels'
-                                            checked={frequencyA.includes('Revenus mensuels')}
-                                            onChange={handleOptionFrequencyA}
-                                            />
-                                        <p className=" mx-2 mb-0 text-center">
-                                            Revenus mensuels
-                                        </p>
-                                        </label>
-                                    </div>
-                                    {/* Revenus Trimestriels */}
-                                    <div className="form-group  mt-3 ">
-                                        <label
-                                            htmlFor="trimestriels-check"
-                                            className="gr-check-input mb-7 d-flex"
-                                        >
-                                            <input 
-                                            type="checkbox" 
-                                            name="trimestriels"
-                                            id='trimestriels-check' 
-                                            value='Revenus trimestriels'
-                                            checked={frequencyB.includes('Revenus trimestriels')}
-                                            onChange={handleOptionFrequencyB}
-                                            />
-                                        <p className=" mx-2 mb-0 text-center">
-                                            Revenus trimestriels
-                                        </p>
-                                        </label>
-                                    </div>
-                                    {/* Revenus annuels */}
-                                    <div className="form-group  mt-3 ">
-                                        <label
-                                            htmlFor="annuels-check"
-                                            className="gr-check-input mb-7 d-flex"
-                                        >
-                                            <input 
-                                            type="checkbox" 
-                                            name="annuels"
-                                            id='annuels-check' 
-                                            value='Revenus annuels'
-                                            checked={frequencyC.includes('Revenus annuels')}
-                                            onChange={handleOptionFrequencyC}
-                                            />
-                                        <p className=" mx-2 mb-0 text-center">
-                                            Revenus annuels
-                                        </p>
-                                        </label>
-                                    </div>
-                                </>
-                            ):("")}
-                            {/* Fin Q4 */}
-
-                            {/* Question 5 */}
-                            <label
-                                htmlFor="Q1"
-                                className="text-blackish-blue mb-2"
-                            >
-                                Dans quel cadre touchez vous ces revenus ?
-                            </label>
-                            {/* Salaire mensuels*/}
-                            <div className="form-group  mt-3 ">
+                            <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="SalaireMensuels-check"
-                                    className="gr-check-input mb-7 d-flex"
+                                    htmlFor="language"
+                                    className="text-blackish-blue mb-2"
                                 >
-                                    <input 
-                                    type="checkbox" 
-                                    name="SalaireMensuels"
-                                    id='SalaireMensuels-check' 
-                                    value='Salaire mensuels'
-                                    checked={incomeTypeA.includes('Salaire mensuels')}
-                                    onChange={handleOptionIncomeTypeA}
-                                    />
-                                <p className=" mx-2 mb-0 text-center">
-                                    Salaire mensuels (Vous êtes salariés)
-                                </p>
+                                    Langue
                                 </label>
-                            </div>
-                            {/* Revenus Trimestriels */}
-                            <div className="form-group  mt-3 ">
+                                <select 
+                                className="form-control"
+                                id="language"
+                                required
+                                defaultValue={language} 
+                                onChange={(event)=>setLanguage(event.target.value)}
+                                >
+                                <option defaultValue="">Choisissez</option>
+                                    <optgroup className='single-cryptocurrency-box'>
+                                    <option  value="Français">Français</option>
+                                    <option  value="Anglais">Anglais</option>
+                                    <option  value="Autre">Autre</option>
+                                    </optgroup>
+                                </select>
+                            </div >
+                            <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="trimestriels-check"
-                                    className="gr-check-input mb-7 d-flex"
+                                    htmlFor="nationality"
+                                    className="text-blackish-blue mb-2"
                                 >
-                                    <input 
-                                    type="checkbox" 
-                                    name="trimestriels"
-                                    id='trimestriels-check' 
-                                    value='Revenus trimestriels'
-                                    checked={incomeTypeB.includes('Revenus trimestriels')}
-                                    onChange={handleOptionIncomeTypeB}
-                                    />
-                                <p className=" mx-2 mb-0 text-center">
-                                    Revenus trimestriels
-                                </p>
+                                    Nationalité
                                 </label>
-                            </div>
-                            {/* Rentes immobilières (Vous percevez des loyers) */}
-                            <div className="form-group  mt-3 ">
+                                <div className='form-group'>
+                                    <input
+                                        type='text'
+                                        id='nationality'
+                                        className='form-control'
+                                        placeholder='nationalité'
+                                        // defaultValue={civility} 
+                                        // onChange={(event)=>setCivility(event.target.value)}
+                                    />
+                                </div>
+                            </div >
+                            <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="immobilieres-check"
-                                    className="gr-check-input mb-7 d-flex"
+                                    htmlFor="nativeCountry"
+                                    className="text-blackish-blue mb-2"
                                 >
-                                    <input 
-                                    type="checkbox" 
-                                    name="immobilieres"
-                                    id='immobilieres' 
-                                    value='Rentes immobilières'
-                                    checked={incomeTypeC.includes('Rentes immobilières')}
-                                    onChange={handleOptionIncomeTypeC}
-                                    />
-                                <p className=" mx-2 mb-0 text-center">
-                                    Rentes immobilières (Vous percevez des loyers)
-                                </p>
+                                    Pays de Naissance
                                 </label>
-                            </div>
-                            {/* Fin Q5 */}
+                                <div className='form-group'>
+                                    <input
+                                        type='text'
+                                        id='nativeCountry'
+                                        className='form-control'
+                                        placeholder='Pays de Naissance'
+                                        // defaultValue={civility} 
+                                        // onChange={(event)=>setCivility(event.target.value)}
+                                    />
+                                </div>
+                            </div >
+                            <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="dateBirth"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Date de naissance
+                                </label>
+                                <div className='form-group'>
+                                    <input
+                                        type='text'
+                                        id='dateBirth'
+                                        className='form-control'
+                                        placeholder='Date de naissance'
+                                        // defaultValue={civility} 
+                                        // onChange={(event)=>setCivility(event.target.value)}
+                                    />
+                                </div>
+                            </div >
+                            <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="intermediaryBusiness"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                   Apporteur d’affaire
+                                </label>
+                                <div className='form-group'>
+                                    <input
+                                        type='text'
+                                        id='intermediaryBusiness'
+                                        className='form-control'
+                                        placeholder='Apporteur d’affaire'
+                                        defaultValue={intermediaryBusiness} 
+                                        onChange={(event)=>setIntermediaryBusiness(event.target.value)}
+                                    />
+                                </div>
+                            </div >
 
 
                             {/* <p className="colorRed mb-7 ">
@@ -794,4 +721,4 @@ const handleOptionIncomeTypeC = (event) => {
   );
 };
 
-export default FirsKyc;
+export default CJustificatifIdentiteOne;

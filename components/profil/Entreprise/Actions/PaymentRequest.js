@@ -161,7 +161,7 @@ const PaymentRequest = () => {
             Swal.fire({
               position: 'center',
               icon: 'success',
-              html: "<p> La demande de paiement a été effectuée avec succès.<br/> Un mail du détail de la demande de paiement vous a été envoyé.</p>" ,
+              html: "<p> La demande de paiement a été envoyée avec succès.<br/> Un email de confirmation vous a été envoyé en ce sens et dès que l'utilisateur effectuera la transaction, vous serez notifié.</p>" ,
               showConfirmButton: false,
               timer: 10000
             })

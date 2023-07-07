@@ -47,6 +47,12 @@ const SecondKyc = () => {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState(false);
     
+    // Pour les deux nouveaux champs
+    // pieceNumber
+    // validityDate
+    const [pieceNumber, setPieceNumber] = useState();
+    const [validityDate, setValidityDate] = useState();
+
 
     const [modalFile, setModalFile] = React.useState(false);
 
@@ -497,6 +503,42 @@ const activeStep = 0;
                             {selected==="file" && statut==="1" ? (
                                 <div className="form-group row mt-3">
                                 <form>
+                                    <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="pieceNumber"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Numéro de la pièce d’identité
+                                        </label>
+                                        <div className='form-group'>
+                                            <input
+                                                type='text'
+                                                id='pieceNumber'
+                                                className='form-control'
+                                                placeholder='Numéro de la pièce d’identité'
+                                                defaultValue={pieceNumber} 
+                                                onChange={(event)=>setPieceNumber(event.target.value)}
+                                            />
+                                        </div>
+                                    </div >
+                                    <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="validityDate"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Date Validité 
+                                        </label>
+                                        <div className='form-group'>
+                                            <input
+                                                type='date'
+                                                id='firstName'
+                                                className='form-control'
+                                                placeholder='Date Validité '
+                                                defaultValue={validityDate} 
+                                                onChange={(event)=>setValidityDate(event.target.value)}
+                                            />
+                                        </div>
+                                    </div >
                                     <div className="form-group mb-6">
                                         <label
                                             htmlFor="picture"
@@ -561,6 +603,42 @@ const activeStep = 0;
                                 <form>
                                     {/* Recto */}
                                     <div className="form-group row mt-3">
+                                        <div className="form-group">
+                                            <label
+                                                htmlFor="pieceNumber"
+                                                className="text-blackish-blue mb-2"
+                                            >
+                                                Numéro de la pièce d’identité
+                                            </label>
+                                            <div className='form-group'>
+                                                <input
+                                                    type='text'
+                                                    id='pieceNumber'
+                                                    className='form-control'
+                                                    placeholder='Numéro de la pièce d’identité'
+                                                    defaultValue={pieceNumber} 
+                                                    onChange={(event)=>setPieceNumber(event.target.value)}
+                                                />
+                                            </div>
+                                        </div >
+                                        <div className="form-group">
+                                            <label
+                                                htmlFor="validityDate"
+                                                className="text-blackish-blue mb-2"
+                                            >
+                                                Date Validité 
+                                            </label>
+                                            <div className='form-group'>
+                                                <input
+                                                    type='date'
+                                                    id='firstName'
+                                                    className='form-control'
+                                                    placeholder='Date Validité '
+                                                    defaultValue={validityDate} 
+                                                    onChange={(event)=>setValidityDate(event.target.value)}
+                                                />
+                                            </div>
+                                        </div >
                                         <div className="form-group col-lg-3 col-md-3"></div>
 
                                         <div className="form-group col-lg-6 col-md-6 ">

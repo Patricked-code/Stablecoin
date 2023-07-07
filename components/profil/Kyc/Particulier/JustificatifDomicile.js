@@ -227,7 +227,7 @@ const activeStep = 1;
                                         <label
                                             htmlFor="picture"
                                         >
-                                            Recto de votre justificatif d'identité
+                                            Recto de votre justificatif de domicile
                                         </label>
                                         <input
                                             className="form-control border mt-3 bg-white"
@@ -242,7 +242,7 @@ const activeStep = 1;
                                         <label
                                             htmlFor="picture"
                                         >
-                                            Verso de votre justificatif d'identité (Facultatif si le fichier ne contient pas de verso)
+                                            Verso de votre justificatif de domicile (Facultatif si le fichier ne contient pas de verso)
                                         </label>
                                         <input
                                             className="form-control  border mt-3"

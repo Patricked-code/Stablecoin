@@ -19,6 +19,17 @@ const LoginForm = () => {
   const API_URL =process.env.NEXT_PUBLIC_URL_API
 
   
+  // FONCTION DE LA DECONNEXION
+  const logaout = useCallback(() => {
+    try {
+    magic.user.logout().then(() => {
+     
+    });
+  } catch (error) {
+    console.log("une erreur s'est produit =>", error)
+  }
+  }, [Router]);
+  // FIN
 
   /**
    * Perform login action via Magic's passwordless flow. Upon successuful
@@ -27,7 +38,7 @@ const LoginForm = () => {
   const login = useCallback(async () => {
     setIsLoggingIn(true);
 
-    
+    logaout() //Appel de la fonction de déconnection à magic
     try {
       const dataa = {
         email:email,
