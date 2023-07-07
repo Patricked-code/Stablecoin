@@ -34,6 +34,7 @@ const CBeneficiaireEffectifTwo = () => {
     // lastName
     // issuingCountry
     // nativeCountry
+    // countryRegistration
     // dateBirth
     // nationality
     // email
@@ -41,7 +42,11 @@ const CBeneficiaireEffectifTwo = () => {
     // typeDocument
     // identityDocNumber
     // mobile
+    // phoneFixe
+    // startDate
+    // NumberRCCM
     // expirationDate
+    // typeBeneficiary
     {/* POUR PIECE D'IDENTITE */}
     // frontIdentity 
     // backIdentity 
@@ -64,6 +69,11 @@ const CBeneficiaireEffectifTwo = () => {
     const [expirationDate, setExpirationDate] = useState();
     const [identityDocNumber, setIdentityDocNumber] = useState();
     const [mobile, setMobile] = useState();
+    const [typeBeneficiary, setTypeBeneficiary] = useState();
+    const [countryRegistration, setCountryRegistration] = useState();
+    const [phoneFixe, setPhoneFixe] = useState();
+    const [startDate, setStartDate] = useState();
+    const [numberRCCM, setNumberRCCM] = useState();
     
     const [frontIdentity, setFrontIdentity ] = useState();
     const [backIdentity, setCackIdentity ] = useState();
@@ -586,63 +596,72 @@ const handleOptionIncomeTypeC = (event) => {
             {/* Les cards */}
             <div className='row'>
                 <div className='col-lg-3 col-md-12'></div>
-
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
                         <form className=''>
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="entrepriseName"
+                                    htmlFor="typeBeneficiary"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Raison sociale
+                                    Type de bénéficiaire
                                 </label>
-                                <div className='form-group'>
-                                    <input
-                                        type='text'
-                                        id='entrepriseName'
-                                        className='form-control'
-                                        placeholder='Raison sociale'
-                                        defaultValue={entrepriseName} 
-                                        onChange={(event)=>setEntrepriseName(event.target.value)}
-                                    />
-                                </div>
-                            </div >
-                            <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="firstName"
-                                    className="text-blackish-blue mb-2"
+                                <select 
+                                className="form-control"
+                                id="typeBeneficiary"
+                                required
+                                defaultValue={typeBeneficiary} 
+                                onChange={(event)=>setTypeBeneficiary(event.target.value)}
                                 >
-                                    Nom du bénéficiaire
-                                </label>
-                                <div className='form-group'>
-                                    <input
-                                        type='text'
-                                        id='firstName'
-                                        className='form-control'
-                                        placeholder='Nom du bénéficiaire'
-                                        defaultValue={firstName} 
-                                        onChange={(event)=>setFirstName(event.target.value)}
-                                    />
-                                </div>
-                            </div >
-                            <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="lastName"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                    Prénoms du bénéficiaire
-                                </label>
-                                <div className='form-group'>
-                                    <input
-                                        type='text'
-                                        id='lastName'
-                                        className='form-control'
-                                        placeholder='Prénoms du bénéficiaire'
-                                        defaultValue={lastName} 
-                                        onChange={(event)=>setLastName(event.target.value)}
-                                    />
-                                </div>
-                            </div >
+                                <option defaultValue="">Choisissez</option>
+                                    <optgroup className='single-cryptocurrency-box'>
+                                        <option  value="Personne physique">Personne Physique</option>
+                                        <option  value="Personne morale">Personne Morale</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+
+                            {typeBeneficiary ? (
+                                <>
+
+                                    {typeBeneficiary==="Personne physique" ? (
+                                        <>
+                                            <div className="form-group mb-6 mt-3">
+                                                <label
+                                                    htmlFor="firstName"
+                                                    className="text-blackish-blue mb-2"
+                                                >
+                                                    Nom du bénéficiaire
+                                                </label>
+                                                <div className='form-group'>
+                                                    <input
+                                                        type='text'
+                                                        id='firstName'
+                                                        className='form-control'
+                                                        placeholder='Nom du bénéficiaire'
+                                                        defaultValue={firstName} 
+                                                        onChange={(event)=>setFirstName(event.target.value)}
+                                                    />
+                                                </div>
+                                            </div >
+                                            <div className="form-group mb-6 mt-3">
+                                                <label
+                                                    htmlFor="lastName"
+                                                    className="text-blackish-blue mb-2"
+                                                >
+                                                    Prénoms du bénéficiaire
+                                                </label>
+                                                <div className='form-group'>
+                                                    <input
+                                                        type='text'
+                                                        id='lastName'
+                                                        className='form-control'
+                                                        placeholder='Prénoms du bénéficiaire'
+                                                        defaultValue={lastName} 
+                                                        onChange={(event)=>setLastName(event.target.value)}
+                                                    />
+                                                </div>
+                                            </div >
+                                       
 
                             <div className="form-group mb-6 mt-3">
                                 <label
@@ -931,33 +950,192 @@ const handleOptionIncomeTypeC = (event) => {
                             ) : ("")}
                             {/* ****************FIN PRENDRE PHOTO**************** */}
 
+                                    <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="nationality"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Nationalité
+                                        </label>
+                                        <select 
+                                        className="form-control"
+                                        id="nationality"
+                                        required
+                                        defaultValue={nationality} 
+                                        onChange={(event)=>setNationality(event.target.value)}
+                                        >
+                                        <option defaultValue="">Choisissez</option>
+                                            <optgroup className='single-cryptocurrency-box'>
+                                                <option  value="CNI">Ivoirienne</option>
+                                                <option  value="Passeport">Malienne</option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
+                                    
+                                    <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="dateBirth"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Date de naissance
+                                        </label>
+                                        <div className='form-group'>
+                                            <input
+                                                type='date'
+                                                id='dateBirth'
+                                                className='form-control'
+                                                placeholder='Date de naissance'
+                                                defaultValue={dateBirth} 
+                                                onChange={(event)=>setDateBirth(event.target.value)}
+                                            />
+                                        </div>
+                                    </div >
 
+                                    <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="nativeCountry"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Pays de résidence  
+                                        </label>
+                                        <select 
+                                        className="form-control"
+                                        id="nativeCountry"
+                                        required
+                                        defaultValue={nativeCountry} 
+                                        onChange={(event)=>setNativeCountry(event.target.value)}
+                                        >
+                                        <option defaultValue="">Choisissez</option>
+                                            <optgroup className='single-cryptocurrency-box'>
+                                                <option  value="CNI">Côte d'Ivoire</option>
+                                                <option  value="Passeport">Mali</option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
 
-
-
-
-                            
-                            <div className="form-group mb-6 mt-3">
+                                    <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="nationality"
+                                    htmlFor="mobile"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Nationalité
+                                    Téléphone mobile 
                                 </label>
-                                <select 
-                                className="form-control"
-                                id="nationality"
-                                required
-                                defaultValue={nationality} 
-                                onChange={(event)=>setNationality(event.target.value)}
-                                >
-                                <option defaultValue="">Choisissez</option>
-                                    <optgroup className='single-cryptocurrency-box'>
-                                        <option  value="CNI">Ivoirienne</option>
-                                        <option  value="Passeport">Malienne</option>
-                                    </optgroup>
-                                </select>
+                                <div className='form-group'>
+                                    <input
+                                        type='text'
+                                        id='mobile'
+                                        className='form-control'
+                                        placeholder='Téléphone mobile'
+                                        defaultValue={mobile} 
+                                        onChange={(event)=>setMobile(event.target.value)}
+                                    />
+                                </div>
                             </div>
+                            
+                                </>
+                            ):('')}
+
+                            {typeBeneficiary==="Personne morale" ? (
+                                <>
+                                    <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="entrepriseName"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Raison sociale
+                                        </label>
+                                        <div className='form-group'>
+                                            <input
+                                                type='text'
+                                                id='entrepriseName'
+                                                className='form-control'
+                                                placeholder='Raison sociale'
+                                                defaultValue={entrepriseName} 
+                                                onChange={(event)=>setEntrepriseName(event.target.value)}
+                                            />
+                                        </div>
+                                    </div >
+
+                                    <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="numberRCCM"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Numéro RCCM
+                                        </label>
+                                        <div className='form-group'>
+                                            <input
+                                                type='text'
+                                                id='numberRCCM'
+                                                className='form-control'
+                                                placeholder='Numéro RCCM'
+                                                defaultValue={numberRCCM} 
+                                                onChange={(event)=>setNumberRCCM(event.target.value)}
+                                            />
+                                        </div>
+                                    </div >
+    
+                                    <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="nativeCountry"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Pays d'immatriculation 
+                                        </label>
+                                        <select 
+                                        className="form-control"
+                                        id="countryRegistration"
+                                        required
+                                        defaultValue={countryRegistration} 
+                                        onChange={(event)=>setCountryRegistration(event.target.value)}
+                                        >
+                                        <option defaultValue="">Choisissez</option>
+                                            <optgroup className='single-cryptocurrency-box'>
+                                                <option  value="CNI">Côte d'Ivoire</option>
+                                                <option  value="Passeport">Mali</option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
+                                    <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="phoneFixe"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Téléphone fixe
+                                </label>
+                                <div className='form-group'>
+                                    <input
+                                        type='text'
+                                        id='phoneFixe'
+                                        className='form-control'
+                                        placeholder='Téléphone fixe'
+                                        defaultValue={phoneFixe} 
+                                        onChange={(event)=>setPhoneFixe(event.target.value)}
+                                    />
+                                </div>
+                                    </div>
+                                    <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="startDate"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Date de création
+                                </label>
+                                <div className='form-group'>
+                                    <input
+                                        type='date'
+                                        id='startDate'
+                                        className='form-control'
+                                        placeholder='Date de création'
+                                        defaultValue={startDate} 
+                                        onChange={(event)=>setStartDate(event.target.value)}
+                                    />
+                                </div>
+                                    </div>
+                                    </>
+                            ):('')}
+
+                            
                             
                             <div className="form-group mb-6 mt-3">
                                 <label
@@ -974,24 +1152,6 @@ const handleOptionIncomeTypeC = (event) => {
                                         placeholder='Email'
                                         defaultValue={email} 
                                         onChange={(event)=>setEmail(event.target.value)}
-                                    />
-                                </div>
-                            </div >
-                            <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="dateBirth"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                    Date de naissance
-                                </label>
-                                <div className='form-group'>
-                                    <input
-                                        type='date'
-                                        id='dateBirth'
-                                        className='form-control'
-                                        placeholder='Date de naissance'
-                                        defaultValue={dateBirth} 
-                                        onChange={(event)=>setDateBirth(event.target.value)}
                                     />
                                 </div>
                             </div >
@@ -1015,45 +1175,7 @@ const handleOptionIncomeTypeC = (event) => {
                             </div >
                             
 
-                            <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="nativeCountry"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                    Pays de résidence  
-                                </label>
-                                <select 
-                                className="form-control"
-                                id="nativeCountry"
-                                required
-                                defaultValue={nativeCountry} 
-                                onChange={(event)=>setNativeCountry(event.target.value)}
-                                >
-                                <option defaultValue="">Choisissez</option>
-                                    <optgroup className='single-cryptocurrency-box'>
-                                        <option  value="CNI">Côte d'Ivoire</option>
-                                        <option  value="Passeport">Mali</option>
-                                    </optgroup>
-                                </select>
-                            </div>
-                            <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="mobile"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                    Téléphone mobile 
-                                </label>
-                                <div className='form-group'>
-                                    <input
-                                        type='text'
-                                        id='mobile'
-                                        className='form-control'
-                                        placeholder='Téléphone mobile'
-                                        defaultValue={mobile} 
-                                        onChange={(event)=>setMobile(event.target.value)}
-                                    />
-                                </div>
-                            </div>
+                            
 
                             
                             
@@ -1093,6 +1215,8 @@ const handleOptionIncomeTypeC = (event) => {
                                 <button className="btn btn-primary " type='button' onClick={addQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
                             )}
                             {/* <button className="btn btn-primary "  disabled={isLoggingIn}>Suivant</button> */}
+                            </>
+                            ) : ("")}
                         </form>       
                     </div>
                 <div className='col-lg-3 col-md-12'></div>

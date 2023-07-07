@@ -40,6 +40,9 @@ const Layout = ({ children }) => {
 
       {/* {pathname === "/auth/authentication"||pathname ==="/auth/enregistrer"||pathname ==="/account/activated"?'' : <Navbar />} */}
       {pathname === "/profil" || 
+      pathname === "/callback_register"|| 
+      pathname === "/callback"|| 
+      
       pathname === "/profil/dashboard" ||
       pathname === "/profil/kyc/particulier"||
       pathname === "/profil/kyc/particulier/questionnaires-revenus-two" ||
@@ -65,6 +68,10 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/identite-representant-two"||
       pathname === "/profil/kyc/entreprise/beneficiaire-effectif-one"||
       pathname === "/profil/kyc/entreprise/beneficiaire-effectif-two"||
+      pathname === "/profil/kyc/entreprise/structure-control-one"||
+      pathname === "/profil/kyc/entreprise/structure-control-two"||
+      pathname === "/profil/kyc/entreprise/politiquement-exposees"||
+      pathname === "/profil/kyc/entreprise/operations-financieres-one"||
       pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/kyc/entreprise/resultat-kyc"||
       pathname === "/profil/wallet"||
@@ -113,8 +120,10 @@ const Layout = ({ children }) => {
       {/* <Navbar /> */}
 
       {children}
-
+      
       {pathname === "/profil"|| 
+      pathname === "/callback_register"|| 
+      pathname === "/callback"|| 
       pathname === "/profil/dashboard" || 
       // KYC particulier
       pathname === "/profil/kyc/particulier" ||
@@ -141,6 +150,10 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/identite-representant-two"||
       pathname === "/profil/kyc/entreprise/beneficiaire-effectif-one"||
       pathname === "/profil/kyc/entreprise/beneficiaire-effectif-two"||
+      pathname === "/profil/kyc/entreprise/structure-control-one"||
+      pathname === "/profil/kyc/entreprise/structure-control-two"||
+      pathname === "/profil/kyc/entreprise/politiquement-exposees"||
+      pathname === "/profil/kyc/entreprise/operation-financieres-one"||
       pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/kyc/entreprise/resultat-kyc"||
       

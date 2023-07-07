@@ -19,7 +19,7 @@ import SignatureCanvas from 'react-signature-canvas'
 
 // FIN
 
-const CBeneficiaireEffectifOne = () => {
+const CStructureControlOne = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
@@ -60,6 +60,12 @@ const CBeneficiaireEffectifOne = () => {
     const [backIdentity, setCackIdentity ] = useState();
     const [frontDomicile, setFrontDomicile] = useState();
     const [backDomicile, setBackDomicile] = useState();
+
+
+    // *******************************
+    // fivePercent
+    const [fivePercent, setFivePercent] = useState();
+
 
 
     // Pour la signature
@@ -501,7 +507,7 @@ const handleOptionIncomeTypeC = (event) => {
         <div className='mt-15' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                <br/><br/><h1 className='text-center '>Bénéficiaire(s) effectif(s) </h1>
+                <br/><br/><h1 className='text-center '>Structure de propriété ou de contrôle</h1>
                 </div>
             </div>
 
@@ -528,18 +534,11 @@ const handleOptionIncomeTypeC = (event) => {
                         <form className=''>
                             
                             <div className="form-group mb-6 mt-3">
-                            <label
-                                    htmlFor="issuingCountry"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                    L’expression « Bénéficiaire effectif »1 (ou « Titulaire réel ») désigne la ou les personnes physiques qui, en dernier ressort, possèdent ou contrôlent, directement ou indirectement, un pourcentage supérieur à 25 % du capital de la société ou des droits de vote ou qui, à travers d’autres moyens, exercent le contrôle direct ou indirect de la gestion de la personne morale. Faute de titulaire réel, identifier le/s administrateur/s de la société (en cas d’administrateur personne morale identifier le représentant personne physique).
-                                </label>
-
                                 <label
                                     htmlFor="issuingCountry"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Combien de bénéficiaire effectif ?
+                                    Nombre d'associé 
                                 </label>
                                 <select 
                                 className="form-control"
@@ -550,6 +549,7 @@ const handleOptionIncomeTypeC = (event) => {
                                 >
                                 <option defaultValue="">Choisissez</option>
                                     <optgroup className='single-cryptocurrency-box'>
+                                        <option  value="0">0</option>
                                         <option  value="1">1</option>
                                         <option  value="2">2</option>
                                         <option  value="3">3</option>
@@ -560,14 +560,51 @@ const handleOptionIncomeTypeC = (event) => {
                                         <option  value="8">8</option>
                                         <option  value="9">9</option>
                                         <option  value="10">10</option>
+                                        <option  value="Plus de 10">Plus de 10</option>
                                     </optgroup>
                                 </select>
                             </div>
+                            {/* Si plus de 10 on pose cette question */}
+                            {issuingCountry==="Plus de 10"? (
+                                <>
+                                
+                                    <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="fivePercent"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Combien d’associé qui ont 5% du capital 
+                                        </label>
+                                        <select 
+                                        className="form-control"
+                                        id="fivePercent"
+                                        required
+                                        defaultValue={fivePercent} 
+                                        onChange={(event)=>setFivePercent(event.target.value)}
+                                        >
+                                        <option defaultValue="">Choisissez</option>
+                                            <optgroup className='single-cryptocurrency-box'>
+                                                <option  value="0">0</option>
+                                                <option  value="1">1</option>
+                                                <option  value="2">2</option>
+                                                <option  value="3">3</option>
+                                                <option  value="4">4</option>
+                                                <option  value="5">5</option>
+                                                <option  value="6">6</option>
+                                                <option  value="7">7</option>
+                                                <option  value="8">8</option>
+                                                <option  value="9">9</option>
+                                                <option  value="10">10</option>
+                                            </optgroup>
+                                        </select>
+                                    </div >
+                                </>
+                            ):("")}
                             <label
                                     htmlFor="nativeCountry"
                                     className="text-blackish-blue mb-2 colorRed"
                                 >
-                                    NB: Vous devez obligatoirement compléter les informations qui vont suivre pour chaque bénéficiaire.  
+                                    NB: Vous devez obligatoirement compléter les informations qui vont suivre pour chaque associé.  
                             </label>
 
 
@@ -595,4 +632,4 @@ const handleOptionIncomeTypeC = (event) => {
   );
 };
 
-export default CBeneficiaireEffectifOne;
+export default CStructureControlOne;

@@ -16,10 +16,12 @@ import ProgressBar from '../ProgressBar';
 
 // Pour la signature
 import SignatureCanvas from 'react-signature-canvas'
+// Pour camera photo
+import Webcam from 'react-webcam'
 
 // FIN
 
-const CBeneficiaireEffectifOne = () => {
+const COperationsFinancieresOne = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
@@ -27,16 +29,24 @@ const CBeneficiaireEffectifOne = () => {
     const [messageError, setMessageError] = useState();
 
     // States du formulaire
+    // entrepriseName
     // firstName
     // lastName
     // issuingCountry
     // nativeCountry
+    // countryRegistration
     // dateBirth
     // nationality
     // email
     // functions
     // typeDocument
     // identityDocNumber
+    // mobile
+    // phoneFixe
+    // startDate
+    // NumberRCCM
+    // expirationDate
+    // typeBeneficiary
     {/* POUR PIECE D'IDENTITE */}
     // frontIdentity 
     // backIdentity 
@@ -45,21 +55,48 @@ const CBeneficiaireEffectifOne = () => {
     // frontDomicile
     // backDomicile
     {/* FIN */}
-    const [firstName, setFirstName] = useState();
-    const [lastName, setLastName] = useState();
+    
+    const [entrepriseName, setEntrepriseName] = useState();
+    
     const [issuingCountry, setIssuingCountry] = useState();
     const [nativeCountry, setNativeCountry] = useState();
     const [dateBirth, setDateBirth] = useState();
-    const [nationality, setNationality] = useState();
-    const [functions, setFunctions] = useState();
-    const [fax, setFax] = useState();
+    
+    const [percentControl, setPercentControl] = useState();
     const [email, setEmail] = useState();
-    const [typeDocument, setTypeDocument] = useState();
+    const [typeDocIdentite, setTypeDocIdentite] = useState();
+    const [expirationDate, setExpirationDate] = useState();
     const [identityDocNumber, setIdentityDocNumber] = useState();
+    const [mobile, setMobile] = useState();
+    const [typeBeneficiary, setTypeBeneficiary] = useState();
+    const [countryRegistration, setCountryRegistration] = useState();
+    const [phoneFixe, setPhoneFixe] = useState();
+    const [startDate, setStartDate] = useState();
+    const [numberRCCM, setNumberRCCM] = useState();
+    
     const [frontIdentity, setFrontIdentity ] = useState();
     const [backIdentity, setCackIdentity ] = useState();
     const [frontDomicile, setFrontDomicile] = useState();
     const [backDomicile, setBackDomicile] = useState();
+
+
+
+
+
+    // familyCompany
+    // functions
+    // firstName
+    // lastName
+    // nationality
+    const [familyCompany, setFamilyCompany] = useState();
+    const [functions, setFunctions] = useState();
+    const [firstName, setFirstName] = useState();
+    const [lastName, setLastName] = useState();
+    const [nationality, setNationality] = useState();
+
+
+
+
 
 
     // Pour la signature
@@ -71,6 +108,60 @@ const CBeneficiaireEffectifOne = () => {
         const data = signatureRef.current.getTrimmedCanvas().toDataURL('image/png')
         setSignatureData(data)
     }
+
+    // STATES POUR PRENDRE PHOTO WEBCAMP (IDENTITE)
+    const [statutDocIdentite, setStatutDocIdentite] = React.useState();
+    // const [importerIdentite, setImporterIdentite] = React.useState();
+    const [statutRecto, setStatutRecto] = React.useState("0");
+    const [statutVerso, setStatutVerso] = React.useState("0");
+    const webcamRefRecto = useRef(null)
+    const webcamRefVerso = useRef(null)
+    const [imageRecto, setImageRecto] = useState(null)
+    const [imageVerso, setImageVerso] = useState(null)
+    // FIN
+
+    // LES FONCTIONS POUR PRENDRE PHOTO (IDENTITE)
+    // Fonction pour prendre photo du Recto
+    const captureRecto = () => {
+        const image = webcamRefRecto.current.getScreenshot()
+        setImageRecto(image)
+    }
+    // Fin
+
+    // Fonction pour prendre photo du verso
+    const captureVerso = () => {
+        const image = webcamRefVerso.current.getScreenshot()
+        setImageVerso(image)
+    }
+    // Fin
+    // FIN
+
+
+    // STATES POUR PRENDRE PHOTO WEBCAMP (IDENTITE)
+    const [statutDocDomicile, setStatutDocDomicile] = React.useState();
+    const [statutRectoDomicile, setStatutRectoDomicile] = React.useState("0");
+    const [statutVersoDomicile, setStatutVersoDomicile] = React.useState("0");
+    const webcamRefRectoDomicile = useRef(null)
+    const webcamRefVersoDomicile = useRef(null)
+    const [imageRectoDomicile, setImageRectoDomicile] = useState(null)
+    const [imageVersoDomicile, setImageVersoDomicile] = useState(null)
+    // FIN
+
+    // LES FONCTIONS POUR PRENDRE PHOTO (DOMICILE)
+    // Fonction pour prendre photo du Recto
+    const captureRectoDomicile = () => {
+        const image = webcamRefRectoDomicile.current.getScreenshot()
+        setImageRectoDomicile(image)
+    }
+    // Fin
+
+    // Fonction pour prendre photo du verso
+    const captureVersoDomicile = () => {
+        const image = webcamRefVersoDomicile.current.getScreenshot()
+        setImageVersoDomicile(image)
+    }
+    // Fin
+    // FIN
 
     
 
@@ -501,7 +592,7 @@ const handleOptionIncomeTypeC = (event) => {
         <div className='mt-15' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                <br/><br/><h1 className='text-center '>Bénéficiaire(s) effectif(s) </h1>
+                <br/><br/><h1 className='text-center '>Description des opérations financières </h1>
                 </div>
             </div>
 
@@ -523,60 +614,122 @@ const handleOptionIncomeTypeC = (event) => {
             {/* Les cards */}
             <div className='row'>
                 <div className='col-lg-3 col-md-12'></div>
-
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
                         <form className=''>
-                            
                             <div className="form-group mb-6 mt-3">
-                            <label
-                                    htmlFor="issuingCountry"
+                                <label
+                                    htmlFor="familyCompany"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    L’expression « Bénéficiaire effectif »1 (ou « Titulaire réel ») désigne la ou les personnes physiques qui, en dernier ressort, possèdent ou contrôlent, directement ou indirectement, un pourcentage supérieur à 25 % du capital de la société ou des droits de vote ou qui, à travers d’autres moyens, exercent le contrôle direct ou indirect de la gestion de la personne morale. Faute de titulaire réel, identifier le/s administrateur/s de la société (en cas d’administrateur personne morale identifier le représentant personne physique).
+                                    1.	Opérations liées aux ventes et aux clients :
                                 </label>
 
                                 <label
-                                    htmlFor="issuingCountry"
-                                    className="text-blackish-blue mb-2"
+                                    htmlFor="familyCompany"
+                                    className="text-blackish-blue mb-2 mx-5"
                                 >
-                                    Combien de bénéficiaire effectif ?
+                                    •	Réception de paiements des clients pour les ventes de biens ou services.
                                 </label>
                                 <select 
                                 className="form-control"
-                                id="issuingCountry"
+                                id="familyCompany"
                                 required
-                                defaultValue={issuingCountry} 
-                                onChange={(event)=>setIssuingCountry(event.target.value)}
+                                defaultValue={familyCompany} 
+                                onChange={(event)=>setFamilyCompany(event.target.value)}
                                 >
                                 <option defaultValue="">Choisissez</option>
                                     <optgroup className='single-cryptocurrency-box'>
-                                        <option  value="1">1</option>
-                                        <option  value="2">2</option>
-                                        <option  value="3">3</option>
-                                        <option  value="4">4</option>
-                                        <option  value="5">5</option>
-                                        <option  value="6">6</option>
-                                        <option  value="7">7</option>
-                                        <option  value="8">8</option>
-                                        <option  value="9">9</option>
-                                        <option  value="10">10</option>
+                                        <option  value="Oui: réception de paiements des clients pour les ventes de biens ou services">Oui</option>
+                                        <option  value="Non: réception de paiements des clients pour les ventes de biens ou services">Non</option>
+                                        <option  value="Peut être : Réception de paiements des clients pour les ventes de biens ou services">Peut être</option>
                                     </optgroup>
                                 </select>
                             </div>
-                            <label
-                                    htmlFor="nativeCountry"
-                                    className="text-blackish-blue mb-2 colorRed"
-                                >
-                                    NB: Vous devez obligatoirement compléter les informations qui vont suivre pour chaque bénéficiaire.  
-                            </label>
+
+
+                            {familyCompany==="Oui" ? (
+                                        <>
+                                            <div className="form-group mb-6 mt-3">
+                                                <label
+                                                    htmlFor="firstName"
+                                                    className="text-blackish-blue mb-2"
+                                                >
+                                                    Nom 
+                                                </label>
+                                                <div className='form-group'>
+                                                    <input
+                                                        type='text'
+                                                        id='firstName'
+                                                        className='form-control'
+                                                        placeholder="Nom de l'associé"
+                                                        defaultValue={firstName} 
+                                                        onChange={(event)=>setFirstName(event.target.value)}
+                                                    />
+                                                </div>
+                                            </div >
+                                            <div className="form-group mb-6 mt-3">
+                                                <label
+                                                    htmlFor="lastName"
+                                                    className="text-blackish-blue mb-2"
+                                                >
+                                                    Prénoms 
+                                                </label>
+                                                <div className='form-group'>
+                                                    <input
+                                                        type='text'
+                                                        id='lastName'
+                                                        className='form-control'
+                                                        placeholder="Prénoms de l'associé"
+                                                        defaultValue={lastName} 
+                                                        onChange={(event)=>setLastName(event.target.value)}
+                                                    />
+                                                </div>
+                                            </div >
+                                            <div className="form-group mb-6 mt-3">
+                                                <label
+                                                    htmlFor="functions"
+                                                    className="text-blackish-blue mb-2"
+                                                >
+                                                    Fonctions
+                                                </label>
+                                                <div className='form-group'>
+                                                    <input
+                                                        type='text'
+                                                        id='functions'
+                                                        className='form-control'
+                                                        placeholder="Fonction"
+                                                        defaultValue={functions} 
+                                                        onChange={(event)=>setFunctions(event.target.value)}
+                                                    />
+                                                </div>
+                                            </div >
+                                            <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="nationality"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Nationalité
+                                        </label>
+                                        <select 
+                                        className="form-control"
+                                        id="nationality"
+                                        required
+                                        defaultValue={nationality} 
+                                        onChange={(event)=>setNationality(event.target.value)}
+                                        >
+                                        <option defaultValue="">Choisissez</option>
+                                            <optgroup className='single-cryptocurrency-box'>
+                                                <option  value="CNI">Ivoirienne</option>
+                                                <option  value="Passeport">Malienne</option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
+                                </>
+                            ):('')}
 
 
 
-
-
-
-
-                            {/* <p className="colorRed mb-7 ">
+                             {/* <p className="colorRed mb-7 ">
                                 NB : Aucun retour n'est permis sur cette page donc, répondez correctement aux questions
                             </p> */}
 
@@ -585,7 +738,6 @@ const handleOptionIncomeTypeC = (event) => {
                             ) : (
                                 <button className="btn btn-primary " type='button' onClick={addQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
                             )}
-                            {/* <button className="btn btn-primary "  disabled={isLoggingIn}>Suivant</button> */}
                         </form>       
                     </div>
                 <div className='col-lg-3 col-md-12'></div>
@@ -595,4 +747,4 @@ const handleOptionIncomeTypeC = (event) => {
   );
 };
 
-export default CBeneficiaireEffectifOne;
+export default COperationsFinancieresOne;

@@ -560,7 +560,7 @@ const handleOptionIncomeTypeC = (event) => {
                                     htmlFor="nativeCountry"
                                     className="text-blackish-blue mb-2 colorRed"
                                 >
-                                    NB: Nous devrez obligatoirement compléter les informations qui vont suivre pour chaque représentant légal.  
+                                    NB: Vous devez obligatoirement compléter les informations qui vont suivre pour chaque représentant légal.  
                             </label>
 
 

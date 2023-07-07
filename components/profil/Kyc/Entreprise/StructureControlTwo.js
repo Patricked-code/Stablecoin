@@ -21,7 +21,7 @@ import Webcam from 'react-webcam'
 
 // FIN
 
-const CIdentiteRepresentantTwo = () => {
+const CStructureControlTwo = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
@@ -29,10 +29,12 @@ const CIdentiteRepresentantTwo = () => {
     const [messageError, setMessageError] = useState();
 
     // States du formulaire
+    // entrepriseName
     // firstName
     // lastName
     // issuingCountry
     // nativeCountry
+    // countryRegistration
     // dateBirth
     // nationality
     // email
@@ -40,6 +42,11 @@ const CIdentiteRepresentantTwo = () => {
     // typeDocument
     // identityDocNumber
     // mobile
+    // phoneFixe
+    // startDate
+    // NumberRCCM
+    // expirationDate
+    // typeBeneficiary
     {/* POUR PIECE D'IDENTITE */}
     // frontIdentity 
     // backIdentity 
@@ -48,18 +55,25 @@ const CIdentiteRepresentantTwo = () => {
     // frontDomicile
     // backDomicile
     {/* FIN */}
+    
+    const [entrepriseName, setEntrepriseName] = useState();
     const [firstName, setFirstName] = useState();
     const [lastName, setLastName] = useState();
     const [issuingCountry, setIssuingCountry] = useState();
     const [nativeCountry, setNativeCountry] = useState();
     const [dateBirth, setDateBirth] = useState();
     const [nationality, setNationality] = useState();
-    const [functions, setFunctions] = useState();
+    const [percentControl, setPercentControl] = useState();
     const [email, setEmail] = useState();
     const [typeDocIdentite, setTypeDocIdentite] = useState();
-    const [typeDocDomicile, setTypeDocDomicile] = useState();
+    const [expirationDate, setExpirationDate] = useState();
     const [identityDocNumber, setIdentityDocNumber] = useState();
     const [mobile, setMobile] = useState();
+    const [typeBeneficiary, setTypeBeneficiary] = useState();
+    const [countryRegistration, setCountryRegistration] = useState();
+    const [phoneFixe, setPhoneFixe] = useState();
+    const [startDate, setStartDate] = useState();
+    const [numberRCCM, setNumberRCCM] = useState();
     
     const [frontIdentity, setFrontIdentity ] = useState();
     const [backIdentity, setCackIdentity ] = useState();
@@ -560,7 +574,7 @@ const handleOptionIncomeTypeC = (event) => {
         <div className='mt-15' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                <br/><br/><h1 className='text-center '>Identité du / des représentants légaux </h1>
+                <br/><br/><h1 className='text-center '>Structure de propriété ou de contrôle</h1>
                 </div>
             </div>
 
@@ -582,45 +596,72 @@ const handleOptionIncomeTypeC = (event) => {
             {/* Les cards */}
             <div className='row'>
                 <div className='col-lg-3 col-md-12'></div>
-
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
                         <form className=''>
-                        <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="firstName"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                    Nom du représentation légal
-                                </label>
-                                <div className='form-group'>
-                                    <input
-                                        type='text'
-                                        id='firstName'
-                                        className='form-control'
-                                        placeholder='Nom du représentation légal'
-                                        defaultValue={firstName} 
-                                        onChange={(event)=>setFirstName(event.target.value)}
-                                    />
-                                </div>
-                            </div >
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="lastName"
+                                    htmlFor="typeBeneficiary"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Prénoms du représentation légal
+                                    Type d'associé
                                 </label>
-                                <div className='form-group'>
-                                    <input
-                                        type='text'
-                                        id='lastName'
-                                        className='form-control'
-                                        placeholder='Prénoms du représentation légal'
-                                        defaultValue={lastName} 
-                                        onChange={(event)=>setLastName(event.target.value)}
-                                    />
-                                </div>
-                            </div >
+                                <select 
+                                className="form-control"
+                                id="typeBeneficiary"
+                                required
+                                defaultValue={typeBeneficiary} 
+                                onChange={(event)=>setTypeBeneficiary(event.target.value)}
+                                >
+                                <option defaultValue="">Choisissez</option>
+                                    <optgroup className='single-cryptocurrency-box'>
+                                        <option  value="Personne physique">Personne Physique</option>
+                                        <option  value="Personne morale">Personne Morale</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+
+                            {typeBeneficiary ? (
+                                <>
+
+                                    {typeBeneficiary==="Personne physique" ? (
+                                        <>
+                                            <div className="form-group mb-6 mt-3">
+                                                <label
+                                                    htmlFor="firstName"
+                                                    className="text-blackish-blue mb-2"
+                                                >
+                                                    Nom de l'associé
+                                                </label>
+                                                <div className='form-group'>
+                                                    <input
+                                                        type='text'
+                                                        id='firstName'
+                                                        className='form-control'
+                                                        placeholder="Nom de l'associé"
+                                                        defaultValue={firstName} 
+                                                        onChange={(event)=>setFirstName(event.target.value)}
+                                                    />
+                                                </div>
+                                            </div >
+                                            <div className="form-group mb-6 mt-3">
+                                                <label
+                                                    htmlFor="lastName"
+                                                    className="text-blackish-blue mb-2"
+                                                >
+                                                    Prénoms de l'associé
+                                                </label>
+                                                <div className='form-group'>
+                                                    <input
+                                                        type='text'
+                                                        id='lastName'
+                                                        className='form-control'
+                                                        placeholder="Prénoms de l'associé"
+                                                        defaultValue={lastName} 
+                                                        onChange={(event)=>setLastName(event.target.value)}
+                                                    />
+                                                </div>
+                                            </div >
+                                       
 
                             <div className="form-group mb-6 mt-3">
                                 <label
@@ -663,6 +704,24 @@ const handleOptionIncomeTypeC = (event) => {
                             </div >
                             <div className="form-group mb-6 mt-3">
                                 <label
+                                    htmlFor="expirationDate"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Date d’expiration
+                                </label>
+                                <div className='form-group'>
+                                    <input
+                                        type='date'
+                                        id='expirationDate'
+                                        className='form-control'
+                                        placeholder='Date d’expiration'
+                                        defaultValue={expirationDate} 
+                                        onChange={(event)=>setExpirationDate(event.target.value)}
+                                    />
+                                </div>
+                            </div >
+                            <div className="form-group mb-6 mt-3">
+                                <label
                                     htmlFor="issuingCountry"
                                     className="text-blackish-blue mb-2"
                                 >
@@ -689,7 +748,7 @@ const handleOptionIncomeTypeC = (event) => {
                                     htmlFor="Q1"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Comment voulez-vous ajouter vos documents de justificatif d'identité ?
+                                    Comment voulez-vous importer vos fichiers ?
                                 <br/>
                                 </label>
                                
@@ -710,7 +769,7 @@ const handleOptionIncomeTypeC = (event) => {
                                         onChange={()=>setStatutDocIdentite("0")}
                                         />
                                     <p className=" mx-2 mb-0 text-center">
-                                        Importer les fichiers de justificatif d'identité en pdf ou en image
+                                        Importer les fichiers pdf ou image
                                     </p>
                                     </label>
                                 </div>
@@ -729,7 +788,7 @@ const handleOptionIncomeTypeC = (event) => {
                                         onChange={()=>setStatutDocIdentite("1")}
                                         />
                                     <p className=" mx-2 mb-0 text-center">
-                                        Prendre les fichiers de justificatif d'identité en photo
+                                        Prendre les fichiers en photo
                                     </p>
                                     </label>
                                 </div>
@@ -746,7 +805,7 @@ const handleOptionIncomeTypeC = (event) => {
                                         <label
                                             htmlFor="frontIdentity"
                                         >
-                                            Recto du document de justificatif d'identité
+                                            Recto du document d'identité
                                         </label>
                                         <input
                                             className="form-control border mt-3 bg-white"
@@ -761,7 +820,7 @@ const handleOptionIncomeTypeC = (event) => {
                                         <label
                                             htmlFor="backIdentity"
                                         >
-                                            Verso du document de justificatif d'identité
+                                            Verso du document d'identité
                                         </label>
                                         <input
                                             className="form-control  border mt-3"
@@ -891,33 +950,192 @@ const handleOptionIncomeTypeC = (event) => {
                             ) : ("")}
                             {/* ****************FIN PRENDRE PHOTO**************** */}
 
+                                    <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="nationality"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Nationalité
+                                        </label>
+                                        <select 
+                                        className="form-control"
+                                        id="nationality"
+                                        required
+                                        defaultValue={nationality} 
+                                        onChange={(event)=>setNationality(event.target.value)}
+                                        >
+                                        <option defaultValue="">Choisissez</option>
+                                            <optgroup className='single-cryptocurrency-box'>
+                                                <option  value="CNI">Ivoirienne</option>
+                                                <option  value="Passeport">Malienne</option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
+                                    
+                                    <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="dateBirth"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Date de naissance
+                                        </label>
+                                        <div className='form-group'>
+                                            <input
+                                                type='date'
+                                                id='dateBirth'
+                                                className='form-control'
+                                                placeholder='Date de naissance'
+                                                defaultValue={dateBirth} 
+                                                onChange={(event)=>setDateBirth(event.target.value)}
+                                            />
+                                        </div>
+                                    </div >
 
+                                    <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="nativeCountry"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Pays de résidence  
+                                        </label>
+                                        <select 
+                                        className="form-control"
+                                        id="nativeCountry"
+                                        required
+                                        defaultValue={nativeCountry} 
+                                        onChange={(event)=>setNativeCountry(event.target.value)}
+                                        >
+                                        <option defaultValue="">Choisissez</option>
+                                            <optgroup className='single-cryptocurrency-box'>
+                                                <option  value="CNI">Côte d'Ivoire</option>
+                                                <option  value="Passeport">Mali</option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
 
-
-
-
-                            
-                            <div className="form-group mb-6 mt-3">
+                                    <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="nationality"
+                                    htmlFor="mobile"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Nationalité
+                                    Téléphone mobile 
                                 </label>
-                                <select 
-                                className="form-control"
-                                id="nationality"
-                                required
-                                defaultValue={nationality} 
-                                onChange={(event)=>setNationality(event.target.value)}
-                                >
-                                <option defaultValue="">Choisissez</option>
-                                    <optgroup className='single-cryptocurrency-box'>
-                                        <option  value="CNI">Ivoirienne</option>
-                                        <option  value="Passeport">Malienne</option>
-                                    </optgroup>
-                                </select>
+                                <div className='form-group'>
+                                    <input
+                                        type='text'
+                                        id='mobile'
+                                        className='form-control'
+                                        placeholder='Téléphone mobile'
+                                        defaultValue={mobile} 
+                                        onChange={(event)=>setMobile(event.target.value)}
+                                    />
+                                </div>
                             </div>
+                            
+                                </>
+                            ):('')}
+
+                            {typeBeneficiary==="Personne morale" ? (
+                                <>
+                                    <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="entrepriseName"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Raison sociale
+                                        </label>
+                                        <div className='form-group'>
+                                            <input
+                                                type='text'
+                                                id='entrepriseName'
+                                                className='form-control'
+                                                placeholder='Raison sociale'
+                                                defaultValue={entrepriseName} 
+                                                onChange={(event)=>setEntrepriseName(event.target.value)}
+                                            />
+                                        </div>
+                                    </div >
+
+                                    <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="numberRCCM"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Numéro RCCM
+                                        </label>
+                                        <div className='form-group'>
+                                            <input
+                                                type='text'
+                                                id='numberRCCM'
+                                                className='form-control'
+                                                placeholder='Numéro RCCM'
+                                                defaultValue={numberRCCM} 
+                                                onChange={(event)=>setNumberRCCM(event.target.value)}
+                                            />
+                                        </div>
+                                    </div >
+    
+                                    <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="nativeCountry"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Pays d'immatriculation 
+                                        </label>
+                                        <select 
+                                        className="form-control"
+                                        id="countryRegistration"
+                                        required
+                                        defaultValue={countryRegistration} 
+                                        onChange={(event)=>setCountryRegistration(event.target.value)}
+                                        >
+                                        <option defaultValue="">Choisissez</option>
+                                            <optgroup className='single-cryptocurrency-box'>
+                                                <option  value="CNI">Côte d'Ivoire</option>
+                                                <option  value="Passeport">Mali</option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
+                                    <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="phoneFixe"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Téléphone fixe
+                                </label>
+                                <div className='form-group'>
+                                    <input
+                                        type='text'
+                                        id='phoneFixe'
+                                        className='form-control'
+                                        placeholder='Téléphone fixe'
+                                        defaultValue={phoneFixe} 
+                                        onChange={(event)=>setPhoneFixe(event.target.value)}
+                                    />
+                                </div>
+                                    </div>
+                                    <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="startDate"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Date de création
+                                </label>
+                                <div className='form-group'>
+                                    <input
+                                        type='date'
+                                        id='startDate'
+                                        className='form-control'
+                                        placeholder='Date de création'
+                                        defaultValue={startDate} 
+                                        onChange={(event)=>setStartDate(event.target.value)}
+                                    />
+                                </div>
+                                    </div>
+                                    </>
+                            ):('')}
+
+                            
                             
                             <div className="form-group mb-6 mt-3">
                                 <label
@@ -939,349 +1157,27 @@ const handleOptionIncomeTypeC = (event) => {
                             </div >
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="dateBirth"
+                                    htmlFor="percentControl"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Date de naissance
-                                </label>
-                                <div className='form-group'>
-                                    <input
-                                        type='date'
-                                        id='dateBirth'
-                                        className='form-control'
-                                        placeholder='Date de naissance'
-                                        defaultValue={dateBirth} 
-                                        onChange={(event)=>setDateBirth(event.target.value)}
-                                    />
-                                </div>
-                            </div >
-
-                            <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="functions"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                    Fonction
-                                </label>
-                                <select 
-                                className="form-control"
-                                id="functions"
-                                required
-                                defaultValue={functions} 
-                                onChange={(event)=>setFunctions(event.target.value)}
-                                >
-                                <option defaultValue="">Choisissez</option>
-                                    <optgroup className='single-cryptocurrency-box'>
-                                        <option  value="Administrateur">Administrateur</option>
-                                        <option  value="Mandataire">Mandataire</option>
-                                        <option  value="Autres">Autres</option>
-                                    </optgroup>
-                                </select>
-                            </div>
-
-                            <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="nativeCountry"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                    Pays de Résidence  
-                                </label>
-                                <select 
-                                className="form-control"
-                                id="nativeCountry"
-                                required
-                                defaultValue={nativeCountry} 
-                                onChange={(event)=>setNativeCountry(event.target.value)}
-                                >
-                                <option defaultValue="">Choisissez</option>
-                                    <optgroup className='single-cryptocurrency-box'>
-                                        <option  value="CNI">Côte d'Ivoire</option>
-                                        <option  value="Passeport">Mali</option>
-                                    </optgroup>
-                                </select>
-                            </div>
-                            <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="mobile"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                    Téléphone mobile 
+                                    % Participation/ Contrôle
                                 </label>
                                 <div className='form-group'>
                                     <input
                                         type='text'
-                                        id='mobile'
+                                        id='percentControl'
                                         className='form-control'
-                                        placeholder='Téléphone mobile'
-                                        defaultValue={mobile} 
-                                        onChange={(event)=>setMobile(event.target.value)}
+                                        placeholder='% Participation/ Contrôle'
+                                        defaultValue={percentControl} 
+                                        onChange={(event)=>setPercentControl(event.target.value)}
                                     />
                                 </div>
-                            </div>
-
-                            <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="typeDocDomicile"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                    Type de document de domicile 
-                                </label>
-                                <select 
-                                className="form-control"
-                                id="typeDocDomicile"
-                                required
-                                defaultValue={typeDocDomicile} 
-                                onChange={(event)=>setTypeDocDomicile(event.target.value)}
-                                >
-                                <option defaultValue="">Choisissez</option>
-                                    <optgroup className='single-cryptocurrency-box'>
-                                        <option  value="Facture de l'électricité">Facture de l'électricité</option>
-                                        <option  value="Attestation de résidence">Attestation de résidence</option>
-                                        <option  value="Relevé de compte bancaire">Relevé de compte bancaire</option>
-                                    </optgroup>
-                                </select>
-                            </div>
+                            </div >
                             
-                             {/* PARTIE DE LA MANIERE A ENVOYER LES FICHIERS */}
-                             <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="Q1"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                    Comment voulez-vous importer vos documents de justificatif de domicile ?
-                                <br/>
-                                </label>
-                               
-                                <div className='row'>
-                                {/* Imoporter*/}
-                                <div className="form-group col-lg-6  mt-3 ">
-                                    <label
-                                        htmlFor="importer-check"
-                                        className="gr-check-input mb-7 d-flex"
-                                    >
-                                        
-                                        <input 
-                                        type="radio" 
-                                        name="importer"
-                                        value='0'
-                                        id='importer-check' 
-                                        checked={statutDocDomicile==="0"}
-                                        onChange={()=>setStatutDocDomicile("0")}
-                                        />
-                                    <p className=" mx-2 mb-0 text-center">
-                                        Importer les fichiers de justificatif de domicile en pdf ou en image
-                                    </p>
-                                    </label>
-                                </div>
-                                {/* Photo */}
-                                <div className="form-group col-lg-6  mt-3 ">
-                                    <label
-                                        htmlFor="photo-check"
-                                        className="gr-check-input mb-7 d-flex"
-                                    >
-                                        <input 
-                                        type="radio" 
-                                        name="photo"
-                                        value="1"
-                                        id='photo-check' 
-                                        checked={statutDocDomicile==="1"}
-                                        onChange={()=>setStatutDocDomicile("1")}
-                                        />
-                                    <p className=" mx-2 mb-0 text-center">
-                                        Prendre les fichiers de justificatif de domicile en photo
-                                    </p>
-                                    </label>
-                                </div>
-                                </div>
-                            </div>
-                            {/* FIN */}
 
+                            
 
-                            {/* SI L'UTILISATEUR CHOISIT D'IMPORTER LES DOCUMENTS */}
-                            {statutDocDomicile==="0" ? (
-                                <>
-                                    <div className="form-group my-6">
-                                        <label
-                                            htmlFor="frontDomicile"
-                                        >
-                                            Recto de justificatif de domicile
-                                        </label>
-                                        <input
-                                            className="form-control border mt-3 bg-white"
-                                            type="file" 
-                                            name="myImage"
-                                            id='frontDomicile'
-                                            accept="application/pdf, image/*"
-                                            // onChange={uploadToClientRecto}
-                                        />
-                                    </div>
-                                    <div className="form-group mb-6">
-                                        <label
-                                            htmlFor="backDomicile"
-                                        >
-                                            Verso de justificatif de domicile
-                                        </label>
-                                        <input
-                                            className="form-control  border mt-3"
-                                            type="file" 
-                                            name="myImage"
-                                            id='backDomicile'
-                                            accept="application/pdf, image/*"
-                                            // onChange={uploadToClientVerso}
-                                        />
-                                    </div>
-                                </>
-                            ) : ("")}
-                            {/* ****************FIN IMPORTATION**************** */}
-
-
-
-                            {/* SI L'UTILISATEUR CHOISIT DE PRENDRE LES DOCUMENTS DE DOMICILE EN PHOTO */}
-                            {statutDocDomicile==="1" ? (
-                                <>
-                                    <div className="form-group col-lg-6 col-md-6 ">
-                                        {statutRectoDomicile==="0" ? (
-                                            <button className="btn btn-primary "
-                                                type='button'  
-                                                disabled={isLoggingIn}
-                                                onClick={()=>setStatutRectoDomicile("1")}
-                                            >
-                                                Déclencher la caméra pour prendre la photo du Recto 
-                                            </button>
-                                        ) : ("")}
-
-
-                                        {/* Cette partie s'affciche lorsqu'on clique sur le bouton ci-dessus */}
-                                        {/* Recto */}
-                                        {statutRectoDomicile==="1" ? (
-                                        <>
-                                        <label
-                                            htmlFor="picture"
-                                        >
-                                            Recto de votre justificatif d'identité
-                                        </label>
-                                            {/* Si on a pas encore pris la photo on affiche la camera */}
-                                        {!imageRectoDomicile ? (
-                                        <Webcam
-                                            audio={false}
-                                            height={350}
-                                            ref={webcamRefRectoDomicile}
-                                            screenshotFormat="image/jpeg"
-                                            width={350}
-                                        />
-                                        ) : ("")}
-                                        {/* Fin */}
-
-                                        {/* Si on a pas encore pris la photo on affiche ce bouton */}
-                                        {!imageRectoDomicile ? (
-                                            <button type='button' onClick={captureRectoDomicile}>Sauvegarder</button>
-                                        ) : ("")}
-                                        {/* Fin */}
-                                                    
-
-                                        {/* Si on a pris la photo et qu'on veut reprende on affiche on clique sur ce bouton */}
-                                        {imageRectoDomicile ? (
-                                            <button type='button' onClick={()=>setImageRectoDomicile("")}>Reprendre la photo</button>
-                                        ) : ("")}
-                                        {/* Fin */}
-
-                                        {/* Pour afficher l'image qui a été prise        */}
-                                        {imageRectoDomicile && <img src={imageRectoDomicile} alt="Selfie" />}
-                                        {/* Fin*/}
-                                        </>
-                                        ) : ("")}
-                                        {/* Fin Recto */}
-
-                                        {/* Verso */}
-                                        {imageRectoDomicile ? (
-                                            statutVersoDomicile ==="0"? (
-
-                                                <button className="btn btn-primary "
-                                                    type='button'  
-                                                    disabled={isLoggingIn}
-                                                    onClick={()=>setStatutVersoDomicile("1")}
-                                                >
-                                                    Déclencher la caméra pour prendre la photo du verso 
-                                                </button>
-                                            ) : ("")
-                                        ) : ("")}
-
-                                        {statutVersoDomicile ==="1"? (
-                                            <>
-                                                <br/><br/>
-                                                <label
-                                                    htmlFor="picture"
-                                                >
-                                                    Verso de votre justificatif d'identité
-                                                </label>
-                                                {/* Si on a pas encore pris la photo on affiche la camera */}
-                                                {!imageVersoDomicile ? (
-                                                <Webcam
-                                                    audio={false}
-                                                    height={350}
-                                                                ref={webcamRefVersoDomicile}
-                                                    screenshotFormat="image/jpeg"
-                                                    width={350}
-                                                />
-                                                ) : ("")}
-                                                {/* Fin */}
-
-                                                {/* Si on a pas encore pris la photo on affiche ce bouton */}
-                                                {!imageVersoDomicile  ? (
-                                                    <button type='button' onClick={captureVersoDomicile}>Sauvegarder</button>
-                                                ) : ("")}
-                                                {/* Fin */}
-                                                    
-
-                                                {/* Si on a pris la photo et qu'on veut reprende on affiche on clique sur ce bouton */}
-                                                {imageVersoDomicile ? (
-                                                    <button type='button' onClick={()=>setImageVersoDomicile("")}>Reprendre la photo</button>
-                                                ) : ("")}
-                                                {/* Fin */}
-
-                                                {/* Pour afficher l'image qui a été prise        */}
-                                                {imageVersoDomicile && <img src={imageVersoDomicile} alt="Selfie" />}
-                                                {/* Fin*/}
-                                            </>
-                                        ) : ("")}
-
-                                    </div>
-                                </>
-                            ) : ("")}
-                            {/* ****************FIN PRENDRE PHOTO**************** */}
-
-
-                            <div className="form-group row mt-3 text-center">
-                            <label
-                                htmlFor="backDomicile mb-3"
-                            >
-                                Signature du représentant légal
-                            </label>
-                            <div className="form-group col-lg-3 col-md-3"></div>
-
-                                <div className="form-group col-lg-6 col-md-6 ">
-                                    {!signatureData? (
-                                    <SignatureCanvas
-                                        className=" card"
-                                        canvasProps={{ width: 250, height: 200, className: 'sigCanvas bg-secondary text-white' }}
-                                        ref={signatureRef}
-                                    />
-                                    ) : ('')}
-                                            
-                                    {signatureData? (
-                                        <button type='button' onClick={()=>setSignatureData("")}>Reprendre la signature</button>
-                                    ) : ('')}
-
-                                    {!signatureData? (
-                                    <button type='button' onClick={save}>Sauvegarder</button>
-                                    ) : ('')}
-                                    
-                                    {signatureData && <img src={signatureData} alt="Signature" className='mt-3' />}
-                                </div>
-                            <div className="form-group col-lg-3 col-md-3"></div>
-
-                            </div>
-                            {/* Fin */}
+                            
                             
                             
                             
@@ -1319,6 +1215,8 @@ const handleOptionIncomeTypeC = (event) => {
                                 <button className="btn btn-primary " type='button' onClick={addQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
                             )}
                             {/* <button className="btn btn-primary "  disabled={isLoggingIn}>Suivant</button> */}
+                            </>
+                            ) : ("")}
                         </form>       
                     </div>
                 <div className='col-lg-3 col-md-12'></div>
@@ -1328,4 +1226,4 @@ const handleOptionIncomeTypeC = (event) => {
   );
 };
 
-export default CIdentiteRepresentantTwo;
+export default CStructureControlTwo;
