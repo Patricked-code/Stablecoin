@@ -23,71 +23,210 @@ const CQuestionnaireRevenuTwo = () => {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
 
-                            // incomeMonthly
-                            // annualIncome
-                            // natureAccount
-                            // naturerelationship
-                            // linkAnotherClient
-                            // otherBankName
-                            // otherBankCountry
-                            // othertypeAccount
-                            // mobileCountry
-                            // operator
-
-    // LES STATES DU FORMULAIRE DE REVENU
-    // const [incomeMonthly, setIncomeMonthly] = useState();
-    // const [annualIncome, setAnnualIncome] = useState();
-    const [natureAccount, setNatureAccount] = useState();
-    const [naturerelationship, setNaturerelationship] = useState();
-    const [linkAnotherClient, setLinkAnotherClient] = useState();
-    const [otherBankName, setOtherBankName] = useState();
-    const [otherBankCountry, setOtherBankCountry] = useState();
-    const [otherTypeAccount, setOtherTypeAccount] = useState();
-    // const [mobileCountry, setMobileCountry] = useState();
-    // const [operator, setOperator] = useState();
 
     // AVEC UNE MISE A JOUR
-
-                            // incomeMonthly
-                            // annualIncome
-                            // otherBankAccount
-                            // savingsAccount
-                            // currentAccount
-                            // bankReferencesSavings
-                            // otherBankNameSavings
-                            // otherBankCountrySavings
-                            // bankReferencesCurrent
-                            // otherBankNameCurrent
-                            // otherBankCountryCurrent
-                            // mobileAccount
-                            // mobileCountry
-                            // operator
+    // incomeMonthly
+    // annualIncome
+    // otherBankAccount
+    // savingsAccount
+    // currentAccount
+    // titleAccount
+    // bankReferencesSavings
+    // otherBankNameSavings
+    // otherBankCountrySavings
+    // bankReferencesCurrent
+    // otherBankNameCurrent
+    // otherBankCountryCurrent
+    // bankReferencesTitle
+    // otherBankNameTitle
+    // otherBankCountryTitle
+    // mobileAccount
+    // mobileCountry
+    // operator
+    // salaries
+    // rents
+    // businessReceipts
+    // allowances
     const [salaries, setSalaries] = useState('');
   const [rents, setRents] = useState('');
-  const [leases, setLeases] = useState('');
   const [businessReceipts, setBusinessReceipts] = useState('');
   const [allowances, setAllowances] = useState('');
 //   ***************************************
 const [incomeMonthly, setIncomeMonthly] = useState('');
 const [annualIncome, setAnnualIncome] = useState('');
 const [otherBankAccount, setOtherBankAccount] = useState('');
-const [savingsAccount, setSavingsAccount] = useState('');
-const [currentAccount, setCurrentAccount] = useState('');
+const [savingsAccount, setSavingsAccount] = useState([]);
+const [currentAccount, setCurrentAccount] = useState([]);
+const [titleAccount, setTitleAccount] = useState([]);
 const [bankReferencesSavings, setBankReferencesSavings] = useState('');
 const [otherBankNameSavings, setOtherBankNameSavings] = useState('');
 const [otherBankCountrySavings, setOtherBankCountrySavings] = useState('');
 const [bankReferencesCurrent, setBankReferencesCurrent] = useState('');
 const [otherBankNameCurrent, setOtherBankNameCurrent] = useState('');
 const [otherBankCountryCurrent, setOtherBankCountryCurrent] = useState('');
+
+const [bankReferencesTitle, setBankReferencesTitle] = useState('');
+const [otherBankNameTitle, setOtherBankNameTitle] = useState('');
+const [otherBankCountryTitle, setOtherBankCountryTitle] = useState('');
+
 const [mobileAccount, setMobileAccount] = useState('');
 const [mobileCountry, setMobileCountry] = useState('');
 const [operator, setOperator] = useState('');
+const [sourceIncome, setSourceIncome] = useState('');
+
+const [allCountry, setAllCountry] = useState('');
+// Operateurs
+const [allOperators, setAllOperators] = useState([])
+// Banques
+const [allBank, setAllBank] = useState([])
+const [dataBankOfCountry, setDataBankOfCountry] = useState('');
 
 
+// Fin AVEC UNE MISE A JOUR
 
+
+ // Fonction d'envoie des informations du questionnaire AML 2
+ const updateQuestionnaireAml2= async (event) => {
+    setIsLoggingIn(true);
+    event.preventDefault();
+
+    try {
+        const dataTable = {
+            savingsAccount:Object.assign({},savingsAccount),
+            currentAccount:Object.assign({},currentAccount),
+            titleAccount:Object.assign({},titleAccount),
+            
+        }
+
+        const dataa = {
+            incomeMonthly:incomeMonthly,
+            annualIncome:annualIncome,
+            otherBankAccount:otherBankAccount,
+            savingsAccount:dataTable?.savingsAccount[0],
+            currentAccount:dataTable?.currentAccount[0],
+            titleAccount:dataTable?.titleAccount[0],
+            bankReferencesSavings:bankReferencesSavings,
+            otherBankNameSavings:otherBankNameSavings,
+            otherBankCountrySavings:otherBankCountrySavings,
+            bankReferencesCurrent:bankReferencesCurrent,
+            otherBankNameCurrent:otherBankNameCurrent,
+            otherBankCountryCurrent:otherBankCountryCurrent,
+            bankReferencesTitle:bankReferencesTitle,
+            otherBankNameTitle:otherBankNameTitle,
+            otherBankCountryTitle:otherBankCountryTitle,
+            mobileAccount:mobileAccount,
+            mobileCountry:mobileCountry,
+            operator:operator,
+            salaries:salaries,
+            rents:rents,
+            businessReceipts:businessReceipts,
+            allowances:allowances
+            
+        }
+        // Condition pour forcer l'utilisateur à choisir au moins une reponse
+        // if () {
+            
+            
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+            const result = await fetch(`${API_URL}/api/kyc/particular/update-kyc-questionnaire-two`, {
+            method:"PUT",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+            })
+            const data = await result.json();
+        
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message) {
+            setMessageError(data.message)
+            setIsLoggingIn(false);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p> ${messageError} </p>` ,
+                showConfirmButton: false,
+                timer: 10000
+            })
+            }else{
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                    showConfirmButton: false,
+                    timer: 5000
+                }),
+                setTimeout(() => {
+                    if (currentKycStatut==="1") {
+                        Router.push("/profil/kyc/particulier/resultat-kyc"); 
+    
+                    }else{
+                        Router.push("/profil/kyc/particulier/questionnaires-fatca"); 
+                    }
+                }, 5000)
+            }
+            // Fin condition 
+        // }else{
+        //     setIsLoggingIn(false);
+        //     Swal.fire({
+        //         position: 'center',
+        //         icon: 'error',
+        //         html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
+        //         showConfirmButton: false,
+        //         timer: 10000
+        //     })
+        // }
+        
+        } catch {
+        setIsLoggingIn(false);
+        }
+    
+};
+// Fin                           
+          
+    // RECUPERER TOUS LES OPERATEURS
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+        
+            const getAllOperators = async () => {
+            const resOperator = await fetch(`${API_URL}/api/operator/find-all-Operators`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((resOperator) => resOperator.json())
+                .then((data) => {
+                setAllOperators(data)
+                }) 
+            };
+            await getAllOperators();
+    }, []);
+    // FIN
+
+    // RECUPERER TOUTES LES BANQUES 
+    useEffect(async() => {
+            
+        const getAllBank = async () => {
+        const resBank = await fetch(`${API_URL}/api/bank/find-all`, {
+            headers: {
+            'Content-Type': 'application/json',
+            },
+        })
+            .then((resBank) => resBank.json())
+            .then((data) => {
+            setAllBank(data)
+
+            }) 
+        };
+        await getAllBank();
+    }, []);
+    // FIN
                             
-                            
-                            
 
 
 
@@ -105,13 +244,7 @@ const [operator, setOperator] = useState('');
 
 
 
-    // State de la question 2
-    const [spentA, setSpentA] = useState([]);
-    const [spentB, setSpentB] = useState([]);
-    const [spentC, setSpentC] = useState([]);
-    const [spentD, setSpentD] = useState([]);
-    const [spentE, setSpentE] = useState([]);
-    const [spentF, setSpentF] = useState([]);
+    
 
     // State de la question 4
     const [frequencyA, setFrequencyA] = useState([]);
@@ -171,343 +304,65 @@ const [operator, setOperator] = useState('');
 
 
 
-    // Fonction d'envoie des informations du questionnaire
-    const addQuestionnaire= useCallback(async () => {
-        setIsLoggingIn(true);
-        
-        try {
-            const dataTable = {
-                spentA:Object.assign({},spentA),
-                spentB:Object.assign({},spentB),
-                spentC:Object.assign({},spentC),
-                spentD:Object.assign({},spentD),
-                spentE:Object.assign({},spentE),
-                spentF:Object.assign({},spentF),
-                frequencyA:Object.assign({},frequencyA),
-                frequencyB:Object.assign({},frequencyB),
-                frequencyC:Object.assign({},frequencyC),
-                incomeTypeA:Object.assign({}, incomeTypeA),
-                incomeTypeB:Object.assign({},incomeTypeB),
-                incomeTypeC:Object.assign({},incomeTypeC)
-            }
 
-            const dataa = {
-                spentA:dataTable?.spentA[0],
-                spentB:dataTable?.spentB[0],
-                spentC:dataTable?.spentC[0],
-                spentD:dataTable?.spentD[0],
-                spentE:dataTable?.spentE[0],
-                spentF:dataTable?.spentF[0],
-                frequencyA:dataTable?.frequencyA[0],
-                frequencyB:dataTable?.frequencyB[0],
-                frequencyC:dataTable?.frequencyC[0],
-                incomeTypeA:dataTable?.incomeTypeA[0],
-                incomeTypeB:dataTable?.incomeTypeB[0],
-                incomeTypeC:dataTable?.incomeTypeC[0],
-                
-            }
-            // Condition pour forcer l'utilisateur à choisir au moins une reponse
-            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
-                
-                
-                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
-
-                const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-questionnaires`, {
-                method:"POST",
-                body: JSON.stringify(dataa),
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization:  `Bearer ${token}`
-                }
-                })
-                const data = await result.json();
-            
-                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-                * sinon on affiche le message de succès
-                */
-                if (data.message) {
-                setMessageError(data.message)
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> ${messageError} </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-                }else{
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'success',
-                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
-                        showConfirmButton: false,
-                        timer: 5000
-                    }),
-                    setTimeout(() => {
-                    Router.push("/profil/kyc/particulier/seconde-phase"); 
-                    }, 5000)
-                }
-                // Fin condition 
-            }else{
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-            }
-            
-            } catch {
-            setIsLoggingIn(false);
-            }
-        
-    }, [spentA,spentB,spentC,spentD,spentE,spentF,frequencyA,frequencyB,frequencyC,incomeTypeA,incomeTypeB,incomeTypeC]);
-    // Fin
-
-
-     // Fonction d'envoie des informations du questionnaire
-     const updateQuestionnaire= useCallback(async () => {
-        setIsLoggingIn(true);
-        
-        try {
-            const dataTable = {
-                spentA:Object.assign({},spentA),
-                spentB:Object.assign({},spentB),
-                spentC:Object.assign({},spentC),
-                spentD:Object.assign({},spentD),
-                spentE:Object.assign({},spentE),
-                spentF:Object.assign({},spentF),
-                frequencyA:Object.assign({},frequencyA),
-                frequencyB:Object.assign({},frequencyB),
-                frequencyC:Object.assign({},frequencyC),
-                incomeTypeA:Object.assign({}, incomeTypeA),
-                incomeTypeB:Object.assign({},incomeTypeB),
-                incomeTypeC:Object.assign({},incomeTypeC)
-            }
-
-            const dataa = {
-                spentA:dataTable?.spentA[0],
-                spentB:dataTable?.spentB[0],
-                spentC:dataTable?.spentC[0],
-                spentD:dataTable?.spentD[0],
-                spentE:dataTable?.spentE[0],
-                spentF:dataTable?.spentF[0],
-                frequencyA:dataTable?.frequencyA[0],
-                frequencyB:dataTable?.frequencyB[0],
-                frequencyC:dataTable?.frequencyC[0],
-                incomeTypeA:dataTable?.incomeTypeA[0],
-                incomeTypeB:dataTable?.incomeTypeB[0],
-                incomeTypeC:dataTable?.incomeTypeC[0],
-                
-            }
-            // Condition pour forcer l'utilisateur à choisir au moins une reponse
-            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
-                
-                
-                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
-
-                const result = await fetch(`${API_URL}/api/kyc/particular/update-kyc-questionnaires`, {
-                method:"PUT",
-                body: JSON.stringify(dataa),
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization:  `Bearer ${token}`
-                }
-                })
-                const data = await result.json();
-            
-                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-                * sinon on affiche le message de succès
-                */
-                if (data.message) {
-                setMessageError(data.message)
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> ${messageError} </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-                }else{
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'success',
-                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
-                        showConfirmButton: false,
-                        timer: 5000
-                    }),
-                    setTimeout(() => {
-                        if (currentKycStatut==="1") {
-                            Router.push("/profil/kyc/particulier/resultat-kyc"); 
-        
-                        }else{
-                            Router.push("/profil/kyc/particulier/seconde-phase"); 
-                        }
-                    }, 5000)
-                }
-                // Fin condition 
-            }else{
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-            }
-            
-            } catch {
-            setIsLoggingIn(false);
-            }
-        
-    }, [spentA,spentB,spentC,spentD,spentE,spentF,frequencyA,frequencyB,frequencyC,incomeTypeA,incomeTypeB,incomeTypeC]);
-    // Fin
+    
+    
 
 // Les handles de la 2è question
-  const handleOptionSpentA = (event) => {
+  const handleOptionSavingsAccount = (event) => {
     const value = event.target.value;
     const isChecked = event.target.checked;
 
     if (isChecked) {
-        setSpentA([...spentA, value]);
+        setSavingsAccount([...savingsAccount, value]);
     } else {
-        setSpentA("");
+        setSavingsAccount("");
     }
   };
 
-const handleOptionSpentB = (event) => {
+const handleOptionCurrentAccount = (event) => {
     const value = event.target.value;
     const isChecked = event.target.checked;
 
     if (isChecked) {
-        setSpentB([...spentB, value]);
+        setCurrentAccount([...currentAccount, value]);
     } else {
-        setSpentB("");
+        setCurrentAccount("");
     }
 };
 
-const handleOptionSpentC = (event) => {
+const handleOptionTitleAccount = (event) => {
     const value = event.target.value;
     const isChecked = event.target.checked;
 
     if (isChecked) {
-        setSpentC([...spentC, value]);
+        setTitleAccount([...titleAccount, value]);
     } else {
-        setSpentC("");
+        setTitleAccount("");
     }
 };
 
-const handleOptionSpentD = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
 
-    if (isChecked) {
-        setSpentD([...spentD, value]);
-    } else {
-        setSpentD("");
-    }
-};
+// RECUPERER TOUS LES PAYS
+useEffect(async() => {
+    const getAllCountries = async () => {
+    const resCountry = await fetch(`${API_URL}/api/country/find-all`, {
+        headers: {
+        'Content-Type': 'application/json',
+        },
+    })
+      .then((resCountry) => resCountry.json())
+      .then((allCountry) => {
+      setAllCountry(allCountry)
+      }) 
+    };
+    await getAllCountries();
+  }, []);
+  // FIN
 
-const handleOptionSpentE = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentE([...spentE, value]);
-    } else {
-        setSpentE("");
-    }
-};
-
-const handleOptionSpentF = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentF([...spentF, value]);
-    } else {
-        setSpentF("");
-    }
-};
-
-// FIN
-
-
-// Les handles de la 4è question
-const handleOptionFrequencyA = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setFrequencyA([...frequencyA, value]);
-    } else {
-        setFrequencyA("");
-    }
-};
-
-const handleOptionFrequencyB = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setFrequencyB([...frequencyB, value]);
-    } else {
-        setFrequencyB("");
-    }
-};
-
-const handleOptionFrequencyC = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setFrequencyC([...frequencyC, value]);
-    } else {
-        setFrequencyC("");
-    }
-};
-// FIN
- 
-// Les handles de la 5è question
-const handleOptionIncomeTypeA = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setIncomeTypeA([...incomeTypeA, value]);
-    } else {
-        setIncomeTypeA("");
-    }
-};
-
-const handleOptionIncomeTypeB = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setIncomeTypeB([...incomeTypeB, value]);
-    } else {
-        setIncomeTypeB("");
-    }
-};
-
-const handleOptionIncomeTypeC = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setIncomeTypeC([...incomeTypeC, value]);
-    } else {
-        setIncomeTypeC("");
-    }
-};
 
     // La barre de progression de KYC
-    const steps = ["Questionnaires", "Justificatif d'identité", "Justificatif de domicile", "Photo", "Signature"];
+    const steps = ["AML 1 & 2","FATCA", "Identité 1 & 2", "Selfie", "Domicile", "Photo", "Signature"];
     const activeStep = -1;
     // Fin
 
@@ -518,7 +373,7 @@ const handleOptionIncomeTypeC = (event) => {
         <div className='mt-15' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                <br/><br/><h1 className='text-center '>Questionnaires AML & REVENU 2</h1>
+                <br/><br/><h1 className='text-center '>Questionnaires AML & REVENU</h1>
                 </div>
             </div>
 
@@ -542,20 +397,20 @@ const handleOptionIncomeTypeC = (event) => {
                 <div className='col-lg-3 col-md-12'></div>
 
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
-                        <form className=''>
+                        <form className='' onSubmit={updateQuestionnaireAml2}>
                             {/* Question 1 */}
                             <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="incomeMonthly"
                                     className="text-blackish-blue mb-2"
                                 >
-                                  Quel est l'estimation de vos revenus mensuels ?
+                                  Quel est l'estimation de vos revenus mensuels en CFA?
                                 </label>
                                 <div className='form-group'>
                                     <input
-                                        type='text'
+                                        type='number'
                                         className='form-control'
-                                        placeholder='Montant des revenus mensuels'
+                                        placeholder='Montant des revenus mensuels en CFA'
                                         defaultValue={incomeMonthly} 
                                         onChange={(event)=>setIncomeMonthly(event.target.value)}
                                     />
@@ -568,13 +423,13 @@ const handleOptionIncomeTypeC = (event) => {
                                     htmlFor="Q1"
                                     className="text-blackish-blue mb-2"
                                 >
-                                  Quel est l'estimation de vos revenus annuels
+                                  Quel est l'estimation de vos revenus annuels en CFA?
                                 </label>
                                 <div className='form-group'>
                                     <input
-                                        type='text'
+                                        type='number'
                                         className='form-control'
-                                        placeholder='Montant des revenus annuels'
+                                        placeholder='Montant des revenus annuels en CFA'
                                         defaultValue={annualIncome} 
                                         onChange={(event)=>setAnnualIncome(event.target.value)}
                                     />
@@ -606,6 +461,9 @@ const handleOptionIncomeTypeC = (event) => {
                             </div >
                             
                             {/* **************SI L'UTILISATEUR A UN COMPTE************ */}
+                            {otherBankAccount==="Oui"? (
+                                <>
+                                
                             {/* Question 3 */}
                             <div className="form-group mb-6 mt-3">
                                 <label
@@ -626,7 +484,7 @@ const handleOptionIncomeTypeC = (event) => {
                                             value="Compte épargne"
                                             id='savingsAccount-check' 
                                             checked={savingsAccount.includes("Compte épargne")}
-                                            // onChange={handleOptionSavingsAccount}
+                                            onChange={handleOptionSavingsAccount}
                                         />
                                     <p className=" mx-2 mb-0 text-center">
                                         Compte épargne
@@ -647,10 +505,31 @@ const handleOptionIncomeTypeC = (event) => {
                                             value="Compte courant"
                                             id='currentAccount-check' 
                                             checked={currentAccount.includes("Compte courant")}
-                                            // onChange={handleOptionCurrentAccount}
+                                            onChange={handleOptionCurrentAccount}
                                         />
                                     <p className=" mx-2 mb-0 text-center">
                                         Compte courant
+                                    </p>
+                                    </label>
+                                </div>
+                                
+                                <div className="form-group ">
+                                    <label
+                                        htmlFor="titleAccount-check"
+                                        className="gr-check-input mb-7 d-flex"
+                                    >
+                                    {/* savingsAccount
+                                    currentAccount */}
+                                        <input 
+                                            type="checkbox" 
+                                            name="Compte titre"
+                                            value="Compte titre"
+                                            id='titleAccount-check' 
+                                            checked={titleAccount.includes("Compte titre")}
+                                            onChange={handleOptionTitleAccount}
+                                        />
+                                    <p className=" mx-2 mb-0 text-center">
+                                        Compte titre
                                     </p>
                                     </label>
                                 </div>
@@ -658,53 +537,15 @@ const handleOptionIncomeTypeC = (event) => {
                             {/* Fin */}
 
                             {/* LES CHAMPS A RENSEIGNER QUAND L'UTISATEUR A UN COMPTE BANCAIRE D'EPARGNE*/}
-                            {/* Question 6 */}
+                            {savingsAccount[0]==="Compte épargne"? (
+                                <>
+                            {/* Question 7 */}
                             <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="bankReferencesSavings"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                    Reférences de votre compte bancaires d'épargne
-                                </label>
-                                <div className='form-group'>
-                                    <input
-                                        type='text'
-                                        id='bankReferencesSavings'
-                                        className='form-control'
-                                        placeholder="Reférences de votre compte bancaires d'épargne"
-                                        defaultValue={bankReferencesSavings} 
-                                        onChange={(event)=>setBankReferencesSavings(event.target.value)}
-                                    />
-                                </div>
-                            </div>
-                            
-                            <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="bankNameSavings"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                  Nom de la banque du compte d'épargne
-                                </label>
-                                <div className='form-group '>
-                                    <input
-                                        type='text'
-                                        id='bankNameSavings'
-                                        className='form-control'
-                                        placeholder="Nom de la banque du compte d'épargne"
-                                        defaultValue={otherBankNameSavings} 
-                                        onChange={(event)=>setOtherBankNameSavings(event.target.value)}
-                                    />
-                                </div>
-                            </div >
-                            {/* Fin */}
-
-                             {/* Question 7 */}
-                             <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="otherBankCountrySavings"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Pays de votre compte bancaire d'épargne existant
+                                    Pays de la banque de votre compte d'épargne existant
                                 </label>
                                 <select 
                                 className="form-control"
@@ -713,65 +554,104 @@ const handleOptionIncomeTypeC = (event) => {
                                 defaultValue={otherBankCountrySavings} 
                                 onChange={(event)=>setOtherBankCountrySavings(event.target.value)}
                                 >
-                                <option defaultValue="">Choisissez</option>
-                                    <optgroup className='single-cryptocurrency-box'>
-                                    <option  value="Oui">Côte d'ivoire </option>
-                                    <option  value="Non">Mali</option>
-                                    </optgroup>
+                                    <option defaultValue="">Choisissez</option>
+                                    {allCountry?(
+                                        allCountry.map((data) => (
+                                        <optgroup className='single-cryptocurrency-box'
+                                                key={data.id}>
+                                        <option  value={data.code}>{data.libelle}</option>
+                                        </optgroup>
+                                    ))):("")}
                                 </select>
                             </div >
-                            
-                            {/* Fin Q3 */}
-                            {/* **********FIN CONDITION S'IL A UN COMPTE BANCAIRE******** */}
 
-                            {/* LES CHAMPS A RENSEIGNER QUAND L'UTISATEUR A UN COMPTE BANCAIRE COURANT*/}
+                            {otherBankCountrySavings==="CI" || otherBankCountrySavings==="TG" || otherBankCountrySavings==="BJ" || otherBankCountrySavings==="BF" || otherBankCountrySavings==="TD" || otherBankCountrySavings==="GA" || otherBankCountrySavings==="CG" || otherBankCountrySavings==="CF" || otherBankCountrySavings==="GQ" || otherBankCountrySavings==="CM" || otherBankCountrySavings==="GW" || otherBankCountrySavings==="ML" || otherBankCountrySavings==="NE" || otherBankCountrySavings==="SN" ?(
+                                <div className='form-group mb-6 mt-3'>
+                                    <label
+                                        htmlFor="bankNameSavings"
+                                        className="text-blackish-blue mb-2"
+                                    >
+                                    Nom de la banque de votre compte d'épargne
+                                    </label>
+                                    <select 
+                                        placeholder='Banque'
+                                        className='form-control'
+                                        defaultValue={otherBankNameSavings} 
+                                        onChange={(event)=>setOtherBankNameSavings(event.target.value)}
+                                    >
+                                        <option>Choisissez</option>
+                                        {/* Afficher les Banques d'un pays */}
+                                        {allBank.map((data) => (
+                                            data.countryIso===otherBankCountrySavings?
+                                                <optgroup className='single-cryptocurrency-box' key={data.id}>
+                                                    <option value={data.bankName}>{data.bankName}</option>
+                                                </optgroup>
+                                            :" "
+                                        ))}
+                                        {/* Fin */}
+                                </select>
+                                </div>
+                            ):(
+                                <div className="form-group mb-6 mt-3">
+                                    <label
+                                        htmlFor="bankNameSavings"
+                                        className="text-blackish-blue mb-2"
+                                    >
+                                    Nom de la banque de votre compte d'épargne
+                                    </label>
+                                    <div className='form-group '>
+                                        <input
+                                            type='text'
+                                            id='bankNameSavings'
+                                            className='form-control'
+                                            placeholder="Nom de la banque de votre compte d'épargne"
+                                            defaultValue={otherBankNameSavings} 
+                                            onChange={(event)=>setOtherBankNameSavings(event.target.value)}
+                                        />
+                                    </div>
+                                </div >
+                            )}
+
+                            {/* Fin Q3 */}
+                                
                             {/* Question 6 */}
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="bankReferencesCurrent"
+                                    htmlFor="bankReferencesSavings"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Reférences de votre compte bancaires courant
+                                    Références de la banque de votre compte d'épargne
                                 </label>
                                 <div className='form-group'>
                                     <input
                                         type='text'
-                                        id='bankReferencesCurrent'
+                                        id='bankReferencesSavings'
                                         className='form-control'
-                                        placeholder='Reférences de votre compte bancaires courant'
-                                        defaultValue={bankReferencesCurrent} 
-                                        onChange={(event)=>setBankReferencesCurrent(event.target.value)}
+                                        placeholder=" Références de la banque de votre compte d'épargne"
+                                        defaultValue={bankReferencesSavings} 
+                                        onChange={(event)=>setBankReferencesSavings(event.target.value)}
                                     />
                                 </div>
                             </div>
                             
-                            <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="bankNameCurrent"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                  Nom de la banque courant
-                                </label>
-                                <div className='form-group '>
-                                    <input
-                                        type='text'
-                                        id='bankNameCurrentCurrent'
-                                        className='form-control'
-                                        placeholder='Nom de la banque courant'
-                                        defaultValue={otherBankNameCurrent} 
-                                        onChange={(event)=>setOtherBankNameCurrent(event.target.value)}
-                                    />
-                                </div>
-                            </div >
-                            {/* Fin */}
                             
-                             {/* Question 7 */}
+                            {/* Fin */}
+
+                             
+                            </>
+                            ):("")}
+                            {/* **********FIN CONDITION DE COMPTE BANCAIRE D'EPARGNE******** */}
+
+                            {/* LES CHAMPS A RENSEIGNER QUAND L'UTISATEUR A UN COMPTE BANCAIRE COURANT*/}
+                            {currentAccount[0]==="Compte courant"? (
+                                <>
+                                 {/* Question 7 */}
                              <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="otherBankCountryCurrent"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Pays de votre compte bancaire courant existant
+                                    Pays de la banque de votre compte courant existant
                                 </label>
                                 <select 
                                 className="form-control"
@@ -780,17 +660,202 @@ const handleOptionIncomeTypeC = (event) => {
                                 defaultValue={otherBankCountryCurrent} 
                                 onChange={(event)=>setOtherBankCountryCurrent(event.target.value)}
                                 >
-                                <option defaultValue="">Choisissez</option>
-                                    <optgroup className='single-cryptocurrency-box'>
-                                    <option  value="Oui">Côte d'ivoire </option>
-                                    <option  value="Non">Mali</option>
-                                    </optgroup>
+                                    <option defaultValue="">Choisissez</option>
+                                    {allCountry?(
+                                        allCountry.map((data) => (
+                                            <optgroup className='single-cryptocurrency-box'
+                                                    key={data.id}>
+                                            <option  value={data.code}>{data.libelle}</option>
+                                            </optgroup>
+                                        ))
+                                    ):("")}
                                 </select>
                             </div >
+
+                            {otherBankCountryCurrent==="CI" || otherBankCountryCurrent==="TG" || otherBankCountryCurrent==="BJ" || otherBankCountryCurrent==="BF" || otherBankCountryCurrent==="TD" || otherBankCountryCurrent==="GA" || otherBankCountryCurrent==="CG" || otherBankCountryCurrent==="CF" || otherBankCountryCurrent==="GQ" || otherBankCountryCurrent==="CM" || otherBankCountryCurrent==="GW" || otherBankCountryCurrent==="ML" || otherBankCountryCurrent==="NE" || otherBankCountryCurrent==="SN" ?(
+                                <div className='form-group mb-6 mt-3'>
+                                    <label
+                                        htmlFor="bankNameSavings"
+                                        className="text-blackish-blue mb-2"
+                                    >
+                                        Nom de la banque de votre compte courant
+                                    </label>
+                                    <select 
+                                        placeholder='Banque'
+                                        className='form-control'
+                                        defaultValue={otherBankNameCurrent} 
+                                        onChange={(event)=>setOtherBankNameCurrent(event.target.value)}
+                                    >
+                                        <option>Choisissez</option>
+                                        {/* Afficher les Banques d'un pays */}
+                                        {allBank.map((data) => (
+                                            data.countryIso===otherBankCountryCurrent?
+                                                <optgroup className='single-cryptocurrency-box' key={data.id}>
+                                                    <option value={data.bankName}>{data.bankName}</option>
+                                                </optgroup>
+                                            :" "
+                                        ))}
+                                        {/* Fin */}
+                                </select>
+                                </div>
+                            ):(
+                                <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="bankNameCurrent"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                  Nom de la banque de votre compte courant
+                                </label>
+                                <div className='form-group '>
+                                    <input
+                                        type='text'
+                                        id='bankNameCurrentCurrent'
+                                        className='form-control'
+                                        placeholder='Nom de la banque de votre compte courant'
+                                        defaultValue={otherBankNameCurrent} 
+                                        onChange={(event)=>setOtherBankNameCurrent(event.target.value)}
+                                    />
+                                </div>
+                            </div >
+                            )}
+                            
+                            {/* Question 6 */}
+                            <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="bankReferencesCurrent"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Références de la banque de votre compte courant
+                                </label>
+                                <div className='form-group'>
+                                    <input
+                                        type='text'
+                                        id='bankReferencesCurrent'
+                                        className='form-control'
+                                        placeholder='Références de la banque de votre compte courant'
+                                        defaultValue={bankReferencesCurrent} 
+                                        onChange={(event)=>setBankReferencesCurrent(event.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            
                            
-                            {/* Fin Q3 */}
+                            {/* Fin */}
+                            
+                            </>
+                            ):("")}
                             {/* ***********FIN CONDITION S'IL A UN COMPTE BANCAIRE COURANT**** */}
                             
+                            {/* LES CHAMPS A RENSEIGNER QUAND L'UTISATEUR A UN COMPTE BANCAIRE TITRE*/}
+                            {titleAccount[0]==="Compte titre"? (
+                                <>
+                                {/* Question 7 */}
+                             <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="otherBankCountryTitle"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Pays de la banque de votre compte titre existant
+                                </label>
+                                <select 
+                                className="form-control"
+                                id="otherBankCountryTitle"
+                                required
+                                defaultValue={otherBankCountryTitle} 
+                                onChange={(event)=>setOtherBankCountryTitle(event.target.value)}
+                                >
+                                    <option defaultValue="">Choisissez</option>
+                                    {allCountry?(
+                                        allCountry.map((data) => (
+                                            <optgroup className='single-cryptocurrency-box'
+                                                    key={data.id}>
+                                            <option  value={data.code}>{data.libelle}</option>
+                                            </optgroup>
+                                        ))
+                                    ):("")}
+                                </select>
+                            </div >
+
+                            {otherBankCountryTitle==="CI" || otherBankCountryTitle==="TG" || otherBankCountryTitle==="BJ" || otherBankCountryTitle==="BF" || otherBankCountryTitle==="TD" || otherBankCountryTitle==="GA" || otherBankCountryTitle==="CG" || otherBankCountryTitle==="CF" || otherBankCountryTitle==="GQ" || otherBankCountryTitle==="CM" || otherBankCountryTitle==="GW" || otherBankCountryTitle==="ML" || otherBankCountryTitle==="NE" || otherBankCountryTitle==="SN" ?(
+                                <div className='form-group mb-6 mt-3'>
+                                    <label
+                                        htmlFor="bankNameSavings"
+                                        className="text-blackish-blue mb-2"
+                                    >
+                                        Nom de la banque de votre compte titre
+
+                                    </label>
+                                    <select 
+                                        placeholder='Banque'
+                                        className='form-control'
+                                        defaultValue={otherBankNameTitle} 
+                                        onChange={(event)=>setOtherBankNameTitle(event.target.value)}
+                                    >
+                                        <option>Choisissez</option>
+                                        {/* Afficher les Banques d'un pays */}
+                                        {allBank.map((data) => (
+                                            data.countryIso===otherBankCountryTitle?
+                                                <optgroup className='single-cryptocurrency-box' key={data.id}>
+                                                    <option value={data.bankName}>{data.bankName}</option>
+                                                </optgroup>
+                                            :" "
+                                        ))}
+                                        {/* Fin */}
+                                </select>
+                                </div>
+                            ):(
+                                <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="bankNameTitle"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                  Nom de la banque de votre compte titre
+                                </label>
+                                <div className='form-group '>
+                                    <input
+                                        type='text'
+                                        id='bankNameCurrentTitle'
+                                        className='form-control'
+                                        placeholder='Nom de la banque de votre compte titre'
+                                        defaultValue={otherBankNameTitle} 
+                                        onChange={(event)=>setOtherBankNameTitle(event.target.value)}
+                                    />
+                                </div>
+                            </div >
+                            )}
+
+                            
+                           
+                            {/* Fin Q3 */}
+                            {/* Question 6 */}
+                            <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="bankReferencesTitle"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Références de la banque de votre compte titre
+                                </label>
+                                <div className='form-group'>
+                                    <input
+                                        type='text'
+                                        id='bankReferencesTitle'
+                                        className='form-control'
+                                        placeholder='Références de la banque de votre compte titre'
+                                        defaultValue={bankReferencesTitle} 
+                                        onChange={(event)=>setBankReferencesTitle(event.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            
+                            
+                            {/* Fin */}
+                            
+                             
+                            </>
+                            ):("")}
+                            {/* **************FIN CONDITION COMPTE TITRE*********** */}
+                            </>
+                            ):("")}
                             {/* ***********************FIN SECTION BANQUE*************** */}
                            
                             {/* ***************FIN CONDITION***************** */}
@@ -805,7 +870,7 @@ const handleOptionIncomeTypeC = (event) => {
                                         htmlFor="mobileAccount"
                                         className="text-blackish-blue mb-2"
                                     >
-                                        Avez-vous un compte de monnaie électronique?
+                                        Avez-vous un compte de monnaie électronique (Mobile money)?
                                 </label>
                                 <select 
                                 className="form-control"
@@ -823,6 +888,9 @@ const handleOptionIncomeTypeC = (event) => {
                             </div >
                             
                             {/* ****************SI L'UTISATEUR A UN COMPTE MOBILE MONEY******** */}
+                            {mobileAccount==="Oui"? (
+                                <>
+                                 
                             {/* Question 7 */}
                             <div className="form-group mb-6 mt-3">
                                 <label
@@ -838,106 +906,151 @@ const handleOptionIncomeTypeC = (event) => {
                                 defaultValue={mobileCountry} 
                                 onChange={(event)=>setMobileCountry(event.target.value)}
                                 >
-                                <option defaultValue="">Choisissez</option>
-                                    <optgroup className='single-cryptocurrency-box'>
-                                    <option  value="Oui">Côte d'ivoire </option>
-                                    <option  value="Non">Mali</option>
-                                    </optgroup>
+                                    <option defaultValue="">Choisissez</option>
+                                    {allCountry?(
+                                        allCountry.map((data) => (
+                                            <optgroup className='single-cryptocurrency-box'
+                                                    key={data.id}>
+                                            <option  value={data.code}>{data.libelle}</option>
+                                            </optgroup>
+                                        ))
+                                    ):("")}
                                 </select>
                             </div >
                             {/* Fin Q3 */}
 
                             {/* Question 7 */}
+                            {mobileCountry==="CI"||mobileCountry==="BF"||mobileCountry==="SN"||mobileCountry==="CM"||mobileCountry==="GN"||mobileCountry==="ML"||mobileCountry==="TG"||mobileCountry==="BJ"?(
+                                <>
+                                    <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="Operator"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Opérateur de votre compte de la monnaie électronique existant
+                                        </label>
+                                        <select 
+                                        className="form-control"
+                                        id="operator"
+                                        required
+                                        defaultValue={operator} 
+                                        onChange={(event)=>setOperator(event.target.value)}
+                                        >
+                                            <option defaultValue="">Choisissez </option>
+                                            {allOperators.map((data) => (
+                                                data.countryIso===mobileCountry?
+                                                    <optgroup className='single-cryptocurrency-box' key={data.id}>
+                                                        <option value={data.operatorName}>{data.operatorName}</option>
+                                                    </optgroup>
+                                                :""
+                                            ))}
+                                            
+                                        </select>
+                                    </div >
+                                </>
+                            ):(
+                            
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="Operator"
+                                    htmlFor="bankNameTitle"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Opérateur votre compte de la monnaie électronique existant
-                                </label>
-                                <select 
-                                className="form-control"
-                                id="operator"
-                                required
-                                defaultValue={operator} 
-                                onChange={(event)=>setOperator(event.target.value)}
-                                >
-                                <option defaultValue="">Choisissez</option>
-                                    <optgroup className='single-cryptocurrency-box'>
-                                    <option  value="Oui">MTN </option>
-                                    <option  value="Non">MOOV</option>
-                                    </optgroup>
-                                </select>
-                            </div >
-                            {/* Fin Q3 */}
+                                    Opérateur de votre compte de la monnaie électronique existant
 
+                                </label>
+                                <div className='form-group '>
+                                    <input
+                                        type='text'
+                                        id='bankNameCurrentTitle'
+                                        className='form-control'
+                                        placeholder='Nom de votre opérateur'
+                                        defaultValue={operator} 
+                                        onChange={(event)=>setOperator(event.target.value)}
+                                    />
+                                </div>
+                            </div >
+                            )}
+                            {/* Fin Q3 */}
+                            </>
+                            ) :("")}
                             {/* **********FIN CONDITION MOBILE************** */}
                             {/* ****************FIN SECTION MOBILE***************** */}
                             
 
 
                            
+                            
+
+
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="employerCorporate"
+                                    htmlFor="sourceIncome"
                                     className="text-blackish-blue mb-2"
                                 >
                                     Source des revenus 
-
                                 </label>
+                                <select 
+                                className="form-control"
+                                id="sourceIncome"
+                                required
+                                defaultValue={sourceIncome} 
+                                onChange={(event)=>setSourceIncome(event.target.value)}
+                                >
+                                <option defaultValue="">Choisissez</option>
+                                    <optgroup className='single-cryptocurrency-box'>
+                                    <option  value="Salaires">Salaires</option>
+                                    <option  value="Rentes">Rentes</option>
+                                    <option  value="Recettes activités commerciales">Recettes activités commerciales</option>
+                                    <option  value="Indemnités">Indemnités</option>
+                                    </optgroup>
+                                </select>
+                            </div >
 
-                                {/* <div className='form-group mt-3'>
-                                    <input
-                                        type='text'
-                                        id='sourceIncome'
-                                        className='form-control'
-                                        placeholder='Source des revenus'
-                                        defaultValue={sourceIncome} 
-                                        onChange={(event)=>setSourceIncome(event.target.value)}
-                                    />
-                                </div> */}
-
-                                <div>
+                            {sourceIncome==="Salaires" ? (
+                                <div className='mt-3'>
                                     <label htmlFor="salaries">Salaires:</label>
                                     <input
                                     type="number"
                                     id="salaries"
-                                    placeholder='Montant'
+                                    placeholder='Montant en CFA'
                                     value={salaries}
                                     onChange={(e) => setSalaries(e.target.value)}
                                     />
                                 </div>
-                                <div>
+                                ):sourceIncome==="Rentes" ?(
+                                <div className='mt-3'>
                                     <label htmlFor="rents">Rentes:</label>
                                     <input
                                     type="number"
                                     id="rents"
-                                    placeholder='Montant'
+                                    placeholder='Montant en CFA'
                                     value={rents}
                                     onChange={(e) => setRents(e.target.value)}
                                     />
                                 </div>
-                                <div>
+                                ):sourceIncome==="Recettes activités commerciales" ? (
+                                <div className='mt-3'>
                                     <label htmlFor="businessReceipts">Recettes activités commerciales:</label>
                                     <input
                                     type="number"
                                     id="businessReceipts"
-                                    placeholder='Montant'
+                                    placeholder='Montant en CFA'
                                     value={businessReceipts}
                                     onChange={(e) => setBusinessReceipts(e.target.value)}
                                     />
                                 </div>
-                                <div>
+                                ):sourceIncome==="Indemnités" ? (
+                                <div className='mt-3'>
                                     <label htmlFor="allowances">Indemnités:</label>
                                     <input
                                     type="number"
                                     id="allowances"
-                                    placeholder='Montant'
+                                    placeholder='Montant en CFA'
                                     value={allowances}
                                     onChange={(e) => setAllowances(e.target.value)}
                                     />
                                 </div>
-                                </div>
+                                ):("")}
 
 
 
@@ -968,11 +1081,28 @@ const handleOptionIncomeTypeC = (event) => {
                                 NB : Aucun retour n'est permis sur cette page donc, répondez correctement aux questions
                             </p> */}
 
-                            {kycForParticular?.userId ? (
+                            {/* {kycForParticular?.userId ? (
                                 <button className="btn btn-primary " type='button' onClick={updateQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
                             ) : (
                                 <button className="btn btn-primary " type='button' onClick={addQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
-                            )}
+                            )} */}
+
+                            <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                    <Link href='/profil/kyc/particulier/questionnaires-revenus-one' className="align-right">
+                                        <a
+                                        className=""
+                                        >
+                                            <button className="btn btn-primary " type='button'  > Précédente </button>
+                                        </a>   
+                                    </Link>                          
+                                </div>
+                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                    <button className="btn btn-primary " type='submit' disabled={isLoggingIn} > Suivant </button>
+                                </div>
+                            </div> 
+
+                           
                             {/* <button className="btn btn-primary "  disabled={isLoggingIn}>Suivant</button> */}
                         </form>       
                     </div>

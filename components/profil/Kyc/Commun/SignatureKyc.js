@@ -214,8 +214,8 @@ const SignatureKyc = () => {
     // Fin
 
     // La barre de progression de KYC du profil particulier
-    const steps = ["Questionnaires", "Justificatif d'identité", "Justificatif de domicile", "Photo", "Signature"];
-    const activeStep = 3;
+    const steps = ["AML 1 & 2","FATCA", "Identité 1 & 2", "Selfie", "Domicile", "Photo", "Signature"];
+    const activeStep = 5;
     // Fin
 
     // La barre de progression de KYC du profil particulier

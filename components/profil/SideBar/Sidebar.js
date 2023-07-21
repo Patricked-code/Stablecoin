@@ -194,7 +194,7 @@ const logaout = useCallback(() => {
                 <>
                 
               {kycForParticular?.quiz==1 && !kycForParticular?.identity==1 && !kycForParticular?.residence==1 && !kycForParticular?.photo==1 ? (
-                 <Link to='/profil/kyc/particulier/seconde-phase/' className={pathname == "/profil/kyc/particulier/seconde-phase/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                 <Link to='/profil/kyc/particulier/justificatif-identite-two/' className={pathname == "/profil/kyc/particulier/seconde-phase/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                   <i className='fas fa-tasks nav-link-icon'></i>
                   <span className='nav-link-name'>KYC</span>
                 </Link>
@@ -214,7 +214,7 @@ const logaout = useCallback(() => {
                     <span className='nav-link-name'>KYC</span>
                   </Link>
               ) : (
-                <Link to='/profil/kyc/particulier/' className={pathname == "/profil/kyc/particulier/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                <Link to='/profil/kyc/particulier/questionnaires-revenus-one' className={pathname == "/profil/kyc/particulier/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                   <i className='fas fa-tasks nav-link-icon'></i>
                   <span className='nav-link-name'>KYC</span>
                 </Link>

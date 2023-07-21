@@ -40,16 +40,12 @@ const CQuestionnaireFatca = () => {
                             // shareholder
                             // whatHareholder
     const [usPerson, setUsPerson] = useState();
-    const [address, setAddress] = useState();
     const [mailbox, setMailbox] = useState();
     const [profession, setProfession] = useState();
     const [professionStatus, setProfessionStatus] = useState();
-    const [bankReferences, setBankReferences] = useState();
     const [motivation, setMotivation] = useState();
     const [employerCorporate, setEmployerCorporate] = useState();
     const [employerAddress, setEmployerAddress] = useState();
-    const [sourceIncome, setSourceIncome] = useState();
-    const [natureAccount, setNatureAccount] = useState();
     const [directorship, setDirectorship] = useState();
     const [whatBoard, setWhatBoard] = useState();
     const [shareholder, setShareholder] = useState();
@@ -57,7 +53,90 @@ const CQuestionnaireFatca = () => {
 
     
     
-                            
+    // Fonction d'envoie des informations du questionnaire FATCA
+    const updateQuestionnaireFatca= async (event) => {
+        setIsLoggingIn(true);
+        event.preventDefault();
+
+        try {
+
+            const dataa = {
+                usPerson:usPerson,
+                mailbox:mailbox,
+                profession:profession,
+                professionStatus:professionStatus,
+                employerCorporate:employerCorporate,
+                employerAddress:employerAddress,
+                motivation:motivation,
+                directorship:directorship,
+                whatBoard:whatBoard,
+                shareholder:shareholder,
+                whatHareholder:whatHareholder
+            }
+            // Condition pour forcer l'utilisateur à choisir au moins une reponse
+            // if () {
+                
+                
+                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+                const result = await fetch(`${API_URL}/api/kyc/particular/update-kyc-questionnaire-fatca`, {
+                method:"PUT",
+                body: JSON.stringify(dataa),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`
+                }
+                })
+                const data = await result.json();
+            
+                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                * sinon on affiche le message de succès
+                */
+                if (data.message) {
+                setMessageError(data.message)
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+                }else{
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                        showConfirmButton: false,
+                        timer: 5000
+                    }),
+                    setTimeout(() => {
+                        if (currentKycStatut==="1") {
+                            Router.push("/profil/kyc/particulier/resultat-kyc"); 
+        
+                        }else{
+                            Router.push("/profil/kyc/particulier/justificatif-identite-one"); 
+                        }
+                    }, 5000)
+                }
+                // Fin condition 
+            // }else{
+            //     setIsLoggingIn(false);
+            //     Swal.fire({
+            //         position: 'center',
+            //         icon: 'error',
+            //         html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
+            //         showConfirmButton: false,
+            //         timer: 10000
+            //     })
+            // }
+            
+            } catch {
+            setIsLoggingIn(false);
+            }
+        
+    };
+    // Fin                   
                             
                             
                             
@@ -68,24 +147,7 @@ const CQuestionnaireFatca = () => {
 
 
 
-    // State de la question 2
-    const [spentA, setSpentA] = useState([]);
-    const [spentB, setSpentB] = useState([]);
-    const [spentC, setSpentC] = useState([]);
-    const [spentD, setSpentD] = useState([]);
-    const [spentE, setSpentE] = useState([]);
-    const [spentF, setSpentF] = useState([]);
-
-    // State de la question 4
-    const [frequencyA, setFrequencyA] = useState([]);
-    const [frequencyB, setFrequencyB] = useState([]);
-    const [frequencyC, setFrequencyC] = useState([]);
-
-    // State de la question 5
-    const [incomeTypeA, setIncomeTypeA] = useState([]);
-    const [incomeTypeB, setIncomeTypeB] = useState([]);
-    const [incomeTypeC, setIncomeTypeC] = useState([]);
-
+    
     // State de la question 1 et 3
     const [statutQ1, setStatutQ1] = useState();
     const [statutQ3, setStatutQ3] = useState();
@@ -128,350 +190,9 @@ const CQuestionnaireFatca = () => {
     // FIN
 
 
-
-
-
-
-
-
-    // Fonction d'envoie des informations du questionnaire
-    const addQuestionnaire= useCallback(async () => {
-        setIsLoggingIn(true);
-        
-        try {
-            const dataTable = {
-                spentA:Object.assign({},spentA),
-                spentB:Object.assign({},spentB),
-                spentC:Object.assign({},spentC),
-                spentD:Object.assign({},spentD),
-                spentE:Object.assign({},spentE),
-                spentF:Object.assign({},spentF),
-                frequencyA:Object.assign({},frequencyA),
-                frequencyB:Object.assign({},frequencyB),
-                frequencyC:Object.assign({},frequencyC),
-                incomeTypeA:Object.assign({}, incomeTypeA),
-                incomeTypeB:Object.assign({},incomeTypeB),
-                incomeTypeC:Object.assign({},incomeTypeC)
-            }
-
-            const dataa = {
-                spentA:dataTable?.spentA[0],
-                spentB:dataTable?.spentB[0],
-                spentC:dataTable?.spentC[0],
-                spentD:dataTable?.spentD[0],
-                spentE:dataTable?.spentE[0],
-                spentF:dataTable?.spentF[0],
-                frequencyA:dataTable?.frequencyA[0],
-                frequencyB:dataTable?.frequencyB[0],
-                frequencyC:dataTable?.frequencyC[0],
-                incomeTypeA:dataTable?.incomeTypeA[0],
-                incomeTypeB:dataTable?.incomeTypeB[0],
-                incomeTypeC:dataTable?.incomeTypeC[0],
-                
-            }
-            // Condition pour forcer l'utilisateur à choisir au moins une reponse
-            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
-                
-                
-                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
-
-                const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-questionnaires`, {
-                method:"POST",
-                body: JSON.stringify(dataa),
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization:  `Bearer ${token}`
-                }
-                })
-                const data = await result.json();
-            
-                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-                * sinon on affiche le message de succès
-                */
-                if (data.message) {
-                setMessageError(data.message)
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> ${messageError} </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-                }else{
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'success',
-                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
-                        showConfirmButton: false,
-                        timer: 5000
-                    }),
-                    setTimeout(() => {
-                    Router.push("/profil/kyc/particulier/seconde-phase"); 
-                    }, 5000)
-                }
-                // Fin condition 
-            }else{
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-            }
-            
-            } catch {
-            setIsLoggingIn(false);
-            }
-        
-    }, [spentA,spentB,spentC,spentD,spentE,spentF,frequencyA,frequencyB,frequencyC,incomeTypeA,incomeTypeB,incomeTypeC]);
-    // Fin
-
-
-     // Fonction d'envoie des informations du questionnaire
-     const updateQuestionnaire= useCallback(async () => {
-        setIsLoggingIn(true);
-        
-        try {
-            const dataTable = {
-                spentA:Object.assign({},spentA),
-                spentB:Object.assign({},spentB),
-                spentC:Object.assign({},spentC),
-                spentD:Object.assign({},spentD),
-                spentE:Object.assign({},spentE),
-                spentF:Object.assign({},spentF),
-                frequencyA:Object.assign({},frequencyA),
-                frequencyB:Object.assign({},frequencyB),
-                frequencyC:Object.assign({},frequencyC),
-                incomeTypeA:Object.assign({}, incomeTypeA),
-                incomeTypeB:Object.assign({},incomeTypeB),
-                incomeTypeC:Object.assign({},incomeTypeC)
-            }
-
-            const dataa = {
-                spentA:dataTable?.spentA[0],
-                spentB:dataTable?.spentB[0],
-                spentC:dataTable?.spentC[0],
-                spentD:dataTable?.spentD[0],
-                spentE:dataTable?.spentE[0],
-                spentF:dataTable?.spentF[0],
-                frequencyA:dataTable?.frequencyA[0],
-                frequencyB:dataTable?.frequencyB[0],
-                frequencyC:dataTable?.frequencyC[0],
-                incomeTypeA:dataTable?.incomeTypeA[0],
-                incomeTypeB:dataTable?.incomeTypeB[0],
-                incomeTypeC:dataTable?.incomeTypeC[0],
-                
-            }
-            // Condition pour forcer l'utilisateur à choisir au moins une reponse
-            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
-                
-                
-                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
-
-                const result = await fetch(`${API_URL}/api/kyc/particular/update-kyc-questionnaires`, {
-                method:"PUT",
-                body: JSON.stringify(dataa),
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization:  `Bearer ${token}`
-                }
-                })
-                const data = await result.json();
-            
-                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-                * sinon on affiche le message de succès
-                */
-                if (data.message) {
-                setMessageError(data.message)
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> ${messageError} </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-                }else{
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'success',
-                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
-                        showConfirmButton: false,
-                        timer: 5000
-                    }),
-                    setTimeout(() => {
-                        if (currentKycStatut==="1") {
-                            Router.push("/profil/kyc/particulier/resultat-kyc"); 
-        
-                        }else{
-                            Router.push("/profil/kyc/particulier/seconde-phase"); 
-                        }
-                    }, 5000)
-                }
-                // Fin condition 
-            }else{
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-            }
-            
-            } catch {
-            setIsLoggingIn(false);
-            }
-        
-    }, [spentA,spentB,spentC,spentD,spentE,spentF,frequencyA,frequencyB,frequencyC,incomeTypeA,incomeTypeB,incomeTypeC]);
-    // Fin
-
-// Les handles de la 2è question
-  const handleOptionSpentA = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentA([...spentA, value]);
-    } else {
-        setSpentA("");
-    }
-  };
-
-const handleOptionSpentB = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentB([...spentB, value]);
-    } else {
-        setSpentB("");
-    }
-};
-
-const handleOptionSpentC = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentC([...spentC, value]);
-    } else {
-        setSpentC("");
-    }
-};
-
-const handleOptionSpentD = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentD([...spentD, value]);
-    } else {
-        setSpentD("");
-    }
-};
-
-const handleOptionSpentE = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentE([...spentE, value]);
-    } else {
-        setSpentE("");
-    }
-};
-
-const handleOptionSpentF = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentF([...spentF, value]);
-    } else {
-        setSpentF("");
-    }
-};
-
-// FIN
-
-
-// Les handles de la 4è question
-const handleOptionFrequencyA = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setFrequencyA([...frequencyA, value]);
-    } else {
-        setFrequencyA("");
-    }
-};
-
-const handleOptionFrequencyB = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setFrequencyB([...frequencyB, value]);
-    } else {
-        setFrequencyB("");
-    }
-};
-
-const handleOptionFrequencyC = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setFrequencyC([...frequencyC, value]);
-    } else {
-        setFrequencyC("");
-    }
-};
-// FIN
- 
-// Les handles de la 5è question
-const handleOptionIncomeTypeA = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setIncomeTypeA([...incomeTypeA, value]);
-    } else {
-        setIncomeTypeA("");
-    }
-};
-
-const handleOptionIncomeTypeB = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setIncomeTypeB([...incomeTypeB, value]);
-    } else {
-        setIncomeTypeB("");
-    }
-};
-
-const handleOptionIncomeTypeC = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setIncomeTypeC([...incomeTypeC, value]);
-    } else {
-        setIncomeTypeC("");
-    }
-};
-
     // La barre de progression de KYC
-    const steps = ["Questionnaires", "Justificatif d'identité", "Justificatif de domicile", "Photo", "Signature"];
-    const activeStep = -1;
+    const steps = ["AML 1 & 2","FATCA", "Identité 1 & 2", "Selfie", "Domicile", "Photo", "Signature"];
+    const activeStep = 0;
     // Fin
 
   return (
@@ -505,7 +226,7 @@ const handleOptionIncomeTypeC = (event) => {
                 <div className='col-lg-3 col-md-12'></div>
 
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
-                        <form className=''>
+                        <form className='' onSubmit={updateQuestionnaireFatca}>
                             {/* Question 1 */}
                             <div className="form-group mb-6 mt-3">
                                 <label
@@ -531,7 +252,7 @@ const handleOptionIncomeTypeC = (event) => {
                             {/* Fin */}
 
                             {/* Question 1 */}
-                            <div className="form-group mb-6 mt-3">
+                            {/* <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="address"
                                     className="text-blackish-blue mb-2"
@@ -548,7 +269,7 @@ const handleOptionIncomeTypeC = (event) => {
                                         onChange={(event)=>setAddress(event.target.value)}
                                     />
                                 </div>
-                            </div >
+                            </div > */}
                             {/* Fin */}
                             
 
@@ -575,12 +296,12 @@ const handleOptionIncomeTypeC = (event) => {
                             {/* Fin */}
 
                             {/* Question 1 DB*/}
-                            <div className="form-group mb-6 mt-3">
+                            {/* <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="incomeMonthly"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Numéro de téléphone mibile
+                                    Numéro de téléphone mobile
 
                                 </label>
                                 <div className='form-group mt-3'>
@@ -589,11 +310,11 @@ const handleOptionIncomeTypeC = (event) => {
                                         id=''
                                         className='form-control'
                                         placeholder='Numéro de téléphone'
-                                        // defaultValue={incomeMonthly} 
-                                        // onChange={(event)=>setIncomeMonthly(event.target.value)}
+                                        defaultValue={mobile} 
+                                        onChange={(event)=>setMolie(event.target.value)}
                                     />
                                 </div>
-                            </div >
+                            </div > */}
                             {/* Fin */}
 
                             {/* Question 1*/}
@@ -602,7 +323,7 @@ const handleOptionIncomeTypeC = (event) => {
                                     htmlFor="profession"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Profession, fonction, activité
+                                    Profession/fonction/activité
                                 </label>
                                 <div className='form-group mt-3'>
                                     <input
@@ -641,7 +362,10 @@ const handleOptionIncomeTypeC = (event) => {
                                     </optgroup>
                                 </select>
                             </div >
-
+                            {/* SI STATUT DU PROFESSION EST SALRIE */}
+                            {professionStatus==="Salarié" ? (
+                                <>
+                                
                             <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="employerCorporate"
@@ -679,7 +403,8 @@ const handleOptionIncomeTypeC = (event) => {
                                     />
                                 </div>
                             </div>
-
+                            </>
+                            ):('')}
                             <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="motivation"
@@ -726,6 +451,10 @@ const handleOptionIncomeTypeC = (event) => {
                                 </select>
                             </div>
                             
+                            {/* SI L'UTISATEUR BENEFICIE D'UN MENDAT D'ADMINISTRATEUR */}
+                            {directorship==="Oui je bénéficie d’un mandat d’administrateur dans le Conseil d’Administration d’une société" ? (
+                                <>
+                                
                             <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="employerCorporate"
@@ -745,7 +474,8 @@ const handleOptionIncomeTypeC = (event) => {
                                     />
                                 </div>
                             </div>
-
+                            </>
+                            ):("")}
                             <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="shareholder"
@@ -762,11 +492,16 @@ const handleOptionIncomeTypeC = (event) => {
                                 >
                                 <option defaultValue="">Choisissez</option>
                                     <optgroup className='single-cryptocurrency-box'>
-                                    <option  value="Oui">Oui</option>
-                                    <option  value="Non">Non</option>
+                                    <option  value="Oui je suis actionnaire dans une société">Oui</option>
+                                    <option  value="Non je ne suis pas actionnaire dans une société">Non</option>
                                     </optgroup>
                                 </select>
                             </div>
+
+                            {/* SI L'UTILISATEUR EST ACTIONNAIRE DANS UNE SOCIETE */}
+                            {shareholder==="Oui je suis actionnaire dans une société"? (
+                                <>
+                                 
                             <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="whatHareholder"
@@ -786,6 +521,8 @@ const handleOptionIncomeTypeC = (event) => {
                                     />
                                 </div>
                             </div>
+                            </>
+                            ):("")}
                             
 
 
@@ -803,11 +540,28 @@ const handleOptionIncomeTypeC = (event) => {
                                 NB : Aucun retour n'est permis sur cette page donc, répondez correctement aux questions
                             </p> */}
 
-                            {kycForParticular?.userId ? (
+                            {/* {kycForParticular?.userId ? (
                                 <button className="btn btn-primary " type='button' onClick={updateQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
                             ) : (
                                 <button className="btn btn-primary " type='button' onClick={addQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
-                            )}
+                            )} */}
+
+                            <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                    <Link href='/profil/kyc/particulier/questionnaires-revenus-two/' className="align-right">
+                                        <a
+                                        className=""
+                                        >
+                                            <button className="btn btn-primary " type='button'  > Précédente </button>
+                                        </a>   
+                                    </Link>                          
+                                </div>
+                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                   
+                                    <button className="btn btn-primary " type='submit' disabled={isLoggingIn} > Suivant </button>
+                                                            
+                                </div>
+                            </div> 
                             {/* <button className="btn btn-primary "  disabled={isLoggingIn}>Suivant</button> */}
                         </form>       
                     </div>

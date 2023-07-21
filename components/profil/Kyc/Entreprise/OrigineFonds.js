@@ -21,7 +21,7 @@ import Webcam from 'react-webcam'
 
 // FIN
 
-const COperationsFinancieresOne = () => {
+const COrigneFonds = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
@@ -36,22 +36,21 @@ const COperationsFinancieresOne = () => {
     const [statusE, setStatusE] = useState(0);
 
     const [questionsA, setQuestionsA] = useState([
-        { title: 'Opérations liées aux ventes et aux clients', question: 'Réception de paiements des clients pour les ventes de biens ou services.', answer: '' },
-        { title: 'Opérations liées aux achats et aux fournisseurs', question: 'Paiement des fournisseurs pour l\'achat de biens ou services.', answer: '' },
-        { title: 'Opérations liées aux employés', question: 'Paiement des salaires et des avantages sociaux aux employés.', answer: '' },
-        { title: 'Opérations liées aux impôts et aux taxes', question: 'Paiement des impôts sur le revenu et des taxes sur les ventes.', answer: '' },
-        { title: 'Opérations liées aux assurances', question: 'Paiement d\'assurances pour couvrir les risques et les pertes éventuelles.', answer: '' },
-    ]); 
+        { title: "Revenus des ventes", question: "Les fonds provenant des ventes de biens ou de services effectuées par l'entreprise et reçus sous forme de paiements des clients.", answer: "" },
+        { title: "Financement par capitaux propres", question: "Les fonds provenant de l'émission d'actions de l'entreprise et de l'investissement des actionnaires.", answer: "" },
+        { title: "Financement par endettement", question: "Les fonds provenant de prêts accordés par des institutions financières ou d'autres prêteurs, tels que des emprunts bancaires, des lignes de crédit ou des émissions d'obligations.", answer: "" },
+        { title: "Autofinancement", question: "Les fonds provenant des bénéfices générés par l'entreprise et conservés pour être réinvestis ou utilisés pour les dépenses opérationnelles.", answer: "" },
+        { title: "Subventions et aides gouvernementales", question: "Les fonds provenant de subventions, de subventions ou d'autres formes d'aides financières accordées par des organismes gouvernementaux ou des institutions publiques.", answer: "" },
+        
+    ]);
 
     const [questionsB, setQuestionsB] = useState([
-        { title: 'Opérations liées aux investissements', question: 'Encaissement d\'intérêts sur les prêts accordés ou paiement d\'intérêts sur les emprunts.', answer: '' },
-        { title: 'Opérations liées aux investissements', question: 'Paiement des dividendes aux actionnaires.', answer: '' },
-        { title: 'Opérations liées aux investissements', question: 'Encaissement de revenus d\'investissements, tels que des intérêts, des dividendes ou des gains en capital.', answer: '' },
-        { title: 'Opérations liées aux investissements', question: 'Acquisition ou cession d\'actifs tels que des immobilisations corporelles ou des brevets.', answer: '' },
-        { title: 'Opérations liées aux investissements', question: 'Investissement dans des OPCVM.', answer: '' },
-        { title: 'Opérations liées aux investissements', question: 'Placement de trésorerie.', answer: '' },
-        { title: 'Opérations liées aux investissements', question: 'Financement participatif.', answer: '' },
-        { title: 'Opérations liées aux investissements', question: 'Epargne salariale.', answer: '' },
+        { title: "Revenus d'investissements", question: "Les fonds provenant des revenus générés par des investissements de l'entreprise, tels que des intérêts, des dividendes ou des gains en capital provenant de placements financiers.", answer: "" },
+        { title: "Prêts accordés à d'autres entités", question: "Les fonds provenant de prêts accordés par l'entreprise à des tiers, tels que des prêts commerciaux ou des prêts intra-groupe.", answer: "" },
+        { title: "Transferts internes de fonds", question: "Les fonds provenant de transferts internes entre comptes bancaires de l'entreprise, par exemple, pour le rééquilibrage de la trésorerie ou pour le financement de filiales ou de divisions internes.", answer: "" },
+        { title: "Recouvrement de créances", question: "Les fonds provenant du recouvrement de créances antérieures, tels que des paiements de clients en retard ou des remboursements d'avances.", answer: "" },
+        { title: "Ventes d'actifs", question: "Les fonds provenant de la vente d'actifs non essentiels de l'entreprise, tels que des propriétés ou des équipements.", answer: "" },
+        { title: "Autres sources de revenus", question: "Les fonds provenant d'autres sources de revenus de l'entreprise, telles que des revenus de location, des redevances ou des pénalités.", answer: "" }
     ]);
 
     const [questionsC, setQuestionsC] = useState([    
@@ -622,10 +621,10 @@ console.log("statutA=>",statusA)
                     }),
                     setTimeout(() => {
                         if (currentKycStatut==="1") {
-                            Router.push("/profil/kyc/particulier/resultat-kyc"); 
+                            Router.push("/profil/kyc/entreprise/resultat-kyc"); 
         
                         }else{
-                            Router.push("/profil/kyc/particulier/seconde-phase"); 
+                            Router.push("/profil/kyc/entreprise/seconde-phase"); 
                         }
                     }, 5000)
                 }
@@ -790,7 +789,7 @@ const handleOptionIncomeTypeC = (event) => {
      // La barre de progression de KYC du profil entreprise
    const stepsEntreprise = ["AML","Identité","Représentant", "Bénéficiaire","Control", "Politique", "Opérations", "Fonds", "Financière", "Documents"];
 
-   const activeStepEntreprise = 4;
+   const activeStepEntreprise = 5;
     // Fin
 
   return (
@@ -800,7 +799,7 @@ const handleOptionIncomeTypeC = (event) => {
         <div className='mt-15' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                <br/><br/><h1 className='text-center '>Description des opérations financières </h1>
+                    <br/><br/><h1 className='text-center '>Déclaration de l’origine des fonds  </h1>
                 </div>
             </div>
 
@@ -859,21 +858,19 @@ const handleOptionIncomeTypeC = (event) => {
                                     </div>
                                 ))}
 
-                                    {/* <button className="btn btn-primary" type='submit' onClick={()=>setStatusA(1)}  disabled={isLoggingIn}>Suivant</button> */}
-                                    <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                {/* <button className="btn btn-primary" type='submit' onClick={()=>setStatusA(1)}  disabled={isLoggingIn}>Suivant</button> */}
+                                <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
                                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        <Link href='/profil/kyc/entreprise/politiquement-exposees/' className="align-right">
+                                        <Link href='/profil/kyc/entreprise/operations-financieres-one/' className="align-right">
                                             <a
                                             className=""
                                             >
-                                                <button className="btn btn-primary " type='button'  > Précédente </button>
+                                                <button className="btn btn-primary " type='button'> Précédente </button>
                                             </a>   
                                         </Link>                          
                                     </div>
                                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                       
                                         <button className="btn btn-primary" type='submit' onClick={()=>setStatusA(1)}  disabled={isLoggingIn}>Suivant</button>
-                                                                  
                                     </div>
                                 </div>
                             </form> 
@@ -882,10 +879,9 @@ const handleOptionIncomeTypeC = (event) => {
                         {/* FORM B */}
                         {statusA===1 && statusB===0 ? (
                             <form onSubmit={handleSubmitB} className="my-30">
-                                <label><b>Opérations liées aux investissements :</b></label>
                                 {questionsB.map((question, index) => (
                                     <div key={index} className="form-group my-3">
-                                        {/* <label>{question.title}</label> */}
+                                        <label><b>{question.title}</b></label>
                                         <input
                                             type="text"
                                             hidden
@@ -916,180 +912,27 @@ const handleOptionIncomeTypeC = (event) => {
                                         </select>
                                     </div>
                                 ))}
+
+                                    {/* <button className="btn btn-primary" type='submit' onClick={()=>setStatusB(1)}  disabled={isLoggingIn}>Suivant</button> */}
                                 <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
                                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        
-                                        <button className="btn btn-primary " onClick={()=>setStatusA(0)}  type='button'  > Précédente </button>
-                                                                      
+                                    
+                                        <button className="btn btn-primary" type='submit' onClick={()=>setStatusA(0)}  disabled={isLoggingIn}>Précédente</button>
+                         
                                     </div>
                                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        <button className="btn btn-primary" type='submit' onClick={()=>setStatusB(1)}  disabled={isLoggingIn}>Suivant</button>
-
-                                    </div>
-                                </div>
-
-
-                            </form> 
-                        ):("")} 
-
-
-                        {/* FORM C */}
-                        {statusA===1 && statusB===1 && statusC===0? (
-                            <form onSubmit={handleSubmitC} className="my-30">
-                                <label><b>Opérations liées au financement :</b></label>
-                                {questionsC.map((question, index) => (
-                                    <div key={index} className="form-group mb-2 mt-3">
-                                        <input
-                                            type="text"
-                                            hidden
-                                            value={question.title}
-                                            onChange={(e) => handleInputChangeC(e, index, 'title')}
-                                        /> 
-
-                                        <label className='mx-3'>• {question.question}</label>
-                                        <input
-                                            type="text"
-                                            hidden
-                                            value={question.question}
-                                            onChange={(e) => handleInputChangeC(e, index, 'question')}
-                                        />
-
-                                        <select
-                                            className="form-control mt-3"
-                                            value={question.answer}
-                                            onChange={(e) => handleInputChangeC(e, index, 'answer')}
-                                        >
-                                            <option defaultValue="">Choisissez</option>
-                                            <optgroup className='single-cryptocurrency-box'>
-                                                <option value="Oui">Oui</option>
-                                                <option value="NON">Non</option>
-                                                <option value="Peut être">Peut être</option>
-                                            </optgroup>
-                                        </select>
-                                    </div>
-                                ))}
-                                <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
-                                    <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        
-                                        <button className="btn btn-primary " onClick={()=>setStatusB(0)}  type='button'  > Précédente </button>
-                                                                      
-                                    </div>
-                                    <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        <button className="btn btn-primary" type='submit' onClick={()=>setStatusC(1)}  disabled={isLoggingIn}>Suivant</button>
-
-                                    </div>
-                                </div>
-                                    {/* <button className="btn btn-primary" type='submit' onClick={()=>setStatusC(1)} disabled={isLoggingIn}>Suivant</button> */}
-
-                            </form> 
-                        ):("")}
-
-                        {/* FORM D */}
-                        {statusA===1 && statusB===1 && statusC===1 && statusD===0? (
-                            <form onSubmit={handleSubmitD} className="my-30">
-                                <label><b>Opérations liées aux opérations internationales :</b></label>
-                                {questionsD.map((question, index) => (
-                                    <div key={index} className="form-group mb-6 mt-3">
-                                        <input
-                                            type="text"
-                                            hidden
-                                            value={question.title}
-                                            onChange={(e) => handleInputChangeD(e, index, 'title')}
-                                        />
-
-                                        <label className='mx-3'>• {question.question}</label>
-                                        <input
-                                            type="text"
-                                            hidden
-                                            value={question.question}
-                                            onChange={(e) => handleInputChangeD(e, index, 'question')}
-                                        />
-
-                                        <select
-                                            className="form-control mt-3"
-                                            value={question.answer}
-                                            onChange={(e) => handleInputChangeD(e, index, 'answer')}
-                                        >
-                                            <option defaultValue="">Choisissez</option>
-                                            <optgroup className='single-cryptocurrency-box'>
-                                                <option value="Oui">Oui</option>
-                                                <option value="NON">Non</option>
-                                                <option value="Peut être">Peut être</option>
-                                            </optgroup>
-                                        </select>
-                                    </div>
-                                ))}
-                                <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
-                                    <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        
-                                        <button className="btn btn-primary " onClick={()=>setStatusC(0)}  type='button'  > Précédente </button>
-                                                                      
-                                    </div>
-                                    <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        <button className="btn btn-primary" type='submit' onClick={()=>setStatusD(1)}  disabled={isLoggingIn}>Suivant</button>
-
-                                    </div>
-                                </div>
-                                    {/* <button className="btn btn-primary" type='submit' onClick={()=>setStatusD(1)}  disabled={isLoggingIn}>Suivant</button> */}
-
-                            </form> 
-                        ):("")}
-
-
-                        {/* FORM E */}
-                        {statusA===1 && statusB===1 && statusC===1 && statusD===1 && statusE===0? (
-                            <form onSubmit={handleSubmitE} className="my-30">
-                                <label><b>Opérations diverses :</b></label>
-
-                                {questionsE.map((question, index) => (
-                                    <div key={index} className="form-group mb-2 mt-3">
-                                        <input
-                                            type="text"
-                                            hidden
-                                            value={question.title}
-                                            onChange={(e) => handleInputChangeE(e, index, 'title')}
-                                        /> 
-
-                                        <label className='mx-3'>• {question.question}</label>
-                                        <input
-                                            type="text"
-                                            hidden
-                                            value={question.question}
-                                            onChange={(e) => handleInputChangeE(e, index, 'question')}
-                                        />
-
-                                        <select
-                                            className="form-control mt-3"
-                                            value={question.answer}
-                                            onChange={(e) => handleInputChangeE(e, index, 'answer')}
-                                        >
-                                            <option defaultValue="">Choisissez</option>
-                                            <optgroup className='single-cryptocurrency-box'>
-                                                <option value="Oui">Oui</option>
-                                                <option value="NON">Non</option>
-                                                <option value="Peut être">Peut être</option>
-                                            </optgroup>
-                                        </select>
-                                    </div>
-                                ))}
-                                <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
-                                    <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        <button className="btn btn-primary " onClick={()=>setStatusD(0)}  type='button'  > Précédente </button>
-                                    </div>
-                                    <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        <Link href='/profil/kyc/entreprise/origine-fonds/' className="align-right">
+                                        <Link href='/profil/kyc/entreprise/information-financiere-one/' className="align-right">
                                             <a
                                             className=""
                                             >
-                                                <button className="btn btn-primary " type='button'  > Suivant </button>
+                                                <button className="btn btn-primary " type='button'> Suivant </button>
                                             </a>   
-                                        </Link>                          
+                                        </Link>
                                     </div>
                                 </div>
-                                    {/* <button className="btn btn-primary" type='submit' onClick={()=>setStatusE(1)}  disabled={isLoggingIn}>Suivant</button> */}
-
                             </form> 
-                        ):("")}
+                        ):("")} 
+
 
                         
                              
@@ -1101,4 +944,4 @@ const handleOptionIncomeTypeC = (event) => {
   );
 };
 
-export default COperationsFinancieresOne;
+export default COrigneFonds;

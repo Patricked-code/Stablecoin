@@ -209,7 +209,7 @@ const CIdentiteOne = () => {
                         timer: 5000
                     }),
                     setTimeout(() => {
-                    Router.push("/profil/kyc/particulier/seconde-phase"); 
+                    Router.push("/profil/kyc/entreprise/seconde-phase"); 
                     }, 5000)
                 }
                 // Fin condition 
@@ -306,10 +306,10 @@ const CIdentiteOne = () => {
                     }),
                     setTimeout(() => {
                         if (currentKycStatut==="1") {
-                            Router.push("/profil/kyc/particulier/resultat-kyc"); 
+                            Router.push("/profil/kyc/entreprise/resultat-kyc"); 
         
                         }else{
-                            Router.push("/profil/kyc/particulier/seconde-phase"); 
+                            Router.push("/profil/kyc/entreprise/seconde-phase"); 
                         }
                     }, 5000)
                 }
@@ -471,9 +471,10 @@ const handleOptionIncomeTypeC = (event) => {
     }
 };
 
-    // La barre de progression de KYC du profil particulier
-    const stepsEntreprise = ["Questionnaires","Documents légaux","Justificatif de domicile", "Justificatif d'identité","Photo", "Signature"];
-    const activeStepEntreprise = 2;
+    // La barre de progression de KYC du profil entreprise
+    const stepsEntreprise = ["AML","Identité","Représentant", "Bénéficiaire","Control", "Politique", "Opérations", "Fonds", "Financière", "Documents"];
+
+    const activeStepEntreprise = 0;
     // Fin
 
   return (
@@ -483,7 +484,7 @@ const handleOptionIncomeTypeC = (event) => {
         <div className='mt-15' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                <br/><br/><h1 className='text-center '>Identité 1</h1>
+                <br/><br/><h1 className='text-center '>Identité </h1>
                 </div>
             </div>
 
@@ -912,11 +913,32 @@ const handleOptionIncomeTypeC = (event) => {
                                 NB : Aucun retour n'est permis sur cette page donc, répondez correctement aux questions
                             </p> */}
 
-                            {kycForParticular?.userId ? (
+                            {/* {kycForParticular?.userId ? (
                                 <button className="btn btn-primary " type='button' onClick={updateQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
                             ) : (
                                 <button className="btn btn-primary " type='button' onClick={addQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
-                            )}
+                            )} */}
+
+                            <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                    <Link href='/profil/kyc/entreprise/questionnaire-aml-five/' className="align-right">
+                                        <a
+                                        className=""
+                                        >
+                                            <button className="btn btn-primary " type='button'  > Précédente </button>
+                                        </a>   
+                                    </Link>                          
+                                </div>
+                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                    <Link href='/profil/kyc/entreprise/identite-representant-one/' className="align-right">
+                                        <a
+                                        className=""
+                                        >
+                                            <button className="btn btn-primary " type='button'  > Suivant </button>
+                                        </a>   
+                                    </Link>                          
+                                </div>
+                            </div> 
                             {/* <button className="btn btn-primary "  disabled={isLoggingIn}>Suivant</button> */}
                         </form>       
                     </div>

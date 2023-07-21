@@ -40,7 +40,7 @@ import ProgressBar from '../ProgressBar';
 
 // FIN
 
-const SecondKyc = () => {
+const JustificatifIdentiteTwo = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
@@ -63,6 +63,7 @@ const SecondKyc = () => {
 
     // State de question 0
     const [typeJustificatif, setTypeJustificatif] = useState('default');
+    const [statutTypeJustificatif, setStatutTypeJustificatif] = useState();
 
     // Fin
     const [selected, setSelected] = useState('file');
@@ -150,10 +151,12 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
 
       const body = new FormData();
       body.append("receiptType", typeJustificatif);
+      body.append("pieceNumber", pieceNumber);
+      body.append("validityDate", validityDate);
       body.append("frontReceipt", frontReceipt);
       body.append("backReceipt", backReceipt);
       
-      const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-identity`, {
+      const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-identity-file`, {
           method:"PUT",
           body,
           headers: {
@@ -176,7 +179,7 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
             if (currentKycStatut==="1") {
                 Router.push("/profil/kyc/particulier/resultat-kyc"); 
             }else{
-                Router.push("/profil/kyc/particulier/justificatif-domicile"); 
+                Router.push("/profil/kyc/particulier/selfie-with-document"); 
             }
         }, 5000)
         
@@ -206,6 +209,8 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
         
         const dataa = {
             receiptType:typeJustificatif,
+            pieceNumber:pieceNumber,
+            validityDate:validityDate,
             frontReceiptPhoto:imageRecto,
             backReceiptPhoto:imageVerso
         }
@@ -234,7 +239,7 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
             timer: 5000
         }),
         setTimeout(() => {
-        Router.push("/profil/kyc/particulier/justificatif-domicile"); 
+        Router.push("/profil/kyc/particulier/selfie-with-document"); 
         }, 5000)
         
         }else{
@@ -266,8 +271,8 @@ const actualiser = ()=>{
 }
 
 // La barre de progression de KYC
-const steps = ["Questionnaires", "Justificatif d'identité", "Justificatif de domicile", "Photo", "Signature"];
-const activeStep = 0;
+const steps = ["AML 1 & 2","FATCA", "Identité 1 & 2", "Selfie", "Domicile", "Photo", "Signature"];
+const activeStep = 1;
 // Fin
 
   return (
@@ -303,7 +308,8 @@ const activeStep = 0;
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
                         {/* <form className=''> */}
                             {/* Question 0 */}
-                            {typeJustificatif==="Passeport"  || typeJustificatif==="Permis de conduire" || typeJustificatif==="Titre de séjour" || typeJustificatif==="Carte d'identité" || typeJustificatif==="Autre"? ("") :(
+                            {/* {typeJustificatif==="Passeport"  || typeJustificatif==="Permis de conduire" || typeJustificatif==="Titre de séjour" || typeJustificatif==="Carte d'identité" || typeJustificatif==="Autre"? ("") :( */}
+                            {statutTypeJustificatif ? ("") :(
                                 <>
                                     <div className="form-group mb-6 mt-3">
                                         <label
@@ -424,13 +430,24 @@ const activeStep = 0;
                                     </div >
 
                                     <form>
-                                    <Link href='/profil/kyc/particulier/' className="align-right">
-                                        <a >
-                                            <button className="btn btn-primary "type='button' >
-                                            Précédente
-                                            </button>
-                                        </a>
-                                    </Link>
+                                   
+
+                                    <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                    <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                        <Link href='/profil/kyc/particulier/justificatif-identite-one/' className="align-right">
+                                            <a >
+                                                <button className="btn btn-primary "type='button' >
+                                                    Précédente
+                                                </button>
+                                            </a>
+                                        </Link> 
+                                    </div> 
+
+                                    <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                        <button className="btn btn-primary" type='button' onClick={()=>setStatutTypeJustificatif(1)}  disabled={isLoggingIn}>Suivant </button>
+                                    </div> 
+                                    </div>
+
                                     </form>
                                 </>
                             )}
@@ -439,7 +456,9 @@ const activeStep = 0;
                             
 
                             {/* Question 1 */}
-                            {typeJustificatif==="Passeport"  || typeJustificatif==="Permis de conduire" || typeJustificatif==="Titre de séjour" || typeJustificatif==="Carte d'identité" || typeJustificatif==="Autre"? (
+                            {/* {typeJustificatif==="Passeport"  || typeJustificatif==="Permis de conduire" || typeJustificatif==="Titre de séjour" || typeJustificatif==="Carte d'identité" || typeJustificatif==="Autre"? ( */}
+                            {statutTypeJustificatif ? (
+                                
                                 <>
                                 <div className="form-group mb-6 mt-3">
                                 <label
@@ -521,6 +540,7 @@ const activeStep = 0;
                                             />
                                         </div>
                                     </div >
+                                    
                                     <div className="form-group mb-6 mt-3">
                                         <label
                                             htmlFor="validityDate"
@@ -640,7 +660,7 @@ const activeStep = 0;
                                             </div>
                                         </div >
                                         <div className="form-group col-lg-3 col-md-3"></div>
-
+                                        
                                         <div className="form-group col-lg-6 col-md-6 ">
                                             {statutRecto==="0" ? (
                                                 <button className="btn btn-primary "
@@ -791,8 +811,9 @@ const activeStep = 0;
                             {statut==="0" ? (
                                 <>
                                 
-                                    {typeJustificatif==="Passeport"  || typeJustificatif==="Permis de conduire" || typeJustificatif==="Titre de séjour" || typeJustificatif==="Carte d'identité" || typeJustificatif==="Autre"? 
-                                    (
+                                    {/* {typeJustificatif==="Passeport"  || typeJustificatif==="Permis de conduire" || typeJustificatif==="Titre de séjour" || typeJustificatif==="Carte d'identité" || typeJustificatif==="Autre"?  */}
+                                    {statutTypeJustificatif ? (
+                                    
                                         <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
                                         <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
                                             {/* <Link href='/profil/kyc/particulier/seconde-phase/' className="align-right"> */}
@@ -923,4 +944,4 @@ const activeStep = 0;
   );
 };
 
-export default SecondKyc;
+export default JustificatifIdentiteTwo;

@@ -44,11 +44,12 @@ const Layout = ({ children }) => {
       pathname === "/callback"|| 
       
       pathname === "/profil/dashboard" ||
-      pathname === "/profil/kyc/particulier"||
+      pathname === "/profil/kyc/particulier/questionnaires-revenus-one"||
       pathname === "/profil/kyc/particulier/questionnaires-revenus-two" ||
       pathname === "/profil/kyc/particulier/questionnaires-fatca" ||
       pathname === "/profil/kyc/particulier/justificatif-identite-one"||
-      pathname === "/profil/kyc/particulier/seconde-phase"||
+      pathname === "/profil/kyc/particulier/justificatif-identite-two"||
+      pathname === "/profil/kyc/particulier/selfie-with-document"||
       pathname === "/profil/kyc/particulier/resultat-kyc"||
       pathname === "/profil/action"||
       pathname === "/profil/achat/achat-carte"||
@@ -62,6 +63,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/documents-legaux"||
       pathname === "/profil/informations/connexion"||
       pathname === "/profil/informations/utilisateur"||
+
       pathname === "/profil/kyc/entreprise/identite-one"||
       pathname === "/profil/kyc/entreprise/justificatif-identite"||
       pathname === "/profil/kyc/entreprise/identite-representant-one"||
@@ -72,6 +74,17 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/structure-control-two"||
       pathname === "/profil/kyc/entreprise/politiquement-exposees"||
       pathname === "/profil/kyc/entreprise/operations-financieres-one"||
+      pathname === "/profil/kyc/entreprise/origine-fonds"||
+      pathname === "/profil/kyc/entreprise/information-financiere-one"||
+      pathname === "/profil/kyc/entreprise/information-financiere-two"||
+      pathname === "/profil/kyc/entreprise/information-financiere-three"||
+      pathname === "/profil/kyc/entreprise/information-financiere-four"||
+      pathname === "/profil/kyc/entreprise/information-financiere-five"||
+      pathname === "/profil/kyc/entreprise/questionnaire-aml-two"||
+      pathname === "/profil/kyc/entreprise/questionnaire-aml-three"||
+      pathname === "/profil/kyc/entreprise/questionnaire-aml-four"||
+      pathname === "/profil/kyc/entreprise/questionnaire-aml-five"||
+
       pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/kyc/entreprise/resultat-kyc"||
       pathname === "/profil/wallet"||
@@ -126,12 +139,13 @@ const Layout = ({ children }) => {
       pathname === "/callback"|| 
       pathname === "/profil/dashboard" || 
       // KYC particulier
-      pathname === "/profil/kyc/particulier" ||
+      pathname === "/profil/kyc/particulier/questionnaires-revenus-one" ||
       pathname === "/profil/kyc/particulier/questionnaires-revenus-two" ||
       pathname === "/profil/kyc/particulier/questionnaires-fatca" ||
       pathname === "/profil/kyc/particulier/justificatif-identite-one"||
+      pathname === "/profil/kyc/particulier/justificatif-identite-two"||
       pathname === "/profil/kyc/particulier/justificatif-domicile"||
-      pathname === "/profil/kyc/particulier/seconde-phase"||
+      pathname === "/profil/kyc/particulier/selfie-with-document"||
       pathname === "/profil/kyc/particulier/resultat-kyc"||
       pathname === "/profil/action"||
       pathname === "/profil/achat/achat-carte"||
@@ -153,7 +167,18 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/structure-control-one"||
       pathname === "/profil/kyc/entreprise/structure-control-two"||
       pathname === "/profil/kyc/entreprise/politiquement-exposees"||
-      pathname === "/profil/kyc/entreprise/operation-financieres-one"||
+      pathname === "/profil/kyc/entreprise/operations-financieres-one"||
+      pathname === "/profil/kyc/entreprise/origine-fonds"||
+      pathname === "/profil/kyc/entreprise/information-financiere-one"||
+      pathname === "/profil/kyc/entreprise/information-financiere-two"||
+      pathname === "/profil/kyc/entreprise/information-financiere-three"||
+      pathname === "/profil/kyc/entreprise/information-financiere-four"||
+      pathname === "/profil/kyc/entreprise/information-financiere-five"||
+      pathname === "/profil/kyc/entreprise/questionnaire-aml-two"||
+      pathname === "/profil/kyc/entreprise/questionnaire-aml-three"||
+      pathname === "/profil/kyc/entreprise/questionnaire-aml-four"||
+      pathname === "/profil/kyc/entreprise/questionnaire-aml-five"||
+
       pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/kyc/entreprise/resultat-kyc"||
       

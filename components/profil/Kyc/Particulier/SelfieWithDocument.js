@@ -19,7 +19,7 @@ import ProgressBar from '../ProgressBar';
 // FIN
 
 
-const SelfieKyc = () => {
+const SelfieWithDocument = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
@@ -31,8 +31,8 @@ const SelfieKyc = () => {
    const [imageSrc, setImageSrc] = useState(null)
    // Fin
 
-    //    State de l'envoie du selfie
-    const [userPicture, setUserPicture] = useState()
+    //    State du selfie avec document
+    const [selfieWithDocument, setSelfieWithDocument] = useState()
 
 
 
@@ -54,7 +54,6 @@ const SelfieKyc = () => {
     useEffect(() => {
         const kycStatutEntreprise = localStorage.getItem('currentKycEntrepriseStatut')  
         setCurrentKycEntrepriseStatut(kycStatutEntreprise)
-        console.log("CurrentKycEntrepriseStatut=>",kycStatutEntreprise)
     }, [currentKycEntrepriseStatut]);
         
        useEffect(() => {
@@ -114,12 +113,12 @@ const SelfieKyc = () => {
         try {
             
             const dataa = {
-                userPicture:imageSrc,
+                selfieWithDocument:imageSrc,
             }
 
             const token = localStorage.getItem('tokenEnCours') //Le token récuperé
 
-            const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-selfie`, {
+            const result = await fetch(`${API_URL}/api/kyc/particular/kyc-particular-selfie-with-document`, {
             method:"PUT",
             body: JSON.stringify(dataa),
             headers: {
@@ -145,7 +144,7 @@ const SelfieKyc = () => {
                     Router.push("/profil/kyc/particulier/resultat-kyc"); 
     
                 }else{
-                    Router.push("/profil/kyc/commun/signature"); 
+                    Router.push("/profil/kyc/particulier/justificatif-domicile"); 
                 }
                 
             }, 5000)
@@ -169,95 +168,28 @@ const SelfieKyc = () => {
             setIsLoggingIn(false);
             }
         
-    }, [userPicture,imageSrc]);
+    }, [selfieWithDocument,imageSrc]);
     // Fin
 
 
-    // Fonction d'envoie des informations du fichiers en photo pour le profil entreprise
-    const addUserPictureLeader= useCallback(async () => {
-        setIsLoggingIn(true);
-        try {
-            
-            const dataa = {
-                userPictureLeader:imageSrc,
-            }
-
-            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
-
-            const result = await fetch(`${API_URL}/api/kyc/entreprise/add-kyc-selfie`, {
-            method:"PUT",
-            body: JSON.stringify(dataa),
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization:  `Bearer ${token}`
-            }
-            })
-            const data = await result.json();
-        
-            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-            * sinon on affiche le message de succès
-            */
-            if (data.message===200) {
-            Swal.fire({
-                position: 'center',
-                icon: 'success',
-                html: `<p> Votre photo a été sauvegardée avec succès.</p>` ,
-                showConfirmButton: false,
-                timer: 5000
-            }),
-            setTimeout(() => {
-            if (currentKycEntrepriseStatut==="1") {
-                Router.push("/profil/kyc/entreprise/resultat-kyc"); 
-           }else{
-                Router.push("/profil/kyc/commun/signature"); 
-           }
-            }, 5000)
-            
-            }else{
-                setMessageError(data.message)
-
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> ${messageError} </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-                
-            }
-            // Fin condition 
-        
-            } catch {
-            setIsLoggingIn(false);
-            }
-        
-    }, [userPicture,imageSrc]);
-    // Fin
+   
 
     // La barre de progression de KYC du profil particulier
     const steps = ["AML 1 & 2","FATCA", "Identité 1 & 2", "Selfie", "Domicile", "Photo", "Signature"];
-    const activeStep = 4;
-    // Fin
-
-    // La barre de progression de KYC du profil particulier
-    const stepsEntreprise = ["Questionnaires","Documents légaux","Justificatif de domicile", "Justificatif d'identité","Photo", "Signature"];
-    const activeStepEntreprise = 3;
+    const activeStep = 2;
     // Fin
 
   return (
     <>
-        {currentUser?.activated && currentUser?.codeTypeProfil==="entCom"? (
-            <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />
-        ) : (
-            <ProgressBar className="mb-15" steps={steps} activeStep={activeStep} />
-        )}
+       
+        <ProgressBar className="mb-15" steps={steps} activeStep={activeStep} />
+
 
 
         <div className='' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                    <br/><br/><h1 className='text-center'>Photo</h1>
+                    <br/><br/><h1 className='text-center'>Selfie avec votre document d'identité </h1>
                 </div>
             </div>
 
@@ -278,30 +210,17 @@ const SelfieKyc = () => {
 
             {/* Les cards */}
             <div className='row'>
-                <div className='col-lg-3 col-md-3 text-center'>
-                    <p className=''>Suivez cet exemple</p>
-                    <img src="/images/ecfa/kyc/selfie.png" alt="Selfie" />
+                <div className='col-lg-3 col-md-3 m-4'>
+                    <p className='text-center'>Suivez cet exemple</p>
+                    <img src="/images/ecfa/kyc/selfie_with_doc.png" alt="Selfie" />
                 </div>
 
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-6'>
                         <form className=''>
                             <div className="form-group row mt-3 text-center">
-                                {currentUser?.activated && currentUser?.codeTypeProfil==="entCom"? (
-                                    <label
-                                        htmlFor="Q1"
-                                        className="text-blackish-blue mb-2"
-                                    >
-                                        Merci de prendre une photo du dirigeant de l'entreprise
-                                    </label>
-
-                                ) :(
-                                    <label
-                                        htmlFor="Q1"
-                                        className="text-blackish-blue mb-2"
-                                    >
-                                        Merci de prendre une photo de vous
-                                    </label>
-                                )}
+                                
+                                    Merci de prendre une photo de vous avec votre document de justificatif d'identité
+                                   
                                 <div className="form-group col-lg-3 col-md-3"></div>
 
                                 <div className="form-group col-lg-6 col-md-6 ">
@@ -342,27 +261,9 @@ const SelfieKyc = () => {
                             {imageSrc? (
                                 <>
                                     
-                                    {currentUser?.activated && currentUser?.codeTypeProfil==="entCom"? (
-                                        <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                    <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
                                         <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                            <Link href='/profil/kyc/entreprise/justificatif-identite/' className="align-right">
-                                                <a
-                                                className=""
-                                                >
-                                                    <button className="btn btn-primary " type='button'  > Précédente </button>
-                                                </a>   
-                                            </Link>                          
-                                        </div> 
-
-                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                            <button className="btn btn-primary " onClick={addUserPictureLeader} type='button'  disabled={isLoggingIn}>Suivant</button>
-                                        </div> 
-                                        </div>
-
-                                    ):(
-                                        <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
-                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                            <Link href='/profil/kyc/particulier/justificatif-domicile/' className="align-right">
+                                            <Link href='/profil/kyc/particulier/justificatif-identite-two/' className="align-right">
                                                 <a
                                                 className=""
                                                 >
@@ -375,8 +276,6 @@ const SelfieKyc = () => {
                                             <button className="btn btn-primary " onClick={addUserPicture} type='button'  disabled={isLoggingIn}>Suivant</button>
                                         </div> 
                                         </div>
-
-                                    )}
                                 </>
                             ) : ("")}
 
@@ -385,11 +284,12 @@ const SelfieKyc = () => {
                         </form>  
                              
                     </div>
-                <div className='col-lg-3 col-md-3'></div>
+                <div className='col-lg-3 col-md-3'>
+                </div>
             </div>
         </div>
     </>
   );
 };
 
-export default SelfieKyc;
+export default SelfieWithDocument;

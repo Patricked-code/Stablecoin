@@ -68,7 +68,10 @@ const JtifDomicile = () => {
     const [imageVerso, setImageVerso] = useState(null)
     // Fin
 
-    
+    // State de la géolocalisation
+    const [latitude, setLatitude] = useState()
+    const [longitude, setLongitude] = useState()
+
     // State pour les fichiers du justificatif de domicile
     const [frontProofResidence, setFrontProofResidence] = useState(null)
     const [backProofResidence, setBackProofResidence] = useState()
@@ -98,6 +101,8 @@ const JtifDomicile = () => {
     }
     // Fin
 
+   
+
 
     // FONCTION POUR UPLOADER LES FICHIERS
     // const [image, setImage] = useState(null);
@@ -122,15 +127,39 @@ const JtifDomicile = () => {
         }
     };
 
+     // FONCTION POUR OBTENIR LES INFOS SUR LA POSITION EXACTE DE L'UTILISATEUR
+     function getUserLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(saveUserLocation);
+        } else {
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p> La géolocalisation n'est pas prise en charge par ce navigateur.</p>` ,
+                showConfirmButton: false,
+                timer: 5000
+            })
+        }
+    }
+    // FIN
+    // FONCTION POUR SAUVEGARDER LES INFOS DE GEAOLOCATION DE USER
+    function saveUserLocation(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        setLatitude(latitude)
+        setLongitude(longitude)
+    }
+    // FIN
+
     // FONCTION D'AJOUT DES FICHIERS DE LA RESIDENSE DANS LA BASE DE DONNEE
     const AddJustificationDomicile = async () => {
         const token = localStorage.getItem('tokenEnCours')
-
         const body = new FormData();
         
+        body.append("latitude", latitude);
+        body.append("longitude", longitude);
         body.append("frontProofResidence", frontProofResidence);
         body.append("backProofResidence", backProofResidence);
-        
         const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-domicile`, {
             method:"PUT",
             body,
@@ -176,8 +205,8 @@ const JtifDomicile = () => {
     // FIN
 
 // La barre de progression de KYC
-const steps = ["Questionnaires", "Justificatif d'identité", "Justificatif de domicile", "Photo", "Signature"];
-const activeStep = 1;
+const steps = ["AML 1 & 2","FATCA", "Identité 1 & 2", "Selfie", "Domicile", "Photo", "Signature"];
+const activeStep = 3;
 // Fin
 
   return (
@@ -212,16 +241,31 @@ const activeStep = 1;
 
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
                         <form className=''>
-
-                            {/* Si selected est file on affiche ce formulaire pour importer des fichiers */}
-                                <div className="form-group row mt-3">
-                                <div className="form-group my-6">
-                                    <label
-                                        htmlFor="picture"
-                                        className='mb-6'
-                                    >
-                                        Merci de joindre soit (votre facture de l'électricité ou votre attestation de résidence ou votre relevé de compte bancaire)
-                                    </label> 
+                                <label className='colorRed'>
+                                    NB: Notez que vous devez être chez vous, à domicile, avant de cliquer sur le bouton ci-dessous pour enregistrer votre situation géographique.
+                                </label> 
+                                <div className="form-group row">
+                                    
+                                    <div className='row '>
+                                        <div className="form-group mb-6 mt-3 col-lg-3 col-md-3"></div>
+                                            <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                                {latitude && longitude ? (
+                                                <label className='colorGreen'>
+                                                    Félicitations ! Vos informations ont été enregistrées avec succès. Nous vous remercions d'avoir partagé votre situation géographique.
+                                                </label>
+                                                ):(
+                                                    <button className="btn btn-primary" type='button' onClick={getUserLocation}>Enregistrer </button>
+                                                )}
+                                            </div> 
+                                        <div className="form-group mb-6 mt-3 col-lg-3 col-md-3"></div>
+                                    </div>
+                                    <div className="form-group my-6">
+                                        <label
+                                            htmlFor="picture"
+                                            className='mb-6'
+                                        >
+                                            Merci de joindre soit (votre facture de l'électricité ou votre attestation de résidence ou votre relevé de compte bancaire)
+                                        </label> 
                                     </div><br/>
                                     <div className="form-group my-6">
                                         <label
@@ -257,7 +301,7 @@ const activeStep = 1;
                             {/* Fin */}
                             <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
                                 <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                    <Link href='/profil/kyc/particulier/seconde-phase/' className="align-right">
+                                    <Link href='/profil/kyc/particulier/selfie-with-document/' className="align-right">
                                         <a
                                         className=""
                                         >

@@ -85,25 +85,12 @@ const CDocumentLegaux = () => {
 
 
 
-    // Fonction pour prendre photo du Recto
-    const captureRecto = () => {
-        const image = webcamRefRecto.current.getScreenshot()
-        setImageRecto(image)
-    }
-    // Fin
-
-    // Fonction pour prendre photo du verso
-    const captureVerso = () => {
-        const image = webcamRefVerso.current.getScreenshot()
-        setImageVerso(image)
-    }
-    // Fin
+   
 
 
 // ***************************************************************************************
 
-// FONCTION POUR UPLOADER LES FICHIERS
-    // const [image, setImage] = useState(null);
+// FONCTION POUR UPLOADER LE FICHIER Extrait de registre de commerce
     const [createObjectURL, setCreateObjectURL] = useState(null);
 
     const uploadToClientRegistre = (event) => {
@@ -182,9 +169,10 @@ const CDocumentLegaux = () => {
     }
     // FIN
 
-    // La barre de progression de KYC du profil particulier
-    const stepsEntreprise = ["Questionnaires","Documents légaux","Justificatif de domicile", "Justificatif d'identité","Photo", "Signature"];
-    const activeStepEntreprise = 0;
+    // La barre de progression de KYC du profil entreprise
+   const stepsEntreprise = ["AML","Identité","Représentant", "Bénéficiaire","Control", "Politique", "Opérations", "Fonds", "Financière", "Documents"];
+
+   const activeStepEntreprise = 7;
     // Fin
 
   return (
@@ -224,18 +212,18 @@ const CDocumentLegaux = () => {
                                 <div className="form-group row mt-3">
                                     
                                     <div className="form-group my-6">
-                                        <label
+                                        <h4
                                             htmlFor="picture"
                                             className='mb-6'
                                         >
                                             Merci de joindre ces différents fichiers
-                                        </label> 
+                                        </h4> 
                                     </div><br/>
                                     <div className="form-group my-6">
                                         <label
                                             htmlFor="picture"
                                         >
-                                            Registre de commerce de l'entreprise
+                                            Extrait de registre de commerce
                                         </label>
                                         <input
                                             className="form-control border mt-3 bg-white"
@@ -250,7 +238,7 @@ const CDocumentLegaux = () => {
                                         <label
                                             htmlFor="picture"
                                         >
-                                            Déclaration d'existence fiscale de l'entreprise.
+                                            DFE
                                         </label>
                                         <input
                                             className="form-control  border mt-3"
@@ -261,22 +249,160 @@ const CDocumentLegaux = () => {
                                             onChange={uploadToClientFiscal}
                                         />
                                     </div>
+
+                                    {/* *********NOUVEAU CHAMPS*************** */}
+                                    <div className="form-group mb-6">
+                                        <label
+                                            htmlFor="picture"
+                                        >
+                                            Copie des statuts à jour
+                                        </label>
+                                        <input
+                                            className="form-control  border mt-3"
+                                            type="file" 
+                                            name="myImage"
+                                            id='picture'
+                                            accept="application/pdf, image/*"
+                                            onChange={uploadToClientFiscal}
+                                        />
+                                    </div>
+
+                                    <div className="form-group mb-6">
+                                        <label
+                                            htmlFor="picture"
+                                        >
+                                            Délégation de pouvoirs, 
+                                        </label>
+                                        <input
+                                            className="form-control  border mt-3"
+                                            type="file" 
+                                            name="myImage"
+                                            id='picture'
+                                            accept="application/pdf, image/*"
+                                            onChange={uploadToClientFiscal}
+                                        />
+                                    </div>
+
+                                    <div className="form-group mb-6">
+                                        <label
+                                            htmlFor="picture"
+                                        >
+                                            PV de nomination des dirigeants publication journal officiel
+                                        </label>
+                                        <input
+                                            className="form-control  border mt-3"
+                                            type="file" 
+                                            name="myImage"
+                                            id='picture'
+                                            accept="application/pdf, image/*"
+                                            onChange={uploadToClientFiscal}
+                                        />
+                                    </div>
+
+                                    <div className="form-group mb-6">
+                                        <label
+                                            htmlFor="picture"
+                                        >
+                                            Plan Localisation géographique
+                                        </label>
+                                        <input
+                                            className="form-control  border mt-3"
+                                            type="file" 
+                                            name="myImage"
+                                            id='picture'
+                                            accept="application/pdf, image/*"
+                                            onChange={uploadToClientFiscal}
+                                        />
+                                    </div>
+
+                                    <div className="form-group mb-6">
+                                        <label
+                                            htmlFor="picture"
+                                        >
+                                            Facture eau / électricité ou contrat de bail
+                                            <br/><small className='colorRed'>
+                                                Si le signataire dU bulletin de souscription n’est pas le représentant légal de la société, joindre également au dossier
+                                            </small>
+                                        </label>
+                                        <input
+                                            className="form-control  border mt-3"
+                                            type="file" 
+                                            name="myImage"
+                                            id='picture'
+                                            accept="application/pdf, image/*"
+                                            onChange={uploadToClientFiscal}
+                                        />
+                                    </div>
+
+                                    <div className="form-group mb-6">
+                                        <label
+                                            htmlFor="picture"
+                                        >
+                                            La copie du justificatif de pouvoir conféré au signataire sur le compte par le représentant légal
+                                        </label>
+                                        <input
+                                            className="form-control  border mt-3"
+                                            type="file" 
+                                            name="myImage"
+                                            id='picture'
+                                            accept="application/pdf, image/*"
+                                            onChange={uploadToClientFiscal}
+                                        />
+                                    </div>
+
+                                    <div className="form-group mb-6">
+                                        <label
+                                            htmlFor="picture"
+                                        >
+                                            Copie recto de la pièce d’identité du signataire du bulletin de souscription (CNI, Passeport ou carte de séjour en coursde validité)
+                                        </label>
+                                        <input
+                                            className="form-control  border mt-3"
+                                            type="file" 
+                                            name="myImage"
+                                            id='picture'
+                                            accept="application/pdf, image/*"
+                                            onChange={uploadToClientFiscal}
+                                        />
+                                    </div>
+
+                                    <div className="form-group mb-6">
+                                        <label
+                                            htmlFor="picture"
+                                        >
+                                            Copie verso de la pièce d’identité du signataire du bulletin de souscription (CNI, Passeport ou carte de séjour en coursde validité)
+                                        </label>
+                                        <input
+                                            className="form-control  border mt-3"
+                                            type="file" 
+                                            name="myImage"
+                                            id='picture'
+                                            accept="application/pdf, image/*"
+                                            onChange={uploadToClientFiscal}
+                                        />
+                                    </div>
+                                    {/* ************FIN NOUVEAU CHAMPS*********** */}
                             </div>
                             {/* Fin */}
                             <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
                                         <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                            <Link href='/profil/kyc/entreprise/questionnaire/' className="align-right">
+                                            <Link href='/profil/kyc/entreprise/information-financiere-five/' className="align-right">
                                                 <a
                                                 className=""
                                                 >
-                                                    <button className="btn btn-primary " type='button'  > Précédente </button>
+                                                    <button className="btn btn-primary " type='button'> Précédente </button>
                                                 </a>   
                                             </Link>                          
                                         </div> 
 
                                         <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                            <button className="btn btn-primary " type='button' onClick={addDocumentsLegaux}  disabled={isLoggingIn}>Suivant</button>
+                                            <button className="btn btn-primary " type='button'  >Suivant </button>
                                         </div> 
+
+                                        {/* <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                        20.	information-financiere-five
+                                            <button className="btn btn-primary " type='button' onClick={addDocumentsLegaux}  disabled={isLoggingIn}>Suivant</button>
+                                        </div>  */}
                                         </div>
                                
 

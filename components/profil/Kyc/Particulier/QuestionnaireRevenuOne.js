@@ -16,7 +16,7 @@ import ProgressBar from '../ProgressBar';
 
 // FIN
 
-const FirsKyc = () => {
+const CQuestionnaireRevenuOne = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
@@ -162,7 +162,9 @@ const FirsKyc = () => {
                         timer: 5000
                     }),
                     setTimeout(() => {
-                    Router.push("/profil/kyc/particulier/seconde-phase"); 
+                    Router.push("/profil/kyc/particulier/questionnaires-revenus-two");
+                    // Router.push("/profil/kyc/particulier/seconde-phase");
+                    
                     }, 5000)
                 }
                 // Fin condition 
@@ -262,7 +264,7 @@ const FirsKyc = () => {
                             Router.push("/profil/kyc/particulier/resultat-kyc"); 
         
                         }else{
-                            Router.push("/profil/kyc/particulier/seconde-phase"); 
+                            Router.push("/profil/kyc/particulier/questionnaires-revenus-two"); 
                         }
                     }, 5000)
                 }
@@ -425,7 +427,7 @@ const handleOptionIncomeTypeC = (event) => {
 };
 
     // La barre de progression de KYC
-    const steps = ["Questionnaires", "Justificatif d'identité", "Justificatif de domicile", "Photo", "Signature"];
+    const steps = ["AML 1 & 2","FATCA", "Identité 1 & 2", "Selfie", "Domicile", "Photo", "Signature"];
     const activeStep = -1;
     // Fin
 
@@ -436,7 +438,7 @@ const handleOptionIncomeTypeC = (event) => {
         <div className='mt-15' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                <br/><br/><h1 className='text-center '>Questionnaires AML & REVENU 1</h1>
+                <br/><br/><h1 className='text-center '>Questionnaires AML & REVENU </h1>
                 </div>
             </div>
 
@@ -794,4 +796,4 @@ const handleOptionIncomeTypeC = (event) => {
   );
 };
 
-export default FirsKyc;
+export default CQuestionnaireRevenuOne;

@@ -793,7 +793,6 @@ const [serviceD, setServiceD] = useState([]);
                 <div className="form-group mb-6 mt-3">
                 <select 
                   className="form-control"
-                  id="sexe"
                   required
                   defaultValue={bankAccount} 
                   onChange={(event)=>setBankAccount(event.target.value)}
@@ -809,7 +808,6 @@ const [serviceD, setServiceD] = useState([]);
                 <div className="form-group mb-6 mt-3">
                 <select 
                   className="form-control"
-                  id="sexe"
                   required
                   defaultValue={moneyAccount} 
                   onChange={(event)=>setMoneyAccount(event.target.value)}

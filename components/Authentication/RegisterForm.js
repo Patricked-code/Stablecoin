@@ -206,11 +206,11 @@ function RegisterForm() {
                   {/* Parcourir les profils */}
                   {allTypeProfil?(
                   allTypeProfil.map((data) => (
-                  <optgroup className='single-cryptocurrency-box'
-                          key={data.id}>
-                    <option  value={data.code}>{data.libelle}</option>
-                  </optgroup>
-                      ))):("")}
+                    <optgroup className='single-cryptocurrency-box'
+                            key={data.id}>
+                      <option  value={data.code}>{data.libelle}</option>
+                    </optgroup>
+                  ))):("")}
                 {/* Fin */}
                             
               </select>

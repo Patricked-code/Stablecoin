@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import FirsKyc from '../../../../components/profil/Kyc/Particulier/FirstKyc';
+import CIformationFinanciereFour from '../../../../components/profil/Kyc/Entreprise/InformationFinanciereFour';
 import SidebarProfil from '../../../../components/profil/SideBar/Sidebar';
 
 
@@ -23,7 +23,7 @@ const index = () => {
           </aside>
 
           {/* CONTENU PROFIL */}
-          <FirsKyc />
+          <CIformationFinanciereFour/>
           {/* FIN */}
 
         </main>

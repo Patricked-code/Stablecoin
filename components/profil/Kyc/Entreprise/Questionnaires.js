@@ -162,7 +162,7 @@ const CQuestionnaire = () => {
                         timer: 5000
                     }),
                     setTimeout(() => {
-                    Router.push("/profil/kyc/entreprise/documents-legaux"); 
+                    Router.push("/profil/kyc/entreprise/questionnaire-aml-two"); 
                     }, 5000)
                 }
                 // Fin condition 
@@ -263,7 +263,7 @@ const CQuestionnaire = () => {
                             Router.push("/profil/kyc/entreprise/resultat-kyc"); 
             
                         }else{
-                            Router.push("/profil/kyc/entreprise/documents-legaux"); 
+                            Router.push("/profil/kyc/entreprise/questionnaire-aml-two"); 
                         }
                     }, 5000)
                 }
@@ -423,8 +423,10 @@ const CQuestionnaire = () => {
         }
     }
 
-   // La barre de progression de KYC du profil particulier
-   const stepsEntreprise = ["Questionnaires","Documents légaux","Justificatif de domicile", "Justificatif d'identité","Photo", "Signature"];
+   // La barre de progression de KYC du profil entreprise
+   const stepsEntreprise = ["AML","Identité","Représentant", "Bénéficiaire","Control", "Politique", "Opérations", "Fonds", "Financière", "Documents"];
+
+//    const stepsEntreprise = ["Questionnaires","Documents légaux","Justificatif de domicile", "Justificatif d'identité","Photo", "Signature"];
    const activeStepEntreprise = -1;
    // Fin
 
@@ -437,7 +439,7 @@ const CQuestionnaire = () => {
         <div className='' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                    <br/><br/><h1 className='text-center'>Questionnaires</h1>
+                    <br/><br/><h1 className='text-center'>Questionnaires AML 1</h1>
                 </div>
             </div>
 
