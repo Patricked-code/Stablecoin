@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import COrigneFonds from '../../../../components/profil/Kyc/Entreprise/origineFonds';
+import COrigneFonds from '../../../../components/profil/Kyc/Entreprise/OrigineFonds';
 import SidebarProfil from '../../../../components/profil/SideBar/Sidebar';
 
 
