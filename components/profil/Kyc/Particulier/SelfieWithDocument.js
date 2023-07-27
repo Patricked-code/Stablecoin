@@ -118,7 +118,7 @@ const SelfieWithDocument = () => {
 
             const token = localStorage.getItem('tokenEnCours') //Le token récuperé
 
-            const result = await fetch(`${API_URL}/api/kyc/particular/kyc-particular-selfie-with-document`, {
+            const result = await fetch(`${API_URL}/api/kyc/particular/kyc-selfie-with-document`, {
             method:"PUT",
             body: JSON.stringify(dataa),
             headers: {

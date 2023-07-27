@@ -28,26 +28,12 @@ const CJustificatifIdentiteOne = () => {
     
 
     // States du formulaire
-    // "civility"
-    // "fatherName"
-    // "motherName"
-    // "familyStatus"
-    // "intermediaryBusiness" 
-    // "language"
-
-    // "firstName" *
-    // "lastName" *
-    // "nationality" *
-    // "nativeCountry" *
-    // "dateBirth" *
-    
-
+   
     const [civility, setCivility] = useState();
     const [fatherName, setFatherName] = useState();
     const [motherName, setMotherName] = useState();
     const [familyStatus, setFamilyStatus] = useState();
     const [language, setLanguage] = useState();
-    const [intermediaryBusiness, setIntermediaryBusiness] = useState();
 
     // Pour les infos qui existent déjà dans la table Users
     const [firstName, setFirstName] = useState();
@@ -122,7 +108,6 @@ const CJustificatifIdentiteOne = () => {
                 motherName:motherName,
                 familyStatus:familyStatus,
                 language:language,
-                intermediaryBusiness:intermediaryBusiness,
             }
             // Condition pour forcer l'utilisateur à choisir au moins une reponse
             // if () {
@@ -526,24 +511,7 @@ const CJustificatifIdentiteOne = () => {
                                     />
                                 </div>
                             </div >
-                            <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="intermediaryBusiness"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                   Apporteur d’affaire
-                                </label>
-                                <div className='form-group'>
-                                    <input
-                                        type='text'
-                                        id='intermediaryBusiness'
-                                        className='form-control'
-                                        placeholder='Apporteur d’affaire'
-                                        defaultValue={intermediaryBusiness} 
-                                        onChange={(event)=>setIntermediaryBusiness(event.target.value)}
-                                    />
-                                </div>
-                            </div >
+                            
 
 
                             {/* <p className="colorRed mb-7 ">

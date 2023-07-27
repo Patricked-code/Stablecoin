@@ -29,8 +29,6 @@ const FirstEdition = () => {
   const [addressPostal, setAddressPostal] = useState("");
   const [nativeCountry, setNativeCountry] = useState("");
   const [cityOfBirth, setCityOfBirth] = useState("");
-  const [bankAccount, setBankAccount] = useState("");
-  const [moneyAccount, setMoneyAccount] = useState("");
 
 
   
@@ -182,8 +180,6 @@ const [serviceD, setServiceD] = useState([]);
           addressPostal:addressPostal,
           cityOfBirth:cityOfBirth,
           nationality:nationality,
-          bankAccount:bankAccount,
-          moneyAccount:moneyAccount,
           nativeCountry:nativeCountry,
           birthday:birthday,
           sex:sex,
@@ -241,7 +237,7 @@ const [serviceD, setServiceD] = useState([]);
         timer: 10000
       })
     }
-  }, [firstName,lastName,mobile,codeCountry,currentAddress,city,birthday,sex,addressPostal,cityOfBirth,nationality,bankAccount,moneyAccount,nativeCountry]);
+  }, [firstName,lastName,mobile,codeCountry,currentAddress,city,birthday,sex,addressPostal,cityOfBirth,nationality,nativeCountry]);
   // Fin
 
   // Fonction de mise à jour des informations du profil Institution et société financière
@@ -789,38 +785,7 @@ const [serviceD, setServiceD] = useState([]);
                     onChange={(event)=>setAddressPostal(event.target.value)}
                   />
                 </div>
-
-                <div className="form-group mb-6 mt-3">
-                <select 
-                  className="form-control"
-                  required
-                  defaultValue={bankAccount} 
-                  onChange={(event)=>setBankAccount(event.target.value)}
-                >
-                  <option defaultValue="">Avez-vous un compte bancaire ?</option>
-                    <optgroup className='single-cryptocurrency-box'>
-                      <option  value="Oui">Oui</option>
-                      <option  value="Non">Non</option>
-                    </optgroup>
-                </select>
-                </div >
-
-                <div className="form-group mb-6 mt-3">
-                <select 
-                  className="form-control"
-                  required
-                  defaultValue={moneyAccount} 
-                  onChange={(event)=>setMoneyAccount(event.target.value)}
-                >
-                  <option defaultValue="">Avez-vous un compte mobile money ?</option>
-                    <optgroup className='single-cryptocurrency-box'>
-                      <option  value="Oui">Oui</option>
-                      <option  value="Non">Non</option>
-                    </optgroup>
-                </select>
-                </div >
                 
-            
                 {/* ****************FIN****************************** */}
                
                 

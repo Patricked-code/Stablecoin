@@ -244,8 +244,8 @@ const CQuestionnaireFatca = () => {
                                 >
                                 <option defaultValue="">Choisissez</option>
                                     <optgroup className='single-cryptocurrency-box'>
-                                    <option  value="Oui le client est une US Person">Oui</option>
-                                    <option  value="Non client n'est pas une US Person">Non</option>
+                                    <option  value="Oui">Oui</option>
+                                    <option  value="Non">Non</option>
                                     </optgroup>
                                 </select>
                             </div >
@@ -344,7 +344,7 @@ const CQuestionnaireFatca = () => {
                                     htmlFor="professionStatus"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Statut
+                                    Statut du profession
                                 </label>
                                 <select 
                                 className="form-control"
@@ -421,9 +421,12 @@ const CQuestionnaireFatca = () => {
                                 >
                                 <option defaultValue="">Choisissez</option>
                                     <optgroup className='single-cryptocurrency-box'>
-                                    <option  value="Salaire">Salaire</option>
-                                    <option  value="Activité commerciale">Activité commerciale</option>
-                                    <option  value="Revenu locative">Revenu locative</option>
+                                    <option  value="Pour recevoir mon salaire">Pour recevoir mon salaire</option>
+                                    <option  value="Pour mon activité commerciale">Pour mon activité commerciale</option>
+                                    <option  value="Pour faire des achats et des paiement">Pour faire des achats et des paiement</option>
+                                    <option  value="Pour épargner">Pour épargner</option>
+                                    <option  value="Pour transférer de l'argent">Pour transférer de l'argent</option>
+                                    <option  value="Pour encaisser des paiements">Pour encaisser des paiements</option>
                                     <option  value="Autre">Autre</option>
                                     </optgroup>
                                 </select>
@@ -445,14 +448,14 @@ const CQuestionnaireFatca = () => {
                                 >
                                 <option defaultValue="">Choisissez</option>
                                     <optgroup className='single-cryptocurrency-box'>
-                                    <option  value="Oui je bénéficie d’un mandat d’administrateur dans le Conseil d’Administration d’une société">Oui</option>
-                                    <option  value="Non je ne bénéficie pas d’un mandat d’administrateur dans le Conseil d’Administration d’une société">Non</option>
+                                    <option  value="Oui">Oui</option>
+                                    <option  value="Non">Non</option>
                                     </optgroup>
                                 </select>
                             </div>
                             
                             {/* SI L'UTISATEUR BENEFICIE D'UN MENDAT D'ADMINISTRATEUR */}
-                            {directorship==="Oui je bénéficie d’un mandat d’administrateur dans le Conseil d’Administration d’une société" ? (
+                            {directorship==="Oui" ? (
                                 <>
                                 
                             <div className="form-group mb-6 mt-3">
@@ -468,7 +471,7 @@ const CQuestionnaireFatca = () => {
                                         type='text'
                                         id='employerCorporate'
                                         className='form-control'
-                                        placeholder='La (les)quelle(s)'
+                                        placeholder='précisez le nom de la société'
                                         defaultValue={whatBoard} 
                                         onChange={(event)=>setWhatBoard(event.target.value)}
                                     />
@@ -492,14 +495,14 @@ const CQuestionnaireFatca = () => {
                                 >
                                 <option defaultValue="">Choisissez</option>
                                     <optgroup className='single-cryptocurrency-box'>
-                                    <option  value="Oui je suis actionnaire dans une société">Oui</option>
-                                    <option  value="Non je ne suis pas actionnaire dans une société">Non</option>
+                                    <option  value="Oui">Oui</option>
+                                    <option  value="Non">Non</option>
                                     </optgroup>
                                 </select>
                             </div>
 
                             {/* SI L'UTILISATEUR EST ACTIONNAIRE DANS UNE SOCIETE */}
-                            {shareholder==="Oui je suis actionnaire dans une société"? (
+                            {shareholder==="Oui"? (
                                 <>
                                  
                             <div className="form-group mb-6 mt-3">
@@ -515,7 +518,7 @@ const CQuestionnaireFatca = () => {
                                         type='text'
                                         id='whatHareholder'
                                         className='form-control'
-                                        placeholder='La (les)quelle(s)'
+                                        placeholder='précisez le nom de la société'
                                         defaultValue={whatHareholder} 
                                         onChange={(event)=>setWhatHareholder(event.target.value)}
                                     />

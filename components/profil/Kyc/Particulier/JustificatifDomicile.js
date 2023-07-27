@@ -77,6 +77,8 @@ const JtifDomicile = () => {
     const [backProofResidence, setBackProofResidence] = useState()
 
     const [currentKycStatut, setCurrentKycStatut] = useState();
+    const [howImportDoc, setHowImportDoc] = useState();
+    
 
     //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
     useEffect(() => {
@@ -89,7 +91,6 @@ const JtifDomicile = () => {
     const captureRecto = () => {
         const image = webcamRefRecto.current.getScreenshot()
         setImageRecto(image)
-        console.log("image=>",image)
     }
     // Fin
 
@@ -97,7 +98,6 @@ const JtifDomicile = () => {
     const captureVerso = () => {
         const image = webcamRefVerso.current.getScreenshot()
         setImageVerso(image)
-        console.log("image=>",image)
     }
     // Fin
 
@@ -126,6 +126,73 @@ const JtifDomicile = () => {
         setCreateObjectURL(URL.createObjectURL(i));
         }
     };
+
+
+    // Fonction d'envoie des informations du fichiers en photo
+    const AddJustificationDomicilePhoto= async () => {
+        setIsLoggingIn(true);
+    
+        try {
+            
+            const dataa = {
+                latitude:latitude,
+                longitude:longitude,
+                frontProofResidencePhoto:imageRecto,
+                backProofResidencePhoto:imageVerso
+            }
+
+            console.log("dataa=>",dataa)
+    
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+    
+            const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-domicile-photo`, {
+            method:"PUT",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+            })
+            const data = await result.json();
+        
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message===200) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Vos fichiers ont été sauvegardés avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 5000
+            }),
+            setTimeout(() => {
+                if (currentKycStatut==="1") {
+                    Router.push("/profil/kyc/particulier/resultat-kyc"); 
+                }else{
+                    Router.push("/profil/kyc/commun/selfie"); 
+                }
+            }, 5000)
+            }else{
+                setMessageError(data.message)
+    
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+                
+            }
+            // Fin condition 
+        
+            } catch {
+            setIsLoggingIn(false);
+            }
+        }
+        // Fin
 
      // FONCTION POUR OBTENIR LES INFOS SUR LA POSITION EXACTE DE L'UTILISATEUR
      function getUserLocation() {
@@ -267,6 +334,65 @@ const activeStep = 3;
                                             Merci de joindre soit (votre facture de l'électricité ou votre attestation de résidence ou votre relevé de compte bancaire)
                                         </label> 
                                     </div><br/>
+
+                                    {/* PARTIE DE LA MANIERE A ENVOYER LES FICHIERS */}
+                                    <div className="form-group mb-6 mt-3">
+                                        <label
+                                            htmlFor="Q1"
+                                            className="text-blackish-blue mb-2"
+                                        >
+                                            Comment voulez-vous importer vos fichiers ?
+                                        <br/>
+                                        </label>
+                                    
+                                        <div className='row'>
+                                        {/* Imoporter*/}
+                                        <div className="form-group col-lg-6  mt-3 ">
+                                            <label
+                                                htmlFor="importer-check"
+                                                className="gr-check-input mb-7 d-flex"
+                                            >
+                                                
+                                                <input 
+                                                type="radio" 
+                                                name="0"
+                                                value='0'
+                                                id='importer-check' 
+                                                checked={howImportDoc==="0"}
+                                                onChange={()=>setHowImportDoc("0")}
+                                                />
+                                            <p className=" mx-2 mb-0 text-center">
+                                                Importer les fichiers pdf ou image
+                                            </p>
+                                            </label>
+                                        </div>
+                                        {/* Photo */}
+                                        <div className="form-group col-lg-6  mt-3 ">
+                                            <label
+                                                htmlFor="photo-check"
+                                                className="gr-check-input mb-7 d-flex"
+                                            >
+                                                <input 
+                                                type="radio" 
+                                                name="photo"
+                                                value="1"
+                                                id='photo-check' 
+                                                checked={howImportDoc==="1"}
+                                                onChange={()=>setHowImportDoc("1")}
+                                                />
+                                            <p className=" mx-2 mb-0 text-center">
+                                                Prendre les fichiers en photo
+                                            </p>
+                                            </label>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    {/* FIN */}
+
+                                    {/* SI L'UTILISATEUR CHOISIT D'IMPORTER LES DOCUMENTS */}
+
+                                    {howImportDoc==="0" ? (
+                                    <>
                                     <div className="form-group my-6">
                                         <label
                                             htmlFor="picture"
@@ -297,6 +423,127 @@ const activeStep = 3;
                                             onChange={uploadToClientVerso}
                                         />
                                     </div>
+                                    </>
+                                    ) : ("")}
+                                    {/* FIN IMPORTATION */}
+                                    {/* SI L'UTILISATEUR CHOISIT DE PRENDRE LES DOCUMENTS EN PHOTO */}
+                            {howImportDoc==="1" ? (
+                                <>
+                                <div className='row'>
+                                <div className="form-group col-lg-3 col-md-3 "></div>
+
+                                    <div className="form-group col-lg-6 col-md-6 ">
+                                        {statutRecto==="0" ? (
+                                            <button className="btn btn-primary "
+                                                type='button'  
+                                                disabled={isLoggingIn}
+                                                onClick={()=>setStatutRecto("1")}
+                                            >
+                                                Déclencher la caméra pour prendre la photo du Recto 
+                                            </button>
+                                        ) : ("")}
+
+
+                                        {/* Cette partie s'affciche lorsqu'on clique sur le bouton ci-dessus */}
+                                        {/* Recto */}
+                                        {statutRecto==="1" ? (
+                                        <>
+                                        <label
+                                            htmlFor="picture"
+                                        >
+                                            Recto de votre justificatif d'identité
+                                        </label>
+                                            {/* Si on a pas encore pris la photo on affiche la camera */}
+                                        {!imageRecto ? (
+                                        <Webcam
+                                            audio={false}
+                                            height={350}
+                                            ref={webcamRefRecto}
+                                            screenshotFormat="image/jpeg"
+                                            width={350}
+                                        />
+                                        ) : ("")}
+                                        {/* Fin */}
+
+                                        {/* Si on a pas encore pris la photo on affiche ce bouton */}
+                                        {!imageRecto ? (
+                                            <button type='button' onClick={captureRecto}>Sauvegarder</button>
+                                        ) : ("")}
+                                        {/* Fin */}
+                                                    
+
+                                        {/* Si on a pris la photo et qu'on veut reprende on affiche on clique sur ce bouton */}
+                                        {imageRecto ? (
+                                            <button type='button' onClick={()=>setImageRecto("")}>Reprendre la photo</button>
+                                        ) : ("")}
+                                        {/* Fin */}
+
+                                        {/* Pour afficher l'image qui a été prise        */}
+                                        {imageRecto && <img src={imageRecto} alt="Selfie" />}
+                                        {/* Fin*/}
+                                        </>
+                                        ) : ("")}
+                                        {/* Fin Recto */}
+
+                                        {/* Verso */}
+                                        {imageRecto ? (
+                                            statutVerso ==="0"? (
+
+                                                <button className="btn btn-primary "
+                                                    type='button'  
+                                                    disabled={isLoggingIn}
+                                                    onClick={()=>setStatutVerso("1")}
+                                                >
+                                                    Déclencher la caméra pour prendre la photo du verso 
+                                                </button>
+                                            ) : ("")
+                                        ) : ("")}
+
+                                        {statutVerso ==="1"? (
+                                            <>
+                                                <br/><br/>
+                                                <label
+                                                    htmlFor="picture"
+                                                >
+                                                    Verso de votre justificatif d'identité
+                                                </label>
+                                                {/* Si on a pas encore pris la photo on affiche la camera */}
+                                                {!imageVerso ? (
+                                                    <Webcam
+                                                        audio={false}
+                                                        height={350}
+                                                        ref={webcamRefVerso}
+                                                        screenshotFormat="image/jpeg"
+                                                        width={350}
+                                                    />
+                                                ) : ("")}
+                                                {/* Fin */}
+
+                                                {/* Si on a pas encore pris la photo on affiche ce bouton */}
+                                                {!imageVerso  ? (
+                                                    <button type='button' onClick={captureVerso}>Sauvegarder</button>
+                                                ) : ("")}
+                                                {/* Fin */}
+                                                    
+
+                                                {/* Si on a pris la photo et qu'on veut reprende on affiche on clique sur ce bouton */}
+                                                {imageVerso ? (
+                                                    <button type='button' onClick={()=>setImageVerso("")}>Reprendre la photo</button>
+                                                ) : ("")}
+                                                {/* Fin */}
+
+                                                {/* Pour afficher l'image qui a été prise        */}
+                                                {imageVerso && <img src={imageVerso} alt="Selfie" />}
+                                                {/* Fin*/}
+                                            </>
+                                        ) : ("")}
+                                        {/* Fin verso */}
+                                    </div>
+                                    </div>
+                                </>
+                            ) : ("")}
+                            {/* ****************FIN PRENDRE PHOTO**************** */}
+
                             </div>
                             {/* Fin */}
                             <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
@@ -311,12 +558,17 @@ const activeStep = 3;
                                 </div> 
 
                                 <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                <a
-                                    className=""
-                                    >
+                                    {howImportDoc==="0" ? (
                                         <button className="btn btn-primary " type='button' onClick={AddJustificationDomicile}  disabled={isLoggingIn}>Suivant</button>
-                                    </a>                         
+                                    ) : ("")}
+
+                                    {howImportDoc==="1" ? (
+                                        <button className="btn btn-primary " type='button' onClick={AddJustificationDomicilePhoto}  disabled={isLoggingIn}>Suivant</button>
+                                    ) : ("")}
+                                                         
                                 </div> 
+                                <div className="form-group col-lg-3 col-md-3 "></div>
+
                                 </div>
                                 
 

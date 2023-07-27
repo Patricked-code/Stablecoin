@@ -82,7 +82,7 @@ const [allBank, setAllBank] = useState([])
 const [dataBankOfCountry, setDataBankOfCountry] = useState('');
 
 
-// Fin AVEC UNE MISE A JOUR
+
 
 
  // Fonction d'envoie des informations du questionnaire AML 2
@@ -538,7 +538,10 @@ useEffect(async() => {
 
                             {/* LES CHAMPS A RENSEIGNER QUAND L'UTISATEUR A UN COMPTE BANCAIRE D'EPARGNE*/}
                             {savingsAccount[0]==="Compte épargne"? (
-                                <>
+                            <>
+                            <label className="text-center mb-2 colorRed">
+                                Les informations du compte d'épargne
+                            </label>
                             {/* Question 7 */}
                             <div className="form-group mb-6 mt-3">
                                 <label
@@ -566,12 +569,13 @@ useEffect(async() => {
                             </div >
 
                             {otherBankCountrySavings==="CI" || otherBankCountrySavings==="TG" || otherBankCountrySavings==="BJ" || otherBankCountrySavings==="BF" || otherBankCountrySavings==="TD" || otherBankCountrySavings==="GA" || otherBankCountrySavings==="CG" || otherBankCountrySavings==="CF" || otherBankCountrySavings==="GQ" || otherBankCountrySavings==="CM" || otherBankCountrySavings==="GW" || otherBankCountrySavings==="ML" || otherBankCountrySavings==="NE" || otherBankCountrySavings==="SN" ?(
+                                
                                 <div className='form-group mb-6 mt-3'>
                                     <label
                                         htmlFor="bankNameSavings"
                                         className="text-blackish-blue mb-2"
                                     >
-                                    Nom de la banque de votre compte d'épargne
+                                     Nom de la banque de votre compte d'épargne
                                     </label>
                                     <select 
                                         placeholder='Banque'
@@ -644,7 +648,10 @@ useEffect(async() => {
 
                             {/* LES CHAMPS A RENSEIGNER QUAND L'UTISATEUR A UN COMPTE BANCAIRE COURANT*/}
                             {currentAccount[0]==="Compte courant"? (
-                                <>
+                            <>
+                            <label className="text-center mb-2 colorRed">
+                                Les informations du compte courant
+                            </label>
                                  {/* Question 7 */}
                              <div className="form-group mb-6 mt-3">
                                 <label
@@ -654,7 +661,7 @@ useEffect(async() => {
                                     Pays de la banque de votre compte courant existant
                                 </label>
                                 <select 
-                                className="form-control"
+                                className="form-control  bgColorRed"
                                 id="otherBankCountryCurrent"
                                 required
                                 defaultValue={otherBankCountryCurrent} 
@@ -748,7 +755,10 @@ useEffect(async() => {
                             
                             {/* LES CHAMPS A RENSEIGNER QUAND L'UTISATEUR A UN COMPTE BANCAIRE TITRE*/}
                             {titleAccount[0]==="Compte titre"? (
-                                <>
+                            <>
+                            <label className="text-center mb-2 colorRed">
+                                Les informations du compte titre
+                            </label>
                                 {/* Question 7 */}
                              <div className="form-group mb-6 mt-3">
                                 <label

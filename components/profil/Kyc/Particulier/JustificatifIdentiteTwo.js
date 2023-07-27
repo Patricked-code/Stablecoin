@@ -261,19 +261,19 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
         setIsLoggingIn(false);
         }
     }
-// Fin
+    // Fin
 
-// actualiser la page
-const actualiser = ()=>{
-    setTimeout(() => {
-        window.location.reload()
-    }, 1000)
-}
+    // actualiser la page
+    const actualiser = ()=>{
+        setTimeout(() => {
+            window.location.reload()
+        }, 1000)
+    }
 
-// La barre de progression de KYC
-const steps = ["AML 1 & 2","FATCA", "Identité 1 & 2", "Selfie", "Domicile", "Photo", "Signature"];
-const activeStep = 1;
-// Fin
+    // La barre de progression de KYC
+    const steps = ["AML 1 & 2","FATCA", "Identité 1 & 2", "Selfie", "Domicile", "Photo", "Signature"];
+    const activeStep = 1;
+    // Fin
 
   return (
     <>
@@ -527,14 +527,14 @@ const activeStep = 1;
                                             htmlFor="pieceNumber"
                                             className="text-blackish-blue mb-2"
                                         >
-                                            Numéro de la pièce d’identité
+                                            Numéro de justificatif d'identité
                                         </label>
                                         <div className='form-group'>
                                             <input
                                                 type='text'
                                                 id='pieceNumber'
                                                 className='form-control'
-                                                placeholder='Numéro de la pièce d’identité'
+                                                placeholder='Numéro de justificatif d’identité'
                                                 defaultValue={pieceNumber} 
                                                 onChange={(event)=>setPieceNumber(event.target.value)}
                                             />
@@ -553,7 +553,7 @@ const activeStep = 1;
                                                 type='date'
                                                 id='firstName'
                                                 className='form-control'
-                                                placeholder='Date Validité '
+                                                placeholder='Date de validité '
                                                 defaultValue={validityDate} 
                                                 onChange={(event)=>setValidityDate(event.target.value)}
                                             />

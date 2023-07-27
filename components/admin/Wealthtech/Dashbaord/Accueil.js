@@ -117,7 +117,7 @@ const DasbaordWti = () => {
       <div className='' >
         <div className=' mx-15'>
             <div className='py-10'>
-                <h1 className='text-center'>Dasbaord de Wealthtech</h1>
+                <h1 className='text-center'>Dashbaord de Wealthtech</h1>
             </div>
         </div>
 

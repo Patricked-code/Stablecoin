@@ -9,6 +9,7 @@ import { Icon } from '@iconify/react';
 import { Table } from '@nextui-org/react';
 
 
+
 // Pour Magic
 import { magic } from "../../../../magic";
 import { ethers } from "ethers";
@@ -48,6 +49,8 @@ const ValidParticular = () => {
 
 
     const [currentUser, setCurrentUser] = useState();
+    const [userById, setUserById] = useState();
+    
     const [provider, setProvider] = useState(null);
     const [isLoggingIn, setIsLoggingIn] = useState(false);
 
@@ -126,6 +129,7 @@ const ValidParticular = () => {
                 .then((resKyc) => resKyc.json())
                 .then((data) => {
                 setAllKycForParticular(data)
+                console.log("data =>",data)
                 }) 
             };
             // console.log("Banques =>",allBank)
@@ -136,9 +140,6 @@ const ValidParticular = () => {
 
     // RECUPERER UNE SEULE LIGNE DE KYC DU PARTICULIER
     if (idKycForParticular) {
-        console.log("idKycForParticular=>",idKycForParticular)
-        // return
-        // useEffect(async() => {
             const getOneKycForParticular = async (_idKycForParticular) => {
             const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-one-kyc-particular/${_idKycForParticular}`, {
                 headers: {
@@ -150,10 +151,32 @@ const ValidParticular = () => {
                 setOneKycForParticular(data)
                 }) 
             };
-            // console.log("Banques =>",allBank)
             getOneKycForParticular(idKycForParticular);
-        // }, []);
+            // FIN
     }
+
+    // FONCTION POUR RECUPERER LES INFOS DE L'UTILISATEUR DONT ON VERIFIE SON KYC EN FONCTION DE SON ID
+    // useEffect(async() => {
+    
+    if (oneKycForParticular?.userId) {
+        console.log("oneKycForParticular?.userId=>",oneKycForParticular?.userId)
+        const getUserById = (_userId) => {
+            const result = fetch(`${API_URL}/api/user/find-one-user-by-id/${_userId}`, {
+                headers: {
+                'Content-Type': 'application/json',
+                },
+            })
+            .then((result) => result.json())
+            .then((user) => {
+            setUserById(user)
+            }) 
+        };
+         getUserById(oneKycForParticular?.userId);
+
+    }
+// }, [userById]);
+    
+    // FIN
    
     // FIN
 
@@ -174,14 +197,6 @@ const ValidParticular = () => {
     const handleCloseInfosKyc = () => setShowInfosKyc(false);
     const handleShowInfosKyc = () => setShowInfosKyc(true);
     // Fin
-    
-    // FONCTION POUR FORMATER LA DATE
-    const formatDate = (_updatedAt) =>{
-        const maDate = moment(_updatedAt).format('DD/MM/YYYY');
-        // const maDate = moment(_updatedAt).format('DD/MM/YYYY à HH:mm');
-        return  maDate
-    }
-    //  FIN
 
     // Fonction de validation des parties de kyc
     const validKycParticular= async () => {
@@ -241,6 +256,13 @@ const ValidParticular = () => {
         }
     // Fin
 
+     // FONCTION POUR FORMATER LA DATE
+     const formatDate = (_updatedAt) =>{
+        const maDate = moment(_updatedAt).format('DD/MM/YYYY');
+        return  maDate
+    }
+    //  FIN
+
   return (
     <>
 
@@ -285,6 +307,7 @@ const ValidParticular = () => {
                                         <Table.Header>
                                             {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom & prenom </p></Table.Column> */}
                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Questionnaires</p></Table.Column>
+                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Fatca</p></Table.Column>
                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Identité</p></Table.Column>
                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Domicile</p></Table.Column>
                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Photo</p></Table.Column>
@@ -299,11 +322,12 @@ const ValidParticular = () => {
                                                         {/* <Table.Cell ><p className=" py-0 ">Koné Arouna</p></Table.Cell> */}
                                                         
                                                         <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(1)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(data?.id)}>Voir détails</button> {data.validQuiz==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(6)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(data?.id)}>Voir détails</button> {data.validQuiz==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
                                                         <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(2)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(data?.id)}>Voir détails</button> {data.validIdentity==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
                                                         <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(3)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(data?.id)}>Voir détails</button> {data.validResidence==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
                                                         <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(4)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(data?.id)}>Voir détails</button> {data.validPhoto==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
                                                         <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(5)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(data?.id)}>Voir détails</button> {data.validSignature==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 ">{data.validQuiz==1 && data.validIdentity==1 && data.validResidence==1 && data.validPhoto==1 && data.validSignature==1 ? (<b className='colorGreen'>Valider</b>):(<b className='colorRed'>En cours</b>)}</p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 ">{data.validQuiz==1 && data.validQuizTwo==1 && data.validQuizFatca==1 && data.validIdentityOne==1 && data.validPhotoWithDocument && data.validIdentity==1 && data.validResidence==1 && data.validPhoto==1 && data.validSignature==1 ? (<b className='colorGreen'>Valider</b>):(<b className='colorRed'>En cours</b>)}</p></Table.Cell>
                                                         <Table.Cell ><p className=" py-0 ">{formatDate(data?.createdAt)}</p></Table.Cell>
                                                         <Table.Cell>
                                                             <div className="d-flex py-0 ">
@@ -350,41 +374,193 @@ const ValidParticular = () => {
                                         <div className='py-10'>
                                             <h3 className='text-center'>Les questionnaires</h3>
                                         </div>
-                                        <div className="input-group ">
-                                        
-                                            <div className='mx-5 '>
-                                                <div className=''>
-                                                    <b>1) Les dépenses récurrentes :</b><br/>
-                                                    {oneKycForParticular?.spentA? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentA }</p>): ("")}
-                                                    {oneKycForParticular?.spentB? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentB }</p>): ("")}
-                                                    {oneKycForParticular?.spentC? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentC }</p>): ("")}
-                                                    {oneKycForParticular?.spentD? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentD }</p>): ("")}
-                                                    {oneKycForParticular?.spentE? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentE }</p>): ("")}
-                                                    {oneKycForParticular?.spentF? (<p className='mb-1'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentF }</p>): ("")}
+                                        <div className='row'>
+                                            <div className="col-lg-6 col-md-6">
+                                                <h4 className='mx-5'><b>La partie 1</b></h4>
+                                                <div className='mx-5 '>
+                                                    <div className=''>
+                                                        <b>1) Les dépenses récurrentes :</b><br/>
+                                                        {oneKycForParticular?.spentA? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentA }</p>): ("")}
+                                                        {oneKycForParticular?.spentB? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentB }</p>): ("")}
+                                                        {oneKycForParticular?.spentC? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentC }</p>): ("")}
+                                                        {oneKycForParticular?.spentD? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentD }</p>): ("")}
+                                                        {oneKycForParticular?.spentE? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentE }</p>): ("")}
+                                                        {oneKycForParticular?.spentF? (<p className='mb-1'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentF }</p>): ("")}
 
-                                                    {!oneKycForParticular?.spentA && !oneKycForParticular?.spentB && !oneKycForParticular?.spentC && !oneKycForParticular?.spentD && !oneKycForParticular?.spentE && !oneKycForParticular?.spentF ? (<p className='my-1'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
-                                                </div>
+                                                        {!oneKycForParticular?.spentA && !oneKycForParticular?.spentB && !oneKycForParticular?.spentC && !oneKycForParticular?.spentD && !oneKycForParticular?.spentE && !oneKycForParticular?.spentF ? (<p className='my-1'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
+                                                    </div>
 
-                                                <div className='mx-10 '>
-                                                    <b>2) La ou les fréquences de revenus :</b><br/>
-                                                    {oneKycForParticular?.frequencyA? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.frequencyA}</p>): ("")}
-                                                    {oneKycForParticular?.frequencyB? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.frequencyB}</p>): ("")}
-                                                    {oneKycForParticular?.frequencyC? (<p className='mb-2'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.frequencyC}</p>): ("")}
+                                                    <div className='mx-10 '>
+                                                        <b>2) La ou les fréquences de revenus :</b><br/>
+                                                        {oneKycForParticular?.frequencyA? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.frequencyA}</p>): ("")}
+                                                        {oneKycForParticular?.frequencyB? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.frequencyB}</p>): ("")}
+                                                        {oneKycForParticular?.frequencyC? (<p className='mb-2'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.frequencyC}</p>): ("")}
+                                                        
+
+                                                        {!oneKycForParticular?.frequencyA && !oneKycForParticular?.frequencyB && !oneKycForParticular?.frequencyC ? (<p className='mt-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
+                                                    </div>
+
+                                                    <div className=''>
+                                                        <b>3) Dans le cadre que les revenus sont touchés :</b><br/>
+                                                        {oneKycForParticular?.incomeTypeA? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.incomeTypeA}</p>): ("")}
+                                                        {oneKycForParticular?.incomeTypeB? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.incomeTypeB}</p>): ("")}
+                                                        {oneKycForParticular?.incomeTypeC? (<p className='mb-2'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.incomeTypeC}</p>): ("")}
+                                                        
+
+                                                        {!oneKycForParticular?.incomeTypeA && !oneKycForParticular?.incomeTypeB && !oneKycForParticular?.incomeTypeC ? (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
+                                                    </div>
                                                     
-
-                                                    {!oneKycForParticular?.frequencyA && !oneKycForParticular?.frequencyB && !oneKycForParticular?.frequencyC ? (<p className='mt-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
                                                 </div>
+                                            </div>
 
-                                                <div className=''>
-                                                    <b>3) Dans le cadre que les revenus sont touchés :</b><br/>
-                                                    {oneKycForParticular?.incomeTypeA? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.incomeTypeA}</p>): ("")}
-                                                    {oneKycForParticular?.incomeTypeB? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.incomeTypeB}</p>): ("")}
-                                                    {oneKycForParticular?.incomeTypeC? (<p className='mb-2'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.incomeTypeC}</p>): ("")}
+
+                                            {/* PARTIE QUESTIONNAIRE 2 */}
+                                            <div className="col-lg-6 col-md-6">
+                                                <h4 className='mx-5'><b>La partie 2</b></h4>
+                                                <div className='mx-5 '>
+                                                    <div className=''>
+                                                        <b> L'estimation de vos revenus mensuels en CFA :</b><br/>
+                                                        {oneKycForParticular?.incomeMonthly? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.incomeMonthly }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    <div className='mx-10 '>
+                                                        <b>L'estimation de vos revenus annuels en CFA :</b><br/>
+                                                        {oneKycForParticular?.annualIncome? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.annualIncome }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    <div className='mx-10 '>
+                                                        <b> Avez-vous un compte bancaire ? :</b><br/>
+                                                        {oneKycForParticular?.otherBankAccount? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankAccount }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    {/* si l'utilisateur a un compte bancaire on lui pose la question suivante */}
+                                                    {oneKycForParticular?.otherBankAccount === "Oui"? (
+                                                        <>
+                                                            <b> Nature du ou des comptes :</b><br/>
+
+                                                            {oneKycForParticular?.savingsAccount? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.savingsAccount }</p>): ("")}
+                                                            {oneKycForParticular?.currentAccount? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.currentAccount }</p>): ("")}
+                                                            {oneKycForParticular?.titleAccount? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.titleAccount }</p>): ("")}
+                                                        
+                                                            {!oneKycForParticular?.savingsAccount && !oneKycForParticular?.currentAccount && !oneKycForParticular?.titleAccount ? (<p className='my-1'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
+
+                                                        </>
+                                                        
+                                                    ):("")}
+                                                    {/* fin */}
                                                     
+                                                    {/* Si l'utilisateur a choisi compte d'épargne */}
+                                                    {oneKycForParticular?.savingsAccount? (
+                                                        <>
+                                                         
+                                                            <b>Pays de la banque de votre compte d'épargne existant :</b><br/>
+                                                            {oneKycForParticular?.otherBankCountrySavings? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankCountrySavings }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                           
+                                                            <b>Nom de la banque de votre compte d'épargne :</b><br/>
+                                                            {oneKycForParticular?.otherBankNameSavings? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankNameSavings }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            
+                                                            <b> Références de la banque de votre compte d'épargne :</b><br/>
+                                                            {oneKycForParticular?.bankReferencesSavings? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.bankReferencesSavings }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
 
-                                                    {!oneKycForParticular?.incomeTypeA && !oneKycForParticular?.incomeTypeB && !oneKycForParticular?.incomeTypeC ? (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
+                                                        </>
+                                                        
+                                                    ):("")}
+                                                    {/* fin */}
+
+
+                                                    {/* Si l'utilisateur a choisi compte courant */}
+                                                    {oneKycForParticular?.currentAccount? (
+                                                        <>
+                                                            <b> Pays de la banque de votre compte courant existant :</b><br/>
+                                                            {oneKycForParticular?.otherBankCountryCourant? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankCountryCourant }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                           
+                                                            <b> Nom de la banque de votre compte courant :</b><br/>
+                                                            {oneKycForParticular?.otherBankNameCourant? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankNameCourant }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            
+                                                            <b> Références de la banque de votre compte courant :</b><br/>
+                                                            {oneKycForParticular?.bankReferencesCourant? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.bankReferencesCourant }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+
+                                                        </>
+                                                        
+                                                    ):("")}
+                                                    {/* fin */}
+
+                                                    {/* Si l'utilisateur a choisi compte titre */}
+                                                    {oneKycForParticular?.titleAccount? (
+                                                        <>
+                                                            
+                                                            <b> Pays de la banque de votre compte titre existant :</b><br/>
+                                                            {oneKycForParticular?.otherBankCountryTitle? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankCountryTitle }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                           
+                                                            <b> Nom de la banque de votre compte titre :</b><br/>
+                                                            {oneKycForParticular?.otherBankNameTitle? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankNameTitle }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            
+                                                            <b> Références de la banque de votre compte titre :</b><br/>
+                                                            {oneKycForParticular?.bankReferencesTitle? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.bankReferencesTitle }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+
+                                                        </>
+                                                        
+                                                    ):("")}
+                                                    {/* fin */}
+
+                                                    {/* Partie mobile money */}
+                                                    <div className='mx-10 '>
+                                                        <b> Avez-vous un compte de monnaie électronique (Mobile money)? </b><br/>
+                                                        {oneKycForParticular?.mobileAccount? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.mobileAccount }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    {oneKycForParticular?.mobileAccount==="Oui"? (
+                                                        <>
+                                                            <b> Pays de votre compte de la monnaie électronique existant :</b><br/>
+                                                            {oneKycForParticular?.mobileCountry? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.mobileCountry }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                        
+                                                            <b> Opérateur de votre compte de la monnaie électronique existant :</b><br/>
+                                                            {oneKycForParticular?.operator? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.operator }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                        
+                                                        </>
+                                                    ) : ("") }
+                                                    {/* Fin */}
+
+                                                    <div className='mx-10 '>
+                                                        <b>Source des revenus</b><br/>
+                                                        {oneKycForParticular?.sourceIncome? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.sourceIncome }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    {oneKycForParticular?.sourceIncome ? (
+                                                        <>
+                                                        
+                                                            {oneKycForParticular?.sourceIncome==="Salaire" ? (
+                                                                <>
+                                                                    <b>Montant :</b><br/>
+                                                                    {oneKycForParticular?.salaries? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.salaries } FCFA</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </>
+                                                            ) : ("") }
+                                                            
+
+                                                            {oneKycForParticular?.sourceIncome==="Rentes" ? (
+                                                                <>
+                                                                    <b>Montant :</b><br/>
+                                                                    {oneKycForParticular?.rents? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.rents } FCFA</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </>
+                                                            ) : ("") }
+
+                                                            {oneKycForParticular?.sourceIncome==="Recettes activités commerciales" ? (
+                                                                <>
+                                                                    <b>Montant :</b><br/>
+                                                                    {oneKycForParticular?.businessReceipts? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.businessReceipts } FCFA</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </>
+                                                            ) : ("") }
+
+                                                            {oneKycForParticular?.allowances==="Indemnités" ? (
+                                                                <>
+                                                                    <b>Montant :</b><br/>
+                                                                    {oneKycForParticular?.allowances? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.allowances } FCFA</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </>
+                                                            ) : ("") }  
+                                                        </>
+                                                    ):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    
                                                 </div>
-                                                
                                             </div>
                                         </div>
                                     </>
@@ -393,8 +569,84 @@ const ValidParticular = () => {
                                 {/* Justificatif d'identité */}
                                 {etape===2 ? (
                                     <>
-                                        <div className='py-10'>
-                                            <h3 className='text-center'>Justificatif d'identité</h3>
+                                        
+
+                                        <div className='py-10 my-10'>
+                                            <h3 className='text-center'>Justificatif d'identité partie 1</h3>
+                                        </div><br/>
+
+                                        
+                                        <div className='row  justify-content-center  mx-5'>
+                                            <div className='col-lg-6 col-md-6 '>
+                                                <b> Civilité :</b><br/>
+                                                {oneKycForParticular?.civility? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.civility }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Votre nom :</b><br/>
+                                                {userById?.firstName? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{userById.firstName }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+                                            
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Vos prénoms :</b><br/>
+                                                {userById?.lastName? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{userById.lastName }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Nom et prénoms du père :</b><br/>
+                                                {oneKycForParticular?.fatherName? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.fatherName }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Nom et prénoms de la mère :</b><br/>
+                                                {oneKycForParticular?.motherName? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.motherName }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Situation familiale :</b><br/>
+                                                {oneKycForParticular?.familyStatus? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.familyStatus }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Langue :</b><br/>
+                                                {oneKycForParticular?.language? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.language }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+                                            
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Nationalité :</b><br/>
+                                                {userById?.nationality? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{userById.nationality }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Pays de Naissance :</b><br/>
+                                                {oneKycForParticular?.nativeCountry? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.nativeCountry }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Date de naissance :</b><br/>
+                                                {userById?.birthday? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(userById.birthday) }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+                                        </div>
+
+                                        <div className='py-10 my-10'>
+                                            <h3 className='text-center'>Justificatif d'identité partie 2</h3>
+                                        </div><br/>
+
+                                        <div className='row  justify-content-between  mx-5'>
+                                            <div className='col-lg-6 col-md-6 '>
+                                                <b> Type de justificatif d'identité :</b><br/>
+                                                {oneKycForParticular?.receiptType? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.receiptType }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6 '>
+                                                <b> Numéro de justificatif d'identité :</b><br/>
+                                                {oneKycForParticular?.pieceNumber? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.pieceNumber }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6 '>
+                                                <b> Date de validité :</b><br/>
+                                                {oneKycForParticular?.validityDate? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(oneKycForParticular.validityDate) }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
                                         </div>
                                         
                                         <div className=" row col-lg-12 col-md-12 justify-content-between">
@@ -573,6 +825,89 @@ const ValidParticular = () => {
                                             <div className='col-lg-12 col-md-12 row justify-content-between'>
                                                 <div className='input-group-alternative my-3 text-center'>
                                                     {oneKycForParticular?.userSignature? <img src={oneKycForParticular?.userSignature} alt="Selfie" /> : "Aucune signature"}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </>
+                                ): ("")}
+
+
+                                {/* Questionnaires Fatca */}
+                                {etape===6 ? (
+                                    <>
+                                        <div className='py-10'>
+                                            <h3 className='text-center'>Les questionnaires ID & FATCA</h3>
+                                        </div>
+                                        <div className='row'>
+                                            {/* PARTIE QUESTIONNAIRE 2 */}
+                                            <div className="col-lg-12 col-md-12">
+                                                <div className='mx-5 '>
+                                                    <div className=''>
+                                                        <b> Etes-vous US Person ? (Citoyenneté Américaine (Passeport américain) / Résidence aux USA /Présence significative ou permanente (green card) / Lieu de naissance aux USA) :</b><br/>
+                                                        {oneKycForParticular?.usPerson? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.usPerson}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    <div className='mx-10 '>
+                                                        <b>Boîte postale :</b><br/>
+                                                        {oneKycForParticular?.mailbox? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.mailbox }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    <div className='mx-10 '>
+                                                        <b> Profession/fonction/activité :</b><br/>
+                                                        {oneKycForParticular?.profession? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.profession }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+                                                    <div className='mx-10 '>
+                                                        <b> Statut du profession :</b><br/>
+                                                        {oneKycForParticular?.professionStatus? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.professionStatus }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    {/* Si le statut du profession est salarié */}
+                                                    {oneKycForParticular?.professionStatus === "Salarié" ? (
+                                                        <>
+                                                            <div className='mx-10 '>
+                                                                <b> Nom de l'employeur :</b><br/>
+                                                                {oneKycForParticular?.employerCorporate? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.employerCorporate }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            </div>
+
+                                                            <div className='mx-10 '>
+                                                                <b> Adresse de l'employeur :</b><br/>
+                                                                {oneKycForParticular?.employerAddress? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.employerAddress }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            </div>
+                                                        </>
+                                                    ) : ("")}
+
+                                                    {/* Fin */}
+
+                                                    <div className='mx-10 '>
+                                                        <b> Motivation de l’ouverture de compte :</b><br/>
+                                                        {oneKycForParticular?.motivation? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.motivation }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    <div className='mx-10 '>
+                                                        <b> Bénéficiez-vous d’un mandat d’administrateur dans le Conseil d’Administration d’une société ?</b><br/>
+                                                        {oneKycForParticular?.directorship? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.directorship }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+                                                    {/* Si l'utilisateur bénéficie d’un mandat d’administrateur */}
+                                                    {oneKycForParticular?.directorship==="Oui"? (
+                                                        <div className='mx-10 '>
+                                                            <b> La (les)quelle(s) :</b><br/>
+                                                            {oneKycForParticular?.whatBoard? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.whatBoard }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                        </div>
+                                                    ) : ("")}
+                                                    
+
+                                                    <div className='mx-10 '>
+                                                        <b> Etes-vous actionnaire dans une société ?</b><br/>
+                                                        {oneKycForParticular?.shareholder? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.shareholder }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+                                                    
+                                                    {oneKycForParticular?.shareholder === "Oui" ? (
+                                                    <div className='mx-10 '>
+                                                        <b> La (les)quelle(s) :</b><br/>
+                                                        {oneKycForParticular?.whatHareholder? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.whatHareholder }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+                                                    ) : ("")}
+
                                                 </div>
                                             </div>
                                         </div>

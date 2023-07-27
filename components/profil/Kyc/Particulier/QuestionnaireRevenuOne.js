@@ -202,9 +202,9 @@ const CQuestionnaireRevenuOne = () => {
                 frequencyA:Object.assign({},frequencyA),
                 frequencyB:Object.assign({},frequencyB),
                 frequencyC:Object.assign({},frequencyC),
-                incomeTypeA:Object.assign({}, incomeTypeA),
-                incomeTypeB:Object.assign({},incomeTypeB),
-                incomeTypeC:Object.assign({},incomeTypeC)
+                // incomeTypeA:Object.assign({}, incomeTypeA),
+                // incomeTypeB:Object.assign({},incomeTypeB),
+                // incomeTypeC:Object.assign({},incomeTypeC)
             }
 
             const dataa = {
@@ -217,9 +217,9 @@ const CQuestionnaireRevenuOne = () => {
                 frequencyA:dataTable?.frequencyA[0],
                 frequencyB:dataTable?.frequencyB[0],
                 frequencyC:dataTable?.frequencyC[0],
-                incomeTypeA:dataTable?.incomeTypeA[0],
-                incomeTypeB:dataTable?.incomeTypeB[0],
-                incomeTypeC:dataTable?.incomeTypeC[0],
+                // incomeTypeA:dataTable?.incomeTypeA[0],
+                // incomeTypeB:dataTable?.incomeTypeB[0],
+                // incomeTypeC:dataTable?.incomeTypeC[0],
                 
             }
             // Condition pour forcer l'utilisateur à choisir au moins une reponse
@@ -711,14 +711,14 @@ const handleOptionIncomeTypeC = (event) => {
                             {/* Fin Q4 */}
 
                             {/* Question 5 */}
-                            <label
+                            {/* <label
                                 htmlFor="Q1"
                                 className="text-blackish-blue mb-2"
                             >
                                 Dans quel cadre touchez vous ces revenus ?
-                            </label>
+                            </label> */}
                             {/* Salaire mensuels*/}
-                            <div className="form-group  mt-3 ">
+                            {/* <div className="form-group  mt-3 ">
                                 <label
                                     htmlFor="SalaireMensuels-check"
                                     className="gr-check-input mb-7 d-flex"
@@ -735,9 +735,9 @@ const handleOptionIncomeTypeC = (event) => {
                                     Salaire mensuels (Vous êtes salariés)
                                 </p>
                                 </label>
-                            </div>
+                            </div> */}
                             {/* Revenus Trimestriels */}
-                            <div className="form-group  mt-3 ">
+                            {/* <div className="form-group  mt-3 ">
                                 <label
                                     htmlFor="trimestriels-check"
                                     className="gr-check-input mb-7 d-flex"
@@ -754,9 +754,9 @@ const handleOptionIncomeTypeC = (event) => {
                                     Revenus trimestriels
                                 </p>
                                 </label>
-                            </div>
+                            </div> */}
                             {/* Rentes immobilières (Vous percevez des loyers) */}
-                            <div className="form-group  mt-3 ">
+                            {/* <div className="form-group  mt-3 ">
                                 <label
                                     htmlFor="immobilieres-check"
                                     className="gr-check-input mb-7 d-flex"
@@ -773,7 +773,7 @@ const handleOptionIncomeTypeC = (event) => {
                                     Rentes immobilières (Vous percevez des loyers)
                                 </p>
                                 </label>
-                            </div>
+                            </div> */}
                             {/* Fin Q5 */}
 
 
