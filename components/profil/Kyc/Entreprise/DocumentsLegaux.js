@@ -48,6 +48,29 @@ const CDocumentLegaux = () => {
 
     const [modalFile, setModalFile] = React.useState(false);
 
+// LES BONS
+// registerFile *
+// registerphoto 
+// dfeFile
+// dfePhoto
+// copyStatutesFile
+// copyStatutesPhoto
+// delegationPowersFile
+// delegationPowersPhoto
+// pvAppointmentFile
+// pvAppointmentPhoto
+// mapLocationFile
+// mapLocationPhoto
+// FactureFile*
+// FacturePhoto*
+// proofPowerFile
+// proofPowerPhoto
+// backIdentityFile*
+// frontIdentityPhoto
+// backIdentityPhoto
+
+
+
 
     const [statut, setStatut] = React.useState("0");
     const [statutRecto, setStatutRecto] = React.useState("0");

@@ -55,9 +55,28 @@ const CIdentiteOne = () => {
     const [local, setLocal] = useState();
 
     
+// LES BONS
+// international, 
+// national,
+// local
+// naturePerson
+// seniority
+// rccmNumber
+// socialObject
+// numberIdentification
+// city
+// registeredAddress
+// Fax
+// dateConstitution
+// registrationDate
 
-    
-    
+// CEUX QUI SONT DANS LA TABLE USER
+// entreprise**
+// countryRegistration **
+// mailbox**
+// phoneFixe**
+// mobile**
+// Email **
     
                             
                             
@@ -743,7 +762,7 @@ const handleOptionIncomeTypeC = (event) => {
 
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="immatriculation"
+                                    htmlFor="mailbox"
                                     className="text-blackish-blue mb-2"
                                 >
                                     Adresse postale
@@ -751,11 +770,11 @@ const handleOptionIncomeTypeC = (event) => {
                                 <div className='form-group'>
                                     <input
                                         type='text'
-                                        id='immatriculation'
+                                        id='mailbox'
                                         className='form-control'
                                         placeholder='Adresse postale'
-                                        // defaultValue={socialObject} 
-                                        // onChange={(event)=>setSocialObject(event.target.value)}
+                                        // defaultValue={mailbox} 
+                                        // onChange={(event)=>setMailbox(event.target.value)}
                                     />
                                 </div>
                             </div>
@@ -790,7 +809,7 @@ const handleOptionIncomeTypeC = (event) => {
                                         type='text'
                                         id='phoneFixe'
                                         className='form-control'
-                                        placeholder='Adresse postale'
+                                        placeholder='Téléphone Fixe'
                                         // defaultValue={phoneFixe} 
                                         // onChange={(event)=>setPhoneFixe(event.target.value)}
                                     />

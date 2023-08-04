@@ -63,7 +63,13 @@ const CStructureControlOne = () => {
 
 
     // *******************************
+
+    // LES BONS
+    // numberAssociates
+	// fivePercent
+
     // fivePercent
+    const [numberAssociates, setNumberAssociates] = useState();
     const [fivePercent, setFivePercent] = useState();
 
 
@@ -536,17 +542,17 @@ const handleOptionIncomeTypeC = (event) => {
                             
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="issuingCountry"
+                                    htmlFor="numberAssociates"
                                     className="text-blackish-blue mb-2"
                                 >
                                     Nombre d'associé 
                                 </label>
                                 <select 
                                 className="form-control"
-                                id="issuingCountry"
+                                id="numberAssociates"
                                 required
-                                defaultValue={issuingCountry} 
-                                onChange={(event)=>setIssuingCountry(event.target.value)}
+                                defaultValue={numberAssociates} 
+                                onChange={(event)=>setNumberAssociates(event.target.value)}
                                 >
                                 <option defaultValue="">Choisissez</option>
                                     <optgroup className='single-cryptocurrency-box'>
@@ -566,7 +572,7 @@ const handleOptionIncomeTypeC = (event) => {
                                 </select>
                             </div>
                             {/* Si plus de 10 on pose cette question */}
-                            {issuingCountry==="Plus de 10"? (
+                            {numberAssociates==="Plus de 10"? (
                                 <>
                                 
                                     <div className="form-group mb-6 mt-3">

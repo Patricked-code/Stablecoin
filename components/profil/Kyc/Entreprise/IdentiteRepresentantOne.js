@@ -59,7 +59,20 @@ const CIdentiteRepresentantOne = () => {
     const [frontIdentity, setFrontIdentity ] = useState();
     const [backIdentity, setCackIdentity ] = useState();
     const [frontDomicile, setFrontDomicile] = useState();
-    const [backDomicile, setBackDomicile] = useState();
+
+
+    // LE BON
+    // numberRepresentatives
+    const [numberRepresentatives, setNumberRepresentatives] = useState();
+
+
+
+
+
+
+
+
+
 
 
     // Pour la signature
@@ -537,10 +550,10 @@ const handleOptionIncomeTypeC = (event) => {
                                 </label>
                                 <select 
                                 className="form-control"
-                                id="issuingCountry"
+                                id="numberRepresentatives"
                                 required
-                                defaultValue={issuingCountry} 
-                                onChange={(event)=>setIssuingCountry(event.target.value)}
+                                defaultValue={numberRepresentatives} 
+                                onChange={(event)=>setNumberRepresentatives(event.target.value)}
                                 >
                                 <option defaultValue="">Choisissez</option>
                                     <optgroup className='single-cryptocurrency-box'>
@@ -558,7 +571,6 @@ const handleOptionIncomeTypeC = (event) => {
                                 </select>
                             </div>
                             <label
-                                    htmlFor="nativeCountry"
                                     className="text-blackish-blue mb-2 colorRed"
                                 >
                                     NB: Vous devez obligatoirement compléter les informations qui vont suivre pour chaque représentant légal.  

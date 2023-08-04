@@ -60,6 +60,10 @@ const KycPendingParticular = () => {
 
     // states du formulaire de validation
     const [validQuiz, setValidQuiz] = useState();
+    const [validQuizTwo, setValidQuizTwo] = useState();
+    const [validQuizFatca, setValidQuizFatca] = useState();
+    const [validIdentityOne, setValidIdentityOne] = useState();
+    const [validPhotoWithDocument, setValidPhotoWithDocument] = useState();
     const [validIdentity, setValidIdentity] = useState();
     const [validResidence, setValidResidence] = useState();
     const [validPhoto, setValidPhoto] = useState();
@@ -279,7 +283,7 @@ const KycPendingParticular = () => {
                         <div className='currency-selection'>
                             <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
                                 <div className='col-lg-12 col-md-12 row justify-content-between'>
-                                    {/* {!kycForParticularUser?.length==0 ?( */}
+                                    {/* {!allKycForParticular?.length==0 ?( */}
                                         <Table
                                             aria-label="Example table with static content"
                                             css={{
@@ -290,6 +294,7 @@ const KycPendingParticular = () => {
                                         <Table.Header>
                                             {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom & prenom </p></Table.Column> */}
                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Questionnaires</p></Table.Column>
+                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Fatca</p></Table.Column>
                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Identité</p></Table.Column>
                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Domicile</p></Table.Column>
                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Photo</p></Table.Column>
@@ -302,34 +307,39 @@ const KycPendingParticular = () => {
                                                     <Table.Row >                       
                                                         {/* <Table.Cell ><p className=" py-0 ">Koné Arouna</p></Table.Cell> */}
                                                         
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(1)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}>Voir détails</button> {kycForParticularUser?.validQuiz==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(2)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}>Voir détails</button> {kycForParticularUser?.validIdentity==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(3)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}>Voir détails</button> {kycForParticularUser?.validResidence==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(1)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}>Voir détails</button> {kycForParticularUser?.validQuiz==1 && kycForParticularUser?.validQuizTwo==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(6)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}>Voir détails</button> {kycForParticularUser?.validQuizFatca==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(2)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}>Voir détails</button> {kycForParticularUser?.validIdentityOne==1 && kycForParticularUser?.validIdentity==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(3)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}>Voir détails</button> {kycForParticularUser?.validResidence==1 && kycForParticularUser?.validPhotoWithDocument==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
                                                         <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(4)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}>Voir détails</button> {kycForParticularUser?.validPhoto==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
                                                         <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(5)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}>Voir détails</button> {kycForParticularUser?.validSignature==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 ">{kycForParticularUser?.validQuiz==1 && kycForParticularUser?.validIdentity==1 && kycForParticularUser?.validResidence==1 && kycForParticularUser?.validPhoto==1 && kycForParticularUser?.validSignature==1 ? (<b className='colorGreen'>Valider</b>):(<b className='colorRed'>En cours</b>)}</p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 ">{kycForParticularUser?.validQuiz==1 && kycForParticularUser?.validQuizTwo==1 && kycForParticularUser?.validQuizFatca==1 && kycForParticularUser?.validIdentityOne==1 && kycForParticularUser?.validPhotoWithDocument && kycForParticularUser?.validIdentity==1 && kycForParticularUser?.validResidence==1 && kycForParticularUser?.validPhoto==1 && kycForParticularUser?.validSignature==1 ? (<b className='colorGreen'>Valider</b>):(<b className='colorRed'>En cours</b>)}</p></Table.Cell>
                                                         <Table.Cell ><p className=" py-0 ">{formatDate(kycForParticularUser?.updateAt)}</p></Table.Cell>
                                                         <Table.Cell>
                                                             <div className="d-flex py-0 ">
-                                                                <p className="text-center">
-                                                                                            
-                                                                    <Button type='button' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}  color='success' className=''>
-                                                                        <div onClick={handleShowEvaluer}>
-                                                                            Résultat <Icon icon="bx:chevron-down-circle"  width="30"/>
-                                                                        </div>          
-                                                                    </Button>
-                                                                </p>
+                                                                {kycForParticularUser?.correction === 1 ?(
+                                                                    <p className="text-center">
+                                                                        <Button type='button' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}  color='success' className=''>
+                                                                            <div onClick={handleShowEvaluer}>
+                                                                                Résultat <Icon icon="bx:chevron-down-circle"  width="30"/>
+                                                                            </div>          
+                                                                        </Button>
+                                                                    </p>
+                                                                ) : (
+                                                                    <p className="text-center">Aucune correction</p>
+                                                                )}
+                                                                
                                                             </div>
                                                         </Table.Cell>
                                                     </Table.Row >
                                             </Table.Body>
-                                            {/* <Table.Pagination
+                                            <Table.Pagination
                                                 shadow
                                                 noMargin
                                                 align="center"
                                                 rowsPerPage={5}
                                                 onPageChange={(page) => console.log({ page })}
-                                            /> */}
+                                            />
                                         </Table>
                                     {/* ):(
                                         <div className="text-center my-5">
@@ -349,41 +359,193 @@ const KycPendingParticular = () => {
                                         <div className='py-10'>
                                             <h3 className='text-center'>Les questionnaires</h3>
                                         </div>
-                                        <div className="input-group ">
-                                        
-                                            <div className='mx-5 '>
-                                                <div className=''>
-                                                    <b>1) Les dépenses récurrentes :</b><br/>
-                                                    {oneKycForParticular?.spentA? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentA }</p>): ("")}
-                                                    {oneKycForParticular?.spentB? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentB }</p>): ("")}
-                                                    {oneKycForParticular?.spentC? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentC }</p>): ("")}
-                                                    {oneKycForParticular?.spentD? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentD }</p>): ("")}
-                                                    {oneKycForParticular?.spentE? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentE }</p>): ("")}
-                                                    {oneKycForParticular?.spentF? (<p className='mb-1'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentF }</p>): ("")}
+                                        <div className='row'>
+                                            <div className="col-lg-6 col-md-6">
+                                                <h4 className='mx-5'><b>La partie 1</b></h4>
+                                                <div className='mx-5 '>
+                                                    <div className=''>
+                                                        <b>1) Les dépenses récurrentes :</b><br/>
+                                                        {oneKycForParticular?.spentA? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentA }</p>): ("")}
+                                                        {oneKycForParticular?.spentB? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentB }</p>): ("")}
+                                                        {oneKycForParticular?.spentC? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentC }</p>): ("")}
+                                                        {oneKycForParticular?.spentD? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentD }</p>): ("")}
+                                                        {oneKycForParticular?.spentE? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentE }</p>): ("")}
+                                                        {oneKycForParticular?.spentF? (<p className='mb-1'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.spentF }</p>): ("")}
 
-                                                    {!oneKycForParticular?.spentA && !oneKycForParticular?.spentB && !oneKycForParticular?.spentC && !oneKycForParticular?.spentD && !oneKycForParticular?.spentE && !oneKycForParticular?.spentF ? (<p className='my-1'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
-                                                </div>
+                                                        {!oneKycForParticular?.spentA && !oneKycForParticular?.spentB && !oneKycForParticular?.spentC && !oneKycForParticular?.spentD && !oneKycForParticular?.spentE && !oneKycForParticular?.spentF ? (<p className='my-1'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
+                                                    </div>
 
-                                                <div className='mx-10 '>
-                                                    <b>2) La ou les fréquences de revenus :</b><br/>
-                                                    {oneKycForParticular?.frequencyA? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.frequencyA}</p>): ("")}
-                                                    {oneKycForParticular?.frequencyB? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.frequencyB}</p>): ("")}
-                                                    {oneKycForParticular?.frequencyC? (<p className='mb-2'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.frequencyC}</p>): ("")}
+                                                    <div className='mx-10 '>
+                                                        <b>2) La ou les fréquences de revenus :</b><br/>
+                                                        {oneKycForParticular?.frequencyA? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.frequencyA}</p>): ("")}
+                                                        {oneKycForParticular?.frequencyB? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.frequencyB}</p>): ("")}
+                                                        {oneKycForParticular?.frequencyC? (<p className='mb-2'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.frequencyC}</p>): ("")}
+                                                        
+
+                                                        {!oneKycForParticular?.frequencyA && !oneKycForParticular?.frequencyB && !oneKycForParticular?.frequencyC ? (<p className='mt-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
+                                                    </div>
+
+                                                    <div className=''>
+                                                        <b>3) Dans le cadre que les revenus sont touchés :</b><br/>
+                                                        {oneKycForParticular?.incomeTypeA? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.incomeTypeA}</p>): ("")}
+                                                        {oneKycForParticular?.incomeTypeB? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.incomeTypeB}</p>): ("")}
+                                                        {oneKycForParticular?.incomeTypeC? (<p className='mb-2'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.incomeTypeC}</p>): ("")}
+                                                        
+
+                                                        {!oneKycForParticular?.incomeTypeA && !oneKycForParticular?.incomeTypeB && !oneKycForParticular?.incomeTypeC ? (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
+                                                    </div>
                                                     
-
-                                                    {!oneKycForParticular?.frequencyA && !oneKycForParticular?.frequencyB && !oneKycForParticular?.frequencyC ? (<p className='mt-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
                                                 </div>
+                                            </div>
 
-                                                <div className=''>
-                                                    <b>3) Dans le cadre que les revenus sont touchés :</b><br/>
-                                                    {oneKycForParticular?.incomeTypeA? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.incomeTypeA}</p>): ("")}
-                                                    {oneKycForParticular?.incomeTypeB? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.incomeTypeB}</p>): ("")}
-                                                    {oneKycForParticular?.incomeTypeC? (<p className='mb-2'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.incomeTypeC}</p>): ("")}
+
+                                            {/* PARTIE QUESTIONNAIRE 2 */}
+                                            <div className="col-lg-6 col-md-6">
+                                                <h4 className='mx-5'><b>La partie 2</b></h4>
+                                                <div className='mx-5 '>
+                                                    <div className=''>
+                                                        <b> L'estimation de vos revenus mensuels en CFA :</b><br/>
+                                                        {oneKycForParticular?.incomeMonthly? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.incomeMonthly }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    <div className='mx-10 '>
+                                                        <b>L'estimation de vos revenus annuels en CFA :</b><br/>
+                                                        {oneKycForParticular?.annualIncome? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.annualIncome }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    <div className='mx-10 '>
+                                                        <b> Avez-vous un compte bancaire ? :</b><br/>
+                                                        {oneKycForParticular?.otherBankAccount? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankAccount }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    {/* si l'utilisateur a un compte bancaire on lui pose la question suivante */}
+                                                    {oneKycForParticular?.otherBankAccount === "Oui"? (
+                                                        <>
+                                                            <b> Nature du ou des comptes :</b><br/>
+
+                                                            {oneKycForParticular?.savingsAccount? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.savingsAccount }</p>): ("")}
+                                                            {oneKycForParticular?.currentAccount? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.currentAccount }</p>): ("")}
+                                                            {oneKycForParticular?.titleAccount? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.titleAccount }</p>): ("")}
+                                                        
+                                                            {!oneKycForParticular?.savingsAccount && !oneKycForParticular?.currentAccount && !oneKycForParticular?.titleAccount ? (<p className='my-1'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
+
+                                                        </>
+                                                        
+                                                    ):("")}
+                                                    {/* fin */}
                                                     
+                                                    {/* Si l'utilisateur a choisi compte d'épargne */}
+                                                    {oneKycForParticular?.savingsAccount? (
+                                                        <>
+                                                         
+                                                            <b>Pays de la banque de votre compte d'épargne existant :</b><br/>
+                                                            {oneKycForParticular?.otherBankCountrySavings? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankCountrySavings }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                           
+                                                            <b>Nom de la banque de votre compte d'épargne :</b><br/>
+                                                            {oneKycForParticular?.otherBankNameSavings? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankNameSavings }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            
+                                                            <b> Références de la banque de votre compte d'épargne :</b><br/>
+                                                            {oneKycForParticular?.bankReferencesSavings? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.bankReferencesSavings }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
 
-                                                    {!oneKycForParticular?.incomeTypeA && !oneKycForParticular?.incomeTypeB && !oneKycForParticular?.incomeTypeC ? (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
+                                                        </>
+                                                        
+                                                    ):("")}
+                                                    {/* fin */}
+
+
+                                                    {/* Si l'utilisateur a choisi compte courant */}
+                                                    {oneKycForParticular?.currentAccount? (
+                                                        <>
+                                                            <b> Pays de la banque de votre compte courant existant :</b><br/>
+                                                            {oneKycForParticular?.otherBankCountryCourant? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankCountryCourant }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                           
+                                                            <b> Nom de la banque de votre compte courant :</b><br/>
+                                                            {oneKycForParticular?.otherBankNameCourant? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankNameCourant }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            
+                                                            <b> Références de la banque de votre compte courant :</b><br/>
+                                                            {oneKycForParticular?.bankReferencesCourant? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.bankReferencesCourant }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+
+                                                        </>
+                                                        
+                                                    ):("")}
+                                                    {/* fin */}
+
+                                                    {/* Si l'utilisateur a choisi compte titre */}
+                                                    {oneKycForParticular?.titleAccount? (
+                                                        <>
+                                                            
+                                                            <b> Pays de la banque de votre compte titre existant :</b><br/>
+                                                            {oneKycForParticular?.otherBankCountryTitle? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankCountryTitle }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                           
+                                                            <b> Nom de la banque de votre compte titre :</b><br/>
+                                                            {oneKycForParticular?.otherBankNameTitle? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankNameTitle }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            
+                                                            <b> Références de la banque de votre compte titre :</b><br/>
+                                                            {oneKycForParticular?.bankReferencesTitle? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.bankReferencesTitle }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+
+                                                        </>
+                                                        
+                                                    ):("")}
+                                                    {/* fin */}
+
+                                                    {/* Partie mobile money */}
+                                                    <div className='mx-10 '>
+                                                        <b> Avez-vous un compte de monnaie électronique (Mobile money)? </b><br/>
+                                                        {oneKycForParticular?.mobileAccount? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.mobileAccount }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    {oneKycForParticular?.mobileAccount==="Oui"? (
+                                                        <>
+                                                            <b> Pays de votre compte de la monnaie électronique existant :</b><br/>
+                                                            {oneKycForParticular?.mobileCountry? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.mobileCountry }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                        
+                                                            <b> Opérateur de votre compte de la monnaie électronique existant :</b><br/>
+                                                            {oneKycForParticular?.operator? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.operator }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                        
+                                                        </>
+                                                    ) : ("") }
+                                                    {/* Fin */}
+
+                                                    <div className='mx-10 '>
+                                                        <b>Source des revenus</b><br/>
+                                                        {oneKycForParticular?.sourceIncome? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.sourceIncome }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    {oneKycForParticular?.sourceIncome ? (
+                                                        <>
+                                                        
+                                                            {oneKycForParticular?.sourceIncome==="Salaire" ? (
+                                                                <>
+                                                                    <b>Montant :</b><br/>
+                                                                    {oneKycForParticular?.salaries? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.salaries } FCFA</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </>
+                                                            ) : ("") }
+                                                            
+
+                                                            {oneKycForParticular?.sourceIncome==="Rentes" ? (
+                                                                <>
+                                                                    <b>Montant :</b><br/>
+                                                                    {oneKycForParticular?.rents? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.rents } FCFA</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </>
+                                                            ) : ("") }
+
+                                                            {oneKycForParticular?.sourceIncome==="Recettes activités commerciales" ? (
+                                                                <>
+                                                                    <b>Montant :</b><br/>
+                                                                    {oneKycForParticular?.businessReceipts? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.businessReceipts } FCFA</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </>
+                                                            ) : ("") }
+
+                                                            {oneKycForParticular?.allowances==="Indemnités" ? (
+                                                                <>
+                                                                    <b>Montant :</b><br/>
+                                                                    {oneKycForParticular?.allowances? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.allowances } FCFA</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </>
+                                                            ) : ("") }  
+                                                        </>
+                                                    ):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    
                                                 </div>
-                                                
                                             </div>
                                         </div>
                                     </>
@@ -392,8 +554,84 @@ const KycPendingParticular = () => {
                                 {/* Justificatif d'identité */}
                                 {etape===2 ? (
                                     <>
-                                        <div className='py-10'>
-                                            <h3 className='text-center'>Justificatif d'identité</h3>
+                                        
+
+                                        <div className='py-10 my-10'>
+                                            <h3 className='text-center'>Justificatif d'identité partie 1</h3>
+                                        </div><br/>
+
+                                        
+                                        <div className='row  justify-content-center  mx-5'>
+                                            <div className='col-lg-6 col-md-6 '>
+                                                <b> Civilité :</b><br/>
+                                                {oneKycForParticular?.civility? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.civility }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Votre nom :</b><br/>
+                                                {currentUser?.firstName? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{currentUser.firstName }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+                                            
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Vos prénoms :</b><br/>
+                                                {currentUser?.lastName? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{currentUser.lastName }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Nom et prénoms du père :</b><br/>
+                                                {oneKycForParticular?.fatherName? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.fatherName }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Nom et prénoms de la mère :</b><br/>
+                                                {oneKycForParticular?.motherName? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.motherName }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Situation familiale :</b><br/>
+                                                {oneKycForParticular?.familyStatus? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.familyStatus }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Langue :</b><br/>
+                                                {oneKycForParticular?.language? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.language }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+                                            
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Nationalité :</b><br/>
+                                                {currentUser?.nationality? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{currentUser.nationality }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Pays de Naissance :</b><br/>
+                                                {oneKycForParticular?.nativeCountry? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.nativeCountry }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Date de naissance :</b><br/>
+                                                {currentUser?.birthday? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(currentUser.birthday) }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+                                        </div>
+
+                                        <div className='py-10 my-10'>
+                                            <h3 className='text-center'>Justificatif d'identité partie 2</h3>
+                                        </div><br/>
+
+                                        <div className='row  justify-content-between  mx-5'>
+                                            <div className='col-lg-6 col-md-6 '>
+                                                <b> Type de justificatif d'identité :</b><br/>
+                                                {oneKycForParticular?.receiptType? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.receiptType }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6 '>
+                                                <b> Numéro de justificatif d'identité :</b><br/>
+                                                {oneKycForParticular?.pieceNumber? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.pieceNumber }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6 '>
+                                                <b> Date de validité :</b><br/>
+                                                {oneKycForParticular?.validityDate? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(oneKycForParticular.validityDate) }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
                                         </div>
                                         
                                         <div className=" row col-lg-12 col-md-12 justify-content-between">
@@ -430,7 +668,7 @@ const KycPendingParticular = () => {
                                                                 )}
                                                             </>
                                                         ):"Pas de recto justificatif"
-                                                        }
+                                                }
                                                 
                                             </div>
 
@@ -471,7 +709,20 @@ const KycPendingParticular = () => {
                                                 }
                                             </div>
                                         </div>
+                                        
+                                        {/* PARTIE SELFIE AVEC LE DOCUMENT D'IDENTITE */}
+                                        <br/><div className='py-10 my-10'>
+                                            <h3 className='text-center'>Photo de l'utilisateur avec le document de justificatif d'identité</h3>
+                                        </div>
 
+                                        <div className="input-group flex-nowrap">
+                                            <div className='col-lg-12 col-md-12 row justify-content-between'>
+                                                <div className='input-group-alternative my-3 text-center'>
+                                                    {oneKycForParticular?.selfieWithDocument? <img src={oneKycForParticular?.selfieWithDocument} alt="Selfie" /> : "Aucune photo avec document"}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {/* FIN */}
                                     </>
                                 ): ("")}
 
@@ -481,66 +732,95 @@ const KycPendingParticular = () => {
                                         <div className='py-10'>
                                             <h3 className='text-center'>Justificatif de domicile</h3>
                                         </div>
+                                        <div className=" row justify-content-center my-5">
+                                            <div className='col-lg-6 col-md-6 text-center'>
+                                                <b> latitude :</b><br/>
+                                                {oneKycForParticular?.latitude? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.latitude }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6 text-center'>
+                                                <b> Longitude :</b><br/>
+                                                {oneKycForParticular?.longitude? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.longitude }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+                                        </div>
+
+                                        <div className='py-10 mb-5'>
+                                            <h3 className='text-center'>Les documents</h3>
+                                        </div>
                                         <div className=" row col-lg-12 col-md-12 justify-content-between">
                                             <div className='col-lg-6 col-md-6 text-center'>
                                                 <h4 className='text-center'>Recto</h4>
-                                                {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
-                                                {isPdfLink(`${API_URL}/${oneKycForParticular?.frontProofResidence}`) ? (
-                                                    <>
-                                                        <div className="hero-btn  text-center ">
-                                                        <a
-                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                            role="button"
-                                                            data-toggle="dropdown"
-                                                            aria-haspopup="true"
-                                                            aria-expanded="false"
-                                                            href={`${API_URL}/${oneKycForParticular?.frontProofResidence}`} 
-                                                            // download
-                                                            // onClick={handleShow}
-                                                            target="_blank"
-                                                        >
-                                                        <p className="gr-text-8 bgColorblue text-white mb-0">
-                                                            <Icon icon="bx:show-alt" width="50" />
-                                                            Veuillez cliquer ici pour voir le fichier
-                                                        </p>
-                                                        </a>
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        {oneKycForParticular?.frontProofResidence? <img src={`${API_URL}/${oneKycForParticular?.frontProofResidence}`} className="" width={'400'} height={'400'} alt="Recto"/> : "Pas de recto justificatif"}
-                                                    </>
-                                                )}
-                                                
+                                                {oneKycForParticular?.frontProofResidencePhoto? 
+                                                    <img src={oneKycForParticular?.frontProofResidencePhoto} className="" width={'400'} height={'400'} alt="Recto"/> :
+                                                    oneKycForParticular?.frontProofResidence? (
+                                                        <>
+                                                            {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
+                                                            {isPdfLink(`${API_URL}/${oneKycForParticular?.frontProofResidence}`) ? (
+                                                                <>
+                                                                    <div className="hero-btn  text-center ">
+                                                                    <a
+                                                                        className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                        role="button"
+                                                                        data-toggle="dropdown"
+                                                                        aria-haspopup="true"
+                                                                        aria-expanded="false"
+                                                                        href={`${API_URL}/${oneKycForParticular?.frontProofResidence}`} 
+                                                                        // download
+                                                                        // onClick={handleShow}
+                                                                        target="_blank"
+                                                                    >
+                                                                    <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                        <Icon icon="bx:show-alt" width="50" />
+                                                                        Veuillez cliquer ici pour voir le fichier
+                                                                    </p>
+                                                                    </a>
+                                                                    </div>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    {oneKycForParticular?.frontProofResidence? <img src={`${API_URL}/${oneKycForParticular?.frontProofResidence}`} className="" width={'400'} height={'400'} alt="Recto"/> : "Pas de recto justificatif"}
+                                                                </>
+                                                            )}
+                                                        </>
+                                                    ):"Pas de recto justificatif de domicile"
+                                                }
                                             </div>
 
                                             <div className='col-lg-6 col-md-6 text-center'>
                                                 <h4 className='text-center'>Verso</h4>
-                                                {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
-                                                {isPdfLink(`${API_URL}/${oneKycForParticular?.backProofResidence}`) ? (
-                                                    <>
-                                                        <div className="hero-btn  text-center ">
-                                                        <a
-                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                            role="button"
-                                                            data-toggle="dropdown"
-                                                            aria-haspopup="true"
-                                                            aria-expanded="false"
-                                                            href={`${API_URL}/${oneKycForParticular?.backProofResidence}`}
-                                                            target="_blank"
-                                                        >
-                                                        <p className="gr-text-8 bgColorblue text-white mb-0">
-                                                            <Icon icon="bx:show-alt" width="50" />
-                                                            Veuillez cliquer ici pour voir le fichier
-                                                        </p>
-                                                        </a>
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        {oneKycForParticular?.backProofResidence? <img src={`${API_URL}/${oneKycForParticular?.backProofResidence}`} width={'400'} height={'400'} alt="Verso"/> : "Pas de verso justificatif"}
-                                                    </>
-                                                )}
+
+                                                {oneKycForParticular?.frontProofResidencePhoto? 
+                                                    <img src={oneKycForParticular?.frontProofResidencePhoto} className="" width={'400'} height={'400'} alt="Recto"/> :
+                                                    oneKycForParticular?.frontProofResidence? (
+                                                        <>
+                                                            {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
+                                                            {isPdfLink(`${API_URL}/${oneKycForParticular?.backProofResidence}`) ? (
+                                                                <>
+                                                                    <div className="hero-btn  text-center ">
+                                                                    <a
+                                                                        className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                        role="button"
+                                                                        data-toggle="dropdown"
+                                                                        aria-haspopup="true"
+                                                                        aria-expanded="false"
+                                                                        href={`${API_URL}/${oneKycForParticular?.backProofResidence}`}
+                                                                        target="_blank"
+                                                                    >
+                                                                    <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                        <Icon icon="bx:show-alt" width="50" />
+                                                                        Veuillez cliquer ici pour voir le fichier
+                                                                    </p>
+                                                                    </a>
+                                                                    </div>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    {oneKycForParticular?.backProofResidence? <img src={`${API_URL}/${oneKycForParticular?.backProofResidence}`} width={'400'} height={'400'} alt="Verso"/> : "Pas de verso justificatif"}
+                                                                </>
+                                                            )}
+                                                        </>
+                                                            ):"Pas de verso de justificatif de domicile"
+                                                    }
                                             </div>
                                         </div>
                                     </>
@@ -577,6 +857,566 @@ const KycPendingParticular = () => {
                                         </div>
                                     </>
                                 ): ("")}
+
+
+                                {/* Questionnaires Fatca */}
+                                {etape===6 ? (
+                                    <>
+                                        <div className='py-10'>
+                                            <h3 className='text-center'>Les questionnaires ID & FATCA</h3>
+                                        </div>
+                                        <div className='row'>
+                                            {/* PARTIE QUESTIONNAIRE 2 */}
+                                            <div className="col-lg-12 col-md-12">
+                                                <div className='mx-5 '>
+                                                    <div className=''>
+                                                        <b> Etes-vous US Person ? (Citoyenneté Américaine (Passeport américain) / Résidence aux USA /Présence significative ou permanente (green card) / Lieu de naissance aux USA) :</b><br/>
+                                                        {oneKycForParticular?.usPerson? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.usPerson}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    <div className='mx-10 '>
+                                                        <b>Boîte postale :</b><br/>
+                                                        {oneKycForParticular?.mailbox? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.mailbox }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    <div className='mx-10 '>
+                                                        <b> Profession/fonction/activité :</b><br/>
+                                                        {oneKycForParticular?.profession? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.profession }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+                                                    <div className='mx-10 '>
+                                                        <b> Statut du profession :</b><br/>
+                                                        {oneKycForParticular?.professionStatus? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.professionStatus }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    {/* Si le statut du profession est salarié */}
+                                                    {oneKycForParticular?.professionStatus === "Salarié" ? (
+                                                        <>
+                                                            <div className='mx-10 '>
+                                                                <b> Nom de l'employeur :</b><br/>
+                                                                {oneKycForParticular?.employerCorporate? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.employerCorporate }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            </div>
+
+                                                            <div className='mx-10 '>
+                                                                <b> Adresse de l'employeur :</b><br/>
+                                                                {oneKycForParticular?.employerAddress? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.employerAddress }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            </div>
+                                                        </>
+                                                    ) : ("")}
+
+                                                    {/* Fin */}
+
+                                                    <div className='mx-10 '>
+                                                        <b> Motivation de l’ouverture de compte :</b><br/>
+                                                        {oneKycForParticular?.motivation? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.motivation }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    <div className='mx-10 '>
+                                                        <b> Bénéficiez-vous d’un mandat d’administrateur dans le Conseil d’Administration d’une société ?</b><br/>
+                                                        {oneKycForParticular?.directorship? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.directorship }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+                                                    {/* Si l'utilisateur bénéficie d’un mandat d’administrateur */}
+                                                    {oneKycForParticular?.directorship==="Oui"? (
+                                                        <div className='mx-10 '>
+                                                            <b> La (les)quelle(s) :</b><br/>
+                                                            {oneKycForParticular?.whatBoard? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.whatBoard }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                        </div>
+                                                    ) : ("")}
+                                                    
+
+                                                    <div className='mx-10 '>
+                                                        <b> Etes-vous actionnaire dans une société ?</b><br/>
+                                                        {oneKycForParticular?.shareholder? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.shareholder }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+                                                    
+                                                    {oneKycForParticular?.shareholder === "Oui" ? (
+                                                    <div className='mx-10 '>
+                                                        <b> La (les)quelle(s) :</b><br/>
+                                                        {oneKycForParticular?.whatHareholder? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.whatHareholder }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+                                                    ) : ("")}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </>
+                                ): ("")}
+
+
+                                {/* KYC PARTICULIER CLASSIFICATION */}
+                                {etape===7 ? (
+                                    <>
+                                        <div className='mt-15' >
+                                            <div className=' mx-15'>
+                                                <div className='py-10'>
+                                                <br/><br/><h1 className='text-center '>Classification</h1>
+                                                </div>
+                                            </div>
+
+                                            {/* Les cards */}
+                                            <div className='row'>
+                                                <div className='col-lg-3 col-md-12'></div>
+                                                    <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
+                                                        <form className='' onSubmit={addClassification} >
+                                                        {/* <form className='' onSubmit={updateQuestionnaireFatca}> */}
+                                                            
+                                                            <label
+                                                                htmlFor="usPerson"
+                                                                className="text-blackish-blue mb-2"
+                                                            >
+                                                                Classification du client en risque élevé si le client remplit au moins une des conditions ci-dessous :
+                                                            </label>
+                                                            
+                                                            <input
+                                                                type='text'
+                                                                className='form-control'
+                                                                defaultValue={idKycForParticular} 
+                                                                onChange={(event)=>setKycParticularId(event.target.value)}
+                                                            />
+                                                            <div className="form-group mb-6 mt-3">
+
+                                                                <label
+                                                                    htmlFor="classificationRisk"
+                                                                    className="text-blackish-blue mb-2"
+                                                                >
+                                                                    S’agit-il d’une personnalité politiquement exposée et active ou un de ses proches ?
+                                                                </label>
+                                                                <select 
+                                                                className="form-control"
+                                                                id="classificationRisk"
+                                                                required
+                                                                defaultValue={classificationRisk} 
+                                                                onChange={(event)=>setClassificationRisk(event.target.value)}
+                                                                >
+                                                                <option defaultValue="">Choisissez</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                    <option  value="Oui">Oui</option>
+                                                                    <option  value="Non">Non</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div >
+
+                                                            <div className="form-group mb-6 mt-3">
+
+                                                                <label
+                                                                    htmlFor="sourcesDiverse"
+                                                                    className="text-blackish-blue mb-2"
+                                                                >
+                                                                    S’agit-il d’une personne dont les sources de revenus sont multiples et diverses ?
+                                                                </label>
+                                                                <select 
+                                                                className="form-control"
+                                                                id="sourcesDiverse"
+                                                                required
+                                                                defaultValue={sourcesDiverse} 
+                                                                onChange={(event)=>setSourcesDiverse(event.target.value)}
+                                                                >
+                                                                <option defaultValue="">Choisissez</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                    <option  value="Oui">Oui</option>
+                                                                    <option  value="Non">Non</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div >
+                                                            
+                                                            <div className="form-group mb-6 mt-3">
+
+                                                                <label
+                                                                    htmlFor="highRisk"
+                                                                    className="text-blackish-blue mb-2"
+                                                                >
+                                                                    S’agit-il d’une personne exerçant une activité à risque élevé (conf procédure) ?
+                                                                </label>
+                                                                <select 
+                                                                className="form-control"
+                                                                id="highRisk"
+                                                                required
+                                                                defaultValue={highRisk} 
+                                                                onChange={(event)=>setHighRisk(event.target.value)}
+                                                                >
+                                                                <option defaultValue="">Choisissez</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                    <option  value="Oui">Oui</option>
+                                                                    <option  value="Non">Non</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div >
+
+                                                            <div className="form-group mb-6 mt-3">
+
+                                                                <label
+                                                                    htmlFor="anotherHighRisk"
+                                                                    className="text-blackish-blue mb-2"
+                                                                >
+                                                                    Existe-il une autre raison de classer le client en risque élevé ?
+                                                                </label>
+                                                                <select 
+                                                                className="form-control"
+                                                                id="anotherHighRisk"
+                                                                required
+                                                                defaultValue={anotherHighRisk} 
+                                                                onChange={(event)=>setAnotherHighRisk(event.target.value)}
+                                                                >
+                                                                <option defaultValue="">Choisissez</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                    <option  value="Oui">Oui</option>
+                                                                    <option  value="Non">Non</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div >
+
+                                                            {/* Si oui il une autre raison */}
+                                                            <div className="form-group mb-6 mt-3">
+                                                                <label
+                                                                    htmlFor="whichOne"
+                                                                    className="text-blackish-blue mb-2"
+                                                                >
+                                                                
+                                                                Laquelle ?
+                                                                </label>
+                                                                <div className='form-group mt-3'>
+                                                                    <input
+                                                                        type='text'
+                                                                        id='whichOne'
+                                                                        className='form-control'
+                                                                        defaultValue={whichOne} 
+                                                                        onChange={(event)=>setWhichOne(event.target.value)}
+                                                                    />
+                                                                </div>
+                                                            </div >
+                                                            {/* Fin si oui */}
+
+                                                            <div className="form-group mb-6 mt-3">
+
+                                                                <label
+                                                                    htmlFor="levelRisk"
+                                                                    className="text-blackish-blue mb-2"
+                                                                >
+                                                                    Niveau de risque attribué au client
+                                                                </label>
+                                                                <select 
+                                                                className="form-control"
+                                                                id="levelRisk"
+                                                                required
+                                                                defaultValue={levelRisk} 
+                                                                onChange={(event)=>setLevelRisk (event.target.value)}
+                                                                >
+                                                                <option defaultValue="">Choisissez</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                        <option  value="Réduit">Réduit</option>
+                                                                        <option  value="Elevé">Elevé</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div >
+
+                                                            <div className="form-group mb-6 mt-3">
+                                                                <label
+                                                                    htmlFor="levelRiskRevision"
+                                                                    className="text-blackish-blue mb-2"
+                                                                >
+                                                                    Niveau de risque en cas de révision
+                                                                </label>
+                                                                <div className='form-group mt-3'>
+                                                                    <input
+                                                                        type='text'
+                                                                        id='levelRiskRevision'
+                                                                        className='form-control'
+                                                                        defaultValue={levelRiskRevision} 
+                                                                        onChange={(event)=>setLevelRiskRevision(event.target.value)}
+                                                                    />
+                                                                </div>
+                                                            </div >
+                                                            <div className="form-group mb-6 mt-3">
+                                                                <label
+                                                                    htmlFor="profileLevel"
+                                                                    className="text-blackish-blue mb-2"
+                                                                >
+                                                                    Niveau de profil attribué au client
+                                                                </label>
+                                                                <select 
+                                                                className="form-control"
+                                                                id="profileLevel"
+                                                                required
+                                                                defaultValue={profileLevel} 
+                                                                onChange={(event)=>setProfileLevel (event.target.value)}
+                                                                >
+                                                                <option defaultValue="">Choisissez</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                        <option  value="Réduit">Réduit</option>
+                                                                        <option  value="Elevé">Elevé</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div >
+
+                                                            <div className="form-group mb-6">
+                                                                <label
+                                                                    htmlFor="comment"
+                                                                    className="text-blackish-blue mb-2"
+                                                                >
+                                                                    Commentaire
+                                                                </label>
+                                                                <textarea
+                                                                    className="form-control gr-text-11 border mt-3 bg-white"
+                                                                    type="text"
+                                                                    id="comment"
+                                                                    placeholder="commentaire ici"
+                                                                    defaultValue={comment} 
+                                                                    onChange={(event)=>setComment(event.target.value)}
+                                                                />
+                                                            </div>
+
+                                                            <button className="btn btn-primary " type='submit' disabled={isLoggingIn} > Suivant </button>
+                                                        </form>       
+                                                    </div>
+                                                <div className='col-lg-3 col-md-12'></div>
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : ("")}
+                                {/* FIN PARTICULIER CLASSIFICATION */}
+
+                                {/* PARTIE EVALUATION */}
+                                {etape===8 ? (
+                                    <>
+                                        <div className='mt-15' >
+                                            <div className=' mx-15'>
+                                                <div className='py-10'>
+                                                <br/><br/><h1 className='text-center '>Evaluation</h1>
+                                                </div>
+                                            </div>
+
+                                            {/* Les cards */}
+                                            <div className='row'>
+                                                <div className='col-lg-3 col-md-12'></div>
+                                                    <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
+                                                    <Form role="form">
+                                                        <div className='row justify-content-between'>
+                                                            {/* Les questionnaires 1 */}
+                                                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                                <label className="mx-2  mb-2" htmlFor='validQuiz'>
+                                                                    Les questionnaires AML 1
+                                                                </label>
+                                                                {!oneKycForParticular?.validQuiz==1 ? (
+                                                                    <select 
+                                                                        className="form-control"
+                                                                        id="validQuiz"
+                                                                        required
+                                                                        defaultValue={validQuiz} 
+                                                                        onChange={(event)=>setValidQuiz(event.target.value)}
+                                                                    >
+                                                                        <option defaultValue="">Choisissez une option</option>
+                                                                        <optgroup className='single-cryptocurrency-box'>
+                                                                            <option  value="true">Valider</option>
+                                                                            <option  value="false">Non valider</option>
+                                                                        </optgroup>
+                                                                    </select>
+                                                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                                                            </div>
+
+                                                            {/* Les questionnaires 2*/}
+                                                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                                <label className="mx-2  mb-2" htmlFor='validQuiz'>
+                                                                    Les questionnaires AML 2
+                                                                </label>
+                                                                {!oneKycForParticular?.validQuizTwo==1 ? (
+                                                                    <select 
+                                                                        className="form-control"
+                                                                        id="validQuiz"
+                                                                        required
+                                                                        defaultValue={validQuizTwo} 
+                                                                        onChange={(event)=>setValidQuizTwo(event.target.value)}
+                                                                    >
+                                                                        <option defaultValue="">Choisissez une option</option>
+                                                                        <optgroup className='single-cryptocurrency-box'>
+                                                                            <option  value="true">Valider</option>
+                                                                            <option  value="false">Non valider</option>
+                                                                        </optgroup>
+                                                                    </select>
+                                                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                                                            </div>
+
+                                                            {/* Les questionnaires FATCA*/}
+                                                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                                <label className="mx-2  mb-2" htmlFor='validQuiz'>
+                                                                    Questionnaires FATCA
+                                                                </label>
+                                                                {!oneKycForParticular?.validQuizFatca==1 ? (
+                                                                    <select 
+                                                                        className="form-control"
+                                                                        id="validQuiz"
+                                                                        required
+                                                                        defaultValue={validQuizFatca} 
+                                                                        onChange={(event)=>setValidQuizFatca(event.target.value)}
+                                                                    >
+                                                                        <option defaultValue="">Choisissez une option</option>
+                                                                        <optgroup className='single-cryptocurrency-box'>
+                                                                            <option  value="true">Valider</option>
+                                                                            <option  value="false">Non valider</option>
+                                                                        </optgroup>
+                                                                    </select>
+                                                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                                                            </div>
+
+                                                            {/* Justificatif d'identité 1*/}
+                                                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                                <label className="mx-2  mb-2" htmlFor='validIdentity'>
+                                                                    Justificatif d'identité 1
+                                                                </label>
+                                                                {!oneKycForParticular?.validIdentityOne==1 ? (
+                                                                    <select 
+                                                                        className="form-control"
+                                                                        id="validIdentity"
+                                                                        required
+                                                                        defaultValue={validIdentityOne} 
+                                                                        onChange={(event)=>setValidIdentityOne(event.target.value)}
+                                                                    >
+                                                                        <option defaultValue="">Choisissez une option</option>
+                                                                        <optgroup className='single-cryptocurrency-box'>
+                                                                            <option  value="true">Valider</option>
+                                                                            <option  value="false">Non valider</option>
+                                                                        </optgroup>
+                                                                    </select>
+                                                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+
+                                                            </div>
+
+                                                            {/* Justificatif d'identité 2*/}
+                                                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                                <label className="mx-2  mb-2" htmlFor='validIdentity'>
+                                                                    Justificatif d'identité 2
+                                                                </label>
+                                                                {!oneKycForParticular?.validIdentity==1 ? (
+                                                                    <select 
+                                                                        className="form-control"
+                                                                        id="validIdentity"
+                                                                        required
+                                                                        defaultValue={validIdentity} 
+                                                                        onChange={(event)=>setValidIdentity(event.target.value)}
+                                                                    >
+                                                                        <option defaultValue="">Choisissez une option</option>
+                                                                        <optgroup className='single-cryptocurrency-box'>
+                                                                            <option  value="true">Valider</option>
+                                                                            <option  value="false">Non valider</option>
+                                                                        </optgroup>
+                                                                    </select>
+                                                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+
+                                                            </div>
+
+                                                            {/* Photo avec Justificatif d'identité 2*/}
+                                                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                                <label className="mx-2  mb-2" htmlFor='validIdentity'>
+                                                                    Photo avec document
+                                                                </label>
+                                                                {!oneKycForParticular?.validPhotoWithDocument==1 ? (
+                                                                    <select 
+                                                                        className="form-control"
+                                                                        id="validIdentity"
+                                                                        required
+                                                                        defaultValue={validPhotoWithDocument} 
+                                                                        onChange={(event)=>setValidPhotoWithDocument(event.target.value)}
+                                                                    >
+                                                                        <option defaultValue="">Choisissez une option</option>
+                                                                        <optgroup className='single-cryptocurrency-box'>
+                                                                            <option  value="true">Valider</option>
+                                                                            <option  value="false">Non valider</option>
+                                                                        </optgroup>
+                                                                    </select>
+                                                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+
+                                                            </div>
+
+                                                            {/* Justificatif de domicile */}
+                                                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                                <label className="mx-2  mb-2" htmlFor='validResidence'>
+                                                                    Justificatif de domicile 
+                                                                </label>
+                                                                {!oneKycForParticular?.validResidence==1 ? (
+                                                                    <select 
+                                                                        className="form-control"
+                                                                        id="validResidence"
+                                                                        required
+                                                                        defaultValue={validResidence} 
+                                                                        onChange={(event)=>setValidResidence(event.target.value)}
+                                                                    >
+                                                                        <option defaultValue="">Choisissez une option</option>
+                                                                        <optgroup className='single-cryptocurrency-box'>
+                                                                            <option  value="true">Valider</option>
+                                                                            <option  value="false">Non valider</option>
+                                                                        </optgroup>
+                                                                    </select>
+                                                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+
+                                                            </div>
+
+                                                            {/* Photo de l'utilisateur */}
+                                                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                                <label className="mx-2  mb-2" htmlFor='validPhoto'>
+                                                                    Photo de l'utilisateur
+                                                                </label>
+                                                                {!oneKycForParticular?.validPhoto==1 ? ( 
+                                                                    <select 
+                                                                        className="form-control"
+                                                                        id="validPhoto"
+                                                                        required
+                                                                        defaultValue={validPhoto} 
+                                                                        onChange={(event)=>setValidPhoto(event.target.value)}
+                                                                    >
+                                                                        <option defaultValue="">Choisissez une option</option>
+                                                                        <optgroup className='single-cryptocurrency-box'>
+                                                                            <option  value="true">Valider</option>
+                                                                            <option  value="false">Non valider</option>
+                                                                        </optgroup>
+                                                                    </select>
+                                                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+
+                                                            </div>
+
+                                                            {/* Signature de l'utilisateur */}
+                                                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                                <label className="mx-2  mb-2" htmlFor='validSignature'>
+                                                                    Signature de l'utilisateur
+                                                                </label>
+                                                                {!oneKycForParticular?.validSignature==1 ? (
+                                                                    <select 
+                                                                        className="form-control"
+                                                                        id="validSignature"
+                                                                        required
+                                                                        defaultValue={validSignature} 
+                                                                        onChange={(event)=>setValidSignature(event.target.value)}
+                                                                    >
+                                                                        <option defaultValue="">Choisissez une option</option>
+                                                                        <optgroup className='single-cryptocurrency-box'>
+                                                                            <option  value="true">Valider</option>
+                                                                            <option  value="false">Non valider</option>
+                                                                        </optgroup>
+                                                                    </select>
+                                                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+
+                                                            </div>
+                                                        </div>
+                                                    
+                                                        <div className="form-group mb-6">
+                                                            <textarea
+                                                                className="form-control gr-text-11 border mt-3 bg-white"
+                                                                type="text"
+                                                                id="contenu"
+                                                                placeholder="Décrivez le résultat ici"
+                                                                defaultValue={pattern} 
+                                                                onChange={(event)=>setPattern(event.target.value)}
+                                                            />
+                                                        </div>
+                                                    
+                                                        <Button  type='button'  color="success" onClick={validKycParticular}  disabled={isLoggingIn}>
+                                                            Envoyer
+                                                        </Button>
+                                                    </Form>
+                                                    </div>
+                                                <div className='col-lg-3 col-md-12'></div>
+                                            </div>
+                                        </div>
+                                    </>
+                                ):("")}
+                                {/* FIN EVALUATION */}
                             </div>
 
                         </div>
@@ -599,29 +1439,88 @@ const KycPendingParticular = () => {
                 <Form role="form">
                     <Modal.Body>
                         <div className='row justify-content-between'>
-                            {/* Les questionnaires */}
+                            {/* Les questionnaires AML 2*/}
                             <div className='form-group my-3 col-lg-6 col-md-6'>
                                 <label className="mx-2  mb-2" htmlFor='validQuiz'>
-                                    Les questionnaires 
+                                    Les questionnaires AML 1
                                 </label>
                                 {!oneKycForParticular?.validQuiz==1 ? (
-                                    <a href='/profil/kyc/particulier/' onClick={()=>setUpdateKycStatut("1")}>
+                                    <a href='/profil/kyc/particulier/questionnaires-revenus-one' onClick={()=>setUpdateKycStatut("1")}>
                                         <Button  type='button'  color="primary" >
-                                            Récompleter 
+                                            Reprendre 
                                         </Button>
                                     </a>
                                 ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
                             </div>
 
-                            {/* Justificatif d'identité */}
+                            {/* Les questionnaires AML 2 */}
+                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                <label className="mx-2  mb-2" htmlFor='validQuiz'>
+                                    Les questionnaires AML 2
+                                </label>
+                                {!oneKycForParticular?.validQuizTwo==1 ? (
+                                    <a href='/profil/kyc/particulier/questionnaires-revenus-two/' onClick={()=>setUpdateKycStatut("1")}>
+                                        <Button  type='button'  color="primary" >
+                                            Reprendre 
+                                        </Button>
+                                    </a>
+                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                            </div>
+
+                            {/* Questionnaires FATCA */}
                             <div className='form-group my-3 col-lg-6 col-md-6'>
                                 <label className="mx-2  mb-2" htmlFor='validIdentity'>
-                                    Justificatif d'identité
+                                    Questionnaires ID & FATCA
+                                </label>
+                                {!oneKycForParticular?.validQuizFatca==1 ? (
+                                    <a href='/profil/kyc/particulier/questionnaires-fatca/' onClick={()=>setUpdateKycStatut("1")}>
+                                        <Button  type='button'  color="primary" >
+                                            Reprendre 
+                                        </Button>
+                                    </a>
+                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+
+                            </div>
+
+                            {/* Justificatif d'identité 1 */}
+                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                <label className="mx-2  mb-2" htmlFor='validIdentity'>
+                                    Justificatif d'identité 1
+                                </label>
+                                {!oneKycForParticular?.validIdentityOne==1 ? (
+                                    <a href='/profil/kyc/particulier/justificatif-identite-one/' onClick={()=>setUpdateKycStatut("1")}>
+                                        <Button  type='button'  color="primary" >
+                                            Reprendre 
+                                        </Button>
+                                    </a>
+                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+
+                            </div>
+
+                            {/* Justificatif d'identité2 */}
+                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                <label className="mx-2  mb-2" htmlFor='validIdentity'>
+                                    Documents d'identité  
                                 </label>
                                 {!oneKycForParticular?.validIdentity==1 ? (
-                                    <a href='/profil/kyc/particulier/seconde-phase/' onClick={()=>setUpdateKycStatut("1")}>
+                                    <a href='/profil/kyc/particulier/justificatif-identite-two/' onClick={()=>setUpdateKycStatut("1")}>
                                         <Button  type='button'  color="primary" >
-                                            Récompleter 
+                                            Reprendre 
+                                        </Button>
+                                    </a>
+                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+
+                            </div>
+
+                            {/* Justificatif d'identité 3 photo avec documents */}
+                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                <label className="mx-2  mb-2" htmlFor='validIdentity'>
+                                    Photo avec document
+                                </label>
+                                {!oneKycForParticular?.validPhotoWithDocument==1 ? (
+                                    <a href='/profil/kyc/particulier/selfie-with-document/' onClick={()=>setUpdateKycStatut("1")}>
+                                        <Button  type='button'  color="primary" >
+                                            Reprendre 
                                         </Button>
                                     </a>
                                 ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
@@ -636,7 +1535,7 @@ const KycPendingParticular = () => {
                                 {!oneKycForParticular?.validResidence==1 ? (
                                     <a href='/profil/kyc/particulier/justificatif-domicile/' onClick={()=>setUpdateKycStatut("1")}>
                                         <Button  type='button'  color="primary" >
-                                            Récompleter 
+                                            Reprendre 
                                         </Button>
                                     </a>
                                 ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
@@ -651,7 +1550,7 @@ const KycPendingParticular = () => {
                                 {!oneKycForParticular?.validPhoto==1 ? ( 
                                     <a href='/profil/kyc/commun/selfie/' onClick={()=>setUpdateKycStatut("1")}>
                                         <Button  type='button'   color="primary" >
-                                            Récompleter 
+                                            Reprendre 
                                         </Button>
                                     </a>
                                 ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
@@ -666,7 +1565,7 @@ const KycPendingParticular = () => {
                                 {!oneKycForParticular?.validSignature==1 ? (
                                     <a href='/profil/kyc/commun/signature/' onClick={()=>setUpdateKycStatut("1")}>
                                         <Button  type='button'  color="primary" >
-                                            Récompleter 
+                                            Reprendre 
                                         </Button>
                                     </a>
                                 ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}

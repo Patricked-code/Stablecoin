@@ -5,18 +5,31 @@ import Link from 'next/link';
 
 
 const CQuestionnaireAmlFive = () => {
+
   const [answers, setAnswers] = useState({
-    proceduresSignalementTransactionsSuspectes: '',
-    mesuresFormationSensibilisationEmployes: '',
-    proceduresEvaluationGestionRisques: '',
-    evaluationRisquesBlanchimentArgent: '',
-    mesuresConfidentialiteSecuriteInformations: '',
-    proceduresEvaluationTiers: '',
-    mecanismesCommunicationInternes: '',
-    auditsConformiteReglementations: '',
-    relationsPaysNonReglementes: '',
-    proceduresGestionNonConformite: ''
+    suspiciousTransactions: '',
+    employeeTraining: '',
+    riskManagement: '',
+    antiMoneyLaunderingRisk: '',
+    infoSecurityMeasures: '',
+    thirdPartyEvaluation: '',
+    internalCommunication: '',
+    complianceAudits: '',
+    regulatedCountries: '',
+    complianceManagement: ''
   });
+  
+  // LES BONS
+  // suspiciousTransactions
+  //   employeeTraining
+  //   riskManagement
+  //   antiMoneyLaunderingRisk
+  //   infoSecurityMeasures
+  //   thirdPartyEvaluation
+  //   internalCommunication
+  //   complianceAudits
+  //   regulatedCountries
+  //   complianceManagement
 
   const handleChange = (e) => {
     setAnswers({ ...answers, [e.target.name]: e.target.value });
@@ -72,7 +85,7 @@ const CQuestionnaireAmlFive = () => {
                 <label>
                   Avez-vous mis en place des procédures pour signaler les transactions suspectes aux autorités compétentes conformément aux réglementations AML en vigueur dans votre pays, en respectant les délais et les protocoles spécifiques ?
                 </label>
-                <select className='form-control mt-2' name="proceduresSignalementTransactionsSuspectes" onChange={handleChange}>
+                <select className='form-control mt-2' name="suspiciousTransactions" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -85,7 +98,7 @@ const CQuestionnaireAmlFive = () => {
                 <label>
                   Avez-vous mis en place des mesures de formation et de sensibilisation régulières pour vos employés sur les risques de blanchiment d'argent et les obligations AML, conformément aux directives de l'autorité de régulation AML de votre pays ?
                 </label>
-                <select className='form-control mt-2' name="mesuresFormationSensibilisationEmployes" onChange={handleChange}>
+                <select className='form-control mt-2' name="employeeTraining" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -97,7 +110,7 @@ const CQuestionnaireAmlFive = () => {
                 <label>
                   Votre entreprise dispose-t-elle de procédures pour évaluer et gérer les risques liés au blanchiment d'argent et au financement du terrorisme, notamment en utilisant des outils de screening des entités et des individus ?
                 </label>
-                <select className='form-control mt-2' name="proceduresEvaluationGestionRisques" onChange={handleChange}>
+                <select className='form-control mt-2' name="riskManagement" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -109,7 +122,7 @@ const CQuestionnaireAmlFive = () => {
                 <label>
                   Avez-vous évalué les risques liés au blanchiment d'argent spécifiques à votre entreprise et à vos activités de monnaie électronique, en prenant en compte les recommandations internationales et les règles établies par l'autorité de régulation AML de votre pays ?
                 </label>
-                <select className='form-control mt-2' name="evaluationRisquesBlanchimentArgent" onChange={handleChange}>
+                <select className='form-control mt-2' name="antiMoneyLaunderingRisk" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -121,7 +134,7 @@ const CQuestionnaireAmlFive = () => {
                 <label>
                   Votre entreprise a-t-elle des mesures en place pour protéger la confidentialité et la sécurité des informations relatives à vos clients et à leurs activités de monnaie électronique, conformément aux exigences de protection des données de votre pays ?
                 </label>
-                <select className='form-control mt-2' name="mesuresConfidentialiteSecuriteInformations" onChange={handleChange}>
+                <select className='form-control mt-2' name="infoSecurityMeasures" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -133,7 +146,7 @@ const CQuestionnaireAmlFive = () => {
                 <label>
                   Avez-vous des procédures pour évaluer les tiers avec lesquels vous faites affaire, en vérifiant leur réputation, leur historique et leur conformité aux règles AML internationales, notamment pour les partenaires situés dans des juridictions à haut risque ?
                 </label>
-                <select className='form-control mt-2' name="proceduresEvaluationTiers" onChange={handleChange}>
+                <select className='form-control mt-2' name="thirdPartyEvaluation" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -145,7 +158,7 @@ const CQuestionnaireAmlFive = () => {
                 <label>
                   Avez-vous mis en place des mécanismes de communication internes pour signaler les comportements suspects ou les violations potentielles des règles AML, conformément aux protocoles de signalement établis par l'autorité de régulation AML de votre pays ?
                 </label>
-                <select className='form-control mt-2' name="mecanismesCommunicationInternes" onChange={handleChange}>
+                <select className='form-control mt-2' name="internalCommunication" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -157,7 +170,7 @@ const CQuestionnaireAmlFive = () => {
                 <label>
                   Avez-vous réalisé des audits internes ou externes pour évaluer votre conformité aux réglementations AML et pour identifier d'éventuelles lacunes, en se basant sur les standards internationaux et les meilleures pratiques de l'industrie ?
                 </label>
-                <select className='form-control mt-2' name="auditsConformiteReglementations" onChange={handleChange}>
+                <select className='form-control mt-2' name="complianceAudits" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -169,7 +182,7 @@ const CQuestionnaireAmlFive = () => {
                 <label>
                   Votre entreprise a-t-elle des relations commerciales avec des personnes ou des entités qui ne sont pas soumises à des réglementations strictes de lutte contre le blanchiment d'argent et les activités illicites, en provenance de pays tels que la Somalie, le Yemen ou le Soudan ?
                 </label>
-                <select className='form-control mt-2' name="relationsPaysNonReglementes" onChange={handleChange}>
+                <select className='form-control mt-2' name="regulatedCountries" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -181,7 +194,7 @@ const CQuestionnaireAmlFive = () => {
                 <label>
                   Avez-vous mis en place des procédures pour gérer les cas de non-conformité et prendre les mesures correctives appropriées, en suivant les directives de l'autorité de régulation AML de votre pays et en tenant compte des éventuelles sanctions ou pénalités ?
                 </label>
-                <select className='form-control mt-2' name="proceduresGestionNonConformite" onChange={handleChange}>
+                <select className='form-control mt-2' name="complianceManagement" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>

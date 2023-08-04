@@ -4,18 +4,34 @@ import Link from 'next/link';
 
 
 const CQuestionnaireAmlFour = () => {
-  const [answers, setAnswers] = useState({
-    relationsParadisFiscaux: '',
-    paiementsEspeceSuperieur15000: '',
-    clientsPolitiquementExposes: '',
-    paiementsEspeceSuperieur10000: '',
-    proceduresKYC: '',
-    evaluationRisqueBlanchiment: '',
-    mesuresSurveillanceTransactions: '',
-    clientsTransactionsSuperieur100000: '',
-    seuilsDeclarationTransactions: '',
-    relationsActivitesIllegales: ''
-  });
+
+const [answers, setAnswers] = useState({
+  taxHavens: '',
+  cashAbove15k: '',
+  politicallyExposed: '',
+  cashAbove10k: '',
+  kycProcedures: '',
+  amlRiskAssessment: '',
+  transactionMonitoring: '',
+  clientsAbove100k: '',
+  transactionDeclaration: '',
+  illegalActivities: ''
+});
+
+// LES BONS
+// taxHavens
+//   cashAbove15k
+//   politicallyExposed
+//   cashAbove10k
+//   kycProcedures
+//   amlRiskAssessment
+//   transactionMonitoring
+//   clientsAbove100k
+//   transactionDeclaration
+//   illegalActivities
+
+
+  
 
   const handleChange = (e) => {
     setAnswers({ ...answers, [e.target.name]: e.target.value });
@@ -71,7 +87,7 @@ const CQuestionnaireAmlFour = () => {
                 <label>
                   Votre entreprise a-t-elle des relations commerciales avec des pays connus pour être des paradis fiscaux, tels que les îles Caymans, les îles Vierges Britanniques ou le Luxembourg ?
                 </label>
-                <select className='form-control mt-2' name="relationsParadisFiscaux" onChange={handleChange}>
+                <select className='form-control mt-2' name="taxHavens" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -84,7 +100,7 @@ const CQuestionnaireAmlFour = () => {
                 <label>
                   Acceptez-vous des paiements en especes pour des transactions d'une valeur superieure à 15 000 euros provenant de pays comme la Suisse, Monaco ou Singapour ?
                 </label>
-                <select className='form-control mt-2' name="paiementsEspeceSuperieur15000" onChange={handleChange}>
+                <select className='form-control mt-2' name="cashAbove15k" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -96,7 +112,7 @@ const CQuestionnaireAmlFour = () => {
                 <label>
                   Avez-vous des clients politiquement exposes (PEP) ou des membres de leur famille proche parmi vos actionnaires, dirigeants ou beneficiaires effectifs provenant de pays tels que la Russie, l'Arabie saoudite ou la Chine ?
                 </label>
-                <select className='form-control mt-2' name="clientsPolitiquementExposes" onChange={handleChange}>
+                <select className='form-control mt-2' name="politicallyExposed" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -108,7 +124,7 @@ const CQuestionnaireAmlFour = () => {
                 <label>
                   Votre entreprise accepte-t-elle des paiements en especes pour des transactions d'une valeur superieure à 10 000 dollars americains provenant de pays tels que les Emirats arabes unis, le Qatar ou le Bahrein ?
                 </label>
-                <select className='form-control mt-2' name="paiementsEspeceSuperieur10000" onChange={handleChange}>
+                <select className='form-control mt-2' name="cashAbove10k" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -120,7 +136,7 @@ const CQuestionnaireAmlFour = () => {
                 <label>
                   Avez-vous mis en place des procedures de connaissance de vos clients (KYC) pour verifier l'identite de vos clients avant d'ouvrir un compte de monnaie electronique, conformement aux reglementations AML en vigueur dans votre pays ?
                 </label>
-                <select className='form-control mt-2' name="proceduresKYC" onChange={handleChange}>
+                <select className='form-control mt-2' name="kycProcedures" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -132,7 +148,7 @@ const CQuestionnaireAmlFour = () => {
                 <label>
                   Disposez-vous de politiques et de procedures pour evaluer le risque de blanchiment d'argent associe à vos clients et à leurs activites, en tenant compte des montants des transactions superieurs à 50 000 euros ou son equivalent dans une autre devise ?
                 </label>
-                <select className='form-control mt-2' name="evaluationRisqueBlanchiment" onChange={handleChange}>
+                <select className='form-control mt-2' name="amlRiskAssessment" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -144,7 +160,7 @@ const CQuestionnaireAmlFour = () => {
                 <label>
                   Avez-vous mis en place des mesures de surveillance pour detecter les transactions suspectes ou inexpliquees effectuees par vos clients, en particulier celles impliquant des pays sous sanctions internationales, tels que la Coree du Nord, l'Iran ou le Venezuela ?
                 </label>
-                <select className='form-control mt-2' name="mesuresSurveillanceTransactions" onChange={handleChange}>
+                <select className='form-control mt-2' name="transactionMonitoring" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -156,7 +172,7 @@ const CQuestionnaireAmlFour = () => {
                 <label>
                   Avez-vous des clients qui effectuent frequentement des transactions d'un montant superieur à 100 000 euros provenant de pays consideres comme des paradis fiscaux, tels que les Iles Caymans, les Iles Vierges Britanniques ou les Seychelles ?
                 </label>
-                <select className='form-control mt-2' name="clientsTransactionsSuperieur100000" onChange={handleChange}>
+                <select className='form-control mt-2' name="clientsAbove100k" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -168,7 +184,7 @@ const CQuestionnaireAmlFour = () => {
                 <label>
                   Avez-vous etabli des seuils de declaration pour les transactions effectuees par vos clients, notamment celles depassant 20 000 euros en especes ou 10 000 euros en crypto-monnaies ?
                 </label>
-                <select className='form-control mt-2' name="seuilsDeclarationTransactions" onChange={handleChange}>
+                <select className='form-control mt-2' name="transactionDeclaration" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -180,7 +196,7 @@ const CQuestionnaireAmlFour = () => {
                 <label>
                   Votre entreprise a-t-elle des relations commerciales avec des entites impliquees dans des activites illegales connues, telles que le trafic de drogue, la traite des etres humains ou le financement du terrorisme, en provenance de pays tels que la Colombie, le Nigeria ou l'Afghanistan ?
                 </label>
-                <select className='form-control mt-2' name="relationsActivitesIllegales" onChange={handleChange}>
+                <select className='form-control mt-2' name="illegalActivities" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>

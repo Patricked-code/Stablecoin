@@ -37,16 +37,22 @@ const CIdentiteRepresentantTwo = () => {
     // nationality
     // email
     // functions
-    // typeDocument
+    // typeDocIdentite
     // identityDocNumber
     // mobile
     {/* POUR PIECE D'IDENTITE */}
-    // frontIdentity 
-    // backIdentity 
+    // frontIdentityFile 
+    // backIdentityFile
+    // frontIdentityPhoto 
+    // backIdentityPhoto  
     {/* FIN */}
     {/* POUR PIECE DE DOMICILE */}
-    // frontDomicile
-    // backDomicile
+    // typeDocumentResidence
+    // frontDomicileFile
+    // backDomicileFile
+    // frontDomicilePhoto
+    // backDomicilePhoto
+    // signature
     {/* FIN */}
     const [firstName, setFirstName] = useState();
     const [lastName, setLastName] = useState();
@@ -57,7 +63,7 @@ const CIdentiteRepresentantTwo = () => {
     const [functions, setFunctions] = useState();
     const [email, setEmail] = useState();
     const [typeDocIdentite, setTypeDocIdentite] = useState();
-    const [typeDocDomicile, setTypeDocDomicile] = useState();
+    const [typeDocumentResidence, setTypeDocumentResidence] = useState();
     const [identityDocNumber, setIdentityDocNumber] = useState();
     const [mobile, setMobile] = useState();
     
@@ -588,7 +594,7 @@ const handleOptionIncomeTypeC = (event) => {
                         <form className=''>
                         <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="firstName"
+                                    htmlFor="lastName"
                                     className="text-blackish-blue mb-2"
                                 >
                                     Nom du représentation légal
@@ -596,17 +602,18 @@ const handleOptionIncomeTypeC = (event) => {
                                 <div className='form-group'>
                                     <input
                                         type='text'
-                                        id='firstName'
+                                        id='lastName'
                                         className='form-control'
                                         placeholder='Nom du représentation légal'
-                                        defaultValue={firstName} 
-                                        onChange={(event)=>setFirstName(event.target.value)}
+                                        defaultValue={lastName} 
+                                        onChange={(event)=>setLastName(event.target.value)}
+                                        
                                     />
                                 </div>
                             </div >
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="lastName"
+                                    htmlFor="firstName"
                                     className="text-blackish-blue mb-2"
                                 >
                                     Prénoms du représentation légal
@@ -614,11 +621,11 @@ const handleOptionIncomeTypeC = (event) => {
                                 <div className='form-group'>
                                     <input
                                         type='text'
-                                        id='lastName'
+                                        id='firstName'
                                         className='form-control'
                                         placeholder='Prénoms du représentation légal'
-                                        defaultValue={lastName} 
-                                        onChange={(event)=>setLastName(event.target.value)}
+                                        defaultValue={firstName} 
+                                        onChange={(event)=>setFirstName(event.target.value)}
                                     />
                                 </div>
                             </div >
@@ -1022,17 +1029,17 @@ const handleOptionIncomeTypeC = (event) => {
 
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="typeDocDomicile"
+                                    htmlFor="typeDocumentResidence"
                                     className="text-blackish-blue mb-2"
                                 >
                                     Type de document de domicile 
                                 </label>
                                 <select 
                                 className="form-control"
-                                id="typeDocDomicile"
+                                id="typeDocumentResidence"
                                 required
-                                defaultValue={typeDocDomicile} 
-                                onChange={(event)=>setTypeDocDomicile(event.target.value)}
+                                defaultValue={typeDocumentResidence} 
+                                onChange={(event)=>setTypeDocumentResidence(event.target.value)}
                                 >
                                 <option defaultValue="">Choisissez</option>
                                     <optgroup className='single-cryptocurrency-box'>
@@ -1331,7 +1338,7 @@ const handleOptionIncomeTypeC = (event) => {
                                     </Link>                          
                                 </div>
                                 <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                    <Link href='/profil/kyc/entreprise/structure-control-one/' className="align-right">
+                                    <Link href='/profil/kyc/entreprise/beneficiaire-effectif-one/' className="align-right">
                                         <a
                                         className=""
                                         >

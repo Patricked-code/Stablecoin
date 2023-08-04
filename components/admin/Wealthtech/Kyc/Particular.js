@@ -63,6 +63,10 @@ const ValidParticular = () => {
 
     // states du formulaire de validation
     const [validQuiz, setValidQuiz] = useState();
+    const [validQuizTwo, setValidQuizTwo] = useState();
+    const [validQuizFatca, setValidQuizFatca] = useState();
+    const [validIdentityOne, setValidIdentityOne] = useState();
+    const [validPhotoWithDocument, setValidPhotoWithDocument] = useState();
     const [validIdentity, setValidIdentity] = useState();
     const [validResidence, setValidResidence] = useState();
     const [validPhoto, setValidPhoto] = useState();
@@ -70,8 +74,28 @@ const ValidParticular = () => {
     const [pattern, setPattern] = useState();
 
 
-
-
+    // States de la CLASSIFICATION
+    const [classificationRisk, setClassificationRisk] = useState();
+    const [sourcesDiverse, setSourcesDiverse] = useState();
+    const [highRisk, setHighRisk] = useState();
+    const [anotherHighRisk, setAnotherHighRisk] = useState();
+    const [whichOne, setWhichOne] = useState();
+    const [levelRisk, setLevelRisk] = useState();
+    const [levelRiskRevision, setLevelRiskRevision] = useState();
+    const [profileLevel, setProfileLevel] = useState();
+    const [comment, setComment] = useState();
+    const [kycParticularId, setKycParticularId] = useState();
+    
+     
+    // classificationRisk,
+    // sourcesDiverse, 
+    // highRisk, 
+    // anotherHighRisk, 
+    // whichOne,
+    // levelRisk, 
+    // levelRiskRevision,
+    // profileLevel, 
+    // comment
     
     
 
@@ -129,7 +153,6 @@ const ValidParticular = () => {
                 .then((resKyc) => resKyc.json())
                 .then((data) => {
                 setAllKycForParticular(data)
-                console.log("data =>",data)
                 }) 
             };
             // console.log("Banques =>",allBank)
@@ -140,41 +163,58 @@ const ValidParticular = () => {
 
     // RECUPERER UNE SEULE LIGNE DE KYC DU PARTICULIER
     if (idKycForParticular) {
-            const getOneKycForParticular = async (_idKycForParticular) => {
+        const getOneKycForParticular = async (_idKycForParticular) => {
+          try {
             const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-one-kyc-particular/${_idKycForParticular}`, {
-                headers: {
+              headers: {
                 'Content-Type': 'application/json',
-                },
-            })
-                .then((resKyc) => resKyc.json())
-                .then((data) => {
-                setOneKycForParticular(data)
-                }) 
-            };
-            getOneKycForParticular(idKycForParticular);
-            // FIN
-    }
+              },
+            });
+      
+            if (!resKyc.ok) {
+              throw new Error('Failed to fetch KYC data');
+            }
+      
+            const data = await resKyc.json();
+            setOneKycForParticular(data);
+          } catch (error) {
+            // Handle errors appropriately, e.g., set an error state.
+            console.error('Error fetching KYC data:', error);
+          }
+        };
+      
+        getOneKycForParticular(idKycForParticular);
+      }
+      
+    
 
     // FONCTION POUR RECUPERER LES INFOS DE L'UTILISATEUR DONT ON VERIFIE SON KYC EN FONCTION DE SON ID
-    // useEffect(async() => {
-    
-    if (oneKycForParticular?.userId) {
-        console.log("oneKycForParticular?.userId=>",oneKycForParticular?.userId)
-        const getUserById = (_userId) => {
-            const result = fetch(`${API_URL}/api/user/find-one-user-by-id/${_userId}`, {
-                headers: {
+    useEffect(() => {
+        const getUserById = async (_userId) => {
+        try {
+            const result = await fetch(`${API_URL}/api/user/find-one-user-by-id/${_userId}`, {
+            headers: {
                 'Content-Type': 'application/json',
-                },
-            })
-            .then((result) => result.json())
-            .then((user) => {
-            setUserById(user)
-            }) 
+            },
+            });
+    
+            if (!result.ok) {
+            throw new Error('Failed to fetch user data');
+            }
+    
+            const user = await result.json();
+            setUserById(user);
+        } catch (error) {
+            // Handle errors appropriately, e.g., set an error state.
+            console.error('Error fetching user data:', error);
+        }
         };
-         getUserById(oneKycForParticular?.userId);
-
-    }
-// }, [userById]);
+    
+        if (oneKycForParticular?.userId) {
+        getUserById(oneKycForParticular.userId);
+        }
+    }, [oneKycForParticular?.userId]);
+  
     
     // FIN
    
@@ -204,12 +244,17 @@ const ValidParticular = () => {
         try {
             const dataa = {
                 validQuiz:validQuiz,
+                validQuizTwo:validQuizTwo,
+                validQuizFatca:validQuizFatca,
+                validIdentityOne:validIdentityOne,
                 validIdentity:validIdentity,
                 validResidence:validResidence,
                 validPhoto:validPhoto,
                 validSignature:validSignature,
+                validPhotoWithDocument:validPhotoWithDocument,
                 pattern:pattern
             }
+            console.log("dataa=>",dataa)
             const token = localStorage.getItem('tokenEnCours') //Le token récuperé
     
             const result = await fetch(`${API_URL}/api/kyc/particular/valid-kyc/${idKycForParticular}`, {
@@ -255,6 +300,89 @@ const ValidParticular = () => {
             }
         }
     // Fin
+
+    console.log("dataa=>",idKycForParticular)
+
+    // ****************PARTIE CLASSIFICATION*************************
+    const addClassification= async (event) => {
+        setIsLoggingIn(true);
+        event.preventDefault();
+    
+        try {
+    
+            const dataa = {
+                classificationRisk:classificationRisk,
+                sourcesDiverse:sourcesDiverse, 
+                highRisk:highRisk, 
+                anotherHighRisk:anotherHighRisk, 
+                whichOne:whichOne,
+                levelRisk:levelRisk, 
+                levelRiskRevision:levelRiskRevision,
+                profileLevel:profileLevel, 
+                comment:comment,
+                kyc_particularId:kycParticularId
+                
+            }
+            console.log("dataa=>",dataa)
+            // Condition pour forcer l'utilisateur à choisir au moins une reponse
+            if (idKycForParticular) {
+                
+                
+                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+    
+                const result = await fetch(`${API_URL}/api/kyc/particular/add-classification`, {
+                method:"POST",
+                body: JSON.stringify(dataa),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`
+                }
+                })
+                const data = await result.json();
+            
+                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                * sinon on affiche le message de succès
+                */
+                if (data.message) {
+                setMessageError(data.message)
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+                }else{
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                        showConfirmButton: false,
+                        timer: 5000
+                    }),
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 5000)
+                }
+                // Fin condition 
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+            }
+            
+            } catch {
+            setIsLoggingIn(false);
+            }
+        
+    };
+    // ****************FIN CLASSIFICATION****************************
 
      // FONCTION POUR FORMATER LA DATE
      const formatDate = (_updatedAt) =>{
@@ -321,10 +449,10 @@ const ValidParticular = () => {
                                                     <Table.Row key={data?.id}>                       
                                                         {/* <Table.Cell ><p className=" py-0 ">Koné Arouna</p></Table.Cell> */}
                                                         
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(1)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(data?.id)}>Voir détails</button> {data.validQuiz==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(6)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(data?.id)}>Voir détails</button> {data.validQuiz==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(2)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(data?.id)}>Voir détails</button> {data.validIdentity==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(3)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(data?.id)}>Voir détails</button> {data.validResidence==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(1)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(data?.id)}>Voir détails</button> {data.validQuiz==1 && data.validQuizTwo==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(6)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(data?.id)}>Voir détails</button> {data.validQuizFatca==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(2)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(data?.id)}>Voir détails</button> {data.validIdentityOne==1 && data.validIdentity==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(3)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(data?.id)}>Voir détails</button> {data.validResidence==1 && data.validPhotoWithDocument==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
                                                         <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(4)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(data?.id)}>Voir détails</button> {data.validPhoto==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
                                                         <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(5)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(data?.id)}>Voir détails</button> {data.validSignature==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
                                                         <Table.Cell ><p className=" py-0 ">{data.validQuiz==1 && data.validQuizTwo==1 && data.validQuizFatca==1 && data.validIdentityOne==1 && data.validPhotoWithDocument && data.validIdentity==1 && data.validResidence==1 && data.validPhoto==1 && data.validSignature==1 ? (<b className='colorGreen'>Valider</b>):(<b className='colorRed'>En cours</b>)}</p></Table.Cell>
@@ -334,14 +462,18 @@ const ValidParticular = () => {
                                                                 <p className="text-center">
                                                                                             
                                                                     <Button type='button' onClick={()=>setIdKycForParticular(data?.id)}  color='success' className=''>
-                                                                        <div onClick={handleShowEvaluer}>
-                                                                            Evaluer <Icon icon="bx:chevron-down-circle"  width="30"/>
+                                                                        <div onClick={()=>setEtape(8)}>
+                                                                            {/* Evaluer  */}
+                                                                            <Icon icon="bx:edit-alt"  width="30"/>
                                                                         </div>          
                                                                     </Button>
 
-                                                                    {/* <Button  color='danger' className='text-center mx-3 bg-red'>
-                                                                        Annuler <Icon icon="bx:trash"  width="30"/> 
-                                                                    </Button> */}
+                                                                    <Button type='button'  color='primary' onClick={()=>setIdKycForParticular(data?.id)}  className='text-center mx-3 bg-red'>
+                                                                        <div onClick={()=>setEtape(7)}>
+                                                                            {/* Remarques */}
+                                                                            <Icon icon="bx:file"  width="30"/>
+                                                                        </div> 
+                                                                    </Button>
                                                                 </p>
                                                             </div>
                                                         </Table.Cell>
@@ -683,7 +815,7 @@ const ValidParticular = () => {
                                                                 )}
                                                             </>
                                                         ):"Pas de recto justificatif"
-                                                        }
+                                                }
                                                 
                                             </div>
 
@@ -724,7 +856,20 @@ const ValidParticular = () => {
                                                 }
                                             </div>
                                         </div>
+                                        
+                                        {/* PARTIE SELFIE AVEC LE DOCUMENT D'IDENTITE */}
+                                        <br/><div className='py-10 my-10'>
+                                            <h3 className='text-center'>Photo de l'utilisateur avec le document de justificatif d'identité</h3>
+                                        </div>
 
+                                        <div className="input-group flex-nowrap">
+                                            <div className='col-lg-12 col-md-12 row justify-content-between'>
+                                                <div className='input-group-alternative my-3 text-center'>
+                                                    {oneKycForParticular?.selfieWithDocument? <img src={oneKycForParticular?.selfieWithDocument} alt="Selfie" /> : "Aucune photo avec document"}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {/* FIN */}
                                     </>
                                 ): ("")}
 
@@ -734,66 +879,95 @@ const ValidParticular = () => {
                                         <div className='py-10'>
                                             <h3 className='text-center'>Justificatif de domicile</h3>
                                         </div>
+                                        <div className=" row justify-content-center my-5">
+                                            <div className='col-lg-6 col-md-6 text-center'>
+                                                <b> latitude :</b><br/>
+                                                {oneKycForParticular?.latitude? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.latitude }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+
+                                            <div className='col-lg-6 col-md-6 text-center'>
+                                                <b> Longitude :</b><br/>
+                                                {oneKycForParticular?.longitude? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.longitude }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+                                        </div>
+
+                                        <div className='py-10 mb-5'>
+                                            <h3 className='text-center'>Les documents</h3>
+                                        </div>
                                         <div className=" row col-lg-12 col-md-12 justify-content-between">
                                             <div className='col-lg-6 col-md-6 text-center'>
                                                 <h4 className='text-center'>Recto</h4>
-                                                {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
-                                                {isPdfLink(`${API_URL}/${oneKycForParticular?.frontProofResidence}`) ? (
-                                                    <>
-                                                        <div className="hero-btn  text-center ">
-                                                        <a
-                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                            role="button"
-                                                            data-toggle="dropdown"
-                                                            aria-haspopup="true"
-                                                            aria-expanded="false"
-                                                            href={`${API_URL}/${oneKycForParticular?.frontProofResidence}`} 
-                                                            // download
-                                                            // onClick={handleShow}
-                                                            target="_blank"
-                                                        >
-                                                        <p className="gr-text-8 bgColorblue text-white mb-0">
-                                                            <Icon icon="bx:show-alt" width="50" />
-                                                            Veuillez cliquer ici pour voir le fichier
-                                                        </p>
-                                                        </a>
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        {oneKycForParticular?.frontProofResidence? <img src={`${API_URL}/${oneKycForParticular?.frontProofResidence}`} className="" width={'400'} height={'400'} alt="Recto"/> : "Pas de recto justificatif"}
-                                                    </>
-                                                )}
-                                                
+                                                {oneKycForParticular?.frontProofResidencePhoto? 
+                                                    <img src={oneKycForParticular?.frontProofResidencePhoto} className="" width={'400'} height={'400'} alt="Recto"/> :
+                                                    oneKycForParticular?.frontProofResidence? (
+                                                        <>
+                                                            {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
+                                                            {isPdfLink(`${API_URL}/${oneKycForParticular?.frontProofResidence}`) ? (
+                                                                <>
+                                                                    <div className="hero-btn  text-center ">
+                                                                    <a
+                                                                        className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                        role="button"
+                                                                        data-toggle="dropdown"
+                                                                        aria-haspopup="true"
+                                                                        aria-expanded="false"
+                                                                        href={`${API_URL}/${oneKycForParticular?.frontProofResidence}`} 
+                                                                        // download
+                                                                        // onClick={handleShow}
+                                                                        target="_blank"
+                                                                    >
+                                                                    <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                        <Icon icon="bx:show-alt" width="50" />
+                                                                        Veuillez cliquer ici pour voir le fichier
+                                                                    </p>
+                                                                    </a>
+                                                                    </div>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    {oneKycForParticular?.frontProofResidence? <img src={`${API_URL}/${oneKycForParticular?.frontProofResidence}`} className="" width={'400'} height={'400'} alt="Recto"/> : "Pas de recto justificatif"}
+                                                                </>
+                                                            )}
+                                                        </>
+                                                    ):"Pas de recto justificatif de domicile"
+                                                }
                                             </div>
 
                                             <div className='col-lg-6 col-md-6 text-center'>
                                                 <h4 className='text-center'>Verso</h4>
-                                                {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
-                                                {isPdfLink(`${API_URL}/${oneKycForParticular?.backProofResidence}`) ? (
-                                                    <>
-                                                        <div className="hero-btn  text-center ">
-                                                        <a
-                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                            role="button"
-                                                            data-toggle="dropdown"
-                                                            aria-haspopup="true"
-                                                            aria-expanded="false"
-                                                            href={`${API_URL}/${oneKycForParticular?.backProofResidence}`}
-                                                            target="_blank"
-                                                        >
-                                                        <p className="gr-text-8 bgColorblue text-white mb-0">
-                                                            <Icon icon="bx:show-alt" width="50" />
-                                                            Veuillez cliquer ici pour voir le fichier
-                                                        </p>
-                                                        </a>
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        {oneKycForParticular?.backProofResidence? <img src={`${API_URL}/${oneKycForParticular?.backProofResidence}`} width={'400'} height={'400'} alt="Verso"/> : "Pas de verso justificatif"}
-                                                    </>
-                                                )}
+
+                                                {oneKycForParticular?.frontProofResidencePhoto? 
+                                                    <img src={oneKycForParticular?.frontProofResidencePhoto} className="" width={'400'} height={'400'} alt="Recto"/> :
+                                                    oneKycForParticular?.frontProofResidence? (
+                                                        <>
+                                                            {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
+                                                            {isPdfLink(`${API_URL}/${oneKycForParticular?.backProofResidence}`) ? (
+                                                                <>
+                                                                    <div className="hero-btn  text-center ">
+                                                                    <a
+                                                                        className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                        role="button"
+                                                                        data-toggle="dropdown"
+                                                                        aria-haspopup="true"
+                                                                        aria-expanded="false"
+                                                                        href={`${API_URL}/${oneKycForParticular?.backProofResidence}`}
+                                                                        target="_blank"
+                                                                    >
+                                                                    <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                        <Icon icon="bx:show-alt" width="50" />
+                                                                        Veuillez cliquer ici pour voir le fichier
+                                                                    </p>
+                                                                    </a>
+                                                                    </div>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    {oneKycForParticular?.backProofResidence? <img src={`${API_URL}/${oneKycForParticular?.backProofResidence}`} width={'400'} height={'400'} alt="Verso"/> : "Pas de verso justificatif"}
+                                                                </>
+                                                            )}
+                                                        </>
+                                                            ):"Pas de verso de justificatif de domicile"
+                                                    }
                                             </div>
                                         </div>
                                     </>
@@ -913,6 +1087,483 @@ const ValidParticular = () => {
                                         </div>
                                     </>
                                 ): ("")}
+
+
+                                {/* KYC PARTICULIER CLASSIFICATION */}
+                                {etape===7 ? (
+                                    <>
+                                        <div className='mt-15' >
+                                            <div className=' mx-15'>
+                                                <div className='py-10'>
+                                                <br/><br/><h1 className='text-center '>Classification</h1>
+                                                </div>
+                                            </div>
+
+                                            {/* Les cards */}
+                                            <div className='row'>
+                                                <div className='col-lg-3 col-md-12'></div>
+                                                    <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
+                                                        <form className='' onSubmit={addClassification} >
+                                                        {/* <form className='' onSubmit={updateQuestionnaireFatca}> */}
+                                                            
+                                                            <label
+                                                                htmlFor="usPerson"
+                                                                className="text-blackish-blue mb-2"
+                                                            >
+                                                                Classification du client en risque élevé si le client remplit au moins une des conditions ci-dessous :
+                                                            </label>
+                                                            
+                                                            <input
+                                                                type='text'
+                                                                className='form-control'
+                                                                defaultValue={idKycForParticular} 
+                                                                onChange={(event)=>setKycParticularId(event.target.value)}
+                                                            />
+                                                            <div className="form-group mb-6 mt-3">
+
+                                                                <label
+                                                                    htmlFor="classificationRisk"
+                                                                    className="text-blackish-blue mb-2"
+                                                                >
+                                                                    S’agit-il d’une personnalité politiquement exposée et active ou un de ses proches ?
+                                                                </label>
+                                                                <select 
+                                                                className="form-control"
+                                                                id="classificationRisk"
+                                                                required
+                                                                defaultValue={classificationRisk} 
+                                                                onChange={(event)=>setClassificationRisk(event.target.value)}
+                                                                >
+                                                                <option defaultValue="">Choisissez</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                    <option  value="Oui">Oui</option>
+                                                                    <option  value="Non">Non</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div >
+
+                                                            <div className="form-group mb-6 mt-3">
+
+                                                                <label
+                                                                    htmlFor="sourcesDiverse"
+                                                                    className="text-blackish-blue mb-2"
+                                                                >
+                                                                    S’agit-il d’une personne dont les sources de revenus sont multiples et diverses ?
+                                                                </label>
+                                                                <select 
+                                                                className="form-control"
+                                                                id="sourcesDiverse"
+                                                                required
+                                                                defaultValue={sourcesDiverse} 
+                                                                onChange={(event)=>setSourcesDiverse(event.target.value)}
+                                                                >
+                                                                <option defaultValue="">Choisissez</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                    <option  value="Oui">Oui</option>
+                                                                    <option  value="Non">Non</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div >
+                                                            
+                                                            <div className="form-group mb-6 mt-3">
+
+                                                                <label
+                                                                    htmlFor="highRisk"
+                                                                    className="text-blackish-blue mb-2"
+                                                                >
+                                                                    S’agit-il d’une personne exerçant une activité à risque élevé (conf procédure) ?
+                                                                </label>
+                                                                <select 
+                                                                className="form-control"
+                                                                id="highRisk"
+                                                                required
+                                                                defaultValue={highRisk} 
+                                                                onChange={(event)=>setHighRisk(event.target.value)}
+                                                                >
+                                                                <option defaultValue="">Choisissez</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                    <option  value="Oui">Oui</option>
+                                                                    <option  value="Non">Non</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div >
+
+                                                            <div className="form-group mb-6 mt-3">
+
+                                                                <label
+                                                                    htmlFor="anotherHighRisk"
+                                                                    className="text-blackish-blue mb-2"
+                                                                >
+                                                                    Existe-il une autre raison de classer le client en risque élevé ?
+                                                                </label>
+                                                                <select 
+                                                                className="form-control"
+                                                                id="anotherHighRisk"
+                                                                required
+                                                                defaultValue={anotherHighRisk} 
+                                                                onChange={(event)=>setAnotherHighRisk(event.target.value)}
+                                                                >
+                                                                <option defaultValue="">Choisissez</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                    <option  value="Oui">Oui</option>
+                                                                    <option  value="Non">Non</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div >
+
+                                                            {/* Si oui il une autre raison */}
+                                                            <div className="form-group mb-6 mt-3">
+                                                                <label
+                                                                    htmlFor="whichOne"
+                                                                    className="text-blackish-blue mb-2"
+                                                                >
+                                                                
+                                                                Laquelle ?
+                                                                </label>
+                                                                <div className='form-group mt-3'>
+                                                                    <input
+                                                                        type='text'
+                                                                        id='whichOne'
+                                                                        className='form-control'
+                                                                        defaultValue={whichOne} 
+                                                                        onChange={(event)=>setWhichOne(event.target.value)}
+                                                                    />
+                                                                </div>
+                                                            </div >
+                                                            {/* Fin si oui */}
+
+                                                            <div className="form-group mb-6 mt-3">
+
+                                                                <label
+                                                                    htmlFor="levelRisk"
+                                                                    className="text-blackish-blue mb-2"
+                                                                >
+                                                                    Niveau de risque attribué au client
+                                                                </label>
+                                                                <select 
+                                                                className="form-control"
+                                                                id="levelRisk"
+                                                                required
+                                                                defaultValue={levelRisk} 
+                                                                onChange={(event)=>setLevelRisk (event.target.value)}
+                                                                >
+                                                                <option defaultValue="">Choisissez</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                        <option  value="Réduit">Réduit</option>
+                                                                        <option  value="Elevé">Elevé</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div >
+
+                                                            <div className="form-group mb-6 mt-3">
+                                                                <label
+                                                                    htmlFor="levelRiskRevision"
+                                                                    className="text-blackish-blue mb-2"
+                                                                >
+                                                                    Niveau de risque en cas de révision
+                                                                </label>
+                                                                <div className='form-group mt-3'>
+                                                                    <input
+                                                                        type='text'
+                                                                        id='levelRiskRevision'
+                                                                        className='form-control'
+                                                                        defaultValue={levelRiskRevision} 
+                                                                        onChange={(event)=>setLevelRiskRevision(event.target.value)}
+                                                                    />
+                                                                </div>
+                                                            </div >
+                                                            <div className="form-group mb-6 mt-3">
+                                                                <label
+                                                                    htmlFor="profileLevel"
+                                                                    className="text-blackish-blue mb-2"
+                                                                >
+                                                                    Niveau de profil attribué au client
+                                                                </label>
+                                                                <select 
+                                                                className="form-control"
+                                                                id="profileLevel"
+                                                                required
+                                                                defaultValue={profileLevel} 
+                                                                onChange={(event)=>setProfileLevel (event.target.value)}
+                                                                >
+                                                                <option defaultValue="">Choisissez</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                        <option  value="Réduit">Réduit</option>
+                                                                        <option  value="Elevé">Elevé</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div >
+
+                                                            <div className="form-group mb-6">
+                                                                <label
+                                                                    htmlFor="comment"
+                                                                    className="text-blackish-blue mb-2"
+                                                                >
+                                                                    Commentaire
+                                                                </label>
+                                                                <textarea
+                                                                    className="form-control gr-text-11 border mt-3 bg-white"
+                                                                    type="text"
+                                                                    id="comment"
+                                                                    placeholder="commentaire ici"
+                                                                    defaultValue={comment} 
+                                                                    onChange={(event)=>setComment(event.target.value)}
+                                                                />
+                                                            </div>
+
+                                                            <button className="btn btn-primary " type='submit' disabled={isLoggingIn} > Suivant </button>
+                                                        </form>       
+                                                    </div>
+                                                <div className='col-lg-3 col-md-12'></div>
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : ("")}
+                                {/* FIN PARTICULIER CLASSIFICATION */}
+
+                                {/* PARTIE EVALUATION */}
+                                {etape===8 ? (
+                                    <>
+                                        <div className='mt-15' >
+                                            <div className=' mx-15'>
+                                                <div className='py-10'>
+                                                <br/><br/><h1 className='text-center '>Evaluation</h1>
+                                                </div>
+                                            </div>
+
+                                            {/* Les cards */}
+                                            <div className='row'>
+                                                <div className='col-lg-3 col-md-12'></div>
+                                                    <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
+                                                    <Form role="form">
+                                                        <div className='row justify-content-between'>
+                                                            {/* Les questionnaires 1 */}
+                                                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                                <label className="mx-2  mb-2" htmlFor='validQuiz'>
+                                                                    Les questionnaires AML 1
+                                                                </label>
+                                                                {!oneKycForParticular?.validQuiz==1 ? (
+                                                                    <select 
+                                                                        className="form-control"
+                                                                        id="validQuiz"
+                                                                        required
+                                                                        defaultValue={validQuiz} 
+                                                                        onChange={(event)=>setValidQuiz(event.target.value)}
+                                                                    >
+                                                                        <option defaultValue="">Choisissez une option</option>
+                                                                        <optgroup className='single-cryptocurrency-box'>
+                                                                            <option  value="true">Valider</option>
+                                                                            <option  value="false">Non valider</option>
+                                                                        </optgroup>
+                                                                    </select>
+                                                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                                                            </div>
+
+                                                            {/* Les questionnaires 2*/}
+                                                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                                <label className="mx-2  mb-2" htmlFor='validQuiz'>
+                                                                    Les questionnaires AML 2
+                                                                </label>
+                                                                {!oneKycForParticular?.validQuizTwo==1 ? (
+                                                                    <select 
+                                                                        className="form-control"
+                                                                        id="validQuiz"
+                                                                        required
+                                                                        defaultValue={validQuizTwo} 
+                                                                        onChange={(event)=>setValidQuizTwo(event.target.value)}
+                                                                    >
+                                                                        <option defaultValue="">Choisissez une option</option>
+                                                                        <optgroup className='single-cryptocurrency-box'>
+                                                                            <option  value="true">Valider</option>
+                                                                            <option  value="false">Non valider</option>
+                                                                        </optgroup>
+                                                                    </select>
+                                                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                                                            </div>
+
+                                                            {/* Les questionnaires FATCA*/}
+                                                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                                <label className="mx-2  mb-2" htmlFor='validQuiz'>
+                                                                    Questionnaires FATCA
+                                                                </label>
+                                                                {!oneKycForParticular?.validQuizFatca==1 ? (
+                                                                    <select 
+                                                                        className="form-control"
+                                                                        id="validQuiz"
+                                                                        required
+                                                                        defaultValue={validQuizFatca} 
+                                                                        onChange={(event)=>setValidQuizFatca(event.target.value)}
+                                                                    >
+                                                                        <option defaultValue="">Choisissez une option</option>
+                                                                        <optgroup className='single-cryptocurrency-box'>
+                                                                            <option  value="true">Valider</option>
+                                                                            <option  value="false">Non valider</option>
+                                                                        </optgroup>
+                                                                    </select>
+                                                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                                                            </div>
+
+                                                            {/* Justificatif d'identité 1*/}
+                                                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                                <label className="mx-2  mb-2" htmlFor='validIdentity'>
+                                                                    Justificatif d'identité 1
+                                                                </label>
+                                                                {!oneKycForParticular?.validIdentityOne==1 ? (
+                                                                    <select 
+                                                                        className="form-control"
+                                                                        id="validIdentity"
+                                                                        required
+                                                                        defaultValue={validIdentityOne} 
+                                                                        onChange={(event)=>setValidIdentityOne(event.target.value)}
+                                                                    >
+                                                                        <option defaultValue="">Choisissez une option</option>
+                                                                        <optgroup className='single-cryptocurrency-box'>
+                                                                            <option  value="true">Valider</option>
+                                                                            <option  value="false">Non valider</option>
+                                                                        </optgroup>
+                                                                    </select>
+                                                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+
+                                                            </div>
+
+                                                            {/* Justificatif d'identité 2*/}
+                                                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                                <label className="mx-2  mb-2" htmlFor='validIdentity'>
+                                                                    Justificatif d'identité 2
+                                                                </label>
+                                                                {!oneKycForParticular?.validIdentity==1 ? (
+                                                                    <select 
+                                                                        className="form-control"
+                                                                        id="validIdentity"
+                                                                        required
+                                                                        defaultValue={validIdentity} 
+                                                                        onChange={(event)=>setValidIdentity(event.target.value)}
+                                                                    >
+                                                                        <option defaultValue="">Choisissez une option</option>
+                                                                        <optgroup className='single-cryptocurrency-box'>
+                                                                            <option  value="true">Valider</option>
+                                                                            <option  value="false">Non valider</option>
+                                                                        </optgroup>
+                                                                    </select>
+                                                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+
+                                                            </div>
+
+                                                            {/* Photo avec Justificatif d'identité 2*/}
+                                                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                                <label className="mx-2  mb-2" htmlFor='validIdentity'>
+                                                                    Photo avec document
+                                                                </label>
+                                                                {!oneKycForParticular?.validPhotoWithDocument==1 ? (
+                                                                    <select 
+                                                                        className="form-control"
+                                                                        id="validIdentity"
+                                                                        required
+                                                                        defaultValue={validPhotoWithDocument} 
+                                                                        onChange={(event)=>setValidPhotoWithDocument(event.target.value)}
+                                                                    >
+                                                                        <option defaultValue="">Choisissez une option</option>
+                                                                        <optgroup className='single-cryptocurrency-box'>
+                                                                            <option  value="true">Valider</option>
+                                                                            <option  value="false">Non valider</option>
+                                                                        </optgroup>
+                                                                    </select>
+                                                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+
+                                                            </div>
+
+                                                            {/* Justificatif de domicile */}
+                                                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                                <label className="mx-2  mb-2" htmlFor='validResidence'>
+                                                                    Justificatif de domicile 
+                                                                </label>
+                                                                {!oneKycForParticular?.validResidence==1 ? (
+                                                                    <select 
+                                                                        className="form-control"
+                                                                        id="validResidence"
+                                                                        required
+                                                                        defaultValue={validResidence} 
+                                                                        onChange={(event)=>setValidResidence(event.target.value)}
+                                                                    >
+                                                                        <option defaultValue="">Choisissez une option</option>
+                                                                        <optgroup className='single-cryptocurrency-box'>
+                                                                            <option  value="true">Valider</option>
+                                                                            <option  value="false">Non valider</option>
+                                                                        </optgroup>
+                                                                    </select>
+                                                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+
+                                                            </div>
+
+                                                            {/* Photo de l'utilisateur */}
+                                                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                                <label className="mx-2  mb-2" htmlFor='validPhoto'>
+                                                                    Photo de l'utilisateur
+                                                                </label>
+                                                                {!oneKycForParticular?.validPhoto==1 ? ( 
+                                                                    <select 
+                                                                        className="form-control"
+                                                                        id="validPhoto"
+                                                                        required
+                                                                        defaultValue={validPhoto} 
+                                                                        onChange={(event)=>setValidPhoto(event.target.value)}
+                                                                    >
+                                                                        <option defaultValue="">Choisissez une option</option>
+                                                                        <optgroup className='single-cryptocurrency-box'>
+                                                                            <option  value="true">Valider</option>
+                                                                            <option  value="false">Non valider</option>
+                                                                        </optgroup>
+                                                                    </select>
+                                                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+
+                                                            </div>
+
+                                                            {/* Signature de l'utilisateur */}
+                                                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                                <label className="mx-2  mb-2" htmlFor='validSignature'>
+                                                                    Signature de l'utilisateur
+                                                                </label>
+                                                                {!oneKycForParticular?.validSignature==1 ? (
+                                                                    <select 
+                                                                        className="form-control"
+                                                                        id="validSignature"
+                                                                        required
+                                                                        defaultValue={validSignature} 
+                                                                        onChange={(event)=>setValidSignature(event.target.value)}
+                                                                    >
+                                                                        <option defaultValue="">Choisissez une option</option>
+                                                                        <optgroup className='single-cryptocurrency-box'>
+                                                                            <option  value="true">Valider</option>
+                                                                            <option  value="false">Non valider</option>
+                                                                        </optgroup>
+                                                                    </select>
+                                                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+
+                                                            </div>
+                                                        </div>
+                                                    
+                                                        <div className="form-group mb-6">
+                                                            <textarea
+                                                                className="form-control gr-text-11 border mt-3 bg-white"
+                                                                type="text"
+                                                                id="contenu"
+                                                                placeholder="Décrivez le résultat ici"
+                                                                defaultValue={pattern} 
+                                                                onChange={(event)=>setPattern(event.target.value)}
+                                                            />
+                                                        </div>
+                                                    
+                                                        <Button  type='button'  color="success" onClick={validKycParticular}  disabled={isLoggingIn}>
+                                                            Envoyer
+                                                        </Button>
+                                                    </Form>
+                                                    </div>
+                                                <div className='col-lg-3 col-md-12'></div>
+                                            </div>
+                                        </div>
+                                    </>
+                                ):("")}
+                                {/* FIN EVALUATION */}
                             </div>
 
                         </div>
@@ -922,6 +1573,18 @@ const ValidParticular = () => {
             </div>
         </div>
 
+
+
+
+
+
+
+
+
+
+                                
+                                                
+                                                
 
 
 
@@ -935,10 +1598,10 @@ const ValidParticular = () => {
                 <Form role="form">
                     <Modal.Body>
                         <div className='row justify-content-between'>
-                            {/* Les questionnaires */}
+                            {/* Les questionnaires 1 */}
                             <div className='form-group my-3 col-lg-6 col-md-6'>
                                 <label className="mx-2  mb-2" htmlFor='validQuiz'>
-                                    Les questionnaires 
+                                    Les questionnaires AML 1
                                 </label>
                                 {!oneKycForParticular?.validQuiz==1 ? (
                                     <select 
@@ -957,10 +1620,77 @@ const ValidParticular = () => {
                                 ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
                             </div>
 
-                            {/* Justificatif d'identité */}
+                            {/* Les questionnaires 2*/}
+                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                <label className="mx-2  mb-2" htmlFor='validQuiz'>
+                                    Les questionnaires AML 2
+                                </label>
+                                {!oneKycForParticular?.validQuizTwo==1 ? (
+                                    <select 
+                                        className="form-control"
+                                        id="validQuiz"
+                                        required
+                                        defaultValue={validQuizTwo} 
+                                        onChange={(event)=>setValidQuizTwo(event.target.value)}
+                                    >
+                                        <option defaultValue="">Choisissez une option</option>
+                                        <optgroup className='single-cryptocurrency-box'>
+                                            <option  value="true">Valider</option>
+                                            <option  value="false">Non valider</option>
+                                        </optgroup>
+                                    </select>
+                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                            </div>
+
+                            {/* Les questionnaires FATCA*/}
+                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                <label className="mx-2  mb-2" htmlFor='validQuiz'>
+                                    Questionnaires FATCA
+                                </label>
+                                {!oneKycForParticular?.validQuizFatca==1 ? (
+                                    <select 
+                                        className="form-control"
+                                        id="validQuiz"
+                                        required
+                                        defaultValue={validQuizFatca} 
+                                        onChange={(event)=>setValidQuizFatca(event.target.value)}
+                                    >
+                                        <option defaultValue="">Choisissez une option</option>
+                                        <optgroup className='single-cryptocurrency-box'>
+                                            <option  value="true">Valider</option>
+                                            <option  value="false">Non valider</option>
+                                        </optgroup>
+                                    </select>
+                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                            </div>
+
+                            {/* Justificatif d'identité 1*/}
                             <div className='form-group my-3 col-lg-6 col-md-6'>
                                 <label className="mx-2  mb-2" htmlFor='validIdentity'>
-                                    Justificatif d'identité
+                                    Justificatif d'identité 1
+                                </label>
+                                {!oneKycForParticular?.validIdentityOne==1 ? (
+                                    <select 
+                                        className="form-control"
+                                        id="validIdentity"
+                                        required
+                                        defaultValue={validIdentityOne} 
+                                        onChange={(event)=>setValidIdentityOne(event.target.value)}
+                                    >
+                                        <option defaultValue="">Choisissez une option</option>
+                                        <optgroup className='single-cryptocurrency-box'>
+                                            <option  value="true">Valider</option>
+                                            <option  value="false">Non valider</option>
+                                        </optgroup>
+                                    </select>
+                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+
+                            </div>
+
+                            {/* Justificatif d'identité 2*/}
+                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                <label className="mx-2  mb-2" htmlFor='validIdentity'>
+                                    Justificatif d'identité 2
                                 </label>
                                 {!oneKycForParticular?.validIdentity==1 ? (
                                     <select 
@@ -980,10 +1710,33 @@ const ValidParticular = () => {
 
                             </div>
 
+                            {/* Photo avec Justificatif d'identité 2*/}
+                            <div className='form-group my-3 col-lg-6 col-md-6'>
+                                <label className="mx-2  mb-2" htmlFor='validIdentity'>
+                                    Photo avec document
+                                </label>
+                                {!oneKycForParticular?.validPhotoWithDocument==1 ? (
+                                    <select 
+                                        className="form-control"
+                                        id="validIdentity"
+                                        required
+                                        defaultValue={validPhotoWithDocument} 
+                                        onChange={(event)=>setValidPhotoWithDocument(event.target.value)}
+                                    >
+                                        <option defaultValue="">Choisissez une option</option>
+                                        <optgroup className='single-cryptocurrency-box'>
+                                            <option  value="true">Valider</option>
+                                            <option  value="false">Non valider</option>
+                                        </optgroup>
+                                    </select>
+                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+
+                            </div>
+
                             {/* Justificatif de domicile */}
                             <div className='form-group my-3 col-lg-6 col-md-6'>
                                 <label className="mx-2  mb-2" htmlFor='validResidence'>
-                                    Justificatif de domicile
+                                    Justificatif de domicile 
                                 </label>
                                 {!oneKycForParticular?.validResidence==1 ? (
                                     <select 

@@ -82,7 +82,7 @@ const CPolitiquementExposees = () => {
 
 
 
-
+// LES BONS
     // familyCompany
     // functions
     // firstName
@@ -644,7 +644,7 @@ const handleOptionIncomeTypeC = (event) => {
                                         <>
                                             <div className="form-group mb-6 mt-3">
                                                 <label
-                                                    htmlFor="firstName"
+                                                    htmlFor="lastName"
                                                     className="text-blackish-blue mb-2"
                                                 >
                                                     Nom 
@@ -652,17 +652,18 @@ const handleOptionIncomeTypeC = (event) => {
                                                 <div className='form-group'>
                                                     <input
                                                         type='text'
-                                                        id='firstName'
+                                                        id='lastName'
                                                         className='form-control'
-                                                        placeholder="Nom de l'associé"
-                                                        defaultValue={firstName} 
-                                                        onChange={(event)=>setFirstName(event.target.value)}
+                                                        placeholder="Nom"
+                                                        defaultValue={lastName} 
+                                                        onChange={(event)=>setLastName(event.target.value)}
+                                                       
                                                     />
                                                 </div>
                                             </div >
                                             <div className="form-group mb-6 mt-3">
                                                 <label
-                                                    htmlFor="lastName"
+                                                    htmlFor="firstName"
                                                     className="text-blackish-blue mb-2"
                                                 >
                                                     Prénoms 
@@ -670,11 +671,11 @@ const handleOptionIncomeTypeC = (event) => {
                                                 <div className='form-group'>
                                                     <input
                                                         type='text'
-                                                        id='lastName'
+                                                        id='firstName'
                                                         className='form-control'
-                                                        placeholder="Prénoms de l'associé"
-                                                        defaultValue={lastName} 
-                                                        onChange={(event)=>setLastName(event.target.value)}
+                                                        placeholder="Prénoms"
+                                                        defaultValue={firstName} 
+                                                        onChange={(event)=>setFirstName(event.target.value)}
                                                     />
                                                 </div>
                                             </div >

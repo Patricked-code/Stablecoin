@@ -44,7 +44,7 @@ const CStructureControlTwo = () => {
     // mobile
     // phoneFixe
     // startDate
-    // NumberRCCM
+    // numberRccm
     // expirationDate
     // typeBeneficiary
     {/* POUR PIECE D'IDENTITE */}
@@ -73,12 +73,12 @@ const CStructureControlTwo = () => {
     const [countryRegistration, setCountryRegistration] = useState();
     const [phoneFixe, setPhoneFixe] = useState();
     const [startDate, setStartDate] = useState();
-    const [numberRCCM, setNumberRCCM] = useState();
+    const [numberRccm, setNumberRccm] = useState();
     
-    const [frontIdentity, setFrontIdentity ] = useState();
-    const [backIdentity, setCackIdentity ] = useState();
-    const [frontDomicile, setFrontDomicile] = useState();
-    const [backDomicile, setBackDomicile] = useState();
+    const [frontIdentityFile, setFrontIdentityFile ] = useState();
+    const [backIdentityFile, setCackIdentityFile ] = useState();
+    const [frontIdentityPhoto, setFrontIdentityPhoto ] = useState();
+    const [backIdentityPhoto, setCackIdentityPhoto ] = useState();
 
 
     // Pour la signature
@@ -1059,7 +1059,7 @@ const handleOptionIncomeTypeC = (event) => {
 
                                     <div className="form-group mb-6 mt-3">
                                         <label
-                                            htmlFor="numberRCCM"
+                                            htmlFor="numberRccm"
                                             className="text-blackish-blue mb-2"
                                         >
                                             Numéro RCCM
@@ -1067,11 +1067,11 @@ const handleOptionIncomeTypeC = (event) => {
                                         <div className='form-group'>
                                             <input
                                                 type='text'
-                                                id='numberRCCM'
+                                                id='numberRccm'
                                                 className='form-control'
                                                 placeholder='Numéro RCCM'
-                                                defaultValue={numberRCCM} 
-                                                onChange={(event)=>setNumberRCCM(event.target.value)}
+                                                defaultValue={numberRccm} 
+                                                onChange={(event)=>setNumberRccm(event.target.value)}
                                             />
                                         </div>
                                     </div >

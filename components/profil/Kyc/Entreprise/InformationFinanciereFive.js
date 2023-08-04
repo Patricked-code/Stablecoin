@@ -28,203 +28,216 @@ const CIformationFinanciereFive = () => {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
 
+
+    // LES BONS AVEC POUR FINANCIERFOUR
+//     nationalBankIssued
+// nationalOthersIssued
+// nationalBankReceived
+// nationalOthersReceived
+// cfaUemoaBankIssued
+// cfaUemoaOthersIssued
+// cfaUemoaBankReceived
+// cfaUemoaOthersReceived
+// cfaOutsideUemoaBankIssued
+// cfaOutsideUemoaOthersIssued
+// cfaOutsideUemoaBankReceived
+// cfaOutsideUemoaOthersReceived
+// euroBankIssued
+// euroOthersIssued
+// euroBankReceived
+// euroOthersReceived
+// dollarBankIssued
+// dollarOthersIssued
+// dollarBankReceived
+// dollarOthersReceived
+// otherCurrencyBankIssued
+// otherCurrencyOthersIssued
+// otherCurrencyBankReceived
+// otherCurrencyOthersReceived
+
+// POUR AUTRE TABLE
+// currencyOne
+// currencyTwo
+// currencyThree
+// country
+
     // ***********LA BONNE PARTIE ***********************
-    // const [nationalEmisesbancaire, setNationalEmisesbancaire] = useState('');
-    // const [nationalEmisesAutres, setNationalEmisesAutres] = useState('');
-    // const [nationalRecuesbancaire, setNationalRecuesbancaire] = useState('');
-    // const [nationalRecuesAutres, setNationalRecuesAutres] = useState('');
 
-    const [nationalEmisesbancaire, setNationalEmisesbancaire] = useState('');
-    const [nationalEmisesAutres, setNationalEmisesAutres] = useState('');
-    const [nationalRecuesbancaire, setNationalRecuesbancaire] = useState('');
-    const [nationalRecuesAutres, setNationalRecuesAutres] = useState('');
+    const [nationalBankIssued, setNationalBankIssued] = useState('');
+    const [nationalOthersIssued, setNationalOthersIssued] = useState('');
+    const [nationalBankReceived, setNationalBankReceived] = useState('');
+    const [nationalOthersReceived, setNationalOthersReceived] = useState('');
+    
+    const [cfaUemoaBankIssued, setCfaUemoaBankIssued] = useState('');
+    const [cfaUemoaOthersIssued, setCfaUemoaOthersIssued] = useState('');
+    const [cfaUemoaBankReceived, setCfaUemoaBankReceived] = useState('');
+    const [cfaUemoaOthersReceived, setCfaUemoaOthersReceived] = useState('');
 
-    
-  
-    // const [cfaUemoaEmisesbancaire, setCfaUemoaEmisesbancaire] = useState('');
-    // const [cfaUemoaEmisesAutres, setCfaUemoaEmisesAutres] = useState('');
-    // const [cfaUemoaRecuesbancaire, setCfaUemoaRecuesbancaire] = useState('');
-    // const [cfaUemoaRecuesAutres, setCfaUemoaRecuesAutres] = useState('');
-    
-    const [cfaUemoaEmisesbancaire, setCfaUemoaEmisesbancaire] = useState('');
-    const [cfaUemoaEmisesAutres, setCfaUemoaEmisesAutres] = useState('');
-    const [cfaUemoaRecuesbancaire, setCfaUemoaRecuesbancaire] = useState('');
-    const [cfaUemoaRecuesAutres, setCfaUemoaRecuesAutres] = useState('');
-
-    // const [cfaHorsUemoaEmisesbancaire, setCfaHorsUemoaEmisesbancaire] = useState('');
-    // const [cfaHorsUemoaEmisesAutres, setCfaHorsUemoaEmisesAutres] = useState('');
-    // const [cfaRecuesbancaire, setCfaHorsUemoaRecuesbancaire] = useState('');
-    // const [cfaHorsUemoaRecuesAutres, setCfaHorsUemoaRecuesAutres] = useState('');
-
-    const [cfaHorsUemoaEmisesbancaire, setCfaHorsUemoaEmisesbancaire] = useState('');
-    const [cfaHorsUemoaEmisesAutres, setCfaHorsUemoaEmisesAutres] = useState('');
-    const [cfaRecuesbancaire, setCfaHorsUemoaRecuesbancaire] = useState('');
-    const [cfaHorsUemoaRecuesAutres, setCfaHorsUemoaRecuesAutres] = useState('');
-
-    // const [euroEmisesbancaire, setEuroEmisesbancaire] = useState('');
-    // const [euroEmisesAutres, setEuroEmisesAutres] = useState('');
-    // const [euroRecuesbancaire, setEuroRecuesbancaire] = useState('');
-    // const [euroRecuesAutres, setEuroRecuesAutres] = useState('');
-    
-    const [euroEmisesbancaire, setEuroEmisesbancaire] = useState('');
-    const [euroEmisesAutres, setEuroEmisesAutres] = useState('');
-    const [euroRecuesbancaire, setEuroRecuesbancaire] = useState('');
-    const [euroRecuesAutres, setEuroRecuesAutres] = useState('');
-    
-    const [dollarEmisesbancaire, setDollarEmisesbancaire] = useState('');
-    const [dollarEmisesAutres, setDollarEmisesAutres] = useState('');
-    const [dollarRecuesbancaire, setDollarRecuesbancaire] = useState('');
-    const [dollarRecuesAutres, setDollarRecuesAutres] = useState('');
-    
-    const [autreDvseEmisesbancaire, setAutreDvseEmisesbancaire] = useState('');
-    const [autreDvseEmisesAutres, setAutreDvseEmisesAutres] = useState('');
-    const [autreDvseRecuesbancaire, setAutreDvseRecuesbancaire] = useState('');
-    const [autreDvseRecuesAutres, setAutreDvseRecuesAutres] = useState('');
+    const [cfaOutsideUemoaBankIssued, setCfaOutsideUemoaBankIssued] = useState('');
+    const [cfaOutsideUemoaOthersIssued, setCfaOutsideUemoaOthersIssued] = useState('');
+    const [cfaOutsideUemoaBankReceived, setCfaOutsideUemoaBankReceived] = useState('');
+    const [cfaOutsideUemoaOthersReceived, setCfaOutsideUemoaOthersReceived] = useState('');
 
     
-    const [deviseOne, setDeviseOne] = useState('');
-    const [deviseTwo, setDeviseTwo] = useState('');
-    const [deviseThree, setDeviseThree] = useState('');
-    const [pays, setPays] = useState('');
+    const [euroBankIssued, setEuroBankIssued] = useState('');
+    const [euroOthersIssued, setEuroOthersIssued] = useState('');
+    const [euroBankReceived, setEuroBankReceived] = useState('');
+    const [euroOthersReceived, setEuroOthersReceived] = useState('');
+    
+    const [dollarBankIssued, setDollarBankIssued] = useState('');
+    const [dollarOthersIssued, setDollarOthersIssued] = useState('');
+    const [dollarBankReceived, setDollarBankReceived] = useState('');
+    const [dollarOthersReceived, setDollarOthersReceived] = useState('');
+    
+    const [otherCurrencyBankIssued, setOtherCurrencyBankIssued] = useState('');
+    const [otherCurrencyOthersIssued, setOtherCurrencyOthersIssued] = useState('');
+    const [otherCurrencyBankReceived, setOtherCurrencyBankReceived] = useState('');
+    const [otherCurrencyOthersReceived, setOtherCurrencyOthersReceived] = useState('');
+
+    
+    const [currencyOne, setCurrencyOne] = useState('');
+    const [currencyTwo, setCurrencyTwo] = useState('');
+    const [currencyThree, setCurrencyThree] = useState('');
+    const [country, setCountry] = useState('');
 
   
 
 
 
     const handlePaysChange = (e) => {
-        setPays(e.target.value);
+        setCountry(e.target.value);
     };
 
     const handleDeviseOneChange = (e) => {
-        setDeviseOne(e.target.value);
+        setCurrencyOne(e.target.value);
     };
 
     const handleDeviseTwoChange = (e) => {
-        setDeviseTwo(e.target.value);
+        setCurrencyTwo(e.target.value);
     };
 
     const handleDeviseThreeChange = (e) => {
-        setDeviseThree(e.target.value);
+        setCurrencyThree(e.target.value);
       };
     
   
     const handleNationalEmisesbancaireChange = (e) => {
-      setNationalEmisesbancaire(e.target.value);
+      setNationalBankIssued(e.target.value);
     };
   
     const handleNationalEmisesAutresChange = (e) => {
-      setNationalEmisesAutres(e.target.value);
+      setNationalOthersIssued(e.target.value);
     };
   
     const handleNationalRecuesbancaireChange = (e) => {
-      setNationalRecuesbancaire(e.target.value);
+      setNationalBankReceived(e.target.value);
     };
   
     const handleNationalRecuesAutresChange = (e) => {
-      setNationalRecuesAutres(e.target.value);
+      setNationalOthersReceived(e.target.value);
     };
   
     const handleCfaUemoaEmisesbancaireChange = (e) => {
-      setCfaUemoaEmisesbancaire(e.target.value);
+      setCfaUemoaBankIssued(e.target.value);
     };
   
     const handleCfaUemoaEmisesAutresChange = (e) => {
-      setCfaUemoaEmisesAutres(e.target.value);
+      setCfaUemoaOthersIssued(e.target.value);
     };
   
     const handleCfaUemoaRecuesbancaireChange = (e) => {
-      setCfaUemoaRecuesbancaire(e.target.value);
+      setCfaUemoaBankReceived(e.target.value);
     };
   
     const handleCfaUemoaRecuesAutresChange = (e) => {
-      setCfaUemoaRecuesAutres(e.target.value);
+      setCfaUemoaOthersReceived(e.target.value);
     };
   
     const handleCfaHorsUemoaEmisesbancaireChange = (e) => {
-      setCfaHorsUemoaEmisesbancaire(e.target.value);
+      setCfaOutsideUemoaBankIssued(e.target.value);
     };
   
     const handleCfaHorsUemoaEmisesAutresChange = (e) => {
-      setCfaHorsUemoaEmisesAutres(e.target.value);
+      setCfaOutsideUemoaOthersIssued(e.target.value);
     };
   
     const handleCfaHorsUemoaRecuesbancaireChange = (e) => {
-      setCfaHorsUemoaRecuesbancaire(e.target.value);
+      setCfaOutsideUemoaBankReceived(e.target.value);
     };
   
     const handleCfaHorsUemoaRecuesAutresChange = (e) => {
-      setCfaHorsUemoaRecuesAutres(e.target.value);
+      setCfaOutsideUemoaOthersReceived(e.target.value);
     };
   
     const handleEuroEmisesbancaireChange = (e) => {
-      setEuroEmisesbancaire(e.target.value);
+      setEuroBankIssued(e.target.value);
     };
   
     const handleEuroEmisesAutresChange = (e) => {
-      setEuroEmisesAutres(e.target.value);
+      setEuroOthersIssued(e.target.value);
     };
   
     const handleEuroRecuesbancaireChange = (e) => {
-      setEuroRecuesbancaire(e.target.value);
+      setEuroBankReceived(e.target.value);
     };
   
     const handleEuroRecuesAutresChange = (e) => {
-      setEuroRecuesAutres(e.target.value);
+      setEuroOthersReceived(e.target.value);
     };
 
     const handleDollarEmisesbancaireChange = (e) => {
-        setDollarEmisesbancaire(e.target.value);
+        setDollarBankIssued(e.target.value);
       };
     
       const handleDollarEmisesAutresChange = (e) => {
-        setDollarEmisesAutres(e.target.value);
+        setDollarOthersIssued(e.target.value);
       };
     
       const handleDollarRecuesbancaireChange = (e) => {
-        setDollarRecuesbancaire(e.target.value);
+        setDollarBankReceived(e.target.value);
       };
     
       const handleDollarRecuesAutresChange = (e) => {
-        setDollarRecuesAutres(e.target.value);
+        setDollarOthersReceived(e.target.value);
       };
     
       const handleAutreDvseEmisesbancaireChange = (e) => {
-        setAutreDvseEmisesbancaire(e.target.value);
+        setOtherCurrencyBankIssued(e.target.value);
       };
     
       const handleAutreDvseEmisesAutresChange = (e) => {
-        setAutreDvseEmisesAutres(e.target.value);
+        setOtherCurrencyOthersIssued(e.target.value);
       };
     
       const handleAutreDvseRecuesbancaireChange = (e) => {
-        setAutreDvseRecuesbancaire(e.target.value);
+        setOtherCurrencyBankReceived(e.target.value);
         
       };
 
       const handleAutreDvseRecuesAutresChange = (e) => {
-        setAutreDvseRecuesAutres(e.target.value);
+        setOtherCurrencyOthersReceived(e.target.value);
       };
   
     const handleSubmit = (e) => {
       e.preventDefault();
       // Effectuer des actions avec les données du formulaire
       console.log({
-        nationalEmisesbancaire,
-        nationalEmisesAutres,
-        nationalRecuesbancaire,
-        nationalRecuesAutres,
-        cfaUemoaEmisesbancaire,
-        cfaUemoaEmisesAutres,
-        cfaUemoaRecuesbancaire,
-        cfaUemoaRecuesAutres,
-        cfaHorsUemoaEmisesbancaire,
-        cfaHorsUemoaEmisesAutres,
-        cfaRecuesbancaire,
-        cfaHorsUemoaRecuesAutres,
-        euroEmisesbancaire,
-        euroEmisesAutres,
-        euroRecuesbancaire,
-        euroRecuesAutres
+        nationalBankIssued,
+        nationalOthersIssued,
+        nationalBankReceived,
+        nationalOthersReceived,
+        cfaUemoaBankIssued,
+        cfaUemoaOthersIssued,
+        cfaUemoaBankReceived,
+        cfaUemoaOthersReceived,
+        cfaOutsideUemoaBankIssued,
+        cfaOutsideUemoaOthersIssued,
+        cfaOutsideUemoaBankReceived,
+        cfaOutsideUemoaOthersReceived,
+        euroBankIssued,
+        euroOthersIssued,
+        euroBankReceived,
+        euroOthersReceived
       });
     };
 
@@ -281,7 +294,7 @@ const CIformationFinanciereFive = () => {
                                 Virement bancaire : <br/>
                                 <select 
                                     className=''
-                                    value={nationalEmisesbancaire} 
+                                    value={nationalBankIssued} 
                                     onChange={handleNationalEmisesbancaireChange}
                                 >
                                     <option value="">Sélectionnez un élément</option>
@@ -294,7 +307,7 @@ const CIformationFinanciereFive = () => {
 
                             <label className="mt-3">
                                 Autres transactions (mobile money, remittance , CB) :<br/>
-                                <select className='' value={nationalEmisesAutres} onChange={handleNationalEmisesAutresChange}>
+                                <select className='' value={nationalOthersIssued} onChange={handleNationalEmisesAutresChange}>
                                     <option value="">Sélectionner un élément</option>
                                     <option value="0">0</option>
                                     <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
@@ -307,7 +320,7 @@ const CIformationFinanciereFive = () => {
                             <label className='mt-3'><b>Reçues</b></label><br/>
                             <label className="">
                                 Virement bancaire :<br/>
-                                <select className='' value={nationalRecuesbancaire} onChange={handleNationalRecuesbancaireChange}>
+                                <select className='' value={nationalBankReceived} onChange={handleNationalRecuesbancaireChange}>
                                 <option value="">Sélectionner un élément</option>
                                     <option value="0">0</option>
                                     <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
@@ -318,7 +331,7 @@ const CIformationFinanciereFive = () => {
 
                             <label className="mt-3">
                                 Autres transactions (mobile money, remittance , CB) : <br/>
-                                <select className='' value={nationalRecuesAutres} onChange={handleNationalRecuesAutresChange}>
+                                <select className='' value={nationalOthersReceived} onChange={handleNationalRecuesAutresChange}>
                                     <option value="">Sélectionner un élément</option>
                                     <option value="0">0</option>
                                     <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
@@ -335,7 +348,7 @@ const CIformationFinanciereFive = () => {
                             <label className=''><b>Emises</b></label><br/>
                             <label>
                                 Virement bancaire :<br/>
-                                <select className='' value={cfaUemoaEmisesbancaire} onChange={handleCfaUemoaEmisesbancaireChange}>
+                                <select className='' value={cfaUemoaBankIssued} onChange={handleCfaUemoaEmisesbancaireChange}>
                                     <option value="">Sélectionner un élément</option>
                                     <option value="0">0</option>
                                     <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
@@ -346,7 +359,7 @@ const CIformationFinanciereFive = () => {
 
                             <label className='mt-3'>
                                 Autres transactions (mobile money, remittance , CB) : <br/>
-                                <select className='' value={cfaUemoaEmisesAutres} onChange={handleCfaUemoaEmisesAutresChange}>
+                                <select className='' value={cfaUemoaOthersIssued} onChange={handleCfaUemoaEmisesAutresChange}>
                                     <option value="">Sélectionner un élément</option>
                                     <option value="0">0</option>
                                     <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
@@ -359,7 +372,7 @@ const CIformationFinanciereFive = () => {
                             <label className='mt-3'><b>Reçues</b></label><br/>
                             <label className=''>
                                 Virement bancaire :<br/>
-                                <select className='' value={cfaUemoaRecuesbancaire} onChange={handleCfaUemoaRecuesbancaireChange}>
+                                <select className='' value={cfaUemoaBankReceived} onChange={handleCfaUemoaRecuesbancaireChange}>
                                     <option value="">Sélectionner un élément</option>
                                     <option value="0">0</option>
                                     <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
@@ -370,7 +383,7 @@ const CIformationFinanciereFive = () => {
 
                             <label className='mt-3'>
                                 Autres transactions (mobile money, remittance , CB) : <br/>
-                                <select className='' value={cfaUemoaRecuesAutres} onChange={handleCfaUemoaRecuesAutresChange}>
+                                <select className='' value={cfaUemoaOthersReceived} onChange={handleCfaUemoaRecuesAutresChange}>
                                     <option value="">Sélectionner un élément</option>
                                     <option value="0">0</option>
                                     <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
@@ -387,7 +400,7 @@ const CIformationFinanciereFive = () => {
                             <label className=''><b>Emises</b></label><br/>
                             <label>
                                 Virement bancaire :<br/>
-                                <select className='' value={cfaHorsUemoaEmisesbancaire} onChange={handleCfaHorsUemoaEmisesbancaireChange}>
+                                <select className='' value={cfaOutsideUemoaBankIssued} onChange={handleCfaHorsUemoaEmisesbancaireChange}>
                                 <option value="">Sélectionner un élément</option>
                                     <option value="0">0</option>
                                     <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
@@ -397,7 +410,7 @@ const CIformationFinanciereFive = () => {
                             </label>
                             <label className='mt-3'>
                                 Autres transactions (mobile money, remittance , CB) : <br/>
-                                <select className='' value={cfaHorsUemoaEmisesAutres} onChange={handleCfaHorsUemoaEmisesAutresChange}>
+                                <select className='' value={cfaOutsideUemoaOthersIssued} onChange={handleCfaHorsUemoaEmisesAutresChange}>
                                     <option value="">Sélectionner un élément</option>
                                     <option value="0">0</option>
                                     <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
@@ -410,7 +423,7 @@ const CIformationFinanciereFive = () => {
                             <label className='mt-3'><b>Reçues</b></label><br/>
                             <label className=''>
                                 Virement bancaire : <br/>
-                                <select className='' value={cfaRecuesbancaire} onChange={handleCfaHorsUemoaRecuesbancaireChange}>
+                                <select className='' value={cfaOutsideUemoaBankReceived} onChange={handleCfaHorsUemoaRecuesbancaireChange}>
                                     <option value="">Sélectionner un élément</option>
                                     <option value="0">0</option>
                                     <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
@@ -421,7 +434,7 @@ const CIformationFinanciereFive = () => {
 
                             <label className='mt-3'>
                                 Autres transactions (mobile money, remittance , CB) :<br/>
-                                <select className='' value={cfaHorsUemoaRecuesAutres} onChange={handleCfaHorsUemoaRecuesAutresChange}>
+                                <select className='' value={cfaOutsideUemoaOthersReceived} onChange={handleCfaHorsUemoaRecuesAutresChange}>
                                     <option value="">Sélectionner un élément</option>
                                     <option value="0">0</option>
                                     <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
@@ -438,7 +451,7 @@ const CIformationFinanciereFive = () => {
                             <label className=''><b>Emises</b></label><br/>
                             <label>
                                 Virement bancaire :<br/>
-                                <select className='' value={euroEmisesbancaire} onChange={handleEuroEmisesbancaireChange}>
+                                <select className='' value={euroBankIssued} onChange={handleEuroEmisesbancaireChange}>
                                     <option value="">Sélectionner un élément</option>
                                     <option value="0">0</option>
                                     <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
@@ -449,7 +462,7 @@ const CIformationFinanciereFive = () => {
 
                             <label className='mt-3'>
                                 Autres transactions (mobile money, remittance , CB) :<br/>
-                                <select className='' value={euroEmisesAutres} onChange={handleEuroEmisesAutresChange}>
+                                <select className='' value={euroOthersIssued} onChange={handleEuroEmisesAutresChange}>
                                     <option value="">Sélectionner un élément</option>
                                     <option value="0">0</option>
                                     <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
@@ -462,7 +475,7 @@ const CIformationFinanciereFive = () => {
                             <label className='mt-3'><b>Reçues</b></label><br/>
                             <label className=''>
                                 Virement bancaire :<br/>
-                                <select className='' value={euroRecuesbancaire} onChange={handleEuroRecuesbancaireChange}>
+                                <select className='' value={euroBankReceived} onChange={handleEuroRecuesbancaireChange}>
                                     <option value="">Sélectionner un élément</option>
                                     <option value="0">0</option>
                                     <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
@@ -473,7 +486,7 @@ const CIformationFinanciereFive = () => {
 
                             <label className='mt-3'>
                                 Autres transactions (mobile money, remittance , CB) : <br/>
-                                <select className='' value={euroRecuesAutres} onChange={handleEuroRecuesAutresChange}>
+                                <select className='' value={euroOthersReceived} onChange={handleEuroRecuesAutresChange}>
                                     <option value="">Sélectionner un élément</option>
                                     <option value="0">0</option>
                                     <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
@@ -491,7 +504,7 @@ const CIformationFinanciereFive = () => {
                             Virement bancaire :<br/>
                             <select
                                 className=''
-                                value={dollarEmisesbancaire}
+                                value={dollarBankIssued}
                                 onChange={handleDollarEmisesbancaireChange}
                             >
                                 <option value="">Sélectionner un élément</option>
@@ -506,7 +519,7 @@ const CIformationFinanciereFive = () => {
                             Autres transactions (mobile money, remittance , CB) :<br/>
                             <select
                                 className=''
-                                value={dollarEmisesAutres}
+                                value={dollarOthersIssued}
                                 onChange={handleDollarEmisesAutresChange}
                             >
                                 <option value="">Sélectionner un élément</option>
@@ -522,7 +535,7 @@ const CIformationFinanciereFive = () => {
                             Virement bancaire :<br/>
                             <select
                                 className=''
-                                value={dollarRecuesbancaire}
+                                value={dollarBankReceived}
                                 onChange={handleDollarRecuesbancaireChange}
                             >
                                 <option value="">Sélectionner un élément</option>
@@ -537,7 +550,7 @@ const CIformationFinanciereFive = () => {
                             Autres transactions (mobile money, remittance , CB) :<br/>
                             <select
                                 className=''
-                                value={dollarRecuesAutres}
+                                value={dollarOthersReceived}
                                 onChange={handleDollarRecuesAutresChange}
                             >
                                 <option value="">Sélectionner un élément</option>
@@ -555,7 +568,7 @@ const CIformationFinanciereFive = () => {
                             Virement bancaire :<br/>
                             <select
                                 className=''
-                                value={autreDvseEmisesbancaire}
+                                value={otherCurrencyBankIssued}
                                 onChange={handleAutreDvseEmisesbancaireChange}
                             >
                                 <option value="">Sélectionner un élément</option>
@@ -570,7 +583,7 @@ const CIformationFinanciereFive = () => {
                             Autres transactions (mobile money, remittance , CB) :<br/>
                             <select
                                 className=''
-                                value={autreDvseEmisesAutres}
+                                value={otherCurrencyOthersIssued}
                                 onChange={handleAutreDvseEmisesAutresChange}
                             >
                                 <option value="">Sélectionner un élément</option>
@@ -586,7 +599,7 @@ const CIformationFinanciereFive = () => {
                             Virement bancaire :<br/>
                             <select
                                 className=''
-                                value={autreDvseRecuesbancaire}
+                                value={otherCurrencyBankReceived}
                                 onChange={handleAutreDvseRecuesbancaireChange}
                             >
                                 <option value="">Sélectionner un élément</option>
@@ -601,7 +614,7 @@ const CIformationFinanciereFive = () => {
                             Autres transactions (mobile money, remittance , CB) : <br/>
                             <select
                                 className=''
-                                value={autreDvseRecuesAutres}
+                                value={otherCurrencyOthersReceived}
                                 onChange={handleAutreDvseRecuesAutresChange}
                             >
                                 <option value="">Sélectionner un élément</option>
@@ -623,7 +636,7 @@ const CIformationFinanciereFive = () => {
                                 Choisissez monnaie 1 : <br/>
                             <select
                                 className=''
-                                value={deviseOne}
+                                value={currencyOne}
                                 onChange={handleDeviseOneChange}
                             >
                                 <option value="">Sélectionner un élément</option>
@@ -636,7 +649,7 @@ const CIformationFinanciereFive = () => {
                                 Choisissez monnaie 2 : <br/>
                             <select
                                 className=''
-                                value={deviseTwo}
+                                value={currencyTwo}
                                 onChange={handleDeviseTwoChange}
                             >
                                 <option value="">Sélectionner un élément</option>
@@ -649,7 +662,7 @@ const CIformationFinanciereFive = () => {
                                 Choisissez monnaie 3 : <br/>
                             <select
                                 className=''
-                                value={deviseThree}
+                                value={currencyThree}
                                 onChange={handleDeviseThreeChange}
                             >
                                 <option value="">Sélectionner un élément</option>
@@ -663,7 +676,7 @@ const CIformationFinanciereFive = () => {
                                 Pays : <br/>
                             <select
                                 className=''
-                                value={pays}
+                                value={country}
                                 onChange={handlePaysChange}
                             >
                                 <option value="">Sélectionner un élément</option>

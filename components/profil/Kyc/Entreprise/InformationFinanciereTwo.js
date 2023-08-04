@@ -157,6 +157,24 @@ const CIformationFinanciereTwo = () => {
     //     m4Transactions
         // periode
     
+// LE BONS
+// periode
+	    // periodOneCa,
+	        // periodOneCharges,
+	        // periodOneResultat,
+	  //  periodOneTransactions,
+	        // periodTwoCa,
+	        // periodTwoCharges,
+	        // periodTwoResultat,
+	  //  periodTwoTransactions,
+	        // periodThreeCa,
+	        // periodThreeCharges,
+	        // periodThreeResultat,
+	// periodThreeTransactions,
+	        // periodFourCa,
+	        // periodFourCharges,
+	        // periodFourResultat,
+	    // periodFourTransactions
 
 
    // La barre de progression de KYC du profil entreprise

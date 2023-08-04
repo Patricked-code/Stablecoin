@@ -35,6 +35,11 @@ const COperationsFinancieresOne = () => {
     const [statusD, setStatusD] = useState(0);
     const [statusE, setStatusE] = useState(0);
 
+    // LES BONS
+    // title
+	// question
+	// answer
+
     const [questionsA, setQuestionsA] = useState([
         { title: 'Opérations liées aux ventes et aux clients', question: 'Réception de paiements des clients pour les ventes de biens ou services.', answer: '' },
         { title: 'Opérations liées aux achats et aux fournisseurs', question: 'Paiement des fournisseurs pour l\'achat de biens ou services.', answer: '' },

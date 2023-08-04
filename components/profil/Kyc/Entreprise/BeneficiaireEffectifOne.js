@@ -59,7 +59,10 @@ const CBeneficiaireEffectifOne = () => {
     const [frontIdentity, setFrontIdentity ] = useState();
     const [backIdentity, setCackIdentity ] = useState();
     const [frontDomicile, setFrontDomicile] = useState();
-    const [backDomicile, setBackDomicile] = useState();
+
+
+    // LE BON
+    const [numberBeneficial, setNumberBeneficial] = useState();
 
 
     // Pour la signature
@@ -537,17 +540,17 @@ const handleOptionIncomeTypeC = (event) => {
                                 </label>
 
                                 <label
-                                    htmlFor="issuingCountry"
+                                    htmlFor="numberBeneficial"
                                     className="text-blackish-blue mb-2"
                                 >
                                     Combien de bénéficiaire effectif ?
                                 </label>
                                 <select 
                                 className="form-control"
-                                id="issuingCountry"
+                                id="numberBeneficial"
                                 required
-                                defaultValue={issuingCountry} 
-                                onChange={(event)=>setIssuingCountry(event.target.value)}
+                                defaultValue={numberBeneficial} 
+                                onChange={(event)=>setNumberBeneficial(event.target.value)}
                                 >
                                 <option defaultValue="">Choisissez</option>
                                     <optgroup className='single-cryptocurrency-box'>

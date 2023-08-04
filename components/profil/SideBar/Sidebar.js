@@ -193,32 +193,53 @@ const logaout = useCallback(() => {
               ) : (
                 <>
                 
-              {kycForParticular?.quiz==1 && !kycForParticular?.identity==1 && !kycForParticular?.residence==1 && !kycForParticular?.photo==1 ? (
-                 <Link to='/profil/kyc/particulier/justificatif-identite-two/' className={pathname == "/profil/kyc/particulier/seconde-phase/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+              {kycForParticular?.quiz==1 && !kycForParticular?.quizTwo && !kycForParticular?.quizFatca && !kycForParticular?.identityOne && !kycForParticular?.identity==1 && !kycForParticular?.photoWithDocument==1 && !kycForParticular?.residence==1 && !kycForParticular?.photo==1? (
+                <Link to='/profil/kyc/particulier/questionnaires-revenus-two/' className={pathname == "/profil/kyc/commun/signature/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                   <i className='fas fa-tasks nav-link-icon'></i>
                   <span className='nav-link-name'>KYC</span>
                 </Link>
-              ) : kycForParticular?.quiz==1 && kycForParticular?.identity==1 && !kycForParticular?.residence==1 && !kycForParticular?.photo==1? (
+              ) :kycForParticular?.quiz==1 && kycForParticular?.quizTwo && !kycForParticular?.quizFatca && !kycForParticular?.identityOne && !kycForParticular?.identity==1 && !kycForParticular?.photoWithDocument==1 && !kycForParticular?.residence==1 && !kycForParticular?.photo==1? (
+                <Link to='/profil/kyc/particulier/questionnaires-fatca/' className={pathname == "/profil/kyc/commun/signature/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                  <i className='fas fa-tasks nav-link-icon'></i>
+                  <span className='nav-link-name'>KYC</span>
+                </Link>
+              ) :kycForParticular?.quiz==1 && kycForParticular?.quizTwo && kycForParticular?.quizFatca && !kycForParticular?.identityOne && !kycForParticular?.identity==1 && !kycForParticular?.photoWithDocument==1 && !kycForParticular?.residence==1 && !kycForParticular?.photo==1? (
+                <Link to='/profil/kyc/particulier/justificatif-identite-one/' className={pathname == "/profil/kyc/particulier/seconde-phase/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                  <i className='fas fa-tasks nav-link-icon'></i>
+                  <span className='nav-link-name'>KYC</span>
+                </Link>
+              ) :kycForParticular?.quiz==1 && kycForParticular?.quizTwo && kycForParticular?.quizFatca && kycForParticular?.identityOne && !kycForParticular?.identity==1 && !kycForParticular?.photoWithDocument==1 && !kycForParticular?.residence==1 && !kycForParticular?.photo==1? (
+                <Link to='/profil/kyc/particulier/justificatif-identite-two/' className={pathname == "/profil/kyc/particulier/seconde-phase/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                  <i className='fas fa-tasks nav-link-icon'></i>
+                  <span className='nav-link-name'>KYC</span>
+                </Link>
+              ) :kycForParticular?.quiz==1 && kycForParticular?.quizTwo && kycForParticular?.quizFatca && kycForParticular?.identityOne && kycForParticular?.identity==1 && !kycForParticular?.photoWithDocument==1 && !kycForParticular?.residence==1 && !kycForParticular?.photo==1? (
+                <Link to='/profil/kyc/particulier/selfie-with-document/' className={pathname == "/profil/kyc/particulier/seconde-phase/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                  <i className='fas fa-tasks nav-link-icon'></i>
+                  <span className='nav-link-name'>KYC</span>
+                </Link>
+              ) :kycForParticular?.quiz==1 && kycForParticular?.quizTwo && kycForParticular?.quizFatca && kycForParticular?.identityOne && kycForParticular?.identity==1 && kycForParticular?.photoWithDocument==1 && !kycForParticular?.residence==1 && !kycForParticular?.photo==1? (
                 <Link to='/profil/kyc/particulier/justificatif-domicile/' className={pathname == "/profil/kyc/particulier/justificatif-domicile/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                   <i className='fas fa-tasks nav-link-icon'></i>
                   <span className='nav-link-name'>KYC</span>
                 </Link>
-              ) : kycForParticular?.quiz==1 && kycForParticular?.identity==1 && kycForParticular?.residence==1 && !kycForParticular?.photo==1? (
+              ) :kycForParticular?.quiz==1 && kycForParticular?.quizTwo && kycForParticular?.quizFatca && kycForParticular?.identityOne && kycForParticular?.identity==1 && kycForParticular?.photoWithDocument==1 && kycForParticular?.residence==1 && !kycForParticular?.photo==1? (
                 <Link to='/profil/kyc/commun/selfie/' className={pathname == "/profil/kyc/commun/selfie/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                   <i className='fas fa-tasks nav-link-icon'></i>
                   <span className='nav-link-name'>KYC</span>
                 </Link>
-                ) : kycForParticular?.quiz==1 && kycForParticular?.identity==1 && kycForParticular?.residence==1 && kycForParticular?.photo==1? (
+              ) :kycForParticular?.quiz==1 && kycForParticular?.quizTwo && kycForParticular?.quizFatca && kycForParticular?.identityOne && kycForParticular?.identity==1 && kycForParticular?.photoWithDocument==1 && kycForParticular?.residence==1 && kycForParticular?.photo==1? (
                   <Link to='/profil/kyc/commun/signature/' className={pathname == "/profil/kyc/commun/signature/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                     <i className='fas fa-tasks nav-link-icon'></i>
                     <span className='nav-link-name'>KYC</span>
                   </Link>
-              ) : (
-                <Link to='/profil/kyc/particulier/questionnaires-revenus-one' className={pathname == "/profil/kyc/particulier/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
-                  <i className='fas fa-tasks nav-link-icon'></i>
-                  <span className='nav-link-name'>KYC</span>
-                </Link>
-              )}
+                
+                ) : (
+                  <Link to='/profil/kyc/particulier/questionnaires-revenus-one' className={pathname == "/profil/kyc/particulier/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                    <i className='fas fa-tasks nav-link-icon'></i>
+                    <span className='nav-link-name'>KYC</span>
+                  </Link>
+                )}
               
               </>
               )}

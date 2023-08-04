@@ -29,132 +29,132 @@ const CIformationFinanciereOne = () => {
     const [messageError, setMessageError] = useState();
 
     // ***********LA BONNE PARTIE ***********************
-    const [m1Ca, setM1Ca] = useState('');
-    const [m1Charges, setM1Charges] = useState('');
-    const [m1Resultat, setM1Resultat] = useState('');
-    const [m1Transactions, setM1Transactions] = useState('');
+    const [mOneCa, setMOneCa] = useState('');
+    const [mOneCharges, setMOneCharges] = useState('');
+    const [mOneResultat, setMOneResultat] = useState('');
+    const [mOneTransactions, setMOneTransactions] = useState('');
   
-    const [m2Ca, setM2Ca] = useState('');
-    const [m2Charges, setM2Charges] = useState('');
-    const [m2Resultat, setM2Resultat] = useState('');
-    const [m2Transactions, setM2Transactions] = useState('');
+    const [mTwoCa, setM2Ca] = useState('');
+    const [mTwoCharges, setMTwoCharges] = useState('');
+    const [mTwoResultat, setMTwoResultat] = useState('');
+    const [mTwoTransactions, setMTwoTransactions] = useState('');
   
-    const [m3Ca, setM3Ca] = useState('');
-    const [m3Charges, setM3Charges] = useState('');
-    const [m3Resultat, setM3Resultat] = useState('');
-    const [m3Transactions, setM3Transactions] = useState('');
+    const [mThreeCa, setM3Ca] = useState('');
+    const [mThreeCharges, setMThreeCharges] = useState('');
+    const [mThreeResultat, setMThreeResultat] = useState('');
+    const [mThreeTransactions, setMThreeTransactions] = useState('');
   
-    const [m4Ca, setM4Ca] = useState('');
-    const [m4Charges, setM4Charges] = useState('');
-    const [m4Resultat, setM4Resultat] = useState('');
-    const [m4Transactions, setM4Transactions] = useState('');
+    const [mFourCa, setM4Ca] = useState('');
+    const [mFourCharges, setMFourCharges] = useState('');
+    const [mFourResultat, setMFourResultat] = useState('');
+    const [mFourTransactions, setMFourTransactions] = useState('');
   
     const handleM1CaChange = (e) => {
-      setM1Ca(e.target.value);
+      setMOneCa(e.target.value);
     };
   
     const handleM1ChargesChange = (e) => {
-      setM1Charges(e.target.value);
+      setMOneCharges(e.target.value);
     };
   
     const handleM1ResultatChange = (e) => {
-      setM1Resultat(e.target.value);
+      setMOneResultat(e.target.value);
     };
   
     const handleM1TransactionsChange = (e) => {
-      setM1Transactions(e.target.value);
+      setMOneTransactions(e.target.value);
     };
   
     const handleM2CaChange = (e) => {
-      setM2Ca(e.target.value);
+      setMTwoCa(e.target.value);
     };
   
     const handleM2ChargesChange = (e) => {
-      setM2Charges(e.target.value);
+      setMTwoCharges(e.target.value);
     };
   
     const handleM2ResultatChange = (e) => {
-      setM2Resultat(e.target.value);
+      setMTwoResultat(e.target.value);
     };
   
     const handleM2TransactionsChange = (e) => {
-      setM2Transactions(e.target.value);
+      setMTwoTransactions(e.target.value);
     };
   
     const handleM3CaChange = (e) => {
-      setM3Ca(e.target.value);
+      setMThreeCa(e.target.value);
     };
   
     const handleM3ChargesChange = (e) => {
-      setM3Charges(e.target.value);
+      setMThreeCharges(e.target.value);
     };
   
     const handleM3ResultatChange = (e) => {
-      setM3Resultat(e.target.value);
+      setMThreeResultat(e.target.value);
     };
   
     const handleM3TransactionsChange = (e) => {
-      setM3Transactions(e.target.value);
+      setMThreeTransactions(e.target.value);
     };
   
     const handleM4CaChange = (e) => {
-      setM4Ca(e.target.value);
+      setMFourCa(e.target.value);
     };
   
     const handleM4ChargesChange = (e) => {
-      setM4Charges(e.target.value);
+      setMFourCharges(e.target.value);
     };
   
     const handleM4ResultatChange = (e) => {
-      setM4Resultat(e.target.value);
+      setMFourResultat(e.target.value);
     };
   
     const handleM4TransactionsChange = (e) => {
-      setM4Transactions(e.target.value);
+      setMFourTransactions(e.target.value);
     };
   
     const handleSubmit = (e) => {
       e.preventDefault();
       // Effectuer des actions avec les données du formulaire
       console.log({
-        m1Ca,
-        m1Charges,
-        m1Resultat,
-        m1Transactions,
-        m2Ca,
-        m2Charges,
-        m2Resultat,
-        m2Transactions,
-        m3Ca,
-        m3Charges,
-        m3Resultat,
-        m3Transactions,
-        m4Ca,
-        m4Charges,
-        m4Resultat,
-        m4Transactions
+        mOneCa,
+        mOneCharges,
+        mOneResultat,
+        mOneTransactions,
+        mTwoCa,
+        mTwoCharges,
+        mTwoResultat,
+        mTwoTransactions,
+        mThreeCa,
+        mThreeCharges,
+        mThreeResultat,
+        mThreeTransactions,
+        mFourCa,
+        mFourCharges,
+        mFourResultat,
+        mFourTransactions
       });
     };
 
     // ***********FIN DE LA BONNE PARTIE*******************
 
     // LES CHAMPS DE LA TABLE
-    //     m1Ca,
-    //     m1Charges,
-    //     m1Resultat,
-    //     m1Transactions,
-    //     m2Ca,
-    //     m2Charges,
-    //     m2Resultat,
-    //     m2Transactions,
-    //     m3Ca,
-    //     m3Charges,
-    //     m3Resultat,
-    //     m3Transactions,
-    //     m4Ca,
-    //     m4Charges,
-    //     m4Resultat,
-    //     m4Transactions
+        // mOneCa,
+        // mOneCharges,
+        // mOneResultat,
+        // mOneTransactions,
+        // mTwoCa,
+        // mTwoCharges,
+        // mTwoResultat,
+        // mTwoTransactions,
+        // mThreeCa,
+        // mThreeCharges,
+        // mThreeResultat,
+        // mThreeTransactions,
+        // mFourCa,
+        // mFourCharges,
+        // mFourResultat,
+        // mFourTransactions
         // periode
     
 
@@ -203,7 +203,7 @@ const CIformationFinanciereOne = () => {
                             <label>
                                 CA mensuel :
                                 <select 
-                                    value={m1Ca} 
+                                    value={mOneCa} 
                                     onChange={handleM1CaChange}
                                 >
                                     <option value="">Sélectionner un élément</option>
@@ -215,7 +215,7 @@ const CIformationFinanciereOne = () => {
 
                             <label className="mt-3">
                                 Charges mensuelles :
-                                <select value={m1Charges} onChange={handleM1ChargesChange}>
+                                <select value={mOneCharges} onChange={handleM1ChargesChange}>
                                 <option value="">Sélectionner un élément</option>
                                 <option value="Charges< 10%CA">Charges &lt; 10%CA</option>
                                 <option value="10%CA<Charges<50% CA">10%CA &lt; Charges &lt; 50%CA</option>
@@ -226,7 +226,7 @@ const CIformationFinanciereOne = () => {
 
                             <label className="mt-3">
                                 Résultat net Mensuel (%CA) :
-                                <select value={m1Resultat} onChange={handleM1ResultatChange}>
+                                <select value={mOneResultat} onChange={handleM1ResultatChange}>
                                 <option value="">Sélectionner un élément</option>
                                 <option value="Résultat<0">Résultat &lt; 0</option>
                                 <option value="0<Résultat<10% CA">0 &lt; Résultat &lt; 10% CA</option>
@@ -237,7 +237,7 @@ const CIformationFinanciereOne = () => {
 
                             <label className="mt-3">
                                 Nombre moyen de transactions mensuelles financières (bancaires) :
-                                <select value={m1Transactions} onChange={handleM1TransactionsChange}>
+                                <select value={mOneTransactions} onChange={handleM1TransactionsChange}>
                                 <option value="">Sélectionner un élément</option>
                                 <option value="0">0</option>
                                 <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
@@ -252,7 +252,7 @@ const CIformationFinanciereOne = () => {
                             <label className='mt-3'><b>M-2</b></label><br/>
                             <label>
                                 CA mensuel :
-                                <select value={m2Ca} onChange={handleM2CaChange}>
+                                <select value={mTwoCa} onChange={handleM2CaChange}>
                                 <option value="">Sélectionner un élément</option>
                                 <option value="CA < 10.000.000 FCFA (15.000€)">CA &lt; 10.000.000 FCFA (15.000€)</option>
                                 <option value="1O.000.000 FCFA < CA < 65.000.000FCFA">1O.000.000 FCFA &lt; CA &lt; 65.000.000FCFA</option>
@@ -262,7 +262,7 @@ const CIformationFinanciereOne = () => {
 
                             <label className='mt-3'>
                                 Charges mensuelles :
-                                <select value={m2Charges} onChange={handleM2ChargesChange}>
+                                <select value={mTwoCharges} onChange={handleM2ChargesChange}>
                                 <option value="">Sélectionner un élément</option>
                                 <option value="Charges< 10%CA">Charges &lt; 10%CA</option>
                                 <option value="10%CA<Charges<50% CA">10%CA &lt; Charges &lt; 50%CA</option>
@@ -273,7 +273,7 @@ const CIformationFinanciereOne = () => {
 
                             <label className='mt-3'>
                                 Résultat net Mensuel (%CA) :
-                                <select value={m2Resultat} onChange={handleM2ResultatChange}>
+                                <select value={mTwoResultat} onChange={handleM2ResultatChange}>
                                 <option value="">Sélectionner un élément</option>
                                 <option value="Résultat<0">Résultat &lt; 0</option>
                                 <option value="0<Résultat<10% CA">0 &lt; Résultat &lt; 10% CA</option>
@@ -284,7 +284,7 @@ const CIformationFinanciereOne = () => {
 
                             <label className='mt-3'>
                                 Nombre moyen de transactions mensuelles financières (bancaires) :
-                                <select value={m2Transactions} onChange={handleM2TransactionsChange}>
+                                <select value={mTwoTransactions} onChange={handleM2TransactionsChange}>
                                 <option value="">Sélectionner un élément</option>
                                 <option value="0">0</option>
                                 <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
@@ -299,7 +299,7 @@ const CIformationFinanciereOne = () => {
                             <label className='mt-3'><b>M-3</b></label><br/>
                             <label>
                                 CA mensuel :
-                                <select value={m3Ca} onChange={handleM3CaChange}>
+                                <select value={mThreeCa} onChange={handleM3CaChange}>
                                 <option value="">Sélectionner un élément</option>
                                 <option value="CA < 10.000.000 FCFA (15.000€)">CA &lt; 10.000.000 FCFA (15.000€)</option>
                                 <option value="1O.000.000 FCFA < CA < 65.000.000FCFA">1O.000.000 FCFA &lt; CA &lt; 65.000.000FCFA</option>
@@ -308,7 +308,7 @@ const CIformationFinanciereOne = () => {
                             </label>
                             <label className='mt-3'>
                                 Charges mensuelles :
-                                <select value={m3Charges} onChange={handleM3ChargesChange}>
+                                <select value={mThreeCharges} onChange={handleM3ChargesChange}>
                                 <option value="">Sélectionner un élément</option>
                                 <option value="Charges< 10%CA">Charges &lt; 10%CA</option>
                                 <option value="10%CA<Charges<50% CA">10%CA &lt; Charges &lt; 50%CA</option>
@@ -319,7 +319,7 @@ const CIformationFinanciereOne = () => {
 
                             <label className='mt-3'>
                                 Résultat net Mensuel (%CA) :
-                                <select value={m3Resultat} onChange={handleM3ResultatChange}>
+                                <select value={mThreeResultat} onChange={handleM3ResultatChange}>
                                 <option value="">Sélectionner un élément</option>
                                 <option value="Résultat<0">Résultat &lt; 0</option>
                                 <option value="0<Résultat<10% CA">0 &lt; Résultat &lt; 10% CA</option>
@@ -330,7 +330,7 @@ const CIformationFinanciereOne = () => {
 
                             <label className='mt-3'>
                                 Nombre moyen de transactions mensuelles financières (bancaires) :
-                                <select value={m3Transactions} onChange={handleM3TransactionsChange}>
+                                <select value={mThreeTransactions} onChange={handleM3TransactionsChange}>
                                 <option value="">Sélectionner un élément</option>
                                 <option value="0">0</option>
                                 <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
@@ -345,7 +345,7 @@ const CIformationFinanciereOne = () => {
                             <label className='mt-3'><b>M-4</b></label><br/>
                             <label>
                                 CA mensuel :
-                                <select value={m4Ca} onChange={handleM4CaChange}>
+                                <select value={mFourCa} onChange={handleM4CaChange}>
                                 <option value="">Sélectionner un élément</option>
                                 <option value="CA < 10.000.000 FCFA (15.000€)">CA &lt; 10.000.000 FCFA (15.000€)</option>
                                 <option value="1O.000.000 FCFA < CA < 65.000.000FCFA">1O.000.000 FCFA &lt; CA &lt; 65.000.000FCFA</option>
@@ -355,7 +355,7 @@ const CIformationFinanciereOne = () => {
 
                             <label className='mt-3'>
                                 Charges mensuelles :
-                                <select value={m4Charges} onChange={handleM4ChargesChange}>
+                                <select value={mFourCharges} onChange={handleM4ChargesChange}>
                                 <option value="">Sélectionner un élément</option>
                                 <option value="Charges< 10%CA">Charges &lt; 10%CA</option>
                                 <option value="10%CA<Charges<50% CA">10%CA &lt; Charges &lt; 50%CA</option>
@@ -366,7 +366,7 @@ const CIformationFinanciereOne = () => {
 
                             <label className='mt-3'>
                                 Résultat net Mensuel (%CA) :
-                                <select value={m4Resultat} onChange={handleM4ResultatChange}>
+                                <select value={mFourResultat} onChange={handleM4ResultatChange}>
                                 <option value="">Sélectionner un élément</option>
                                 <option value="Résultat<0">Résultat &lt; 0</option>
                                 <option value="0<Résultat<10% CA">0 &lt; Résultat &lt; 10% CA</option>
@@ -377,7 +377,7 @@ const CIformationFinanciereOne = () => {
 
                             <label className='mt-3'>
                                 Nombre moyen de transactions mensuelles financières (bancaires) :
-                                <select value={m4Transactions} onChange={handleM4TransactionsChange}>
+                                <select value={mFourTransactions} onChange={handleM4TransactionsChange}>
                                 <option value="">Sélectionner un élément</option>
                                 <option value="0">0</option>
                                 <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>

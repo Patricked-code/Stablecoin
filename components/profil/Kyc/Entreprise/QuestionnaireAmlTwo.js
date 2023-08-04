@@ -25,18 +25,62 @@ const CQuestionnaireAmlTwo = () => {
 
 
     // states des questionnaires
-    const [answers, setAnswers] = useState({
-        transactionMontantSuperieur: '',
-        paiementEspeces: '',
-        relationsIranCoreeSyrieCuba: '',
-        transactionsParadisFiscaux: '',
-        paiementsCryptoMonnaies: '',
-        relationsSanctionsInternationales: '',
-        transactionsFaibleTauxImposition: '',
-        clientsPolitiquementExposes: '',
-        paiementsSocietesOffshore: '',
-        transactionsTransfrontalieres: ''
+      const [answers, setAnswers] = useState({
+        cashPayments: '',
+        relationsIranKoreaSyriaCuba: '',
+        transactionsInTaxHavens: '',
+        cryptocurrencyPayments: '',
+        relationsInternationalSanctions: '',
+        transactionsLowTaxation: '',
+        politicallyExposedClients: '',
+        offshoreCompanyPayments: '',
+        crossBorderTransactions: ''
       });
+
+
+      // Autres states
+      const [otherBankAccount, setOtherBankAccount] = useState('');
+      const [savingsAccount, setSavingsAccount] = useState([]);
+      const [currentAccount, setCurrentAccount] = useState([]);
+      const [titleAccount, setTitleAccount] = useState([]);
+      const [bankReferencesSavings, setBankReferencesSavings] = useState('');
+      const [otherBankNameSavings, setOtherBankNameSavings] = useState('');
+      const [otherBankCountrySavings, setOtherBankCountrySavings] = useState('');
+      const [bankReferencesCurrent, setBankReferencesCurrent] = useState('');
+      const [otherBankNameCurrent, setOtherBankNameCurrent] = useState('');
+      const [otherBankCountryCurrent, setOtherBankCountryCurrent] = useState('');
+      const [bankReferencesTitle, setBankReferencesTitle] = useState('');
+      const [otherBankNameTitle, setOtherBankNameTitle] = useState('');
+      const [otherBankCountryTitle, setOtherBankCountryTitle] = useState('');
+
+// LES BONS
+// otherBankAccount
+// savingsAccount
+// currentAccount
+// titleAccount
+// dat
+// bankReferencesSavings
+// otherBankNameSavings
+// otherBankCountrySavings
+// bankReferencesCurrent
+// otherBankNameCurrent
+// otherBankCountryCurrent
+// bankReferencesTitle
+// otherBankNameTitle
+// otherBankCountryTitle
+// bankReferencesDat
+// otherBankNameDat
+// otherBankCountryDat
+// cashPayments
+// relationsIranKoreaSyriaCuba
+// transactionsInTaxHavens
+// cryptocurrencyPayments
+// relationsInternationalSanctions
+// transactionsLowTaxation
+// politicallyExposedClients
+// offshoreCompanyPayments
+// crossBorderTransactions
+
     
       const handleChange = (e) => {
         setAnswers({ ...answers, [e.target.name]: e.target.value });
@@ -230,21 +274,11 @@ const CQuestionnaireAmlTwo = () => {
                 </>
               )}
 
-
-
-
-
-
-
-
-
-
-
                             <div className='mt-3'>
                                 <label>
                                 Acceptez-vous des paiements en espèces pour des biens ou services d'une valeur supérieure à 15 000 dollars américains (ou équivalent dans une autre devise) provenant d'activités telles que la construction, les services juridiques ou l'hôtellerie ?
                                 </label>
-                                <select className='form-control mt-2' name="paiementEspeces" onChange={handleChange}>
+                                <select className='form-control mt-2' name="cashPayments" onChange={handleChange}>
                                 <option value="">Choisissez une option</option>
                                 <option value="Oui">Oui</option>
                                 <option value="Non">Non</option>
@@ -255,7 +289,7 @@ const CQuestionnaireAmlTwo = () => {
                                 <label>
                                 Avez-vous des relations commerciales avec des individus ou des entités basés en Iran, en Corée du Nord, en Syrie ou à Cuba, notamment dans des secteurs tels que l'énergie, les télécommunications ou la construction ?
                                 </label>
-                                <select className='form-control mt-2' name="relationsIranCoreeSyrieCuba" onChange={handleChange}>
+                                <select className='form-control mt-2' name="relationsIranKoreaSyriaCuba" onChange={handleChange}>
                                 <option value="">Choisissez une option</option>
                                 <option value="Oui">Oui</option>
                                 <option value="Non">Non</option>
@@ -266,7 +300,7 @@ const CQuestionnaireAmlTwo = () => {
                                 <label>
                                 Effectuez-vous des transactions avec des banques ou des institutions financières situées dans des pays considérés comme des paradis fiscaux ou à haut risque de blanchiment d'argent, en particulier dans des zones offshore telles que les Îles Caïmans, les Îles Vierges Britanniques ou les Seychelles ?
                                 </label>
-                                <select className='form-control mt-2' name="transactionsParadisFiscaux" onChange={handleChange}>
+                                <select className='form-control mt-2' name="transactionsInTaxHavens" onChange={handleChange}>
                                 <option value="">Choisissez une option</option>
                                 <option value="Oui">Oui</option>
                                 <option value="Non">Non</option>
@@ -277,7 +311,7 @@ const CQuestionnaireAmlTwo = () => {
                                 <label>
                                 Acceptez-vous des paiements ou effectuez-vous des transactions en crypto-monnaies telles que le Bitcoin ou l'Ethereum, notamment dans des activités de jeux en ligne, de paris sportifs ou de commerce en ligne ?
                                 </label>
-                                <select className='form-control mt-2' name="paiementsCryptoMonnaies" onChange={handleChange}>
+                                <select className='form-control mt-2' name="cryptocurrencyPayments" onChange={handleChange}>
                                 <option value="">Choisissez une option</option>
                                 <option value="Oui">Oui</option>
                                 <option value="Non">Non</option>
@@ -288,7 +322,7 @@ const CQuestionnaireAmlTwo = () => {
                                 <label>
                                 Avez-vous des relations commerciales avec des individus ou des entités figurant sur des listes de sanctions internationales, telles que la liste des personnes spécialement désignées (SDN) du Bureau of Foreign Assets Control (OFAC) aux États-Unis, notamment dans des secteurs tels que la défense, la technologie ou les transports ?
                                 </label>
-                                <select className='form-control mt-2' name="relationsSanctionsInternationales" onChange={handleChange}>
+                                <select className='form-control mt-2' name="relationsInternationalSanctions" onChange={handleChange}>
                                 <option value="">Choisissez une option</option>
                                 <option value="Oui">Oui</option>
                                 <option value="Non">Non</option>
@@ -299,7 +333,7 @@ const CQuestionnaireAmlTwo = () => {
                                 <label>
                                 Effectuez-vous des transactions d'une valeur supérieure à 5 000 euros (ou équivalent dans une autre devise) vers des pays ou des territoires à faible taux d'imposition, notamment dans des secteurs tels que la finance, la gestion de patrimoine ou l'immobilier ?
                                 </label>
-                                <select className='form-control mt-2' name="transactionsFaibleTauxImposition" onChange={handleChange}>
+                                <select className='form-control mt-2' name="transactionsLowTaxation" onChange={handleChange}>
                                 <option value="">Choisissez une option</option>
                                 <option value="Oui">Oui</option>
                                 <option value="Non">Non</option>
@@ -310,7 +344,7 @@ const CQuestionnaireAmlTwo = () => {
                                 <label>
                                 Avez-vous des clients ou des fournisseurs qui sont des politiquement exposés (PEP) ou des membres de leur famille proche, notamment dans des secteurs tels que la politique, les institutions publiques ou les organisations internationales ?
                                 </label>
-                                <select className='form-control mt-2' name="clientsPolitiquementExposes" onChange={handleChange}>
+                                <select className='form-control mt-2' name="politicallyExposedClients" onChange={handleChange}>
                                 <option value="">Choisissez une option</option>
                                 <option value="Oui">Oui</option>
                                 <option value="Non">Non</option>
@@ -321,7 +355,7 @@ const CQuestionnaireAmlTwo = () => {
                                 <label>
                                 Acceptez-vous des paiements ou effectuez-vous des transactions en utilisant des sociétés écrans, des trusts ou des sociétés offshore, notamment dans des activités telles que l'évasion fiscale, la planification successorale ou la gestion de patrimoine ?
                                 </label>
-                                <select className='form-control mt-2' name="paiementsSocietesOffshore" onChange={handleChange}>
+                                <select className='form-control mt-2' name="offshoreCompanyPayments" onChange={handleChange}>
                                 <option value="">Choisissez une option</option>
                                 <option value="Oui">Oui</option>
                                 <option value="Non">Non</option>
@@ -332,7 +366,7 @@ const CQuestionnaireAmlTwo = () => {
                                 <label>
                                 Effectuez-vous des transactions transfrontalieres d'une valeur superieure à 10 000 dollars americains (ou equivalent dans une autre devise) sans verifier la source des fonds ou l'identite des parties, notamment dans des activites telles que le commerce de marchandises, le negoce de matieres premieres ou le transport international ?
                                 </label>
-                                <select className='form-control mt-2' name="transactionsTransfrontalieres" onChange={handleChange}>
+                                <select className='form-control mt-2' name="crossBorderTransactions" onChange={handleChange}>
                                 <option value="">Choisissez une option</option>
                                 <option value="Oui">Oui</option>
                                 <option value="Non">Non</option>

@@ -35,6 +35,10 @@ const COrigneFonds = () => {
     const [statusD, setStatusD] = useState(0);
     const [statusE, setStatusE] = useState(0);
 
+    // LES BONS
+    // title
+	// question
+	// answer
     const [questionsA, setQuestionsA] = useState([
         { title: "Revenus des ventes", question: "Les fonds provenant des ventes de biens ou de services effectuées par l'entreprise et reçus sous forme de paiements des clients.", answer: "" },
         { title: "Financement par capitaux propres", question: "Les fonds provenant de l'émission d'actions de l'entreprise et de l'investissement des actionnaires.", answer: "" },
