@@ -3,6 +3,8 @@ import React from "react";
 import axios from 'axios';
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
+import moment from 'moment';
+
 
 // Pour camera photo
 import Webcam from 'react-webcam'
@@ -145,58 +147,72 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
      }
  };
 
+ const currentDate = new Date();//definir la date actuelle
+
   // FONCTION D'AJOUT DU TYPE DE JUSTIFICATIF ET SES FICHIER
   const AddReceipt = async () => {
       const token = localStorage.getItem('tokenEnCours')
-
       const body = new FormData();
       body.append("receiptType", typeJustificatif);
       body.append("pieceNumber", pieceNumber);
       body.append("validityDate", validityDate);
       body.append("frontReceipt", frontReceipt);
       body.append("backReceipt", backReceipt);
-      
-      const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-identity-file`, {
-          method:"PUT",
-          body,
-          headers: {
-            // 'Content-Type': 'application/json',
-            Authorization:  `Bearer ${token}`,
-            },
-      })    
-      /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-        * sinon on affiche le message de succès
-        */
-      if (result?.status===200) {
-        Swal.fire({
-            position: 'center',
-            icon: 'success',
-            html: `<p> Vos fichiers de justificatif d'identité ont été sauvegardés avec succès.</p>` ,
-            showConfirmButton: false,
-            timer: 5000
-        }),
-        setTimeout(() => {
-            if (currentKycStatut==="1") {
-                Router.push("/profil/kyc/particulier/resultat-kyc"); 
-            }else{
-                Router.push("/profil/kyc/particulier/selfie-with-document"); 
-            }
-        }, 5000)
-        
-        }else{
-            // setMessageError(data.message)
 
+        if (validityDate > formatDate(currentDate)) {
+          
+      
+            const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-identity-file`, {
+                method:"PUT",
+                body,
+                headers: {
+                    // 'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`,
+                    },
+            })    
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                * sinon on affiche le message de succès
+                */
+            if (result?.status===200) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Vos fichiers de justificatif d'identité ont été sauvegardés avec succès.</p>` ,
+                    showConfirmButton: false,
+                    timer: 5000
+                }),
+                setTimeout(() => {
+                    if (currentKycStatut==="1") {
+                        Router.push("/profil/kyc/particulier/resultat-kyc"); 
+                    }else{
+                        Router.push("/profil/kyc/particulier/selfie-with-document"); 
+                    }
+                }, 5000)
+                
+                }else{
+                    // setMessageError(data.message)
+
+                    setIsLoggingIn(false);
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        html: `<p> Désolé une erreur s'est produite,Veuillez réessayer svp. </p>` ,
+                        showConfirmButton: false,
+                        timer: 10000
+                    })
+                    
+                }
+            // Fin condition 
+        }else{
             setIsLoggingIn(false);
             Swal.fire({
                 position: 'center',
                 icon: 'error',
-                html: `<p> Désolé une erreur s'est produite,Veuillez réessayer svp. </p>` ,
+                html: `<p> Désolé la date de validité doit être supérieure à la date du jour. </p>` ,
                 showConfirmButton: false,
                 timer: 10000
             })
-            
         }
-        // Fin condition 
   }
   // FIN
 
@@ -215,47 +231,58 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
             backReceiptPhoto:imageVerso
         }
 
-        const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+            if (validityDate > formatDate(currentDate)) {
 
-        const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-identity-photo`, {
-        method:"PUT",
-        body: JSON.stringify(dataa),
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization:  `Bearer ${token}`
-        }
-        })
-        const data = await result.json();
-    
-        /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-        * sinon on affiche le message de succès
-        */
-        if (data.message===200) {
-        Swal.fire({
-            position: 'center',
-            icon: 'success',
-            html: `<p> Vos fichiers ont été sauvegardés avec succès.</p>` ,
-            showConfirmButton: false,
-            timer: 5000
-        }),
-        setTimeout(() => {
-        Router.push("/profil/kyc/particulier/selfie-with-document"); 
-        }, 5000)
-        
-        }else{
-            setMessageError(data.message)
-
-            setIsLoggingIn(false);
-            Swal.fire({
-                position: 'center',
-                icon: 'error',
-                html: `<p> ${messageError} </p>` ,
-                showConfirmButton: false,
-                timer: 10000
-            })
+                const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-identity-photo`, {
+                method:"PUT",
+                body: JSON.stringify(dataa),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`
+                }
+                })
+                const data = await result.json();
             
-        }
-        // Fin condition 
+                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                * sinon on affiche le message de succès
+                */
+                if (data.message===200) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Vos fichiers ont été sauvegardés avec succès.</p>` ,
+                    showConfirmButton: false,
+                    timer: 5000
+                }),
+                setTimeout(() => {
+                Router.push("/profil/kyc/particulier/selfie-with-document"); 
+                }, 5000)
+                
+                }else{
+                    setMessageError(data.message)
+
+                    setIsLoggingIn(false);
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        html: `<p> ${messageError} </p>` ,
+                        showConfirmButton: false,
+                        timer: 10000
+                    })
+                    
+                }
+                // Fin condition 
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> Désolé la date de validité doit être supérieure à la date du jour. </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+            }
     
         } catch {
         setIsLoggingIn(false);
@@ -269,6 +296,13 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
             window.location.reload()
         }, 1000)
     }
+
+    // FONCTION POUR FORMATER LA DATE
+    const formatDate = (_updatedAt) =>{
+        const maDate = moment(_updatedAt).format('YYYY-MM-DD');
+        return  maDate
+    }
+    //  FIN
 
     // La barre de progression de KYC
     const steps = ["AML 1 & 2","FATCA", "Identité 1 & 2", "Selfie", "Domicile", "Photo", "Signature"];
@@ -707,7 +741,9 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
                                             {/* Fin */}
 
                                             {/* Pour afficher l'image qui a été prise        */}
-                                            {imageRecto && <img src={imageRecto} alt="Selfie" />}
+                                            <div className='text-center'>
+                                                {imageRecto && <img src={imageRecto} alt="Selfie" />}
+                                            </div>
                                             {/* Fin*/}
                                             </>
                                         ) : ("")}
@@ -772,7 +808,9 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
                                             {/* Fin */}
 
                                             {/* Pour afficher l'image qui a été prise        */}
-                                            {imageVerso && <img src={imageVerso} alt="Selfie" />}
+                                            <div className='text-center'>
+                                                {imageVerso && <img src={imageVerso} alt="Selfie" />}
+                                            </div>
                                             {/* Fin*/}
                                             </>
                                         ) : ("")}

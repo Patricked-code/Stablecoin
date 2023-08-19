@@ -7,28 +7,28 @@ const CQuestionnaireAmlFour = () => {
 
 const [answers, setAnswers] = useState({
   taxHavens: '',
-  cashAbove15k: '',
+  cashAboveFifteenThousand: '',
   politicallyExposed: '',
-  cashAbove10k: '',
+  cashAboveTenThousand: '',
   kycProcedures: '',
   amlRiskAssessment: '',
   transactionMonitoring: '',
-  clientsAbove100k: '',
+  clientsAboveOneHundredThousand: '',
   transactionDeclaration: '',
   illegalActivities: ''
 });
 
 // LES BONS
-// taxHavens
-//   cashAbove15k
-//   politicallyExposed
-//   cashAbove10k
-//   kycProcedures
-//   amlRiskAssessment
-//   transactionMonitoring
-//   clientsAbove100k
-//   transactionDeclaration
-//   illegalActivities
+  // taxHavens
+  // cashAboveFifteenThousand
+  // politicallyExposed
+  // cashAboveTenThousand
+  // kycProcedures
+  // amlRiskAssessment
+  // transactionMonitoring 
+  // clientsAboveOneHundredThousand 
+  // transactionDeclaration 
+  // illegalActivities 
 
 
   
@@ -100,7 +100,7 @@ const [answers, setAnswers] = useState({
                 <label>
                   Acceptez-vous des paiements en especes pour des transactions d'une valeur superieure à 15 000 euros provenant de pays comme la Suisse, Monaco ou Singapour ?
                 </label>
-                <select className='form-control mt-2' name="cashAbove15k" onChange={handleChange}>
+                <select className='form-control mt-2' name="cashAboveFifteenThousand" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -124,7 +124,7 @@ const [answers, setAnswers] = useState({
                 <label>
                   Votre entreprise accepte-t-elle des paiements en especes pour des transactions d'une valeur superieure à 10 000 dollars americains provenant de pays tels que les Emirats arabes unis, le Qatar ou le Bahrein ?
                 </label>
-                <select className='form-control mt-2' name="cashAbove10k" onChange={handleChange}>
+                <select className='form-control mt-2' name="cashAboveTenThousand" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -172,7 +172,7 @@ const [answers, setAnswers] = useState({
                 <label>
                   Avez-vous des clients qui effectuent frequentement des transactions d'un montant superieur à 100 000 euros provenant de pays consideres comme des paradis fiscaux, tels que les Iles Caymans, les Iles Vierges Britanniques ou les Seychelles ?
                 </label>
-                <select className='form-control mt-2' name="clientsAbove100k" onChange={handleChange}>
+                <select className='form-control mt-2' name="clientsAboveOneHundredThousand" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>
@@ -215,7 +215,7 @@ const [answers, setAnswers] = useState({
                                     </Link>                          
                                 </div>
                                 <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                    <Link href='/profil/kyc/entreprise/questionnaire-aml-five/' className="align-right">
+                                    <Link href='/profil/kyc/entreprise/identite-one/' className="align-right">
                                         <a
                                         className=""
                                         >

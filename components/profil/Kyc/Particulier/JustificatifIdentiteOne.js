@@ -498,7 +498,7 @@ const CJustificatifIdentiteOne = () => {
                                     htmlFor="dateBirth"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Date de naissance ({formatDate(currentUser?.birthday)}) si cette date est intecorrecte veuillez saisir la bonne sion laissez le champ vide.
+                                    Date de naissance ({formatDate(currentUser?.birthday)}) si cette date est incorrecte veuillez saisir la bonne sinon laissez le champ vide.
                                 </label>
                                 <div className='form-group'>
                                     <input

@@ -29,34 +29,30 @@ const CStructureControlTwo = () => {
     const [messageError, setMessageError] = useState();
 
     // States du formulaire
-    // entrepriseName
-    // firstName
+    // typePartner
     // lastName
-    // issuingCountry
-    // nativeCountry
-    // countryRegistration
-    // dateBirth
-    // nationality
-    // email
-    // functions
-    // typeDocument
+    // firstName
+    // typeDocIdentity
     // identityDocNumber
+    // expirationDate
+    // issuingCountry
+    // frontIdentityFile
+    // backIdentityFile
+    // frontIdentityPhoto
+    // backIdentityPhoto
+    // nationality
+    // dateBirth
+    // nativeCountry
     // mobile
+    // email
+    // percentControl
+    // countryRegistration
     // phoneFixe
     // startDate
     // numberRccm
-    // expirationDate
-    // typeBeneficiary
-    {/* POUR PIECE D'IDENTITE */}
-    // frontIdentity 
-    // backIdentity 
-    {/* FIN */}
-    {/* POUR PIECE DE DOMICILE */}
-    // frontDomicile
-    // backDomicile
-    {/* FIN */}
+    // socialReason
     
-    const [entrepriseName, setEntrepriseName] = useState();
+    const [socialReason, setSocialReason] = useState();
     const [firstName, setFirstName] = useState();
     const [lastName, setLastName] = useState();
     const [issuingCountry, setIssuingCountry] = useState();
@@ -65,11 +61,11 @@ const CStructureControlTwo = () => {
     const [nationality, setNationality] = useState();
     const [percentControl, setPercentControl] = useState();
     const [email, setEmail] = useState();
-    const [typeDocIdentite, setTypeDocIdentite] = useState();
+    const [typeDocIdentity, setTypeDocIdentity] = useState();
     const [expirationDate, setExpirationDate] = useState();
     const [identityDocNumber, setIdentityDocNumber] = useState();
     const [mobile, setMobile] = useState();
-    const [typeBeneficiary, setTypeBeneficiary] = useState();
+    const [typePartner, setTypePartner] = useState();
     const [countryRegistration, setCountryRegistration] = useState();
     const [phoneFixe, setPhoneFixe] = useState();
     const [startDate, setStartDate] = useState();
@@ -601,17 +597,17 @@ const handleOptionIncomeTypeC = (event) => {
                         <form className=''>
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="typeBeneficiary"
+                                    htmlFor="typePartner"
                                     className="text-blackish-blue mb-2"
                                 >
                                     Type d'associé
                                 </label>
                                 <select 
                                 className="form-control"
-                                id="typeBeneficiary"
+                                id="typePartner"
                                 required
-                                defaultValue={typeBeneficiary} 
-                                onChange={(event)=>setTypeBeneficiary(event.target.value)}
+                                defaultValue={typePartner} 
+                                onChange={(event)=>setTypePartner(event.target.value)}
                                 >
                                 <option defaultValue="">Choisissez</option>
                                     <optgroup className='single-cryptocurrency-box'>
@@ -621,10 +617,10 @@ const handleOptionIncomeTypeC = (event) => {
                                 </select>
                             </div>
 
-                            {typeBeneficiary ? (
+                            {typePartner ? (
                                 <>
 
-                                    {typeBeneficiary==="Personne physique" ? (
+                                    {typePartner==="Personne physique" ? (
                                         <>
                                             <div className="form-group mb-6 mt-3">
                                                 <label
@@ -666,17 +662,17 @@ const handleOptionIncomeTypeC = (event) => {
 
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="typeDocIdentite"
+                                    htmlFor="typeDocIdentity"
                                     className="text-blackish-blue mb-2"
                                 >
                                     Type de document d’identité  
                                 </label>
                                 <select 
                                 className="form-control"
-                                id="typeDocIdentite"
+                                id="typeDocIdentity"
                                 required
-                                defaultValue={typeDocIdentite} 
-                                onChange={(event)=>setTypeDocIdentite(event.target.value)}
+                                defaultValue={typeDocIdentity} 
+                                onChange={(event)=>setTypeDocIdentity(event.target.value)}
                                 >
                                 <option defaultValue="">Choisissez</option>
                                     <optgroup className='single-cryptocurrency-box'>
@@ -1036,11 +1032,11 @@ const handleOptionIncomeTypeC = (event) => {
                                 </>
                             ):('')}
 
-                            {typeBeneficiary==="Personne morale" ? (
+                            {typePartner==="Personne morale" ? (
                                 <>
                                     <div className="form-group mb-6 mt-3">
                                         <label
-                                            htmlFor="entrepriseName"
+                                            htmlFor="socialReason"
                                             className="text-blackish-blue mb-2"
                                         >
                                             Raison sociale
@@ -1048,11 +1044,11 @@ const handleOptionIncomeTypeC = (event) => {
                                         <div className='form-group'>
                                             <input
                                                 type='text'
-                                                id='entrepriseName'
+                                                id='socialReason'
                                                 className='form-control'
                                                 placeholder='Raison sociale'
-                                                defaultValue={entrepriseName} 
-                                                onChange={(event)=>setEntrepriseName(event.target.value)}
+                                                defaultValue={socialReason} 
+                                                onChange={(event)=>setSocialReason(event.target.value)}
                                             />
                                         </div>
                                     </div >
@@ -1222,7 +1218,7 @@ const handleOptionIncomeTypeC = (event) => {
                             ) : ("")}
 
                             <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
-                                {typeBeneficiary|| !typeBeneficiary ?(
+                                {typePartner|| !typePartner ?(
                                     
                                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
                                         <Link href='/profil/kyc/entreprise/structure-control-one/' className="align-right">
@@ -1234,7 +1230,7 @@ const handleOptionIncomeTypeC = (event) => {
                                         </Link>                          
                                     </div>
                                 ):("")}
-                                {typeBeneficiary ? (
+                                {typePartner ? (
                                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
                                         <Link href='/profil/kyc/entreprise/politiquement-exposees/' className="align-right">
                                             <a

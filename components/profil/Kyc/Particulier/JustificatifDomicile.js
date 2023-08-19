@@ -450,8 +450,9 @@ const activeStep = 3;
                                         <>
                                         <label
                                             htmlFor="picture"
+                                            className='text-center'
                                         >
-                                            Recto de votre justificatif d'identité
+                                            Recto de votre justificatif de domicile
                                         </label>
                                             {/* Si on a pas encore pris la photo on affiche la camera */}
                                         {!imageRecto ? (
@@ -479,7 +480,9 @@ const activeStep = 3;
                                         {/* Fin */}
 
                                         {/* Pour afficher l'image qui a été prise        */}
-                                        {imageRecto && <img src={imageRecto} alt="Selfie" />}
+                                        <div className='text-center'>
+                                            {imageRecto && <img src={imageRecto} alt="Selfie" />}
+                                        </div>
                                         {/* Fin*/}
                                         </>
                                         ) : ("")}
@@ -504,8 +507,9 @@ const activeStep = 3;
                                                 <br/><br/>
                                                 <label
                                                     htmlFor="picture"
+                                                    className='text-center'
                                                 >
-                                                    Verso de votre justificatif d'identité
+                                                    Verso de votre justificatif de domicile
                                                 </label>
                                                 {/* Si on a pas encore pris la photo on affiche la camera */}
                                                 {!imageVerso ? (
@@ -533,7 +537,9 @@ const activeStep = 3;
                                                 {/* Fin */}
 
                                                 {/* Pour afficher l'image qui a été prise        */}
-                                                {imageVerso && <img src={imageVerso} alt="Selfie" />}
+                                                <div className='text-center'>
+                                                    {imageVerso && <img  src={imageVerso} alt="Selfie" />}
+                                                </div>
                                                 {/* Fin*/}
                                             </>
                                         ) : ("")}

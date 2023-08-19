@@ -43,7 +43,13 @@ const CQuestionnaireFatca = () => {
     const [mailbox, setMailbox] = useState();
     const [profession, setProfession] = useState();
     const [professionStatus, setProfessionStatus] = useState();
-    const [motivation, setMotivation] = useState();
+    const [motivation, setMotivation] = useState([]);
+    const [motivationA, setMotivationA] = useState([]);
+    const [motivationB, setMotivationB] = useState([]);
+    const [motivationC, setMotivationC] = useState([]);
+    const [motivationD, setMotivationD] = useState([]);
+    const [motivationE, setMotivationE] = useState([]);
+    const [motivationF, setMotivationF] = useState([]);
     const [employerCorporate, setEmployerCorporate] = useState();
     const [employerAddress, setEmployerAddress] = useState();
     const [directorship, setDirectorship] = useState();
@@ -52,6 +58,89 @@ const CQuestionnaireFatca = () => {
     const [whatHareholder, setWhatHareholder] = useState();
 
     
+
+    const handleOptionMotivation = (event) => {
+        const value = event.target.value;
+        const isChecked = event.target.checked;
+    
+        if (isChecked) {
+            setMotivation([...motivation, value]);
+        } else {
+            setMotivation("");
+        }
+    };
+
+    const handleOptionMotivationA = (event) => {
+        const value = event.target.value;
+        const isChecked = event.target.checked;
+    
+        if (isChecked) {
+            setMotivationA([...motivationA, value]);
+        } else {
+            setMotivationA("");
+        }
+    };
+
+    const handleOptionMotivationB = (event) => {
+        const value = event.target.value;
+        const isChecked = event.target.checked;
+    
+        if (isChecked) {
+            setMotivationB([...motivationB, value]);
+        } else {
+            setMotivationB("");
+        }
+    };
+
+    const handleOptionMotivationC = (event) => {
+        const value = event.target.value;
+        const isChecked = event.target.checked;
+    
+        if (isChecked) {
+            setMotivationC([...motivationC, value]);
+        } else {
+            setMotivationC("");
+        }
+    };
+
+    const handleOptionMotivationD = (event) => {
+        const value = event.target.value;
+        const isChecked = event.target.checked;
+    
+        if (isChecked) {
+            setMotivationD([...motivationD, value]);
+        } else {
+            setMotivationD("");
+        }
+    };
+
+    const handleOptionMotivationE = (event) => {
+        const value = event.target.value;
+        const isChecked = event.target.checked;
+    
+        if (isChecked) {
+            setMotivationE([...frequencyB, value]);
+        } else {
+            setMotivationE("");
+        }
+    };
+
+    const handleOptionMotivationF = (event) => {
+        const value = event.target.value;
+        const isChecked = event.target.checked;
+    
+        if (isChecked) {
+            setMotivationF([...frequencyB, value]);
+        } else {
+            setMotivationF("");
+        }
+    };
+
+
+
+
+
+
     
     // Fonction d'envoie des informations du questionnaire FATCA
     const updateQuestionnaireFatca= async (event) => {
@@ -59,15 +148,29 @@ const CQuestionnaireFatca = () => {
         event.preventDefault();
 
         try {
+            const dataTable = {
+                motivation:Object.assign({},motivation),
+                motivationA:Object.assign({},motivationA),
+                motivationB:Object.assign({},motivationB),
+                motivationC:Object.assign({},motivationC),
+                motivationD:Object.assign({},motivationD),
+                
+            }
 
             const dataa = {
+                motivation:dataTable?.motivation[0],
+                motivationA:dataTable?.motivationA[0],
+                motivationB:dataTable?.motivationB[0],
+                motivationC:dataTable?.motivationC[0],
+                motivationD:dataTable?.motivationD[0],
+                
+
                 usPerson:usPerson,
                 mailbox:mailbox,
                 profession:profession,
                 professionStatus:professionStatus,
                 employerCorporate:employerCorporate,
                 employerAddress:employerAddress,
-                motivation:motivation,
                 directorship:directorship,
                 whatBoard:whatBoard,
                 shareholder:shareholder,
@@ -233,7 +336,7 @@ const CQuestionnaireFatca = () => {
                                     htmlFor="usPerson"
                                     className="text-blackish-blue mb-2"
                                 >
-                                   Etes-vous US Person ? (Citoyenneté Américaine (Passeport américain) / Résidence aux USA /Présence significative ou permanente (green card) / Lieu de naissance aux USA) 
+                                   Etes-vous une "US PERSON"? (Citoyenneté Américaine (Passeport américain) / Résidence aux USA /Présence significative ou permanente (green card) / Lieu de naissance aux USA) 
                                 </label>
                                 <select 
                                 className="form-control"
@@ -252,42 +355,20 @@ const CQuestionnaireFatca = () => {
                             {/* Fin */}
 
                             {/* Question 1 */}
-                            {/* <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="address"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                  Adresse
-                                </label>
-                                <div className='form-group mt-3'>
-                                    <input
-                                        type='text'
-                                        id='address'
-                                        className='form-control'
-                                        placeholder='Adresse'
-                                        defaultValue={address} 
-                                        onChange={(event)=>setAddress(event.target.value)}
-                                    />
-                                </div>
-                            </div > */}
-                            {/* Fin */}
-                            
-
-                            {/* Question 1 */}
                             <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="mailbox"
                                     className="text-blackish-blue mb-2"
                                 >
                                   
-                                    Boîte postale
+                                   Adresse ou boîte postale
                                 </label>
                                 <div className='form-group mt-3'>
                                     <input
                                         type='text'
                                         id='mailbox'
                                         className='form-control'
-                                        placeholder='Boîte postale'
+                                        placeholder='Adresse ou boîte postale'
                                         defaultValue={mailbox} 
                                         onChange={(event)=>setMailbox(event.target.value)}
                                     />
@@ -295,56 +376,12 @@ const CQuestionnaireFatca = () => {
                             </div >
                             {/* Fin */}
 
-                            {/* Question 1 DB*/}
-                            {/* <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="incomeMonthly"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                    Numéro de téléphone mobile
-
-                                </label>
-                                <div className='form-group mt-3'>
-                                    <input
-                                        type='text'
-                                        id=''
-                                        className='form-control'
-                                        placeholder='Numéro de téléphone'
-                                        defaultValue={mobile} 
-                                        onChange={(event)=>setMolie(event.target.value)}
-                                    />
-                                </div>
-                            </div > */}
-                            {/* Fin */}
-
-                            {/* Question 1*/}
-                            <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="profession"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                    Profession/fonction/activité
-                                </label>
-                                <div className='form-group mt-3'>
-                                    <input
-                                        type='text'
-                                        id='profession'
-                                        className='form-control'
-                                        placeholder='Profession, fonction, activité'
-                                        defaultValue={profession} 
-                                        onChange={(event)=>setProfession(event.target.value)}
-                                    />
-                                </div>
-                            </div >
-                            {/* Fin */}
-                            
-
                             <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="professionStatus"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Statut du profession
+                                    Statut professionnel
                                 </label>
                                 <select 
                                 className="form-control"
@@ -362,7 +399,7 @@ const CQuestionnaireFatca = () => {
                                     </optgroup>
                                 </select>
                             </div >
-                            {/* SI STATUT DU PROFESSION EST SALRIE */}
+                            {/* SI Statut professionnel EST SALRIE */}
                             {professionStatus==="Salarié" ? (
                                 <>
                                 
@@ -405,7 +442,190 @@ const CQuestionnaireFatca = () => {
                             </div>
                             </>
                             ):('')}
+
+                            {/* Question 1*/}
                             <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="profession"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Profession/fonction/activité
+                                </label>
+                                <div className='form-group mt-3'>
+                                    <input
+                                        type='text'
+                                        id='profession'
+                                        className='form-control'
+                                        placeholder='Profession, fonction, activité'
+                                        defaultValue={profession} 
+                                        onChange={(event)=>setProfession(event.target.value)}
+                                    />
+                                </div>
+                            </div >
+                            {/* Fin */}
+                            
+
+
+
+                            {/* PARTIE MOTIVATION */}
+                            <label
+                                htmlFor="Q1"
+                                className="text-blackish-blue mb-2"
+                            >
+                                Motivation de l’ouverture de compte.
+                            </label> 
+                            <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="Salaire-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="Salaire"
+                                    id='Salaire-check' 
+                                    value='Pour recevoir mon salaire'
+                                    checked={motivation.includes('Pour recevoir mon salaire')}
+                                    onChange={handleOptionMotivation}
+                                    />
+                                <p className=" mx-2 mb-0 text-center">
+                                    Pour recevoir mon salaire
+                                </p>
+                                </label>
+                            </div> 
+
+                            <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="commerciale-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="commerciale"
+                                    id='commerciale-check' 
+                                    value='Pour mon activité commerciale'
+                                    checked={motivationA.includes('Pour mon activité commerciale')}
+                                    onChange={handleOptionMotivationA}
+                                    />
+                                <p className=" mx-2 mb-0 text-center">
+                                    Pour mon activité commerciale
+                                </p>
+                                </label>
+                            </div> 
+
+                            <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="paiement-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="paiement"
+                                    id='paiement-check' 
+                                    value='Pour faire des achats et des paiement'
+                                    checked={motivationB.includes('Pour faire des achats et des paiement')}
+                                    onChange={handleOptionMotivationB}
+                                    />
+                                <p className=" mx-2 mb-0 text-center">
+                                    Pour faire des achats et des paiement
+                                </p>
+                                </label>
+                            </div> 
+
+                            <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="epargner-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="epargner"
+                                    id='epargner-check' 
+                                    value='Pour épargner'
+                                    checked={motivationC.includes('Pour épargner')}
+                                    onChange={handleOptionMotivationC}
+                                    />
+                                <p className=" mx-2 mb-0 text-center">
+                                    Pour épargner
+                                </p>
+                                </label>
+                            </div> 
+
+                            {/* <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="transfert-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="transfert"
+                                    id='transfert-check' 
+                                    value="Pour transférer de l'argent"
+                                    checked={motivationD.includes("Pour transférer de l'argent")}
+                                    onChange={handleOptionMotivationD}
+                                    />
+                                <p className=" mx-2 mb-0 text-center">
+                                    Pour transférer de l'argent
+                                </p>
+                                </label>
+                            </div>  */}
+
+                            {/* <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="encaisser-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="encaisser"
+                                    id='encaisser-check' 
+                                    value='Pour encaisser des paiements'
+                                    checked={motivationE.includes('Pour encaisser des paiements')}
+                                    onChange={handleOptionMotivationE}
+                                    />
+                                <p className=" mx-2 mb-0 text-center">
+                                    Pour encaisser des paiements
+                                </p>
+                                </label>
+                            </div>  */}
+
+                            <div className="form-group  mt-3 ">
+                                <label
+                                    htmlFor="autre-check"
+                                    className="gr-check-input mb-7 d-flex"
+                                >
+                                    <input 
+                                    type="checkbox" 
+                                    name="autre"
+                                    id='autre-check' 
+                                    value='Autre'
+                                    checked={motivationD.includes('Autre')}
+                                    onChange={handleOptionMotivationD}
+                                    />
+                                <p className=" mx-2 mb-0 text-center">
+                                    Autre
+                                </p>
+                                </label>
+                            </div> 
+                            {/* FIN MOTIVATION */}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            {/* <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="motivation"
                                     className="text-blackish-blue mb-2"
@@ -430,7 +650,7 @@ const CQuestionnaireFatca = () => {
                                     <option  value="Autre">Autre</option>
                                     </optgroup>
                                 </select>
-                            </div >
+                            </div > */}
 
                             <div className="form-group mb-6 mt-3">
                                 <label
@@ -484,7 +704,7 @@ const CQuestionnaireFatca = () => {
                                     htmlFor="shareholder"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Etes-vous actionnaire dans une société ? 
+                                    Etes-vous actionnaire, fondateur ou co-fondateur d'une société ? 
                                 </label>
                                 <select 
                                 className="form-control"

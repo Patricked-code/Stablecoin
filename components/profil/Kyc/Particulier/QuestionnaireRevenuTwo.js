@@ -404,7 +404,7 @@ useEffect(async() => {
                                     htmlFor="incomeMonthly"
                                     className="text-blackish-blue mb-2"
                                 >
-                                  Quel est l'estimation de vos revenus mensuels en CFA?
+                                  Quelle est l'estimation de vos revenus mensuels en CFA?
                                 </label>
                                 <div className='form-group'>
                                     <input
@@ -423,7 +423,7 @@ useEffect(async() => {
                                     htmlFor="Q1"
                                     className="text-blackish-blue mb-2"
                                 >
-                                  Quel est l'estimation de vos revenus annuels en CFA?
+                                  Quelle est l'estimation de vos revenus annuels en CFA?
                                 </label>
                                 <div className='form-group'>
                                     <input
@@ -436,6 +436,79 @@ useEffect(async() => {
                                 </div>
                             </div >
                             {/* Fin */}
+
+                            {/* PARTIE SOURCE DE REVENUS */}
+                            <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="sourceIncome"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Source des revenus 
+                                </label>
+                                <select 
+                                className="form-control"
+                                id="sourceIncome"
+                                required
+                                defaultValue={sourceIncome} 
+                                onChange={(event)=>setSourceIncome(event.target.value)}
+                                >
+                                <option defaultValue="">Choisissez</option>
+                                    <optgroup className='single-cryptocurrency-box'>
+                                    <option  value="Salaires">Salaires</option>
+                                    <option  value="Rentes">Rentes</option>
+                                    <option  value="Recettes activités commerciales">Recettes activités commerciales</option>
+                                    <option  value="Indemnités">Indemnités</option>
+                                    </optgroup>
+                                </select>
+                            </div >
+
+                            {sourceIncome==="Salaires" ? (
+                                <div className='mt-3'>
+                                    <label htmlFor="salaries">Salaires:</label>
+                                    <input
+                                    type="number"
+                                    id="salaries"
+                                    placeholder='Montant en CFA'
+                                    value={salaries}
+                                    onChange={(e) => setSalaries(e.target.value)}
+                                    />
+                                </div>
+                                ):sourceIncome==="Rentes" ?(
+                                <div className='mt-3'>
+                                    <label htmlFor="rents">Rentes:</label>
+                                    <input
+                                    type="number"
+                                    id="rents"
+                                    placeholder='Montant en CFA'
+                                    value={rents}
+                                    onChange={(e) => setRents(e.target.value)}
+                                    />
+                                </div>
+                                ):sourceIncome==="Recettes activités commerciales" ? (
+                                <div className='mt-3'>
+                                    <label htmlFor="businessReceipts">Recettes activités commerciales:</label>
+                                    <input
+                                    type="number"
+                                    id="businessReceipts"
+                                    placeholder='Montant en CFA'
+                                    value={businessReceipts}
+                                    onChange={(e) => setBusinessReceipts(e.target.value)}
+                                    />
+                                </div>
+                                ):sourceIncome==="Indemnités" ? (
+                                <div className='mt-3'>
+                                    <label htmlFor="allowances">Indemnités:</label>
+                                    <input
+                                    type="number"
+                                    id="allowances"
+                                    placeholder='Montant en CFA'
+                                    value={allowances}
+                                    onChange={(e) => setAllowances(e.target.value)}
+                                    />
+                                </div>
+                                ):("")}
+
+                            {/* FIN SOURCE DE REVENUS */}
                             
                             {/* **************SECTION BANQUE************** */}
                             <div className="form-group mb-6 mt-3">
@@ -987,105 +1060,6 @@ useEffect(async() => {
                             {/* ****************FIN SECTION MOBILE***************** */}
                             
 
-
-                           
-                            
-
-
-                            <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="sourceIncome"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                    Source des revenus 
-                                </label>
-                                <select 
-                                className="form-control"
-                                id="sourceIncome"
-                                required
-                                defaultValue={sourceIncome} 
-                                onChange={(event)=>setSourceIncome(event.target.value)}
-                                >
-                                <option defaultValue="">Choisissez</option>
-                                    <optgroup className='single-cryptocurrency-box'>
-                                    <option  value="Salaires">Salaires</option>
-                                    <option  value="Rentes">Rentes</option>
-                                    <option  value="Recettes activités commerciales">Recettes activités commerciales</option>
-                                    <option  value="Indemnités">Indemnités</option>
-                                    </optgroup>
-                                </select>
-                            </div >
-
-                            {sourceIncome==="Salaires" ? (
-                                <div className='mt-3'>
-                                    <label htmlFor="salaries">Salaires:</label>
-                                    <input
-                                    type="number"
-                                    id="salaries"
-                                    placeholder='Montant en CFA'
-                                    value={salaries}
-                                    onChange={(e) => setSalaries(e.target.value)}
-                                    />
-                                </div>
-                                ):sourceIncome==="Rentes" ?(
-                                <div className='mt-3'>
-                                    <label htmlFor="rents">Rentes:</label>
-                                    <input
-                                    type="number"
-                                    id="rents"
-                                    placeholder='Montant en CFA'
-                                    value={rents}
-                                    onChange={(e) => setRents(e.target.value)}
-                                    />
-                                </div>
-                                ):sourceIncome==="Recettes activités commerciales" ? (
-                                <div className='mt-3'>
-                                    <label htmlFor="businessReceipts">Recettes activités commerciales:</label>
-                                    <input
-                                    type="number"
-                                    id="businessReceipts"
-                                    placeholder='Montant en CFA'
-                                    value={businessReceipts}
-                                    onChange={(e) => setBusinessReceipts(e.target.value)}
-                                    />
-                                </div>
-                                ):sourceIncome==="Indemnités" ? (
-                                <div className='mt-3'>
-                                    <label htmlFor="allowances">Indemnités:</label>
-                                    <input
-                                    type="number"
-                                    id="allowances"
-                                    placeholder='Montant en CFA'
-                                    value={allowances}
-                                    onChange={(e) => setAllowances(e.target.value)}
-                                    />
-                                </div>
-                                ):("")}
-
-
-
-
-
-                            
-                            
-
-                           
-
-                            
-                            
-                            
-                            
-                            
-
-
-
-
-
-
-
-
-
-                            
 
                             {/* <p className="colorRed mb-7 ">
                                 NB : Aucun retour n'est permis sur cette page donc, répondez correctement aux questions

@@ -23,11 +23,11 @@ const CQuestionnaireAmlThree = () => {
   // transactionAmountHigher
   //   relationsSanctionedCountries
   //   highRiskCountryPayments
-  //   restrictedGoodsTransactions
+  //   restrictedGoodsTransactions S
   //   relationsIllegalActivities
   //   noCooperativeJurisdictionPayments
   //   offshoreBankAccountsTransactions
-  //   frequentClientsTransactions
+  //   frequentClientsTransactions S
   //   thirdPartyCashPayments
   //   transactionsTerrorismLinks
   

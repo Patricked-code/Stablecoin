@@ -385,15 +385,7 @@ const KycPendingParticular = () => {
                                                         {!oneKycForParticular?.frequencyA && !oneKycForParticular?.frequencyB && !oneKycForParticular?.frequencyC ? (<p className='mt-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
                                                     </div>
 
-                                                    <div className=''>
-                                                        <b>3) Dans le cadre que les revenus sont touchés :</b><br/>
-                                                        {oneKycForParticular?.incomeTypeA? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.incomeTypeA}</p>): ("")}
-                                                        {oneKycForParticular?.incomeTypeB? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.incomeTypeB}</p>): ("")}
-                                                        {oneKycForParticular?.incomeTypeC? (<p className='mb-2'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.incomeTypeC}</p>): ("")}
-                                                        
-
-                                                        {!oneKycForParticular?.incomeTypeA && !oneKycForParticular?.incomeTypeB && !oneKycForParticular?.incomeTypeC ? (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
-                                                    </div>
+                                                   
                                                     
                                                 </div>
                                             </div>
@@ -412,6 +404,46 @@ const KycPendingParticular = () => {
                                                         <b>L'estimation de vos revenus annuels en CFA :</b><br/>
                                                         {oneKycForParticular?.annualIncome? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.annualIncome }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                     </div>
+
+                                                    <div className='mx-10 '>
+                                                        <b>Source des revenus</b><br/>
+                                                        {oneKycForParticular?.sourceIncome? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.sourceIncome }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+
+                                                    {oneKycForParticular?.sourceIncome ? (
+                                                        <>
+                                                        
+                                                            {oneKycForParticular?.sourceIncome==="Salaire" ? (
+                                                                <>
+                                                                    <b>Montant :</b><br/>
+                                                                    {oneKycForParticular?.salaries? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.salaries } FCFA</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </>
+                                                            ) : ("") }
+                                                            
+
+                                                            {oneKycForParticular?.sourceIncome==="Rentes" ? (
+                                                                <>
+                                                                    <b>Montant :</b><br/>
+                                                                    {oneKycForParticular?.rents? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.rents } FCFA</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </>
+                                                            ) : ("") }
+
+                                                            {oneKycForParticular?.sourceIncome==="Recettes activités commerciales" ? (
+                                                                <>
+                                                                    <b>Montant :</b><br/>
+                                                                    {oneKycForParticular?.businessReceipts? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.businessReceipts } FCFA</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </>
+                                                            ) : ("") }
+
+                                                            {oneKycForParticular?.allowances==="Indemnités" ? (
+                                                                <>
+                                                                    <b>Montant :</b><br/>
+                                                                    {oneKycForParticular?.allowances? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.allowances } FCFA</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </>
+                                                            ) : ("") }  
+                                                        </>
+                                                    ):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    
 
                                                     <div className='mx-10 '>
                                                         <b> Avez-vous un compte bancaire ? :</b><br/>
@@ -506,44 +538,6 @@ const KycPendingParticular = () => {
                                                     ) : ("") }
                                                     {/* Fin */}
 
-                                                    <div className='mx-10 '>
-                                                        <b>Source des revenus</b><br/>
-                                                        {oneKycForParticular?.sourceIncome? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.sourceIncome }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                    </div>
-
-                                                    {oneKycForParticular?.sourceIncome ? (
-                                                        <>
-                                                        
-                                                            {oneKycForParticular?.sourceIncome==="Salaire" ? (
-                                                                <>
-                                                                    <b>Montant :</b><br/>
-                                                                    {oneKycForParticular?.salaries? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.salaries } FCFA</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </>
-                                                            ) : ("") }
-                                                            
-
-                                                            {oneKycForParticular?.sourceIncome==="Rentes" ? (
-                                                                <>
-                                                                    <b>Montant :</b><br/>
-                                                                    {oneKycForParticular?.rents? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.rents } FCFA</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </>
-                                                            ) : ("") }
-
-                                                            {oneKycForParticular?.sourceIncome==="Recettes activités commerciales" ? (
-                                                                <>
-                                                                    <b>Montant :</b><br/>
-                                                                    {oneKycForParticular?.businessReceipts? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.businessReceipts } FCFA</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </>
-                                                            ) : ("") }
-
-                                                            {oneKycForParticular?.allowances==="Indemnités" ? (
-                                                                <>
-                                                                    <b>Montant :</b><br/>
-                                                                    {oneKycForParticular?.allowances? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.allowances } FCFA</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </>
-                                                            ) : ("") }  
-                                                        </>
-                                                    ):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                     
                                                 </div>
                                             </div>
@@ -870,25 +864,20 @@ const KycPendingParticular = () => {
                                             <div className="col-lg-12 col-md-12">
                                                 <div className='mx-5 '>
                                                     <div className=''>
-                                                        <b> Etes-vous US Person ? (Citoyenneté Américaine (Passeport américain) / Résidence aux USA /Présence significative ou permanente (green card) / Lieu de naissance aux USA) :</b><br/>
+                                                        <b> Etes-vous une "US PERSON"? (Citoyenneté Américaine (Passeport américain) / Résidence aux USA /Présence significative ou permanente (green card) / Lieu de naissance aux USA) :</b><br/>
                                                         {oneKycForParticular?.usPerson? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.usPerson}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                     </div>
 
                                                     <div className='mx-10 '>
-                                                        <b>Boîte postale :</b><br/>
+                                                        <b>Adresse ou boîte postale :</b><br/>
                                                         {oneKycForParticular?.mailbox? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.mailbox }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                     </div>
-
                                                     <div className='mx-10 '>
-                                                        <b> Profession/fonction/activité :</b><br/>
-                                                        {oneKycForParticular?.profession? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.profession }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                    </div>
-                                                    <div className='mx-10 '>
-                                                        <b> Statut du profession :</b><br/>
+                                                        <b> Statut professionnel :</b><br/>
                                                         {oneKycForParticular?.professionStatus? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.professionStatus }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                     </div>
 
-                                                    {/* Si le statut du profession est salarié */}
+                                                    {/* Si le Statut professionnel est salarié */}
                                                     {oneKycForParticular?.professionStatus === "Salarié" ? (
                                                         <>
                                                             <div className='mx-10 '>
@@ -902,13 +891,25 @@ const KycPendingParticular = () => {
                                                             </div>
                                                         </>
                                                     ) : ("")}
-
+                                                    <div className='mx-10 '>
+                                                        <b> Profession/fonction/activité :</b><br/>
+                                                        {oneKycForParticular?.profession? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.profession }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
                                                     {/* Fin */}
-
+                                                    
+                                                    {/* PARTIE MOTIVATION */}
                                                     <div className='mx-10 '>
                                                         <b> Motivation de l’ouverture de compte :</b><br/>
-                                                        {oneKycForParticular?.motivation? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.motivation }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                        {oneKycForParticular?.motivation? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.motivation }</p>): ("")}
+                                                        {oneKycForParticular?.motivationA? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.motivationA }</p>): ("")}
+                                                        {oneKycForParticular?.motivationB? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.motivationB }</p>): ("")}
+                                                        {oneKycForParticular?.motivationC? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.motivationC }</p>): ("")}
+                                                        {oneKycForParticular?.motivationD? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.motivationD }</p>): ("")}
+                                                        
+                                                        {!oneKycForParticular?.motivation && !oneKycForParticular?.motivationA && !oneKycForParticular?.motivationB && !oneKycForParticular?.motivationC ? (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
+                                                    
                                                     </div>
+                                                    {/* FIN PARTIE MOTIVATION */}
 
                                                     <div className='mx-10 '>
                                                         <b> Bénéficiez-vous d’un mandat d’administrateur dans le Conseil d’Administration d’une société ?</b><br/>
@@ -924,7 +925,7 @@ const KycPendingParticular = () => {
                                                     
 
                                                     <div className='mx-10 '>
-                                                        <b> Etes-vous actionnaire dans une société ?</b><br/>
+                                                        <b> Etes-vous actionnaire, fondateur ou co-fondateur d'une société ??</b><br/>
                                                         {oneKycForParticular?.shareholder? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.shareholder }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                     </div>
                                                     

@@ -37,7 +37,7 @@ const CIdentiteRepresentantTwo = () => {
     // nationality
     // email
     // functions
-    // typeDocIdentite
+    // typeDocIdentity
     // identityDocNumber
     // mobile
     {/* POUR PIECE D'IDENTITE */}
@@ -54,6 +54,7 @@ const CIdentiteRepresentantTwo = () => {
     // backDomicilePhoto
     // signature
     {/* FIN */}
+
     const [firstName, setFirstName] = useState();
     const [lastName, setLastName] = useState();
     const [issuingCountry, setIssuingCountry] = useState();
@@ -62,7 +63,7 @@ const CIdentiteRepresentantTwo = () => {
     const [nationality, setNationality] = useState();
     const [functions, setFunctions] = useState();
     const [email, setEmail] = useState();
-    const [typeDocIdentite, setTypeDocIdentite] = useState();
+    const [typeDocIdentity, setTypeDocIdentity] = useState();
     const [typeDocumentResidence, setTypeDocumentResidence] = useState();
     const [identityDocNumber, setIdentityDocNumber] = useState();
     const [mobile, setMobile] = useState();
@@ -632,17 +633,17 @@ const handleOptionIncomeTypeC = (event) => {
 
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="typeDocIdentite"
+                                    htmlFor="typeDocIdentity"
                                     className="text-blackish-blue mb-2"
                                 >
                                     Type de document d’identité  
                                 </label>
                                 <select 
                                 className="form-control"
-                                id="typeDocIdentite"
+                                id="typeDocIdentity"
                                 required
-                                defaultValue={typeDocIdentite} 
-                                onChange={(event)=>setTypeDocIdentite(event.target.value)}
+                                defaultValue={typeDocIdentity} 
+                                onChange={(event)=>setTypeDocIdentity(event.target.value)}
                                 >
                                 <option defaultValue="">Choisissez</option>
                                     <optgroup className='single-cryptocurrency-box'>

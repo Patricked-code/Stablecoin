@@ -64,9 +64,8 @@ const CIdentiteOne = () => {
 // rccmNumber
 // socialObject
 // numberIdentification
-// city
 // registeredAddress
-// Fax
+// fax
 // dateConstitution
 // registrationDate
 
@@ -77,6 +76,7 @@ const CIdentiteOne = () => {
 // phoneFixe**
 // mobile**
 // Email **
+// city **
     
                             
                             

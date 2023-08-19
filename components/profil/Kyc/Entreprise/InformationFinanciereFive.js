@@ -54,6 +54,13 @@ const CIformationFinanciereFive = () => {
 // otherCurrencyOthersIssued
 // otherCurrencyBankReceived
 // otherCurrencyOthersReceived
+// currencyOne
+// currencyTwo
+// currencyThree
+// countryOne
+// countryTwo
+// countryThree
+
 
 // POUR AUTRE TABLE
 // currencyOne

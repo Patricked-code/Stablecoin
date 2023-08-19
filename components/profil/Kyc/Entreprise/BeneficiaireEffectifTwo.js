@@ -29,7 +29,7 @@ const CBeneficiaireEffectifTwo = () => {
     const [messageError, setMessageError] = useState();
 
     // States du formulaire
-    // entrepriseName
+    // socialReason
     // firstName
     // lastName
     // issuingCountry
@@ -38,8 +38,7 @@ const CBeneficiaireEffectifTwo = () => {
     // dateBirth
     // nationality
     // email
-    // functions
-    // typeDocument
+    // typeDocIdentity
     // identityDocNumber
     // mobile
     // phoneFixe
@@ -53,9 +52,11 @@ const CBeneficiaireEffectifTwo = () => {
     // frontIdentityPhoto
     // backIdentityPhoto
     {/* FIN */}
+
     
     
-    const [entrepriseName, setEntrepriseName] = useState();
+    
+    const [socialReason, setSocialReason] = useState();
     const [firstName, setFirstName] = useState();
     const [lastName, setLastName] = useState();
     const [issuingCountry, setIssuingCountry] = useState();
@@ -64,7 +65,7 @@ const CBeneficiaireEffectifTwo = () => {
     const [nationality, setNationality] = useState();
     const [percentControl, setPercentControl] = useState();
     const [email, setEmail] = useState();
-    const [typeDocIdentite, setTypeDocIdentite] = useState();
+    const [typeDocIdentity, setTypeDocIdentity] = useState();
     const [expirationDate, setExpirationDate] = useState();
     const [identityDocNumber, setIdentityDocNumber] = useState();
     const [mobile, setMobile] = useState();
@@ -666,17 +667,17 @@ const handleOptionIncomeTypeC = (event) => {
 
                                             <div className="form-group mb-6 mt-3">
                                                 <label
-                                                    htmlFor="typeDocIdentite"
+                                                    htmlFor="typeDocIdentity"
                                                     className="text-blackish-blue mb-2"
                                                 >
                                                     Type de document d’identité  
                                                 </label>
                                                 <select 
                                                 className="form-control"
-                                                id="typeDocIdentite"
+                                                id="typeDocIdentity"
                                                 required
-                                                defaultValue={typeDocIdentite} 
-                                                onChange={(event)=>setTypeDocIdentite(event.target.value)}
+                                                defaultValue={typeDocIdentity} 
+                                                onChange={(event)=>setTypeDocIdentity(event.target.value)}
                                                 >
                                                 <option defaultValue="">Choisissez</option>
                                                     <optgroup className='single-cryptocurrency-box'>
@@ -1040,7 +1041,7 @@ const handleOptionIncomeTypeC = (event) => {
                                                 <>
                                                     <div className="form-group mb-6 mt-3">
                                                         <label
-                                                            htmlFor="entrepriseName"
+                                                            htmlFor="socialReason"
                                                             className="text-blackish-blue mb-2"
                                                         >
                                                             Raison sociale
@@ -1048,11 +1049,11 @@ const handleOptionIncomeTypeC = (event) => {
                                                         <div className='form-group'>
                                                             <input
                                                                 type='text'
-                                                                id='entrepriseName'
+                                                                id='socialReason'
                                                                 className='form-control'
                                                                 placeholder='Raison sociale'
-                                                                defaultValue={entrepriseName} 
-                                                                onChange={(event)=>setEntrepriseName(event.target.value)}
+                                                                defaultValue={socialReason} 
+                                                                onChange={(event)=>setSocialReason(event.target.value)}
                                                             />
                                                         </div>
                                                     </div >

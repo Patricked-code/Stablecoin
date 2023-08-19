@@ -26,25 +26,6 @@ const CIdentiteRepresentantOne = () => {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
 
-    // States du formulaire
-    // firstName
-    // lastName
-    // issuingCountry
-    // nativeCountry
-    // dateBirth
-    // nationality
-    // email
-    // functions
-    // typeDocument
-    // identityDocNumber
-    {/* POUR PIECE D'IDENTITE */}
-    // frontIdentity 
-    // backIdentity 
-    {/* FIN */}
-    {/* POUR PIECE DE DOMICILE */}
-    // frontDomicile
-    // backDomicile
-    {/* FIN */}
     const [firstName, setFirstName] = useState();
     const [lastName, setLastName] = useState();
     const [issuingCountry, setIssuingCountry] = useState();

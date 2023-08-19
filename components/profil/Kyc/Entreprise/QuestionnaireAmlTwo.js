@@ -72,10 +72,10 @@ const CQuestionnaireAmlTwo = () => {
 // otherBankNameDat
 // otherBankCountryDat
 // cashPayments
-// relationsIranKoreaSyriaCuba
+// relationsIranKoreaSyriaCuba S
 // transactionsInTaxHavens
 // cryptocurrencyPayments
-// relationsInternationalSanctions
+// relationsInternationalSanctions S
 // transactionsLowTaxation
 // politicallyExposedClients
 // offshoreCompanyPayments

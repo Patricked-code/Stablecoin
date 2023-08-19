@@ -217,9 +217,6 @@ const CQuestionnaireRevenuOne = () => {
                 frequencyA:dataTable?.frequencyA[0],
                 frequencyB:dataTable?.frequencyB[0],
                 frequencyC:dataTable?.frequencyC[0],
-                // incomeTypeA:dataTable?.incomeTypeA[0],
-                // incomeTypeB:dataTable?.incomeTypeB[0],
-                // incomeTypeC:dataTable?.incomeTypeC[0],
                 
             }
             // Condition pour forcer l'utilisateur à choisir au moins une reponse
@@ -621,7 +618,7 @@ const handleOptionIncomeTypeC = (event) => {
                                     htmlFor="Q1"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Avez-vous une source récurrente de revenus financiers ? soit mensuelle, Trimestriels ou annuels ?
+                                    Avez-vous une source récurrente de revenus financiers ? soit mensuelle, trimestrielle ou annuelle ?
                                 </label>
                                 <select 
                                 className="form-control"

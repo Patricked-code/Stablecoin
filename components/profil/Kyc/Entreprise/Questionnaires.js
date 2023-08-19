@@ -25,13 +25,35 @@ const CQuestionnaire = () => {
 
 
     // states des questionnaires
-
+// LES NOUVEAUX CHAMPS
+// spentA
+// spentB
+// spentC
+// spentD
+// spentE
+// spentF
+// spentG
+// spentH
+// spentI
+// operationA
+// operationB
+// operationC
+// operationD
+// operationE
+// operationF
+// operationG
+// eShop
+// multiplePayment
     // State de la question 2
     const [spentA, setSpentA] = useState([]);
     const [spentB, setSpentB] = useState([]);
     const [spentC, setSpentC] = useState([]);
     const [spentD, setSpentD] = useState([]);
     const [spentE, setSpentE] = useState([]);
+    const [spentF, setSpentF] = useState([]);
+    const [spentG, setSpentG] = useState([]);
+    const [spentH, setSpentH] = useState([]);
+    const [spentI, setSpentI] = useState([]);
 
     // State de la question 4
     const [operationA, setOperationA] = useState([]);
@@ -55,6 +77,45 @@ const CQuestionnaire = () => {
 
 
     const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
+
+
+    const descriptionFluxFinancierHorsAfriqueEuro = "Flux financier entrant (Hors Afrique / EURO)\t" +
+    "Clients AUTRES: Nous avons des clients qui ne sont ni en Afrique ni dans la zone euro.\n" +
+    "Devise du client: Autres devises (Hors Afrique, Hors Euro).\n" +
+    "Nous sommes amenés à recevoir des paiements de clients qui ne résident pas en Afrique et n'utilisent pas l'euro comme monnaie d'échange.";
+  
+  const descriptionFluxFinancierZoneEuro = "Flux financier entrant (Zone EURO)\n" +
+    "Clients ZONE EURO: Nous avons des clients dans la zone euro.\n" +
+    "Devise du client: EURO.\n" +
+    "Nous sommes amenés à recevoir des paiements de clients qui utilisent l'euro comme monnaie d'échange.";
+  
+  const descriptionFluxFinancierAutres = "Flux financier entrant (Hors Afrique / EURO)\n" +
+    "Clients AUTRES: Nous avons des clients qui ne sont ni en Afrique ni dans la zone euro.\n" +
+    "Devise du client: Autres devises (Hors Afrique, Hors Euro).\n" +
+    "Nous sommes amenés à recevoir des paiements de clients qui ne résident pas en Afrique et n'utilisent pas l'euro comme monnaie d'échange.";
+    
+  const descriptionFluxSortantUEMOA = "Flux financier sortant (Zone UEMOA)\n" +
+    "Fournisseurs UEMOA: Règlement FCFA.\n" +
+    "Nous sommes amenés à régler des factures auprès de fournisseurs qui résident dans les pays de la zone UEMOA et qui utilisent le franc CFA comme monnaie d'échange.";
+  
+  const descriptionFluxSortantHorsAfrique = "Flux financier sortant (Afrique - Hors UEMOA)\n" +
+    "Fournisseurs Afrique - Hors UEMOA: Règlement autres devises africaines (hors CFA).\n" +
+    "Nous sommes amenés à régler des factures auprès de fournisseurs africains qui n'utilisent pas le franc CFA comme monnaie d'échange.";
+  
+  const descriptionFluxSortantZoneEuro = "Flux financier sortant (Zone EURO)\n" +
+    "Fournisseurs ZONE EURO: Règlement EURO.\n" +
+    "Nous sommes amenés à régler des factures auprès de fournisseurs qui utilisent l'euro comme monnaie d'échange et qui résident dans la zone euro.";
+  
+  const descriptionFluxSortantAutres = "Flux financier sortant (Hors Afrique / EURO)\n" +
+    "Fournisseurs AUTRES: Règlement autres devises (Hors Afrique, Hors Euro).\n" +
+    "Nous sommes amenés à régler des factures auprès de fournisseurs qui n'utilisent ni le FCFA, ni l'EURO, ni une devise africaine comme monnaie d'échange.";
+  
+
+
+
+
+
+
 
     //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
     useEffect(() => {
@@ -99,6 +160,10 @@ const CQuestionnaire = () => {
                 spentC:Object.assign({},spentC),
                 spentD:Object.assign({},spentD),
                 spentE:Object.assign({},spentE),
+                spentF:Object.assign({},spentF),
+                spentG:Object.assign({},spentG),
+                spentH:Object.assign({},spentH),
+                spentI:Object.assign({},spentI),
                 operationA:Object.assign({},operationA),
                 operationB:Object.assign({},operationB),
                 operationC:Object.assign({},operationC),
@@ -114,6 +179,10 @@ const CQuestionnaire = () => {
                 spentC:dataTable?.spentC[0],
                 spentD:dataTable?.spentD[0],
                 spentE:dataTable?.spentE[0],
+                spentF:dataTable?.spentF[0],
+                spentG:dataTable?.spentG[0],
+                spentH:dataTable?.spentH[0],
+                spentI:dataTable?.spentI[0],
                 operationA:dataTable?.operationA[0],
                 operationB:dataTable?.operationB[0],
                 operationC:dataTable?.operationC[0],
@@ -196,6 +265,10 @@ const CQuestionnaire = () => {
                 spentC:Object.assign({},spentC),
                 spentD:Object.assign({},spentD),
                 spentE:Object.assign({},spentE),
+                spentF:Object.assign({},spentF),
+                spentG:Object.assign({},spentG),
+                spentH:Object.assign({},spentH),
+                spentI:Object.assign({},spentI),
                 operationA:Object.assign({},operationA),
                 operationB:Object.assign({},operationB),
                 operationC:Object.assign({},operationC),
@@ -211,6 +284,10 @@ const CQuestionnaire = () => {
                 spentC:dataTable?.spentC[0],
                 spentD:dataTable?.spentD[0],
                 spentE:dataTable?.spentE[0],
+                spentF:dataTable?.spentF[0],
+                spentG:dataTable?.spentG[0],
+                spentH:dataTable?.spentH[0],
+                spentI:dataTable?.spentI[0],
                 operationA:dataTable?.operationA[0],
                 operationB:dataTable?.operationB[0],
                 operationC:dataTable?.operationC[0],
@@ -341,6 +418,50 @@ const CQuestionnaire = () => {
             setSpentE([...spentE, value]);
         } else {
             setSpentE("");
+        }
+    };
+
+    const handleOptionSpentF = (event) => {
+        const value = event.target.value;
+        const isChecked = event.target.checked;
+
+        if (isChecked) {
+            setSpentF([...spentF, value]);
+        } else {
+            setSpentF("");
+        }
+    };
+
+    const handleOptionSpentG = (event) => {
+        const value = event.target.value;
+        const isChecked = event.target.checked;
+
+        if (isChecked) {
+            setSpentG([...spentG, value]);
+        } else {
+            setSpentG("");
+        }
+    };
+
+    const handleOptionSpentH = (event) => {
+        const value = event.target.value;
+        const isChecked = event.target.checked;
+
+        if (isChecked) {
+            setSpentH([...spentH, value]);
+        } else {
+            setSpentH("");
+        }
+    };
+
+    const handleOptionSpentI = (event) => {
+        const value = event.target.value;
+        const isChecked = event.target.checked;
+
+        if (isChecked) {
+            setSpentI([...spentI, value]);
+        } else {
+            setSpentI("");
         }
     };
     // FIN
@@ -592,9 +713,96 @@ const CQuestionnaire = () => {
                                         </p>
                                         </label>
                                     </div>
+
+                                    {/* Salaires */}
+                                    <div className="form-group  mt-3 ">
+                                        <label
+                                            htmlFor="Salaires-check"
+                                            className="gr-check-input mb-7 d-flex"
+                                        >
+                                            <input 
+                                            type="checkbox" 
+                                            name="Salaires"
+                                            id='Salaires-check' 
+                                            value='Salaires'
+                                            checked={spentF.includes("Salaires")}
+                                            onChange={handleOptionSpentF}
+                                            />
+                                        <p className=" mx-2 mb-0 text-center">
+                                            Salaires
+                                        </p>
+                                        </label>
+                                    </div>
+
+                                    {/* Charges sociales */}
+                                    <div className="form-group  mt-3 ">
+                                        <label
+                                            htmlFor="Charges-check"
+                                            className="gr-check-input mb-7 d-flex"
+                                        >
+                                            <input 
+                                            type="checkbox" 
+                                            name="Charges"
+                                            id='Charges-check' 
+                                            value='Charges sociales'
+                                            checked={spentG.includes("Charges sociales")}
+                                            onChange={handleOptionSpentG}
+                                            />
+                                        <p className=" mx-2 mb-0 text-center">
+                                            Charges sociales
+                                        </p>
+                                        </label>
+                                    </div>
+
+                                    {/* Cotisations */}
+                                    <div className="form-group  mt-3 ">
+                                        <label
+                                            htmlFor="Cotisations-check"
+                                            className="gr-check-input mb-7 d-flex"
+                                        >
+                                            <input 
+                                            type="checkbox" 
+                                            name="Cotisations"
+                                            id='Cotisations-check' 
+                                            value='Cotisations'
+                                            checked={spentH.includes("Cotisations")}
+                                            onChange={handleOptionSpentH}
+                                            />
+                                        <p className=" mx-2 mb-0 text-center">
+                                            Cotisations
+                                        </p>
+                                        </label>
+                                    </div>
+
+                                    {/* Autres */}
+                                    <div className="form-group  mt-3 ">
+                                        <label
+                                            htmlFor="Autres-check"
+                                            className="gr-check-input mb-7 d-flex"
+                                        >
+                                            <input 
+                                            type="checkbox" 
+                                            name="Autres"
+                                            id='Autres-check' 
+                                            value='Autres'
+                                            checked={spentI.includes("Autres")}
+                                            onChange={handleOptionSpentI}
+                                            />
+                                        <p className=" mx-2 mb-0 text-center">
+                                            Autres
+                                        </p>
+                                        </label>
+                                    </div>
+
+                                    
                                 </>
                             ):('')}
                              {/* Fin Q2 */}
+
+                              
+
+
+
 
                             {/* Question 3 */}
                             <div className="form-group mb-6 mt-3">
@@ -602,7 +810,7 @@ const CQuestionnaire = () => {
                                     htmlFor="Q1"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Avez-vous des clients ou des fournisseurs dans en dehors du pays dans lequel votre entreprise en située?
+                                    Avez-vous des clients ou des fournisseurs en dehors du pays dans lequel votre entreprise en située?
                                 </label>
                                 <select 
                                 className="form-control"
@@ -619,7 +827,13 @@ const CQuestionnaire = () => {
                                 </select>
                             </div >
                             {/* Fin Q3 */}
-
+                            {/* descriptionFluxFinancierHorsAfriqueEuro */}
+    {/* descriptionFluxFinancierZoneEuro */}
+    {/* descriptionFluxFinancierAutres */}
+    {/* descriptionFluxSortantUEMOA */}
+    {/* descriptionFluxSortantHorsAfrique */}
+    descriptionFluxSortantZoneEuro
+    descriptionFluxSortantAutres
                             {/* Question 4 */}
                             {statutQ3==="Oui" ? (
                                 <>
@@ -629,6 +843,7 @@ const CQuestionnaire = () => {
                                         className="text-blackish-blue mb-2"
                                     >
                                         Les opérations financières transfrontalières dans le cadre des activités de votre entreprise concernent ? 
+                                    
                                     </label>
                                 
                                     {/* operationA*/}
@@ -641,13 +856,16 @@ const CQuestionnaire = () => {
                                             type="checkbox" 
                                             name="operationA"
                                             id='operationA-check' 
-                                            value="Vos clients Afrique-hors UEMOA: Réception de Fonds facturés aux clients africains-Hors CFA"
-                                            checked={operationA.includes("Vos clients Afrique-hors UEMOA: Réception de Fonds facturés aux clients africains-Hors CFA")}
+                                            value={descriptionFluxFinancierHorsAfriqueEuro}
+                                            checked={operationA.includes(`${descriptionFluxFinancierHorsAfriqueEuro}`)}
                                             onChange={handleOptionOperationA}
                                             />
-                                        <p className=" mx-2 mb-0">
-                                            Vos clients Afrique-hors UEMOA: Réception de Fonds facturés aux clients africains-Hors CFA
-                                        </p>
+                                            <p className='mx-2'>
+                                                Flux financier entrant (Afrique - Hors UEMOA) <br/>
+                                                Clients Afrique - Hors UEMOA: Nous avons des clients en Afrique qui ne sont pas dans la zone UEMOA.<br/>
+                                                Devise du client: Autres devises africaines.<br/>
+                                                Nous sommes amenés à recevoir des paiements de clients africains qui n'utilisent pas le franc CFA comme monnaie d'échange.<br/>
+                                            </p>
                                         </label>
                                     </div>
                                     {/* operationB */}
@@ -660,12 +878,15 @@ const CQuestionnaire = () => {
                                             type="checkbox" 
                                             name="operationB"
                                             id='operationA-check' 
-                                            value="Vos clients ZONE EURO : Réception de Fonds facturés aux clients qui résident dans la zone EURO"
-                                            checked={operationB.includes("Vos clients ZONE EURO : Réception de Fonds facturés aux clients qui résident dans la zone EURO")}
+                                            value={descriptionFluxFinancierZoneEuro}
+                                            checked={operationB.includes(`${descriptionFluxFinancierZoneEuro}`)}
                                             onChange={handleOptionOperationB}
                                             />
                                         <p className=" mx-2 mb-0 ">
-                                            Vos clients ZONE EURO : Réception de Fonds facturés aux clients qui résident dans la zone EURO
+                                            Flux financier entrant (Zone EURO)<br/>
+                                            Clients ZONE EURO: Nous avons des clients dans la zone euro.<br/>
+                                            Devise du client: EURO.<br/>
+                                            Nous sommes amenés à recevoir des paiements de clients qui utilisent l'euro comme monnaie d'échange.<br/>
                                         </p>
                                         </label>
                                     </div>
@@ -679,12 +900,16 @@ const CQuestionnaire = () => {
                                             type="checkbox" 
                                             name="operationC"
                                             id='operationC-check' 
-                                            value="Vos clients AUTRES : Réception de Fonds facturés aux clients qui ne sont ni en Afrique, ni dans la zone euro"
-                                            checked={operationC.includes("Vos clients AUTRES : Réception de Fonds facturés aux clients qui ne sont ni en Afrique, ni dans la zone euro")}
+                                            value={descriptionFluxFinancierAutres}
+                                            checked={operationC.includes(`{descriptionFluxFinancierAutres}`)}
                                             onChange={handleOptionOperationC}
                                             />
                                         <p className=" mx-2 mb-0">
-                                            Vos clients AUTRES : Réception de Fonds facturés aux clients qui ne sont ni en Afrique, ni dans la zone euro
+
+                                            Flux financier entrant (Hors Afrique / EURO).<br/>
+                                            Clients AUTRES: Nous avons des clients qui ne sont ni en Afrique ni dans la zone euro.<br/>
+                                            Devise du client: Autres devises (Hors Afrique, Hors Euro).<br/>
+                                            Nous sommes amenés à recevoir des paiements de clients qui ne résident pas en Afrique et n'utilisent pas l'euro comme monnaie d'échange.<br/>
                                         </p>
                                         </label>
                                     </div>
@@ -700,12 +925,16 @@ const CQuestionnaire = () => {
                                             type="checkbox" 
                                             name="operationD"
                                             id='operationD-check' 
-                                            value="Vos Fournisseurs UEMOA : Envoi de Fonds Pour payer vos Fournisseurs dans les pays de la zone CFA UEMOA"
-                                            checked={operationD.includes("Vos Fournisseurs UEMOA : Envoi de Fonds Pour payer vos Fournisseurs dans les pays de la zone CFA UEMOA")}
+                                            value={descriptionFluxSortantUEMOA}
+                                            checked={operationD.includes(`${descriptionFluxSortantUEMOA}`)}
                                             onChange={handleOptionOperationD}
                                             />
                                         <p className=" mx-2 mb-0">
-                                            Vos Fournisseurs UEMOA : Envoi de Fonds Pour payer vos Fournisseurs dans les pays de la zone CFA UEMOA
+
+                                            Flux financier sortant (Zone UEMOA)<br/>
+                                            Fournisseurs UEMOA: Règlement FCFA.<br/>
+                                            Nous sommes amenés à régler des factures auprès de fournisseurs qui résident dans les pays de la zone UEMOA et qui utilisent le franc CFA comme monnaie d'échange.eurs UEMOA : Envoi de Fonds Pour payer vos Fournisseurs dans les pays de la zone CFA UEMOA<br/>
+                                        
                                         </p>
                                         </label>
                                     </div>
@@ -719,12 +948,14 @@ const CQuestionnaire = () => {
                                             type="checkbox" 
                                             name="operationE"
                                             id='operationE-check' 
-                                            value="Vos Fournisseurs Afrique-hors UEMOA: Envoi de Fonds Pour payer vos Fournisseurs africains-Hors CFA"
-                                            checked={operationE.includes("Vos Fournisseurs Afrique-hors UEMOA: Envoi de Fonds Pour payer vos Fournisseurs africains-Hors CFA")}
+                                            value={descriptionFluxSortantHorsAfrique}
+                                            checked={operationE.includes(`${descriptionFluxSortantHorsAfrique}`)}
                                             onChange={handleOptionOperationE}
                                             />
                                         <p className=" mx-2 mb-0">
-                                            Vos Fournisseurs Afrique-hors UEMOA: Envoi de Fonds Pour payer vos Fournisseurs africains-Hors CFA
+                                            Flux financier sortant (Afrique - Hors UEMOA)<br/>
+                                            Fournisseurs Afrique - Hors UEMOA: Règlement autres devises africaines (hors CFA).<br/>
+                                            Nous sommes amenés à régler des factures auprès de fournisseurs africains qui n'utilisent pas le franc CFA comme monnaie d'échange.<br/>
                                         </p>
                                         </label>
                                     </div>
@@ -738,12 +969,14 @@ const CQuestionnaire = () => {
                                             type="checkbox" 
                                             name="operationF"
                                             id='operationF-check' 
-                                            value="Vos Fournisseurs ZONE EURO : Envoi de Fonds Pour payer vos Fournisseurs qui résident dans la zone EURO"
-                                            checked={operationF.includes("Vos Fournisseurs ZONE EURO : Envoi de Fonds Pour payer vos Fournisseurs qui résident dans la zone EURO")}
+                                            value={descriptionFluxSortantZoneEuro}
+                                            checked={operationF.includes(`${descriptionFluxSortantZoneEuro}`)}
                                             onChange={handleOptionOperationF}
                                             />
                                         <p className=" mx-2 mb-0">
-                                            Vos Fournisseurs ZONE EURO : Envoi de Fonds Pour payer vos Fournisseurs qui résident dans la zone EURO
+                                            Flux financier sortant (Zone EURO)<br/>
+                                            Fournisseurs ZONE EURO: Règlement EURO.<br/>
+                                            Nous sommes amenés à régler des factures auprès de fournisseurs qui utilisent l'euro comme monnaie d'échange et qui résident dans la zone euro.<br/>
                                         </p>
                                         </label>
                                     </div>
@@ -757,12 +990,14 @@ const CQuestionnaire = () => {
                                             type="checkbox" 
                                             name="operationG"
                                             id='operationG-check' 
-                                            value="Vos Fournisseurs AUTRES : Envoi de Fonds Pour payer vos Fournisseurs qui ne sont ni en Afrique, ni dans la zone euro"
-                                            checked={operationG.includes("Vos Fournisseurs AUTRES : Envoi de Fonds Pour payer vos Fournisseurs qui ne sont ni en Afrique, ni dans la zone euro")}
+                                            value={descriptionFluxSortantAutres}
+                                            checked={operationG.includes(`${descriptionFluxSortantAutres}`)}
                                             onChange={handleOptionOperationG}
                                             />
                                         <p className="mx-2 mb-0">
-                                            Vos Fournisseurs AUTRES : Envoi de Fonds Pour payer vos Fournisseurs qui ne sont ni en Afrique, ni dans la zone euro
+                                            Flux financier sortant (Hors Afrique / EURO)<br/>
+                                            Fournisseurs AUTRES: Règlement autres devises (Hors Afrique, Hors Euro).<br/>
+                                            Nous sommes amenés à régler des factures auprès de fournisseurs qui n'utilisent ni le FCFA, ni l'EURO, ni une devise africaine comme monnaie d'échange.<br/>
                                         </p>
                                         </label>
                                     </div>
@@ -798,7 +1033,7 @@ const CQuestionnaire = () => {
                                 htmlFor="Q1"
                                 className="text-blackish-blue mb-2"
                             >
-                                Seriez intéressés par une solution digitale (paiement/ encaissement) qui vous permettra de recevoir et d'effectuer des paiements instantanés de vos clients et à vos fournisseurs, quelque soit leur pays de résidence, les moyens de paiements que ces derniers utilisent ?
+                                Seriez vous intéressés par une solution digitale (paiement/encaissement) qui vous permettra de recevoir et d'effectuer des paiements instantanés de la part de vos clients et à vos fournisseurs, quel que soit leur pays de résidence et les moyens de paiement qu'ils utilisent ?
                             </label>
                             <select 
                                 className="form-control"
