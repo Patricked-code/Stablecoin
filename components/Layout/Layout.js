@@ -72,7 +72,8 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/beneficiaire-effectif-two"||
       pathname === "/profil/kyc/entreprise/structure-control-one"||
       pathname === "/profil/kyc/entreprise/structure-control-two"||
-      pathname === "/profil/kyc/entreprise/politiquement-exposees"||
+      pathname === "/profil/kyc/entreprise/politiquement-exposees-one"||
+      pathname === "/profil/kyc/entreprise/politiquement-exposees-two"||
       pathname === "/profil/kyc/entreprise/operations-financieres-one"||
       pathname === "/profil/kyc/entreprise/origine-fonds"||
       pathname === "/profil/kyc/entreprise/information-financiere-one"||
@@ -166,7 +167,8 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/beneficiaire-effectif-two"||
       pathname === "/profil/kyc/entreprise/structure-control-one"||
       pathname === "/profil/kyc/entreprise/structure-control-two"||
-      pathname === "/profil/kyc/entreprise/politiquement-exposees"||
+      pathname === "/profil/kyc/entreprise/politiquement-exposees-one"||
+      pathname === "/profil/kyc/entreprise/politiquement-exposees-two"||
       pathname === "/profil/kyc/entreprise/operations-financieres-one"||
       pathname === "/profil/kyc/entreprise/origine-fonds"||
       pathname === "/profil/kyc/entreprise/information-financiere-one"||

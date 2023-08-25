@@ -1,25 +1,10 @@
 import { useCallback, useState, useEffect,useRef } from 'react';
 import React from "react";
-import axios from 'axios';
 import Link from 'next/link';
-import { Icon } from '@iconify/react';
-
-
-// Pour Magic
-import { magic } from "../../../../magic";
-import { ethers } from "ethers";
-import Loading from "../../../loading";
 import Router from "next/router";
 import Swal from 'sweetalert2';
-import Web3 from "web3";
 import ProgressBar from '../ProgressBar';
 
-// Pour la signature
-import SignatureCanvas from 'react-signature-canvas'
-// Pour camera photo
-import Webcam from 'react-webcam'
-
-// FIN
 
 const COperationsFinancieresOne = () => {
     // Variable de l'url de l'api
@@ -27,6 +12,9 @@ const COperationsFinancieresOne = () => {
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
+    const [currentKycStatut, setCurrentKycStatut] = useState();
+    const [financialOperationIdsToUpdate, setFinancialOperationIdsToUpdate] = useState([]);
+
 
     // ***********LA BONNE PARTIE ***********************
     const [statusA, setStatusA] = useState(0);
@@ -35,11 +23,7 @@ const COperationsFinancieresOne = () => {
     const [statusD, setStatusD] = useState(0);
     const [statusE, setStatusE] = useState(0);
 
-    // LES BONS
-    // title
-	// question
-	// answer
-
+    // Les states du formulaire
     const [questionsA, setQuestionsA] = useState([
         { title: 'Opérations liées aux ventes et aux clients', question: 'Réception de paiements des clients pour les ventes de biens ou services.', answer: '' },
         { title: 'Opérations liées aux achats et aux fournisseurs', question: 'Paiement des fournisseurs pour l\'achat de biens ou services.', answer: '' },
@@ -87,9 +71,6 @@ const COperationsFinancieresOne = () => {
     
       ]);
 
-       // localStorage.setItem('statusQuestA', statusA); 
-        // const token = localStorage.getItem('tokenEnCours')
-    
 
     //   ***********PARTIE SOLUTION A*********************
       const handleInputChangeA = (e, index, field) => {
@@ -102,13 +83,175 @@ const COperationsFinancieresOne = () => {
       };
 
 
-      const handleSubmitA = (e) => {
+    // ENVOIES DES DONNEES DE L'OPERATION FINANCIERE
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoggingIn(true);
 
-        // Effectuer des actions avec les questions du formulaire
-        console.log(questionsA);
-      };
-    //   ****************FIN**********************************
+        // Combiner les données du formulaire de différentes sections
+        const combinedFormData = [
+            ...questionsA,
+            ...questionsB,
+            ...questionsC,
+            ...questionsD,
+            ...questionsE,
+        ];
+        try {
+            // Prepare data
+            const dataa = {
+                financialOperation: combinedFormData,
+            };
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+            // Envoyer une requête POST en utilisant fetch
+            const response = await fetch(`${API_URL}/api/kyc/business/add-kyc-financial-operation`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`
+
+                },
+                body: JSON.stringify(dataa),
+            });
+
+            // Parse the response data
+            const data = await response.json();
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message) {
+                setMessageError(data.message)
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+            }else{
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                    showConfirmButton: false,
+                    timer: 5000
+                }),
+                setTimeout(() => {
+                    if (currentKycStatut==="1") {
+                        Router.push("/profil/kyc/entreprise/resultat-kyc"); 
+                    }else{
+                        Router.push("/profil/kyc/entreprise/origine-fonds"); 
+                    }
+                }, 5000)
+            }
+            // Fin condition 
+                    
+        } catch (error) {
+            setIsLoggingIn(false);
+        }
+    };
+    // FIN
+
+        // FONCTION DE MODIFICATION DES DONNEES DES OPERATIONS FINANCIRES
+        const handleUpdateSubmit = async (e) => {
+            e.preventDefault();
+            setIsLoggingIn(true);
+
+            try {
+                 // Combine form data from different sections
+                const combinedFormData = [
+                    ...questionsA,
+                    ...questionsB,
+                    ...questionsC,
+                    ...questionsD,
+                    ...questionsE,
+                ];
+
+                // Prepare data
+                const dataa = {
+                    financialOperationUpdate: combinedFormData,
+                    financialOperationIds: financialOperationIdsToUpdate,
+                };
+                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+                
+                // Send PUT request using fetch
+                const response = await fetch(`${API_URL}/api/kyc/business/update-kyc-financial-operation`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization:  `Bearer ${token}`
+                    },
+                    body: JSON.stringify(dataa),
+                });
+    
+                // Parse the response data
+                const data = await response.json();
+                /* Verifier s'il y a un messsage d'erreur et qui est différent de 200 on l'affiche dans SWAL 
+                * sinon on affiche le message de succès
+                */
+                if (data.message != 200) {
+                    setMessageError(data.message)
+                    setIsLoggingIn(false);
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        html: `<p> ${messageError} </p>` ,
+                        showConfirmButton: false,
+                        timer: 10000
+                    })
+                }else{
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                        showConfirmButton: false,
+                        timer: 5000
+                    }),
+                    setTimeout(() => {
+                        if (currentKycStatut==="1") {
+                            Router.push("/profil/kyc/entreprise/resultat-kyc"); 
+                        }else{
+                            Router.push("/profil/kyc/entreprise/origine-fonds"); 
+                        }
+                    }, 5000)
+                }
+                // Fin condition 
+                
+            } catch (error) {
+                setIsLoggingIn(false);
+            }
+        };
+        // FIN
+
+        // FONCTION POUR RECUPERER LES DONNEES DES OPERATIONS FINANCIERES ET DEFINIR LES IDENTIFIANTS
+        const getFinancialOperationData = async () => {
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+            try {
+                const response = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-operation-of-user-signIn`,{
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization:  `Bearer ${token}`
+                    },
+                });
+                const data = await response.json();
+    
+                // Extract IDs and set to state
+                const ids = data.map(item => item.id);
+                setFinancialOperationIdsToUpdate(ids);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+    
+        // Appelez getFinancialOperationData lors du montage du composant
+        useEffect(() => {
+            getFinancialOperationData();
+        }, []);
+        // FIN
+    
+    
 
 
     //   ***********PARTIE SOLUTION B*********************
@@ -119,14 +262,6 @@ const COperationsFinancieresOne = () => {
           updatedQuestions[index] = { ...updatedQuestions[index], [field]: value };
           return updatedQuestions;
         });
-      };
-
-
-      const handleSubmitB = (e) => {
-        e.preventDefault();
-
-        // Effectuer des actions avec les questions du formulaire
-        console.log(questionsB);
       };
     //   ****************FIN**********************************
 
@@ -139,14 +274,6 @@ const COperationsFinancieresOne = () => {
           return updatedQuestions;
         });
       };
-
-
-      const handleSubmitC = (e) => {
-        e.preventDefault();
-
-        // Effectuer des actions avec les questions du formulaire
-        console.log(questionsC);
-      };
     //   ****************FIN**********************************
 
     //   ***********PARTIE SOLUTION D*********************
@@ -157,14 +284,6 @@ const COperationsFinancieresOne = () => {
           updatedQuestions[index] = { ...updatedQuestions[index], [field]: value };
           return updatedQuestions;
         });
-      };
-
-
-      const handleSubmitD = (e) => {
-        e.preventDefault();
-
-        // Effectuer des actions avec les questions du formulaire
-        console.log(questionsD);
       };
     //   ****************FIN**********************************
 
@@ -177,625 +296,65 @@ const COperationsFinancieresOne = () => {
           return updatedQuestions;
         });
       };
-
-
-      const handleSubmitE = (e) => {
-        e.preventDefault();
-
-        // Effectuer des actions avec les questions du formulaire
-        console.log(questionsE);
-      };
     //   ****************FIN**********************************
 
 
-    // ***********FIN DE LA BONNE PARTIE*******************
-
-console.log("statutA=>",statusA)
-
-
-
-
-    // const handleSubmit = (e) => {
-    //     e.preventDefault();
-    //     Construction des données à envoyer
-    //     const requestData = questions.map((question) => ({
-    //       title: question.title,
-    //       question: question.question,
-    //       answer: question.answer
-    //     }));
-    
-    //     Envoi de la requête POST à l'API
-    //     fetch('URL_DE_L_API', {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json'
-    //       },
-    //       body: JSON.stringify(requestData)
-    //     })
-    //       .then((response) => response.json())
-    //       .then((data) => {
-    //         Traitement de la réponse de l'API
-    //         console.log(data);
-    //       })
-    //       .catch((error) => {
-    //         Gestion des erreurs
-    //         console.error(error);
-    //       });
-    //   };
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // States du formulaire
-    // entrepriseName
-    // firstName
-    // lastName
-    // issuingCountry
-    // nativeCountry
-    // countryRegistration
-    // dateBirth
-    // nationality
-    // email
-    // functions
-    // typeDocument
-    // identityDocNumber
-    // mobile
-    // phoneFixe
-    // startDate
-    // NumberRCCM
-    // expirationDate
-    // typeBeneficiary
-    {/* POUR PIECE D'IDENTITE */}
-    // frontIdentity 
-    // backIdentity 
-    {/* FIN */}
-    {/* POUR PIECE DE DOMICILE */}
-    // frontDomicile
-    // backDomicile
-    {/* FIN */}
-    
-    const [entrepriseName, setEntrepriseName] = useState();
-    
-    const [issuingCountry, setIssuingCountry] = useState();
-    const [nativeCountry, setNativeCountry] = useState();
-    const [dateBirth, setDateBirth] = useState();
-    
-    const [percentControl, setPercentControl] = useState();
-    const [email, setEmail] = useState();
-    const [typeDocIdentite, setTypeDocIdentite] = useState();
-    const [expirationDate, setExpirationDate] = useState();
-    const [identityDocNumber, setIdentityDocNumber] = useState();
-    const [mobile, setMobile] = useState();
-    const [typeBeneficiary, setTypeBeneficiary] = useState();
-    const [countryRegistration, setCountryRegistration] = useState();
-    const [phoneFixe, setPhoneFixe] = useState();
-    const [startDate, setStartDate] = useState();
-    const [numberRCCM, setNumberRCCM] = useState();
-    
-    const [frontIdentity, setFrontIdentity ] = useState();
-    const [backIdentity, setCackIdentity ] = useState();
-    const [frontDomicile, setFrontDomicile] = useState();
-    const [backDomicile, setBackDomicile] = useState();
-
-
-
-
-
-    // familyCompany
-    // functions
-    // firstName
-    // lastName
-    // nationality
-    const [familyCompany, setFamilyCompany] = useState();
-    const [functions, setFunctions] = useState();
-    const [firstName, setFirstName] = useState();
-    const [lastName, setLastName] = useState();
-    const [nationality, setNationality] = useState();
-
-
-
-
-
-
-    // Pour la signature
-    const signatureRef = useRef(null)
-    const [signatureData, setSignatureData] = useState(null)
-
-    // Fonction pour sauvegarder une signature
-    const save = () => {
-        const data = signatureRef.current.getTrimmedCanvas().toDataURL('image/png')
-        setSignatureData(data)
+    // Modifie le state setStatusA avant de passer à la page suivante
+    const newPageA =()=>{
+        setStatusA(1),
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            html: `<p> Veuillez renseigner aussi le formulaire de la page suivante.</p>` ,
+            showConfirmButton: false,
+            timer: 5000
+        })
     }
 
-    // STATES POUR PRENDRE PHOTO WEBCAMP (IDENTITE)
-    const [statutDocIdentite, setStatutDocIdentite] = React.useState();
-    // const [importerIdentite, setImporterIdentite] = React.useState();
-    const [statutRecto, setStatutRecto] = React.useState("0");
-    const [statutVerso, setStatutVerso] = React.useState("0");
-    const webcamRefRecto = useRef(null)
-    const webcamRefVerso = useRef(null)
-    const [imageRecto, setImageRecto] = useState(null)
-    const [imageVerso, setImageVerso] = useState(null)
-    // FIN
-
-    // LES FONCTIONS POUR PRENDRE PHOTO (IDENTITE)
-    // Fonction pour prendre photo du Recto
-    const captureRecto = () => {
-        const image = webcamRefRecto.current.getScreenshot()
-        setImageRecto(image)
+    // Modifie le state setStatusB avant de passer à la page suivante
+    const newPageB =()=>{
+        setStatusB(1)
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            html: `<p> Veuillez renseigner aussi le formulaire de la page suivante.</p>` ,
+            showConfirmButton: false,
+            timer: 5000
+        })
     }
-    // Fin
 
-    // Fonction pour prendre photo du verso
-    const captureVerso = () => {
-        const image = webcamRefVerso.current.getScreenshot()
-        setImageVerso(image)
+    // Modifie le state setStatusC avant de passer à la page suivante
+    const newPageC =()=>{
+        setStatusC(1)
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            html: `<p> Veuillez renseigner aussi le formulaire de la page suivante.</p>` ,
+            showConfirmButton: false,
+            timer: 5000
+        })
     }
-    // Fin
-    // FIN
 
-
-    // STATES POUR PRENDRE PHOTO WEBCAMP (IDENTITE)
-    const [statutDocDomicile, setStatutDocDomicile] = React.useState();
-    const [statutRectoDomicile, setStatutRectoDomicile] = React.useState("0");
-    const [statutVersoDomicile, setStatutVersoDomicile] = React.useState("0");
-    const webcamRefRectoDomicile = useRef(null)
-    const webcamRefVersoDomicile = useRef(null)
-    const [imageRectoDomicile, setImageRectoDomicile] = useState(null)
-    const [imageVersoDomicile, setImageVersoDomicile] = useState(null)
-    // FIN
-
-    // LES FONCTIONS POUR PRENDRE PHOTO (DOMICILE)
-    // Fonction pour prendre photo du Recto
-    const captureRectoDomicile = () => {
-        const image = webcamRefRectoDomicile.current.getScreenshot()
-        setImageRectoDomicile(image)
+    // Modifie le state setStatusD avant de passer à la page suivante
+    const newPageD =()=>{
+        setStatusD(1)
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            html: `<p> Veuillez renseigner aussi le formulaire de la page suivante.</p>` ,
+            showConfirmButton: false,
+            timer: 5000
+        })
     }
-    // Fin
-
-    // Fonction pour prendre photo du verso
-    const captureVersoDomicile = () => {
-        const image = webcamRefVersoDomicile.current.getScreenshot()
-        setImageVersoDomicile(image)
-    }
-    // Fin
-    // FIN
-
-    
-
-    
-    
-    
-                            
-                            
-                            
-                            
-                            
-                            
-    
 
 
 
 
-    // State de la question 2
-    const [spentA, setSpentA] = useState([]);
-    const [spentB, setSpentB] = useState([]);
-    const [spentC, setSpentC] = useState([]);
-    const [spentD, setSpentD] = useState([]);
-    const [spentE, setSpentE] = useState([]);
-    const [spentF, setSpentF] = useState([]);
-
-    // State de la question 4
-    const [frequencyA, setFrequencyA] = useState([]);
-    const [frequencyB, setFrequencyB] = useState([]);
-    const [frequencyC, setFrequencyC] = useState([]);
-
-    // State de la question 5
-    const [incomeTypeA, setIncomeTypeA] = useState([]);
-    const [incomeTypeB, setIncomeTypeB] = useState([]);
-    const [incomeTypeC, setIncomeTypeC] = useState([]);
-
-    // State de la question 1 et 3
-    const [statutQ1, setStatutQ1] = useState();
-    const [statutQ3, setStatutQ3] = useState();
-    
-    // FIN
-
-    const [kycForParticular, setKycForParticular] = useState();
-
-
-
-    const [currentKycStatut, setCurrentKycStatut] = useState();
-
-    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
-    useEffect(() => {
-        const kycStatut = localStorage.getItem('currentUpdateKycStatut')  
-        setCurrentKycStatut(kycStatut)
-    }, [currentKycStatut]);
-    // Fin
-
-
-    // RECUPERER KYC DE L'UTILISATEUR
-    useEffect(async() => {
-        const token = localStorage.getItem('tokenEnCours')
-        
-            const getKycForParticular = async () => {
-            const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-kyc-particular-for-user`, {
-                headers: {
-                'Content-Type': 'application/json',
-                Authorization:  `Bearer ${token}`,
-                },
-            })
-                .then((resKyc) => resKyc.json())
-                .then((data) => {
-                setKycForParticular(data)
-                }) 
-            };
-            // console.log("Banques =>",allBank)
-            await getKycForParticular();
-    }, []);
-    // FIN
-
-
-
-
-
-
-
-
-    // Fonction d'envoie des informations du questionnaire
-    const addQuestionnaire= useCallback(async () => {
-        setIsLoggingIn(true);
-        
-        try {
-            const dataTable = {
-                spentA:Object.assign({},spentA),
-                spentB:Object.assign({},spentB),
-                spentC:Object.assign({},spentC),
-                spentD:Object.assign({},spentD),
-                spentE:Object.assign({},spentE),
-                spentF:Object.assign({},spentF),
-                frequencyA:Object.assign({},frequencyA),
-                frequencyB:Object.assign({},frequencyB),
-                frequencyC:Object.assign({},frequencyC),
-                incomeTypeA:Object.assign({}, incomeTypeA),
-                incomeTypeB:Object.assign({},incomeTypeB),
-                incomeTypeC:Object.assign({},incomeTypeC)
-            }
-
-            const dataa = {
-                spentA:dataTable?.spentA[0],
-                spentB:dataTable?.spentB[0],
-                spentC:dataTable?.spentC[0],
-                spentD:dataTable?.spentD[0],
-                spentE:dataTable?.spentE[0],
-                spentF:dataTable?.spentF[0],
-                frequencyA:dataTable?.frequencyA[0],
-                frequencyB:dataTable?.frequencyB[0],
-                frequencyC:dataTable?.frequencyC[0],
-                incomeTypeA:dataTable?.incomeTypeA[0],
-                incomeTypeB:dataTable?.incomeTypeB[0],
-                incomeTypeC:dataTable?.incomeTypeC[0],
-                
-            }
-            // Condition pour forcer l'utilisateur à choisir au moins une reponse
-            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
-                
-                
-                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
-
-                const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-questionnaires`, {
-                method:"POST",
-                body: JSON.stringify(dataa),
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization:  `Bearer ${token}`
-                }
-                })
-                const data = await result.json();
-            
-                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-                * sinon on affiche le message de succès
-                */
-                if (data.message) {
-                setMessageError(data.message)
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> ${messageError} </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-                }else{
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'success',
-                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
-                        showConfirmButton: false,
-                        timer: 5000
-                    }),
-                    setTimeout(() => {
-                    Router.push("/profil/kyc/particulier/seconde-phase"); 
-                    }, 5000)
-                }
-                // Fin condition 
-            }else{
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-            }
-            
-            } catch {
-            setIsLoggingIn(false);
-            }
-        
-    }, [spentA,spentB,spentC,spentD,spentE,spentF,frequencyA,frequencyB,frequencyC,incomeTypeA,incomeTypeB,incomeTypeC]);
-    // Fin
-
-
-     // Fonction d'envoie des informations du questionnaire
-     const updateQuestionnaire= useCallback(async () => {
-        setIsLoggingIn(true);
-        
-        try {
-            const dataTable = {
-                spentA:Object.assign({},spentA),
-                spentB:Object.assign({},spentB),
-                spentC:Object.assign({},spentC),
-                spentD:Object.assign({},spentD),
-                spentE:Object.assign({},spentE),
-                spentF:Object.assign({},spentF),
-                frequencyA:Object.assign({},frequencyA),
-                frequencyB:Object.assign({},frequencyB),
-                frequencyC:Object.assign({},frequencyC),
-                incomeTypeA:Object.assign({}, incomeTypeA),
-                incomeTypeB:Object.assign({},incomeTypeB),
-                incomeTypeC:Object.assign({},incomeTypeC)
-            }
-
-            const dataa = {
-                spentA:dataTable?.spentA[0],
-                spentB:dataTable?.spentB[0],
-                spentC:dataTable?.spentC[0],
-                spentD:dataTable?.spentD[0],
-                spentE:dataTable?.spentE[0],
-                spentF:dataTable?.spentF[0],
-                frequencyA:dataTable?.frequencyA[0],
-                frequencyB:dataTable?.frequencyB[0],
-                frequencyC:dataTable?.frequencyC[0],
-                incomeTypeA:dataTable?.incomeTypeA[0],
-                incomeTypeB:dataTable?.incomeTypeB[0],
-                incomeTypeC:dataTable?.incomeTypeC[0],
-                
-            }
-            // Condition pour forcer l'utilisateur à choisir au moins une reponse
-            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
-                
-                
-                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
-
-                const result = await fetch(`${API_URL}/api/kyc/particular/update-kyc-questionnaires`, {
-                method:"PUT",
-                body: JSON.stringify(dataa),
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization:  `Bearer ${token}`
-                }
-                })
-                const data = await result.json();
-            
-                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-                * sinon on affiche le message de succès
-                */
-                if (data.message) {
-                setMessageError(data.message)
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> ${messageError} </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-                }else{
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'success',
-                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
-                        showConfirmButton: false,
-                        timer: 5000
-                    }),
-                    setTimeout(() => {
-                        if (currentKycStatut==="1") {
-                            Router.push("/profil/kyc/particulier/resultat-kyc"); 
-        
-                        }else{
-                            Router.push("/profil/kyc/particulier/seconde-phase"); 
-                        }
-                    }, 5000)
-                }
-                // Fin condition 
-            }else{
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-            }
-            
-            } catch {
-            setIsLoggingIn(false);
-            }
-        
-    }, [spentA,spentB,spentC,spentD,spentE,spentF,frequencyA,frequencyB,frequencyC,incomeTypeA,incomeTypeB,incomeTypeC]);
-    // Fin
-
-// Les handles de la 2è question
-  const handleOptionSpentA = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentA([...spentA, value]);
-    } else {
-        setSpentA("");
-    }
-  };
-
-const handleOptionSpentB = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentB([...spentB, value]);
-    } else {
-        setSpentB("");
-    }
-};
-
-const handleOptionSpentC = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentC([...spentC, value]);
-    } else {
-        setSpentC("");
-    }
-};
-
-const handleOptionSpentD = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentD([...spentD, value]);
-    } else {
-        setSpentD("");
-    }
-};
-
-const handleOptionSpentE = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentE([...spentE, value]);
-    } else {
-        setSpentE("");
-    }
-};
-
-const handleOptionSpentF = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentF([...spentF, value]);
-    } else {
-        setSpentF("");
-    }
-};
-
-// FIN
-
-
-// Les handles de la 4è question
-const handleOptionFrequencyA = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setFrequencyA([...frequencyA, value]);
-    } else {
-        setFrequencyA("");
-    }
-};
-
-const handleOptionFrequencyB = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setFrequencyB([...frequencyB, value]);
-    } else {
-        setFrequencyB("");
-    }
-};
-
-const handleOptionFrequencyC = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setFrequencyC([...frequencyC, value]);
-    } else {
-        setFrequencyC("");
-    }
-};
-// FIN
- 
-// Les handles de la 5è question
-const handleOptionIncomeTypeA = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setIncomeTypeA([...incomeTypeA, value]);
-    } else {
-        setIncomeTypeA("");
-    }
-};
-
-const handleOptionIncomeTypeB = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setIncomeTypeB([...incomeTypeB, value]);
-    } else {
-        setIncomeTypeB("");
-    }
-};
-
-const handleOptionIncomeTypeC = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setIncomeTypeC([...incomeTypeC, value]);
-    } else {
-        setIncomeTypeC("");
-    }
-};
 
      // La barre de progression de KYC du profil entreprise
    const stepsEntreprise = ["AML","Identité","Représentant", "Bénéficiaire","Control", "Politique", "Opérations", "Fonds", "Financière", "Documents"];
 
-   const activeStepEntreprise = 4;
+   const activeStepEntreprise = 5;
     // Fin
 
   return (
@@ -829,8 +388,10 @@ const handleOptionIncomeTypeC = (event) => {
                 <div className='col-lg-3 col-md-12'></div>
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
                         {/* FORM A */}
+                        <form onSubmit={financialOperationIdsToUpdate?.length===0 ? handleSubmit:handleUpdateSubmit} className="my-30">
                         {statusA===0? (
-                            <form onSubmit={handleSubmitA} className="my-30">
+                            <>
+
                                 {questionsA.map((question, index) => (
                                     <div key={index} className="form-group mb-6 mt-3">
                                         <label><b>{question.title}</b></label>
@@ -867,7 +428,7 @@ const handleOptionIncomeTypeC = (event) => {
                                     {/* <button className="btn btn-primary" type='submit' onClick={()=>setStatusA(1)}  disabled={isLoggingIn}>Suivant</button> */}
                                     <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
                                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        <Link href='/profil/kyc/entreprise/politiquement-exposees/' className="align-right">
+                                        <Link href='/profil/kyc/entreprise/politiquement-exposees-two/' className="align-right">
                                             <a
                                             className=""
                                             >
@@ -876,21 +437,18 @@ const handleOptionIncomeTypeC = (event) => {
                                         </Link>                          
                                     </div>
                                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                       
-                                        <button className="btn btn-primary" type='submit' onClick={()=>setStatusA(1)}  disabled={isLoggingIn}>Suivant</button>
-                                                                  
+                                        <button className="btn btn-primary" type='button' onClick={newPageA} disabled={isLoggingIn}>Suivant</button>
                                     </div>
                                 </div>
-                            </form> 
+                            </>
                         ):("")} 
-
+                        
                         {/* FORM B */}
                         {statusA===1 && statusB===0 ? (
-                            <form onSubmit={handleSubmitB} className="my-30">
+                            <>
                                 <label><b>Opérations liées aux investissements :</b></label>
                                 {questionsB.map((question, index) => (
                                     <div key={index} className="form-group my-3">
-                                        {/* <label>{question.title}</label> */}
                                         <input
                                             type="text"
                                             hidden
@@ -928,19 +486,17 @@ const handleOptionIncomeTypeC = (event) => {
                                                                       
                                     </div>
                                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        <button className="btn btn-primary" type='submit' onClick={()=>setStatusB(1)}  disabled={isLoggingIn}>Suivant</button>
+                                        <button className="btn btn-primary" type='button' onClick={newPageB}  disabled={isLoggingIn}>Suivant</button>
 
                                     </div>
                                 </div>
-
-
-                            </form> 
+                            </>
                         ):("")} 
 
 
                         {/* FORM C */}
                         {statusA===1 && statusB===1 && statusC===0? (
-                            <form onSubmit={handleSubmitC} className="my-30">
+                            <>
                                 <label><b>Opérations liées au financement :</b></label>
                                 {questionsC.map((question, index) => (
                                     <div key={index} className="form-group mb-2 mt-3">
@@ -980,18 +536,16 @@ const handleOptionIncomeTypeC = (event) => {
                                                                       
                                     </div>
                                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        <button className="btn btn-primary" type='submit' onClick={()=>setStatusC(1)}  disabled={isLoggingIn}>Suivant</button>
+                                        <button className="btn btn-primary" type='button' onClick={newPageC}  disabled={isLoggingIn}>Suivant</button>
 
                                     </div>
                                 </div>
-                                    {/* <button className="btn btn-primary" type='submit' onClick={()=>setStatusC(1)} disabled={isLoggingIn}>Suivant</button> */}
-
-                            </form> 
+                            </>
                         ):("")}
 
                         {/* FORM D */}
                         {statusA===1 && statusB===1 && statusC===1 && statusD===0? (
-                            <form onSubmit={handleSubmitD} className="my-30">
+                            <>
                                 <label><b>Opérations liées aux opérations internationales :</b></label>
                                 {questionsD.map((question, index) => (
                                     <div key={index} className="form-group mb-6 mt-3">
@@ -1031,19 +585,17 @@ const handleOptionIncomeTypeC = (event) => {
                                                                       
                                     </div>
                                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        <button className="btn btn-primary" type='submit' onClick={()=>setStatusD(1)}  disabled={isLoggingIn}>Suivant</button>
+                                        <button className="btn btn-primary" type='button' onClick={newPageD}  disabled={isLoggingIn}>Suivant</button>
 
                                     </div>
                                 </div>
-                                    {/* <button className="btn btn-primary" type='submit' onClick={()=>setStatusD(1)}  disabled={isLoggingIn}>Suivant</button> */}
-
-                            </form> 
+                            </>
                         ):("")}
 
 
                         {/* FORM E */}
                         {statusA===1 && statusB===1 && statusC===1 && statusD===1 && statusE===0? (
-                            <form onSubmit={handleSubmitE} className="my-30">
+                            <>
                                 <label><b>Opérations diverses :</b></label>
 
                                 {questionsE.map((question, index) => (
@@ -1082,22 +634,12 @@ const handleOptionIncomeTypeC = (event) => {
                                         <button className="btn btn-primary " onClick={()=>setStatusD(0)}  type='button'  > Précédente </button>
                                     </div>
                                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        <Link href='/profil/kyc/entreprise/origine-fonds/' className="align-right">
-                                            <a
-                                            className=""
-                                            >
-                                                <button className="btn btn-primary " type='button'  > Suivant </button>
-                                            </a>   
-                                        </Link>                          
+                                        <button className="btn btn-primary" type='submit'   disabled={isLoggingIn}>Suivant</button>
                                     </div>
                                 </div>
-                                    {/* <button className="btn btn-primary" type='submit' onClick={()=>setStatusE(1)}  disabled={isLoggingIn}>Suivant</button> */}
-
-                            </form> 
+                            </>
                         ):("")}
-
-                        
-                             
+                        </form>  
                     </div>
                 <div className='col-lg-3 col-md-12'></div>
             </div>

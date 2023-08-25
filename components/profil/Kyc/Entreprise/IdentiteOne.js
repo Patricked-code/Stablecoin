@@ -20,29 +20,19 @@ const CIdentiteOne = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
+    const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
 
+    const [kycForEntreprise,setKycForEntreprise] = useState()
+    const [kycIdentityForUser,setKycIdentityForUser] = useState()
+    const [currentUser,setCurrentUser] = useState()
+    
     // States du formulaire
-                            // naturePerson
-                            // seniority
-                            // entreprise
-                            // numberRCCM
-                            // socialObject
-                            // numberIdentification
-                            // officeAddress
-                            // fax
-                            // email
-                            // dateConstitution
-                            // registrationDate
-                            // international
-                            // national
-                            // local
-
     const [naturePerson, setNaturePerson] = useState();
     const [seniority, setSeniority] = useState();
-    const [entreprise, setEntreprise] = useState();
-    const [numberRCCM, setNumberRCCM] = useState();
+    const [rccmNumber, setRccmNumber] = useState();
+    const [registeredAddress, setRegisteredAddress] = useState();
     const [socialObject, setSocialObject] = useState();
     const [numberIdentification, setNumberIdentification] = useState();
     const [officeAddress, setOfficeAddress] = useState();
@@ -50,89 +40,50 @@ const CIdentiteOne = () => {
     const [email, setEmail] = useState();
     const [dateConstitution, setDateConstitution] = useState();
     const [registrationDate, setRegistrationDate] = useState();
-    const [international, setInternational] = useState();
-    const [national, setNational] = useState();
-    const [local, setLocal] = useState();
+    const [international, setInternational] = useState([]);
+    const [national, setNational] = useState([]);
+    const [local, setLocal] = useState([]);
 
-    
-// LES BONS
-// international, 
-// national,
-// local
-// naturePerson
-// seniority
-// rccmNumber
-// socialObject
-// numberIdentification
-// registeredAddress
-// fax
-// dateConstitution
-// registrationDate
-
-// CEUX QUI SONT DANS LA TABLE USER
-// entreprise**
-// countryRegistration **
-// mailbox**
-// phoneFixe**
-// mobile**
-// Email **
-// city **
-    
-                            
-                            
-                            
-                            
-                            
-                            
+    // Pour les infos de l'utilisateur dans la table users
+    const [entreprise, setEntreprise] = useState();
+    const [mailbox, setMailbox] = useState();
+    const [phoneFixe, setPhoneFixe] = useState();
+    const [mobile, setMobile] = useState();
+    const [city, setCity] = useState();
     
 
-
-
-
-    // State de la question 2
-    const [spentA, setSpentA] = useState([]);
-    const [spentB, setSpentB] = useState([]);
-    const [spentC, setSpentC] = useState([]);
-    const [spentD, setSpentD] = useState([]);
-    const [spentE, setSpentE] = useState([]);
-    const [spentF, setSpentF] = useState([]);
-
-    // State de la question 4
-    const [frequencyA, setFrequencyA] = useState([]);
-    const [frequencyB, setFrequencyB] = useState([]);
-    const [frequencyC, setFrequencyC] = useState([]);
-
-    // State de la question 5
-    const [incomeTypeA, setIncomeTypeA] = useState([]);
-    const [incomeTypeB, setIncomeTypeB] = useState([]);
-    const [incomeTypeC, setIncomeTypeC] = useState([]);
-
-    // State de la question 1 et 3
-    const [statutQ1, setStatutQ1] = useState();
-    const [statutQ3, setStatutQ3] = useState();
-    
-    // FIN
-
-    const [kycForParticular, setKycForParticular] = useState();
-
-
-
-    const [currentKycStatut, setCurrentKycStatut] = useState();
-
-    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
     useEffect(() => {
-        const kycStatut = localStorage.getItem('currentUpdateKycStatut')  
-        setCurrentKycStatut(kycStatut)
-    }, [currentKycStatut]);
-    // Fin
+        (async () => {
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
 
+            // Obtenir l'utilisateur qui est connecté
+            const getUser = async () => {
+            const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
 
-    // RECUPERER KYC DE L'UTILISATEUR
+                },
+            })
+            .then((result) => result.json())
+            .then((user) => {
+            setCurrentUser(user)
+
+            }) 
+            };
+            await getUser();
+            // Fin
+
+        })();
+    }, [currentUser]);
+      // Fin
+
+    // RECUPERER KYC DE L'ENTREPRISE
     useEffect(async() => {
         const token = localStorage.getItem('tokenEnCours')
         
-            const getKycForParticular = async () => {
-            const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-kyc-particular-for-user`, {
+            const getKycForEntreprise = async () => {
+            const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-of-user`, {
                 headers: {
                 'Content-Type': 'application/json',
                 Authorization:  `Bearer ${token}`,
@@ -140,63 +91,86 @@ const CIdentiteOne = () => {
             })
                 .then((resKyc) => resKyc.json())
                 .then((data) => {
-                setKycForParticular(data)
+                setKycForEntreprise(data)
                 }) 
             };
-            // console.log("Banques =>",allBank)
-            await getKycForParticular();
+            await getKycForEntreprise();
     }, []);
     // FIN
 
 
-
-
-
-
-
-
-    // Fonction d'envoie des informations du questionnaire
-    const addQuestionnaire= useCallback(async () => {
-        setIsLoggingIn(true);
+    // RECUPERER KYC DE L'ENTREPRISE
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
         
+            const getKycForEntreprise = async () => {
+            const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-of-user`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((resKyc) => resKyc.json())
+                .then((data) => {
+                setKycForEntreprise(data)
+
+                }) 
+            };
+            await getKycForEntreprise();
+    }, []);
+    // FIN
+
+    // RECUPERER KYC DE L'IDENTITE DE L'UTISATEUR
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+            const getKycForEntreprise = async () => {
+            const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-identity-of-user-signIn`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((resKyc) => resKyc.json())
+                .then((data) => {
+                    setKycIdentityForUser(data)
+                    console.log("Data identity=>",data?.userId)
+                }) 
+            };
+            await getKycForEntreprise();
+    }, []);
+    // FIN
+
+
+    // Fonction d'envoie des informations du de l'identité
+    const addIdentity= async (event) => {
+        event.preventDefault();
+        setIsLoggingIn(true);
         try {
             const dataTable = {
-                spentA:Object.assign({},spentA),
-                spentB:Object.assign({},spentB),
-                spentC:Object.assign({},spentC),
-                spentD:Object.assign({},spentD),
-                spentE:Object.assign({},spentE),
-                spentF:Object.assign({},spentF),
-                frequencyA:Object.assign({},frequencyA),
-                frequencyB:Object.assign({},frequencyB),
-                frequencyC:Object.assign({},frequencyC),
-                incomeTypeA:Object.assign({}, incomeTypeA),
-                incomeTypeB:Object.assign({},incomeTypeB),
-                incomeTypeC:Object.assign({},incomeTypeC)
+                international:Object.assign({},international),
+                national:Object.assign({},national),
+                local:Object.assign({},local),
             }
-
             const dataa = {
-                spentA:dataTable?.spentA[0],
-                spentB:dataTable?.spentB[0],
-                spentC:dataTable?.spentC[0],
-                spentD:dataTable?.spentD[0],
-                spentE:dataTable?.spentE[0],
-                spentF:dataTable?.spentF[0],
-                frequencyA:dataTable?.frequencyA[0],
-                frequencyB:dataTable?.frequencyB[0],
-                frequencyC:dataTable?.frequencyC[0],
-                incomeTypeA:dataTable?.incomeTypeA[0],
-                incomeTypeB:dataTable?.incomeTypeB[0],
-                incomeTypeC:dataTable?.incomeTypeC[0],
-                
+                international:dataTable?.international[0], 
+                national:dataTable?.national[0],
+                local:dataTable?.local[0],
+                naturePerson:naturePerson,
+                seniority:seniority,
+                rccmNumber:rccmNumber,
+                socialObject:socialObject,
+                numberIdentification:numberIdentification,
+                registeredAddress:registeredAddress,
+                fax:fax,
+                dateConstitution:dateConstitution,
+                registrationDate:registrationDate
             }
-            // Condition pour forcer l'utilisateur à choisir au moins une reponse
-            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
-                
-                
+            
+            console.log("OK1")
+
                 const token = localStorage.getItem('tokenEnCours') //Le token récuperé
 
-                const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-questionnaires`, {
+                const result = await fetch(`${API_URL}/api/kyc/business/add-kyc-identity`, {
                 method:"POST",
                 body: JSON.stringify(dataa),
                 headers: {
@@ -220,81 +194,97 @@ const CIdentiteOne = () => {
                     timer: 10000
                 })
                 }else{
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'success',
-                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
-                        showConfirmButton: false,
-                        timer: 5000
-                    }),
-                    setTimeout(() => {
-                    Router.push("/profil/kyc/entreprise/seconde-phase"); 
-                    }, 5000)
+                    updateInfosUser() //Appel de la fonction qui modifie les infos de l'entreprise dans la table users
                 }
                 // Fin condition 
-            }else{
+            } catch {
+            setIsLoggingIn(false);
+            }
+    };
+    // Fin
+
+    // Fonction de modification d'envoie des informations du de l'identité
+    const updateIdentity= async (event) => {
+        event.preventDefault();
+        setIsLoggingIn(true);
+        
+        try {
+
+            const dataTable = {
+                international:Object.assign({},international),
+                national:Object.assign({},national),
+                local:Object.assign({},local),
+            }
+            const dataa = {
+                international:dataTable?.international[0], 
+                national:dataTable?.national[0],
+                local:dataTable?.local[0],
+                naturePerson:naturePerson,
+                seniority:seniority,
+                rccmNumber:rccmNumber,
+                socialObject:socialObject,
+                numberIdentification:numberIdentification,
+                registeredAddress:registeredAddress,
+                fax:fax,
+                dateConstitution:dateConstitution,
+                registrationDate:registrationDate
+            }
+
+                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+                const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-identity`, {
+                method:"PUT",
+                body: JSON.stringify(dataa),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`
+                }
+                })
+                const data = await result.json();
+            
+                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                * sinon on affiche le message de succès
+                */
+                if (data.message) {
+                setMessageError(data.message)
                 setIsLoggingIn(false);
                 Swal.fire({
                     position: 'center',
                     icon: 'error',
-                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
+                    html: `<p> ${messageError} </p>` ,
                     showConfirmButton: false,
                     timer: 10000
                 })
-            }
-            
+                }else{
+                    updateInfosUser() //Appel de la fonction qui modifie les infos de l'entreprise dans la table users
+                }
+                // Fin condition 
             } catch {
             setIsLoggingIn(false);
             }
-        
-    }, [spentA,spentB,spentC,spentD,spentE,spentF,frequencyA,frequencyB,frequencyC,incomeTypeA,incomeTypeB,incomeTypeC]);
+    };
     // Fin
 
 
-     // Fonction d'envoie des informations du questionnaire
-     const updateQuestionnaire= useCallback(async () => {
+    // Fonction de modification des infos de l'utisateur qui sont dans justificatif d'identité
+    const updateInfosUser = async() => {
         setIsLoggingIn(true);
-        
-        try {
-            const dataTable = {
-                spentA:Object.assign({},spentA),
-                spentB:Object.assign({},spentB),
-                spentC:Object.assign({},spentC),
-                spentD:Object.assign({},spentD),
-                spentE:Object.assign({},spentE),
-                spentF:Object.assign({},spentF),
-                frequencyA:Object.assign({},frequencyA),
-                frequencyB:Object.assign({},frequencyB),
-                frequencyC:Object.assign({},frequencyC),
-                incomeTypeA:Object.assign({}, incomeTypeA),
-                incomeTypeB:Object.assign({},incomeTypeB),
-                incomeTypeC:Object.assign({},incomeTypeC)
-            }
 
-            const dataa = {
-                spentA:dataTable?.spentA[0],
-                spentB:dataTable?.spentB[0],
-                spentC:dataTable?.spentC[0],
-                spentD:dataTable?.spentD[0],
-                spentE:dataTable?.spentE[0],
-                spentF:dataTable?.spentF[0],
-                frequencyA:dataTable?.frequencyA[0],
-                frequencyB:dataTable?.frequencyB[0],
-                frequencyC:dataTable?.frequencyC[0],
-                incomeTypeA:dataTable?.incomeTypeA[0],
-                incomeTypeB:dataTable?.incomeTypeB[0],
-                incomeTypeC:dataTable?.incomeTypeC[0],
-                
+        try {
+
+            const dataInfosUser = {
+                entreprise:entreprise,
+                mailbox:mailbox,
+                phoneFixe:phoneFixe,
+                mobile:mobile,
+                city:city
+                            
             }
-            // Condition pour forcer l'utilisateur à choisir au moins une reponse
-            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
-                
-                
                 const token = localStorage.getItem('tokenEnCours') //Le token récuperé
 
-                const result = await fetch(`${API_URL}/api/kyc/particular/update-kyc-questionnaires`, {
+                const result = await fetch(`${API_URL}/api/kyc/business/update-user-kyc-identity`, {
                 method:"PUT",
-                body: JSON.stringify(dataa),
+                body: JSON.stringify(dataInfosUser),
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization:  `Bearer ${token}`
@@ -325,170 +315,71 @@ const CIdentiteOne = () => {
                     }),
                     setTimeout(() => {
                         if (currentKycStatut==="1") {
-                            Router.push("/profil/kyc/entreprise/resultat-kyc"); 
+                            Router.push("/profil/kyc/particulier/resultat-kyc"); 
         
                         }else{
-                            Router.push("/profil/kyc/entreprise/seconde-phase"); 
+                            Router.push("/profil/kyc/entreprise/identite-representant-one"); 
                         }
                     }, 5000)
                 }
                 // Fin condition 
-            }else{
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-            }
             
             } catch {
             setIsLoggingIn(false);
-            }
+        }
         
-    }, [spentA,spentB,spentC,spentD,spentE,spentF,frequencyA,frequencyB,frequencyC,incomeTypeA,incomeTypeB,incomeTypeC]);
+    }
+    // Fin 
+    
+    
+    // Les handle de la partie des boutons checkbox
+    const handleOptionInternational = (event) => {
+        const value = event.target.value;
+        const isChecked = event.target.checked;
+
+        if (isChecked) {
+            setInternational([...international, value]);
+        } else {
+            setInternational("");
+        }
+    };
+
+    const handleOptionNational = (event) => {
+        const value = event.target.value;
+        const isChecked = event.target.checked;
+
+        if (isChecked) {
+            setNational([...national, value]);
+        } else {
+            setNational("");
+        }
+    };
+
+    const handleOptionLocal = (event) => {
+        const value = event.target.value;
+        const isChecked = event.target.checked;
+
+        if (isChecked) {
+            setLocal([...local, value]);
+        } else {
+            setLocal("");
+        }
+    };
+
+          
+    
+
+
+
+
+    const [currentKycStatut, setCurrentKycStatut] = useState();
+    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+        const kycStatut = localStorage.getItem('currentUpdateKycStatut')  
+        setCurrentKycStatut(kycStatut)
+    }, [currentKycStatut]);
     // Fin
 
-// Les handles de la 2è question
-  const handleOptionSpentA = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentA([...spentA, value]);
-    } else {
-        setSpentA("");
-    }
-  };
-
-const handleOptionSpentB = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentB([...spentB, value]);
-    } else {
-        setSpentB("");
-    }
-};
-
-const handleOptionSpentC = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentC([...spentC, value]);
-    } else {
-        setSpentC("");
-    }
-};
-
-const handleOptionSpentD = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentD([...spentD, value]);
-    } else {
-        setSpentD("");
-    }
-};
-
-const handleOptionSpentE = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentE([...spentE, value]);
-    } else {
-        setSpentE("");
-    }
-};
-
-const handleOptionSpentF = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentF([...spentF, value]);
-    } else {
-        setSpentF("");
-    }
-};
-
-// FIN
-
-
-// Les handles de la 4è question
-const handleOptionFrequencyA = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setFrequencyA([...frequencyA, value]);
-    } else {
-        setFrequencyA("");
-    }
-};
-
-const handleOptionFrequencyB = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setFrequencyB([...frequencyB, value]);
-    } else {
-        setFrequencyB("");
-    }
-};
-
-const handleOptionFrequencyC = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setFrequencyC([...frequencyC, value]);
-    } else {
-        setFrequencyC("");
-    }
-};
-// FIN
- 
-// Les handles de la 5è question
-const handleOptionIncomeTypeA = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setIncomeTypeA([...incomeTypeA, value]);
-    } else {
-        setIncomeTypeA("");
-    }
-};
-
-const handleOptionIncomeTypeB = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setIncomeTypeB([...incomeTypeB, value]);
-    } else {
-        setIncomeTypeB("");
-    }
-};
-
-const handleOptionIncomeTypeC = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setIncomeTypeC([...incomeTypeC, value]);
-    } else {
-        setIncomeTypeC("");
-    }
-};
 
     // La barre de progression de KYC du profil entreprise
     const stepsEntreprise = ["AML","Identité","Représentant", "Bénéficiaire","Control", "Politique", "Opérations", "Fonds", "Financière", "Documents"];
@@ -527,7 +418,7 @@ const handleOptionIncomeTypeC = (event) => {
                 <div className='col-lg-3 col-md-12'></div>
 
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
-                        <form className=''>
+                        <form className='' onSubmit={kycIdentityForUser?.userId || !kycIdentityForUser?.userId==undefined? updateIdentity :addIdentity} >
                             <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="international"
@@ -546,8 +437,9 @@ const handleOptionIncomeTypeC = (event) => {
                                             name="International"
                                             value="International"
                                             id='international-check' 
-                                            // checked={international.includes("International")}
-                                            // onChange={handleOptionInternational}
+                                            checked={international.includes("International")}
+                                            onChange={handleOptionInternational}
+                                            
                                         />
                                     <p className=" mx-2 mb-0 text-center">
                                         International
@@ -564,8 +456,8 @@ const handleOptionIncomeTypeC = (event) => {
                                             name="National"
                                             value="National"
                                             id='national-check' 
-                                            // checked={national.includes("National")}
-                                            // onChange={handleOptionNational}
+                                            checked={national.includes("National")}
+                                            onChange={handleOptionNational}
                                         />
                                     <p className=" mx-2 mb-0 text-center">
                                         National
@@ -582,8 +474,8 @@ const handleOptionIncomeTypeC = (event) => {
                                             name="Local"
                                             value="Local"
                                             id='local-check' 
-                                            // checked={local.includes("Local")}
-                                            // onChange={handleOptionNational}
+                                            checked={local.includes("Local")}
+                                            onChange={handleOptionLocal}
                                         />
                                     <p className=" mx-2 mb-0 text-center">
                                         Local
@@ -660,7 +552,7 @@ const handleOptionIncomeTypeC = (event) => {
                                         id='entreprise'
                                         className='form-control'
                                         placeholder='Dénomination sociale'
-                                        defaultValue={entreprise} 
+                                        defaultValue={currentUser?.entreprise} 
                                         onChange={(event)=>setEntreprise(event.target.value)}
                                     />
                                 </div>
@@ -679,8 +571,8 @@ const handleOptionIncomeTypeC = (event) => {
                                         id='numberRCCM'
                                         className='form-control'
                                         placeholder='Numéro RCCM'
-                                        defaultValue={numberRCCM} 
-                                        onChange={(event)=>setNumberRCCM(event.target.value)}
+                                        defaultValue={rccmNumber} 
+                                        onChange={(event)=>setRccmNumber(event.target.value)}
                                     />
                                 </div>
                             </div>
@@ -723,7 +615,7 @@ const handleOptionIncomeTypeC = (event) => {
                                 </div>
                             </div>
 
-                            <div className="form-group mb-6 mt-3">
+                            {/* <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="immatriculation"
                                     className="text-blackish-blue mb-2"
@@ -736,11 +628,11 @@ const handleOptionIncomeTypeC = (event) => {
                                         id='immatriculation'
                                         className='form-control'
                                         placeholder='Pays d’immatriculation'
-                                        // defaultValue={socialObject} 
-                                        // onChange={(event)=>setSocialObject(event.target.value)}
+                                        defaultValue={socialObject} 
+                                        onChange={(event)=>setSocialObject(event.target.value)}
                                     />
                                 </div>
-                            </div>
+                            </div> */}
                             <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="city"
@@ -754,8 +646,8 @@ const handleOptionIncomeTypeC = (event) => {
                                         id='city'
                                         className='form-control'
                                         placeholder='Ville'
-                                        // defaultValue={numberIdentification} 
-                                        // onChange={(event)=>setNumberIdentification(event.target.value)}
+                                        defaultValue={currentUser?.city} 
+                                        onChange={(event)=>setCity(event.target.value)}
                                     />
                                 </div>
                             </div>
@@ -773,8 +665,8 @@ const handleOptionIncomeTypeC = (event) => {
                                         id='mailbox'
                                         className='form-control'
                                         placeholder='Adresse postale'
-                                        // defaultValue={mailbox} 
-                                        // onChange={(event)=>setMailbox(event.target.value)}
+                                        defaultValue={currentUser?.mailbox} 
+                                        onChange={(event)=>setMailbox(event.target.value)}
                                     />
                                 </div>
                             </div>
@@ -791,8 +683,8 @@ const handleOptionIncomeTypeC = (event) => {
                                         id='officeAddress'
                                         className='form-control'
                                         placeholder='Adresse siège social'
-                                        defaultValue={officeAddress} 
-                                        onChange={(event)=>setOfficeAddress(event.target.value)}
+                                        defaultValue={registeredAddress} 
+                                        onChange={(event)=>setRegisteredAddress(event.target.value)}
                                     />
                                 </div>
                             </div>
@@ -810,11 +702,12 @@ const handleOptionIncomeTypeC = (event) => {
                                         id='phoneFixe'
                                         className='form-control'
                                         placeholder='Téléphone Fixe'
-                                        // defaultValue={phoneFixe} 
-                                        // onChange={(event)=>setPhoneFixe(event.target.value)}
+                                        defaultValue={currentUser?.phoneFixe} 
+                                        onChange={(event)=>setPhoneFixe(event.target.value)}
                                     />
                                 </div>
                             </div>
+                            
                             <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="mobile"
@@ -828,8 +721,8 @@ const handleOptionIncomeTypeC = (event) => {
                                         id='mobile'
                                         className='form-control'
                                         placeholder='Téléphone mobile'
-                                        // defaultValue={mobile} 
-                                        // onChange={(event)=>setMobile(event.target.value)}
+                                        defaultValue={currentUser?.mobile} 
+                                        onChange={(event)=>setMobile(event.target.value)}
                                     />
                                 </div>
                             </div>
@@ -853,7 +746,7 @@ const handleOptionIncomeTypeC = (event) => {
                                 </div>
                             </div>
                             
-                            <div className="form-group mb-6 mt-3">
+                            {/* <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="email"
                                     className="text-blackish-blue mb-2"
@@ -870,7 +763,7 @@ const handleOptionIncomeTypeC = (event) => {
                                         onChange={(event)=>setEmail(event.target.value)}
                                     />
                                 </div>
-                            </div>
+                            </div> */}
                             
                             <div className="form-group mb-6 mt-3">
                                 <label
@@ -881,7 +774,7 @@ const handleOptionIncomeTypeC = (event) => {
                                 </label>
                                 <div className='form-group'>
                                     <input
-                                        type='text'
+                                        type='date'
                                         id='dateConstitution'
                                         className='form-control'
                                         placeholder='Date de constitution '
@@ -900,7 +793,7 @@ const handleOptionIncomeTypeC = (event) => {
                                 </label>
                                 <div className='form-group'>
                                     <input
-                                        type='text'
+                                        type='date'
                                         id='registrationDate'
                                         className='form-control'
                                         placeholder="Date d'enregistrement"
@@ -910,37 +803,9 @@ const handleOptionIncomeTypeC = (event) => {
                                 </div>
                             </div>
 
-                            
-
-                            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                            {/* <p className="colorRed mb-7 ">
-                                NB : Aucun retour n'est permis sur cette page donc, répondez correctement aux questions
-                            </p> */}
-
-                            {/* {kycForParticular?.userId ? (
-                                <button className="btn btn-primary " type='button' onClick={updateQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
-                            ) : (
-                                <button className="btn btn-primary " type='button' onClick={addQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
-                            )} */}
-
                             <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
                                 <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                    <Link href='/profil/kyc/entreprise/questionnaire-aml-five/' className="align-right">
+                                    <Link href='/profil/kyc/entreprise/questionnaire-aml-four/' className="align-right">
                                         <a
                                         className=""
                                         >
@@ -949,16 +814,11 @@ const handleOptionIncomeTypeC = (event) => {
                                     </Link>                          
                                 </div>
                                 <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                    <Link href='/profil/kyc/entreprise/identite-representant-one/' className="align-right">
-                                        <a
-                                        className=""
-                                        >
-                                            <button className="btn btn-primary " type='button'  > Suivant </button>
-                                        </a>   
-                                    </Link>                          
+                                
+                                    <button className="btn btn-primary " type='submit' disabled={isLoggingIn}  > Suivant </button>
+                                                       
                                 </div>
                             </div> 
-                            {/* <button className="btn btn-primary "  disabled={isLoggingIn}>Suivant</button> */}
                         </form>       
                     </div>
                 <div className='col-lg-3 col-md-12'></div>

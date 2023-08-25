@@ -135,9 +135,6 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
  };
 
 
-//  const [imageVerso, setImageVerso] = useState(null);
-//  const [createObjectURL, setCreateObjectURLVerso] = useState(null);
-
  const uploadToClientVerso = (event) => {
      if (event.target.files && event.target.files[0]) {
      const i = event.target.files[0];

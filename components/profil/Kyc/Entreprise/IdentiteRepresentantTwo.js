@@ -1,17 +1,8 @@
 import { useCallback, useState, useEffect,useRef } from 'react';
 import React from "react";
-import axios from 'axios';
 import Link from 'next/link';
-import { Icon } from '@iconify/react';
-
-
-// Pour Magic
-import { magic } from "../../../../magic";
-import { ethers } from "ethers";
-import Loading from "../../../loading";
 import Router from "next/router";
 import Swal from 'sweetalert2';
-import Web3 from "web3";
 import ProgressBar from '../ProgressBar';
 
 // Pour la signature
@@ -27,39 +18,18 @@ const CIdentiteRepresentantTwo = () => {
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
+    const [allCountry, setAllCountry] = useState();
+    const [allNationality, setAllNationality] = useState();
+    const [kycForEntreprise, setKycForEntreprise] = useState();
+    const [kycRepresentative, setKycRepresentative] = useState();
 
-    // States du formulaire
-    // firstName
-    // lastName
-    // issuingCountry
-    // nativeCountry
-    // dateBirth
-    // nationality
-    // email
-    // functions
-    // typeDocIdentity
-    // identityDocNumber
-    // mobile
-    {/* POUR PIECE D'IDENTITE */}
-    // frontIdentityFile 
-    // backIdentityFile
-    // frontIdentityPhoto 
-    // backIdentityPhoto  
-    {/* FIN */}
-    {/* POUR PIECE DE DOMICILE */}
-    // typeDocumentResidence
-    // frontDomicileFile
-    // backDomicileFile
-    // frontDomicilePhoto
-    // backDomicilePhoto
-    // signature
-    {/* FIN */}
-
+    // Les states du formulaire
     const [firstName, setFirstName] = useState();
     const [lastName, setLastName] = useState();
     const [issuingCountry, setIssuingCountry] = useState();
-    const [nativeCountry, setNativeCountry] = useState();
+    const [residenceCountry, setResidenceCountry] = useState();
     const [dateBirth, setDateBirth] = useState();
+    const [expirationDate, setExpirationDate] = useState();
     const [nationality, setNationality] = useState();
     const [functions, setFunctions] = useState();
     const [email, setEmail] = useState();
@@ -69,20 +39,14 @@ const CIdentiteRepresentantTwo = () => {
     const [mobile, setMobile] = useState();
     
     const [frontIdentity, setFrontIdentity ] = useState();
-    const [backIdentity, setCackIdentity ] = useState();
+    const [backIdentity, setBackIdentity ] = useState();
     const [frontDomicile, setFrontDomicile] = useState();
     const [backDomicile, setBackDomicile] = useState();
 
-
+    
     // Pour la signature
     const signatureRef = useRef(null)
     const [signatureData, setSignatureData] = useState(null)
-
-    // Fonction pour sauvegarder une signature
-    const save = () => {
-        const data = signatureRef.current.getTrimmedCanvas().toDataURL('image/png')
-        setSignatureData(data)
-    }
 
     // STATES POUR PRENDRE PHOTO WEBCAMP (IDENTITE)
     const [statutDocIdentite, setStatutDocIdentite] = React.useState();
@@ -93,6 +57,17 @@ const CIdentiteRepresentantTwo = () => {
     const webcamRefVerso = useRef(null)
     const [imageRecto, setImageRecto] = useState(null)
     const [imageVerso, setImageVerso] = useState(null)
+    // FIN
+
+
+    // STATES POUR PRENDRE PHOTO WEBCAMP (DOMICILE)
+    const [statutDocDomicile, setStatutDocDomicile] = React.useState();
+    const [statutRectoDomicile, setStatutRectoDomicile] = React.useState("0");
+    const [statutVersoDomicile, setStatutVersoDomicile] = React.useState("0");
+    const webcamRefRectoDomicile = useRef(null)
+    const webcamRefVersoDomicile = useRef(null)
+    const [imageRectoDomicile, setImageRectoDomicile] = useState(null)
+    const [imageVersoDomicile, setImageVersoDomicile] = useState(null)
     // FIN
 
     // LES FONCTIONS POUR PRENDRE PHOTO (IDENTITE)
@@ -112,16 +87,6 @@ const CIdentiteRepresentantTwo = () => {
     // FIN
 
 
-    // STATES POUR PRENDRE PHOTO WEBCAMP (IDENTITE)
-    const [statutDocDomicile, setStatutDocDomicile] = React.useState();
-    const [statutRectoDomicile, setStatutRectoDomicile] = React.useState("0");
-    const [statutVersoDomicile, setStatutVersoDomicile] = React.useState("0");
-    const webcamRefRectoDomicile = useRef(null)
-    const webcamRefVersoDomicile = useRef(null)
-    const [imageRectoDomicile, setImageRectoDomicile] = useState(null)
-    const [imageVersoDomicile, setImageVersoDomicile] = useState(null)
-    // FIN
-
     // LES FONCTIONS POUR PRENDRE PHOTO (DOMICILE)
     // Fonction pour prendre photo du Recto
     const captureRectoDomicile = () => {
@@ -138,47 +103,244 @@ const CIdentiteRepresentantTwo = () => {
     // Fin
     // FIN
 
-    
 
-    
-    
-    
+    // FONCTION DE LA MODIFICATION DE LA PHOTO
+    const [createObjectURL, setCreateObjectURL] = useState(null);
+
+    // Les fichiers de justificatif d'identité du representant
+    const uploadToClientIdentityFront = (event) => {
+        if (event.target.files && event.target.files[0]) {
+        const i = event.target.files[0];
+
+        setFrontIdentity(i);
+        setCreateObjectURL(URL.createObjectURL(i));
+        }
+    };
+
+
+    const uploadToClientIdentityBack = (event) => {
+        if (event.target.files && event.target.files[0]) {
+        const i = event.target.files[0];
+
+        setBackIdentity(i);
+        setCreateObjectURL(URL.createObjectURL(i));
+        }
+    };
+    // Fin
+
+    // Les fichiers de justificatif de domicile du representant
+    const uploadToClientDomicileFront = (event) => {
+        if (event.target.files && event.target.files[0]) {
+        const i = event.target.files[0];
+
+        setFrontDomicile(i);
+        setCreateObjectURL(URL.createObjectURL(i));
+        }
+    };
+
+    const uploadToClientDomicileBack = (event) => {
+        if (event.target.files && event.target.files[0]) {
+        const i = event.target.files[0];
+
+        setBackDomicile(i);
+        setCreateObjectURL(URL.createObjectURL(i));
+        }
+    };
+    // Fin
+
+    // Fonction pour sauvegarder une signature
+    const save = () => {
+        const data = signatureRef.current.getTrimmedCanvas().toDataURL('image/png')
+        setSignatureData(data)
+      }
+    // Fin
+
+    // FONCTION D'ENVOIE DES DONNEES DU REPRESENTANT LEGAL
+    const addRepresentatives = async (event) => {
+        event.preventDefault();
+        setIsLoggingIn(true);
+
+        const token = localStorage.getItem('tokenEnCours')
+        const body = new FormData();
+        body.append("lastName", lastName);
+        body.append("firstName", firstName);
+        body.append("issuingCountry", issuingCountry);
+        body.append("residenceCountry", residenceCountry);
+        body.append("dateBirth", dateBirth);
+        body.append("expirationDate", expirationDate);
+        body.append("nationality", nationality);
+        body.append("email", email);
+        body.append("functions", functions);
+        body.append("typeDocIdentity", typeDocIdentity);
+        body.append("identityDocNumber", identityDocNumber);
+        body.append("mobile", mobile);
+        body.append("frontIdentityFile", statutDocIdentite==="0"?frontIdentity:"");
+        body.append("backIdentityFile", statutDocIdentite==="0"?backIdentity:"");
+        body.append("frontIdentityPhoto", statutDocIdentite==="1"?imageRecto:"");
+        body.append("backIdentityPhoto", statutDocIdentite==="1"?imageVerso:"");
+        body.append("typeDocumentResidence", typeDocumentResidence);
+        body.append("frontDomicileFile", statutDocDomicile==="0"?frontDomicile:"");
+        body.append("backDomicileFile", statutDocDomicile==="0"?backDomicile:"");
+        body.append("frontDomicilePhoto", statutDocDomicile==="1"?imageRectoDomicile:"");
+        body.append("backDomicilePhoto", statutDocDomicile==="1"?imageVersoDomicile:"");
+        body.append("signature", signatureData);
+        
+        
+            const result = await fetch(`${API_URL}/api/kyc/business/add-kyc-representatives`, {
+                method:"POST",
+                body,
+                headers: {
+                    // 'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`,
+                    },
+            })    
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                * sinon on affiche le message de succès
+                */
+            if (result?.status===200) {
+                setTimeout(() => {
+                    if (currentKycStatut==="1") {
+                        Router.push("/profil/kyc/particulier/resultat-kyc"); 
+                    }else{
+                        if (kycRepresentative?.length+1 == kycForEntreprise?.numberRepresentatives) {
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'success',
+                                html: `<p> Vous avez ajouté ${kycRepresentative?.length + 1} représentant(s) avec succès. </p>` ,
+                                showConfirmButton: false,
+                                timer: 5000
+                            })
                             
-                            
-                            
-                            
-                            
-                            
-    
+                            Router.push("/profil/kyc/entreprise/beneficiaire-effectif-one"); 
+                        }else{
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'success',
+                                html: `<p> Vous avez ajouté ${kycRepresentative?.length + 1} représentant(s) avec succès. </p>` ,
+                                showConfirmButton: false,
+                                timer: 2000
+                            })
 
+                            setTimeout(() => {
+                                window.location.reload()
+                            }, 2000)
+                        }
+                    }
+                }, 5000)
+                
+                }else{
+                    // setMessageError(data.message)
 
-
-
-    // State de la question 2
-    const [spentA, setSpentA] = useState([]);
-    const [spentB, setSpentB] = useState([]);
-    const [spentC, setSpentC] = useState([]);
-    const [spentD, setSpentD] = useState([]);
-    const [spentE, setSpentE] = useState([]);
-    const [spentF, setSpentF] = useState([]);
-
-    // State de la question 4
-    const [frequencyA, setFrequencyA] = useState([]);
-    const [frequencyB, setFrequencyB] = useState([]);
-    const [frequencyC, setFrequencyC] = useState([]);
-
-    // State de la question 5
-    const [incomeTypeA, setIncomeTypeA] = useState([]);
-    const [incomeTypeB, setIncomeTypeB] = useState([]);
-    const [incomeTypeC, setIncomeTypeC] = useState([]);
-
-    // State de la question 1 et 3
-    const [statutQ1, setStatutQ1] = useState();
-    const [statutQ3, setStatutQ3] = useState();
-    
+                    setIsLoggingIn(false);
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        html: `<p> Désolé une erreur s'est produite,Veuillez réessayer svp. </p>` ,
+                        showConfirmButton: false,
+                        timer: 10000
+                    })
+                    
+                }
+    }
     // FIN
 
-    const [kycForParticular, setKycForParticular] = useState();
+
+    // RECUPERER TOUS LES PAYS
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+        
+            const getAllCountries = async () => {
+            const resCountry = await fetch(`${API_URL}/api/country/find-all`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+
+                },
+            })
+                .then((resCountry) => resCountry.json())
+                .then((allCountry) => {
+                setAllCountry(allCountry)
+                }) 
+
+            };
+            
+            await getAllCountries();
+    }, []);
+    // FIN
+
+    // RECUPERER TOUTES LES NATIONALITES
+    useEffect(async() => {
+        const getAllNationality = async () => {
+        const resCountry = await fetch(`${API_URL}/api/country/find-all-nationnality`, {
+            headers: {
+            'Content-Type': 'application/json',
+            },
+        })
+        .then((resNationality) => resNationality.json())
+        .then((allNationality) => {
+            setAllNationality(allNationality)
+        }) 
+        };
+        await getAllNationality();
+    }, []);
+    // FIN
+
+
+    // RECUPERER KYC DE L'ENTREPRISE
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+        
+            const getKycForEntreprise = async () => {
+            const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-of-user`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((resKyc) => resKyc.json())
+                .then((data) => {
+                setKycForEntreprise(data)
+
+                }) 
+            };
+            await getKycForEntreprise();
+    }, []);
+    // FIN
+
+    // RECUPERER LES DONNEES DU KYC REPRESENTATNT LEGAL DE L'ENTREPRISE CONNECTEE
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+        
+            const getKycRepresentative = async () => {
+            const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-representative-of-user-signIn`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((resKyc) => resKyc.json())
+                .then((data) => {
+                setKycRepresentative(data)
+
+                }) 
+            };
+            await getKycRepresentative();
+    }, []);
+    // FIN
+    
+
+    
+    
+    
+                            
+                            
+                            
+                            
+                            
+                            
+    
+
+
 
 
 
@@ -192,26 +354,7 @@ const CIdentiteRepresentantTwo = () => {
     // Fin
 
 
-    // RECUPERER KYC DE L'UTILISATEUR
-    useEffect(async() => {
-        const token = localStorage.getItem('tokenEnCours')
-        
-            const getKycForParticular = async () => {
-            const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-kyc-particular-for-user`, {
-                headers: {
-                'Content-Type': 'application/json',
-                Authorization:  `Bearer ${token}`,
-                },
-            })
-                .then((resKyc) => resKyc.json())
-                .then((data) => {
-                setKycForParticular(data)
-                }) 
-            };
-            // console.log("Banques =>",allBank)
-            await getKycForParticular();
-    }, []);
-    // FIN
+   
 
 
 
@@ -220,340 +363,6 @@ const CIdentiteRepresentantTwo = () => {
 
 
 
-    // Fonction d'envoie des informations du questionnaire
-    const addQuestionnaire= useCallback(async () => {
-        setIsLoggingIn(true);
-        
-        try {
-            const dataTable = {
-                spentA:Object.assign({},spentA),
-                spentB:Object.assign({},spentB),
-                spentC:Object.assign({},spentC),
-                spentD:Object.assign({},spentD),
-                spentE:Object.assign({},spentE),
-                spentF:Object.assign({},spentF),
-                frequencyA:Object.assign({},frequencyA),
-                frequencyB:Object.assign({},frequencyB),
-                frequencyC:Object.assign({},frequencyC),
-                incomeTypeA:Object.assign({}, incomeTypeA),
-                incomeTypeB:Object.assign({},incomeTypeB),
-                incomeTypeC:Object.assign({},incomeTypeC)
-            }
-
-            const dataa = {
-                spentA:dataTable?.spentA[0],
-                spentB:dataTable?.spentB[0],
-                spentC:dataTable?.spentC[0],
-                spentD:dataTable?.spentD[0],
-                spentE:dataTable?.spentE[0],
-                spentF:dataTable?.spentF[0],
-                frequencyA:dataTable?.frequencyA[0],
-                frequencyB:dataTable?.frequencyB[0],
-                frequencyC:dataTable?.frequencyC[0],
-                incomeTypeA:dataTable?.incomeTypeA[0],
-                incomeTypeB:dataTable?.incomeTypeB[0],
-                incomeTypeC:dataTable?.incomeTypeC[0],
-                
-            }
-            // Condition pour forcer l'utilisateur à choisir au moins une reponse
-            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
-                
-                
-                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
-
-                const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-questionnaires`, {
-                method:"POST",
-                body: JSON.stringify(dataa),
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization:  `Bearer ${token}`
-                }
-                })
-                const data = await result.json();
-            
-                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-                * sinon on affiche le message de succès
-                */
-                if (data.message) {
-                setMessageError(data.message)
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> ${messageError} </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-                }else{
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'success',
-                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
-                        showConfirmButton: false,
-                        timer: 5000
-                    }),
-                    setTimeout(() => {
-                    Router.push("/profil/kyc/particulier/seconde-phase"); 
-                    }, 5000)
-                }
-                // Fin condition 
-            }else{
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-            }
-            
-            } catch {
-            setIsLoggingIn(false);
-            }
-        
-    }, [spentA,spentB,spentC,spentD,spentE,spentF,frequencyA,frequencyB,frequencyC,incomeTypeA,incomeTypeB,incomeTypeC]);
-    // Fin
-
-
-     // Fonction d'envoie des informations du questionnaire
-     const updateQuestionnaire= useCallback(async () => {
-        setIsLoggingIn(true);
-        
-        try {
-            const dataTable = {
-                spentA:Object.assign({},spentA),
-                spentB:Object.assign({},spentB),
-                spentC:Object.assign({},spentC),
-                spentD:Object.assign({},spentD),
-                spentE:Object.assign({},spentE),
-                spentF:Object.assign({},spentF),
-                frequencyA:Object.assign({},frequencyA),
-                frequencyB:Object.assign({},frequencyB),
-                frequencyC:Object.assign({},frequencyC),
-                incomeTypeA:Object.assign({}, incomeTypeA),
-                incomeTypeB:Object.assign({},incomeTypeB),
-                incomeTypeC:Object.assign({},incomeTypeC)
-            }
-
-            const dataa = {
-                spentA:dataTable?.spentA[0],
-                spentB:dataTable?.spentB[0],
-                spentC:dataTable?.spentC[0],
-                spentD:dataTable?.spentD[0],
-                spentE:dataTable?.spentE[0],
-                spentF:dataTable?.spentF[0],
-                frequencyA:dataTable?.frequencyA[0],
-                frequencyB:dataTable?.frequencyB[0],
-                frequencyC:dataTable?.frequencyC[0],
-                incomeTypeA:dataTable?.incomeTypeA[0],
-                incomeTypeB:dataTable?.incomeTypeB[0],
-                incomeTypeC:dataTable?.incomeTypeC[0],
-                
-            }
-            // Condition pour forcer l'utilisateur à choisir au moins une reponse
-            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
-                
-                
-                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
-
-                const result = await fetch(`${API_URL}/api/kyc/particular/update-kyc-questionnaires`, {
-                method:"PUT",
-                body: JSON.stringify(dataa),
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization:  `Bearer ${token}`
-                }
-                })
-                const data = await result.json();
-            
-                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-                * sinon on affiche le message de succès
-                */
-                if (data.message) {
-                setMessageError(data.message)
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> ${messageError} </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-                }else{
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'success',
-                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
-                        showConfirmButton: false,
-                        timer: 5000
-                    }),
-                    setTimeout(() => {
-                        if (currentKycStatut==="1") {
-                            Router.push("/profil/kyc/particulier/resultat-kyc"); 
-        
-                        }else{
-                            Router.push("/profil/kyc/particulier/seconde-phase"); 
-                        }
-                    }, 5000)
-                }
-                // Fin condition 
-            }else{
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-            }
-            
-            } catch {
-            setIsLoggingIn(false);
-            }
-        
-    }, [spentA,spentB,spentC,spentD,spentE,spentF,frequencyA,frequencyB,frequencyC,incomeTypeA,incomeTypeB,incomeTypeC]);
-    // Fin
-
-// Les handles de la 2è question
-  const handleOptionSpentA = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentA([...spentA, value]);
-    } else {
-        setSpentA("");
-    }
-  };
-
-const handleOptionSpentB = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentB([...spentB, value]);
-    } else {
-        setSpentB("");
-    }
-};
-
-const handleOptionSpentC = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentC([...spentC, value]);
-    } else {
-        setSpentC("");
-    }
-};
-
-const handleOptionSpentD = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentD([...spentD, value]);
-    } else {
-        setSpentD("");
-    }
-};
-
-const handleOptionSpentE = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentE([...spentE, value]);
-    } else {
-        setSpentE("");
-    }
-};
-
-const handleOptionSpentF = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentF([...spentF, value]);
-    } else {
-        setSpentF("");
-    }
-};
-
-// FIN
-
-
-// Les handles de la 4è question
-const handleOptionFrequencyA = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setFrequencyA([...frequencyA, value]);
-    } else {
-        setFrequencyA("");
-    }
-};
-
-const handleOptionFrequencyB = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setFrequencyB([...frequencyB, value]);
-    } else {
-        setFrequencyB("");
-    }
-};
-
-const handleOptionFrequencyC = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setFrequencyC([...frequencyC, value]);
-    } else {
-        setFrequencyC("");
-    }
-};
-// FIN
- 
-// Les handles de la 5è question
-const handleOptionIncomeTypeA = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setIncomeTypeA([...incomeTypeA, value]);
-    } else {
-        setIncomeTypeA("");
-    }
-};
-
-const handleOptionIncomeTypeB = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setIncomeTypeB([...incomeTypeB, value]);
-    } else {
-        setIncomeTypeB("");
-    }
-};
-
-const handleOptionIncomeTypeC = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setIncomeTypeC([...incomeTypeC, value]);
-    } else {
-        setIncomeTypeC("");
-    }
-};
 
     // La barre de progression de KYC du profil entreprise
    const stepsEntreprise = ["AML","Identité","Représentant", "Bénéficiaire","Control", "Politique", "Opérations", "Fonds", "Financière", "Documents"];
@@ -568,7 +377,7 @@ const handleOptionIncomeTypeC = (event) => {
         <div className='mt-15' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                <br/><br/><h1 className='text-center '>Identité du / des représentants légaux 2</h1>
+                <br/><br/><h1 className='text-center '>Identité du / des représentants légaux 2 </h1>
                 </div>
             </div>
 
@@ -592,7 +401,7 @@ const handleOptionIncomeTypeC = (event) => {
                 <div className='col-lg-3 col-md-12'></div>
 
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
-                        <form className=''>
+                        <form className='' onSubmit={addRepresentatives}>
                         <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="lastName"
@@ -672,24 +481,47 @@ const handleOptionIncomeTypeC = (event) => {
                             </div >
                             <div className="form-group mb-6 mt-3">
                                 <label
+                                    htmlFor="identityDocNumber"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Date d'expiration du document d’identité 
+                                </label>
+                                <div className='form-group'>
+                                    <input
+                                        type='date'
+                                        id='identityDocNumber'
+                                        className='form-control'
+                                        defaultValue={expirationDate} 
+                                        onChange={(event)=>setExpirationDate(event.target.value)}
+                                    />
+                                </div>
+                            </div >
+
+                            <div className='form-group form-group mb-6 mt-3'>
+                                <label
                                     htmlFor="issuingCountry"
                                     className="text-blackish-blue mb-2"
                                 >
                                     Pays émetteur du document d'identité
                                 </label>
                                 <select 
-                                className="form-control"
-                                id="issuingCountry"
-                                required
-                                defaultValue={issuingCountry} 
-                                onChange={(event)=>setIssuingCountry(event.target.value)}
+                                    className="form-control"
+                                    id="issuingCountry"
+                                    required
+                                    defaultValue={issuingCountry} 
+                                    onChange={(event)=>setIssuingCountry(event.target.value)}
                                 >
-                                <option defaultValue="">Choisissez</option>
-                                    <optgroup className='single-cryptocurrency-box'>
-                                        <option  value="CNI">Côte d'Ivoire</option>
-                                        <option  value="Passeport">Mali</option>
-                                    </optgroup>
+                                    <option>Pays </option>
+                                    {/* Parcourir les pays */}
+                                    {allCountry?(
+                                    allCountry.map((data) => (
+                                        <optgroup className='single-cryptocurrency-box'
+                                                key={data.id}>
+                                            <option  value={data.libelle}>{data.libelle}</option>
+                                        </optgroup>
+                                    ))):("")}
                                 </select>
+                                {/* Fin */}
                             </div>
 
                             {/* PARTIE DE LA MANIERE A ENVOYER LES FICHIERS */}
@@ -763,7 +595,7 @@ const handleOptionIncomeTypeC = (event) => {
                                             name="myImage"
                                             id='frontIdentity'
                                             accept="application/pdf, image/*"
-                                            // onChange={uploadToClientRecto}
+                                            onChange={uploadToClientIdentityFront}
                                         />
                                     </div>
                                     <div className="form-group mb-6">
@@ -778,7 +610,7 @@ const handleOptionIncomeTypeC = (event) => {
                                             name="myImage"
                                             id='backIdentity'
                                             accept="application/pdf, image/*"
-                                            // onChange={uploadToClientVerso}
+                                            onChange={uploadToClientIdentityBack}
                                         />
                                     </div>
                                 </>
@@ -900,32 +732,30 @@ const handleOptionIncomeTypeC = (event) => {
                             ) : ("")}
                             {/* ****************FIN PRENDRE PHOTO**************** */}
 
-
-
-
-
-
-                            
-                            <div className="form-group mb-6 mt-3">
+                            <div className='form-group mt-3'>
                                 <label
-                                    htmlFor="nationality"
+                                    htmlFor="email"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Nationalité
+                                   Votre nationalité
                                 </label>
                                 <select 
-                                className="form-control"
-                                id="nationality"
-                                required
+                                className='form-control'
+                                placeholder='Nationalité '
                                 defaultValue={nationality} 
                                 onChange={(event)=>setNationality(event.target.value)}
                                 >
-                                <option defaultValue="">Choisissez</option>
-                                    <optgroup className='single-cryptocurrency-box'>
-                                        <option  value="CNI">Ivoirienne</option>
-                                        <option  value="Passeport">Malienne</option>
+                                    <option>Votre nationalité</option>
+                                    {/* Parcourir les nationalités */}
+                                    {allNationality?(
+                                    allNationality.map((data) => (
+                                    <optgroup className='single-cryptocurrency-box'
+                                            key={data.id}>
+                                    <option  value={data.libelle}>{data.libelle}</option>
                                     </optgroup>
+                                        ))):("")}
                                 </select>
+                                {/* Fin */}
                             </div>
                             
                             <div className="form-group mb-6 mt-3">
@@ -988,42 +818,59 @@ const handleOptionIncomeTypeC = (event) => {
                                 </select>
                             </div>
 
-                            <div className="form-group mb-6 mt-3">
+                            <div className='form-group form-group mb-6 mt-3'>
                                 <label
-                                    htmlFor="nativeCountry"
+                                    htmlFor="residenceCountry"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Pays de Résidence  
+                                    Pays de résidence  
                                 </label>
                                 <select 
-                                className="form-control"
-                                id="nativeCountry"
-                                required
-                                defaultValue={nativeCountry} 
-                                onChange={(event)=>setNativeCountry(event.target.value)}
+                                    className="form-control"
+                                    id="residenceCountry"
+                                    required
+                                    defaultValue={residenceCountry} 
+                                    onChange={(event)=>setResidenceCountry(event.target.value)}
                                 >
-                                <option defaultValue="">Choisissez</option>
-                                    <optgroup className='single-cryptocurrency-box'>
-                                        <option  value="CNI">Côte d'Ivoire</option>
-                                        <option  value="Passeport">Mali</option>
-                                    </optgroup>
+                                <option>Pays de Résidence </option>
+                                {/* Parcourir les pays */}
+                                {allCountry?(
+                                allCountry.map((data) => (
+                                <optgroup className='single-cryptocurrency-box'
+                                        key={data.id}>
+                                    <option  value={data.code}>{data.libelle}</option>
+                                </optgroup>
+                                    ))):("")}
                                 </select>
+                                {/* Fin */}
                             </div>
-                            <div className="form-group mb-6 mt-3">
+
+                            <div className=" form-group mb-6 mt-3 ">
                                 <label
                                     htmlFor="mobile"
                                     className="text-blackish-blue mb-2"
                                 >
                                     Téléphone mobile 
                                 </label>
-                                <div className='form-group'>
+                                <div className=" input-group flex-nowrap ">
+                                    <span  className="input-group-text " id="addon-wrapping">
+                                    {allCountry?(
+                                    allCountry.map((data) => (
+                                        data.code == residenceCountry ?(
+                                        <i key={data.id}>{data.indicator}</i>
+                                        
+                                        ):('')
+                                    ))
+                                    ):("")}
+                                    </span>
                                     <input
-                                        type='text'
-                                        id='mobile'
-                                        className='form-control'
-                                        placeholder='Téléphone mobile'
-                                        defaultValue={mobile} 
-                                        onChange={(event)=>setMobile(event.target.value)}
+                                    className="form-control"
+                                    type="text"
+                                    id="contact"
+                                    placeholder="Numéro téléphone mobile"
+                                    required
+                                    defaultValue={mobile} 
+                                    onChange={(event)=>setMobile(event.target.value)}
                                     />
                                 </div>
                             </div>
@@ -1121,7 +968,7 @@ const handleOptionIncomeTypeC = (event) => {
                                             name="myImage"
                                             id='frontDomicile'
                                             accept="application/pdf, image/*"
-                                            // onChange={uploadToClientRecto}
+                                            onChange={uploadToClientDomicileFront}
                                         />
                                     </div>
                                     <div className="form-group mb-6">
@@ -1136,7 +983,7 @@ const handleOptionIncomeTypeC = (event) => {
                                             name="myImage"
                                             id='backDomicile'
                                             accept="application/pdf, image/*"
-                                            // onChange={uploadToClientVerso}
+                                            onChange={uploadToClientDomicileBack}
                                         />
                                     </div>
                                 </>
@@ -1291,42 +1138,13 @@ const handleOptionIncomeTypeC = (event) => {
 
                             </div>
                             {/* Fin */}
-                            
-                            
-                            
 
-
-
-
-
-
-
-
-
-
-
-                            
-
-
-
-
-
-
-
-
-
-
-
-
-                            {/* <p className="colorRed mb-7 ">
-                                NB : Aucun retour n'est permis sur cette page donc, répondez correctement aux questions
-                            </p> */}
-
-                            {/* {kycForParticular?.userId ? (
-                                <button className="btn btn-primary " type='button' onClick={updateQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
-                            ) : (
-                                <button className="btn btn-primary " type='button' onClick={addQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
-                            )} */}
+                            <label
+                                htmlFor="backDomicile mb-3 "
+                                className='colorRed'
+                            >
+                                NB: Vous avez ajouté {kycRepresentative?.length}/{kycForEntreprise?.numberRepresentatives} représentant(s)
+                            </label>
 
                             <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
                                 <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
@@ -1336,19 +1154,26 @@ const handleOptionIncomeTypeC = (event) => {
                                         >
                                             <button className="btn btn-primary " type='button'  > Précédente </button>
                                         </a>   
-                                    </Link>                          
+                                    </Link>  
+                                                            
                                 </div>
                                 <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                    <Link href='/profil/kyc/entreprise/beneficiaire-effectif-one/' className="align-right">
-                                        <a
-                                        className=""
-                                        >
-                                            <button className="btn btn-primary " type='button'  > Suivant </button>
-                                        </a>   
-                                    </Link>                          
+
+                                    {kycRepresentative?.length == kycForEntreprise?.numberRepresentatives ? (
+                                        <Link href='/profil/kyc/entreprise/beneficiaire-effectif-one' className="align-right">
+                                            <a
+                                            className=""
+                                            >
+                                                <button className="btn btn-primary " type='button'  > Suivant </button>
+                                            </a>   
+                                        </Link>
+                                    ) : (
+                                        <button className="btn btn-primary " type='submit'  disabled={isLoggingIn}>Suivant</button>
+
+                                        
+                                    )}
                                 </div>
                             </div>
-                            {/* <button className="btn btn-primary "  disabled={isLoggingIn}>Suivant</button> */}
                         </form>       
                     </div>
                 <div className='col-lg-3 col-md-12'></div>

@@ -19,13 +19,15 @@ import SignatureCanvas from 'react-signature-canvas'
 
 // FIN
 
-const CStructureControlOne = () => {
+const CPolitiquementExposeesOne = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
     const [currentKycStatut, setCurrentKycStatut] = useState();
+    const [familyCompany, setFamilyCompany] = useState();
+
 
 
     // LES BONS
@@ -33,13 +35,13 @@ const CStructureControlOne = () => {
 	// fivePercent
 
     // fivePercent
-    const [numberAssociates, setNumberAssociates] = useState();
-    const [fivePercent, setFivePercent] = useState();
+    const [numberPoliticallyExposed, setNumberPoliticallyExposed] = useState();
+    
 
 
 
-   // Fonction de modification des infos des champs numberAssociates et fivePercent dans la table kyc_entreprise
-   const updateNumberAssociates = async(event) => {
+   // Fonction de modification des infos des champs numberPoliticallyExposed dans la table kyc_entreprise
+   const updateNumberPoliticallyExposed = async(event) => {
     setIsLoggingIn(true);
     event.preventDefault();
 
@@ -47,12 +49,11 @@ const CStructureControlOne = () => {
     try {
 
         const dataInfos = {
-            numberAssociates:numberAssociates,
-            fivePercent:fivePercent
+            numberPoliticallyExposed:numberPoliticallyExposed,
         }
             const token = localStorage.getItem('tokenEnCours') //Le token récuperé
 
-            const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-for-number-associates`, {
+            const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-for-number-politically-exposed`, {
             method:"PUT",
             body: JSON.stringify(dataInfos),
             headers: {
@@ -88,7 +89,7 @@ const CStructureControlOne = () => {
                         Router.push("/profil/kyc/particulier/resultat-kyc"); 
     
                     }else{
-                        Router.push("/profil/kyc/entreprise/structure-control-two"); 
+                        Router.push("/profil/kyc/entreprise/politiquement-exposees-two"); 
                     }
                 }, 5000)
             }
@@ -104,7 +105,7 @@ const CStructureControlOne = () => {
      // La barre de progression de KYC du profil entreprise
    const stepsEntreprise = ["AML","Identité","Représentant", "Bénéficiaire","Control", "Politique", "Opérations", "Fonds", "Financière", "Documents"];
 
-   const activeStepEntreprise = 3;
+   const activeStepEntreprise = 4;
     // Fin
 
   return (
@@ -114,7 +115,7 @@ const CStructureControlOne = () => {
         <div className='mt-15' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                <br/><br/><h1 className='text-center '>Structure de propriété ou de contrôle 1</h1>
+                    <br/><br/><h1 className='text-center '>Declaration de personnes politiquement exposees 1</h1>
                 </div>
             </div>
 
@@ -138,40 +139,31 @@ const CStructureControlOne = () => {
                 <div className='col-lg-3 col-md-12'></div>
 
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
-                        <form className='' onSubmit={updateNumberAssociates}>
+                        <form className='' onSubmit={updateNumberPoliticallyExposed}>
                             
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="numberAssociates"
+                                    htmlFor="familyCompany"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Nombre d'associé 
+                                    La société possède parmi ses bénéficiaires effectifs/titulaires réels ou ses administrateurs, ou parmi les plus proches membres de leur famille et des personnes connues pour leur être étroitement associées, une personne occupant ou ayant occupé durant les 12 derniers mois une haute fonction publique représentative ou un poste important au sein des administrations publiques en Andorre, dans des États membres de l’Union européenne ou dans des pays tiers ?
                                 </label>
                                 <select 
                                 className="form-control"
-                                id="numberAssociates"
+                                id="familyCompany"
                                 required
-                                defaultValue={numberAssociates} 
-                                onChange={(event)=>setNumberAssociates(event.target.value)}
+                                defaultValue={familyCompany} 
+                                onChange={(event)=>setFamilyCompany(event.target.value)}
                                 >
                                 <option defaultValue="">Choisissez</option>
                                     <optgroup className='single-cryptocurrency-box'>
-                                        <option  value="1">1</option>
-                                        <option  value="2">2</option>
-                                        <option  value="3">3</option>
-                                        <option  value="4">4</option>
-                                        <option  value="5">5</option>
-                                        <option  value="6">6</option>
-                                        <option  value="7">7</option>
-                                        <option  value="8">8</option>
-                                        <option  value="9">9</option>
-                                        <option  value="10">10</option>
-                                        <option  value="Plus de 10">Plus de 10</option>
+                                        <option  value="Oui">Oui</option>
+                                        <option  value="Non">Non</option>
                                     </optgroup>
                                 </select>
                             </div>
                             {/* Si plus de 10 on pose cette question */}
-                            {numberAssociates==="Plus de 10"? (
+                            {familyCompany==="Oui"? (
                                 <>
                                 
                                     <div className="form-group mb-6 mt-3">
@@ -179,18 +171,17 @@ const CStructureControlOne = () => {
                                             htmlFor="fivePercent"
                                             className="text-blackish-blue mb-2"
                                         >
-                                            Combien d’associé qui ont 5% du capital 
+                                            Combien sont-ils? 
                                         </label>
                                         <select 
                                         className="form-control"
                                         id="fivePercent"
                                         required
-                                        defaultValue={fivePercent} 
-                                        onChange={(event)=>setFivePercent(event.target.value)}
+                                        defaultValue={numberPoliticallyExposed} 
+                                        onChange={(event)=>setNumberPoliticallyExposed(event.target.value)}
                                         >
                                         <option defaultValue="">Choisissez</option>
                                             <optgroup className='single-cryptocurrency-box'>
-                                                <option  value="0">0</option>
                                                 <option  value="1">1</option>
                                                 <option  value="2">2</option>
                                                 <option  value="3">3</option>
@@ -210,14 +201,14 @@ const CStructureControlOne = () => {
                                     htmlFor="nativeCountry"
                                     className="text-blackish-blue mb-2 colorRed"
                                 >
-                                    NB: Vous devez obligatoirement compléter les informations qui vont suivre pour chaque associé.  
+                                    NB: Vous devez obligatoirement compléter les informations qui vont suivre pour chaque membre.  
                             </label>
 
 
 
                             <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
                                 <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                    <Link href='/profil/kyc/entreprise/beneficiaire-effectif-two/' className="align-right">
+                                    <Link href='/profil/kyc/entreprise/structure-control-two/' className="align-right">
                                         <a
                                         className=""
                                         >
@@ -226,7 +217,17 @@ const CStructureControlOne = () => {
                                     </Link>                          
                                 </div>
                                 <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                    <button className="btn btn-primary "  disabled={isLoggingIn}>Suivant</button>                         
+                                    {familyCompany==="Non"? (
+                                        <Link href='/profil/kyc/entreprise/operations-financieres-one' className="align-right">
+                                            <a
+                                            className=""
+                                            >
+                                                <button className="btn btn-primary " type='button'  > Suivant </button>
+                                            </a>   
+                                        </Link>
+                                    ):(
+                                        <button className="btn btn-primary " type='submit'  disabled={isLoggingIn}>Suivant</button>                         
+                                    )}
                                 </div>
                             </div>
                         </form>       
@@ -238,4 +239,4 @@ const CStructureControlOne = () => {
   );
 };
 
-export default CStructureControlOne;
+export default CPolitiquementExposeesOne;

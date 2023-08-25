@@ -1,11 +1,19 @@
 import { useState } from 'react';
 import ProgressBar from '../ProgressBar';
 import Link from 'next/link';
-
+import Swal from 'sweetalert2';
+import Router from "next/router";
 
 
 const CQuestionnaireAmlThree = () => {
- 
+  // Variable de l'url de l'api
+  const API_URL =process.env.NEXT_PUBLIC_URL_API;
+
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [messageError, setMessageError] = useState();
+  const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
+
+
   const [answers, setAnswers] = useState({
     transactionAmountHigher: '',
     relationsSanctionedCountries: '',
@@ -19,30 +27,79 @@ const CQuestionnaireAmlThree = () => {
     transactionsTerrorismLinks: ''
   });
 
-  // LES BONS
-  // transactionAmountHigher
-  //   relationsSanctionedCountries
-  //   highRiskCountryPayments
-  //   restrictedGoodsTransactions S
-  //   relationsIllegalActivities
-  //   noCooperativeJurisdictionPayments
-  //   offshoreBankAccountsTransactions
-  //   frequentClientsTransactions S
-  //   thirdPartyCashPayments
-  //   transactionsTerrorismLinks
-  
+  // Fonction d'envoie des informations du questionnaire Three
+  const updateQuizThree= async (event) => {
+    event.preventDefault();
+    setIsLoggingIn(true);
+    
+    try {
+
+        const dataa = {
+          transactionAmountHigher:answers?.transactionAmountHigher,
+          relationsSanctionedCountries:answers?.relationsSanctionedCountries,
+          highRiskCountryPayments:answers?.highRiskCountryPayments,
+          relationsIllegalActivities:answers?.relationsIllegalActivities,
+          noCooperativeJurisdictionPayments:answers?.noCooperativeJurisdictionPayments,
+          offshoreBankAccountsTransactions:answers?.offshoreBankAccountsTransactions,
+          thirdPartyCashPayments:answers?.thirdPartyCashPayments,
+          transactionsTerrorismLinks:answers?.transactionsTerrorismLinks
+        }
+
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+            const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-quiz-three`, {
+            method:"PUT",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+            })
+            const data = await result.json();
+        
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message) {
+            setMessageError(data.message)
+            setIsLoggingIn(false);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p> ${messageError} </p>` ,
+                showConfirmButton: false,
+                timer: 10000
+            })
+            }else{
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                    showConfirmButton: false,
+                    timer: 5000
+                }),
+                setTimeout(() => {
+                    if (currentKycEntrepriseStatut==="1") {
+                        Router.push("/profil/kyc/entreprise/resultat-kyc"); 
+        
+                    }else{
+                        Router.push("/profil/kyc/entreprise/questionnaire-aml-four"); 
+                    }
+                }, 5000)
+            }
+            // Fin condition 
+        } catch {
+        setIsLoggingIn(false);
+        }
+  };
+  // Fin
+
   
   const handleChange = (e) => {
     setAnswers({ ...answers, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Envoyer les réponses à l'endroit approprié ou effectuer d'autres actions nécessaires
-    console.log(answers);
-    // Faites ici votre appel API ou toute autre action nécessaire avec les réponses
-  };
-
+  
 // La barre de progression de KYC du profil entreprise
 const stepsEntreprise = ["AML","Identité","Représentant", "Bénéficiaire","Control", "Politique", "Opérations", "Fonds", "Financière", "Documents"];
 
@@ -80,7 +137,7 @@ const activeStepEntreprise = -1;
           <div className='col-lg-3 col-md-12'></div>
 
           <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={updateQuizThree}>
 
               <div className='mt-3'>
                 <label>
@@ -204,25 +261,19 @@ const activeStepEntreprise = -1;
 
               {/* <button type="submit">Envoyer</button> */}
               <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
-                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                    <Link href='/profil/kyc/entreprise/questionnaire-aml-two/' className="align-right">
-                                        <a
-                                        className=""
-                                        >
-                                            <button className="btn btn-primary " type='button'  > Précédente </button>
-                                        </a>   
-                                    </Link>                          
-                                </div>
-                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                    <Link href='/profil/kyc/entreprise/questionnaire-aml-four/' className="align-right">
-                                        <a
-                                        className=""
-                                        >
-                                            <button className="btn btn-primary " type='button'  > Suivant </button>
-                                        </a>   
-                                    </Link>                          
-                                </div>
-                            </div> 
+                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                    <Link href='/profil/kyc/entreprise/questionnaire-aml-two/' className="align-right">
+                        <a
+                        className=""
+                        >
+                            <button className="btn btn-primary " type='button'  > Précédente </button>
+                        </a>   
+                    </Link>                          
+                </div>
+                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                  <button className="btn btn-primary " type='submit' disabled={isLoggingIn}  > Suivant </button>
+                </div>
+            </div> 
             </form>
           </div>
           <div className='col-lg-3 col-md-12'></div>

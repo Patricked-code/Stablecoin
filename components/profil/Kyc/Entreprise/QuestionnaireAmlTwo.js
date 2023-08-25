@@ -43,6 +43,16 @@ const CQuestionnaireAmlTwo = () => {
       const [savingsAccount, setSavingsAccount] = useState([]);
       const [currentAccount, setCurrentAccount] = useState([]);
       const [titleAccount, setTitleAccount] = useState([]);
+      const [datAccount, setDatAccount] = useState([]);
+      const [foreignCurrencyAccount, setForeignCurrencyAccount] = useState([]);
+
+      const [allCountry, setAllCountry] = useState('');
+      const [allBank, setAllBank] = useState([])
+      const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
+
+
+
+      
       const [bankReferencesSavings, setBankReferencesSavings] = useState('');
       const [otherBankNameSavings, setOtherBankNameSavings] = useState('');
       const [otherBankCountrySavings, setOtherBankCountrySavings] = useState('');
@@ -52,84 +62,203 @@ const CQuestionnaireAmlTwo = () => {
       const [bankReferencesTitle, setBankReferencesTitle] = useState('');
       const [otherBankNameTitle, setOtherBankNameTitle] = useState('');
       const [otherBankCountryTitle, setOtherBankCountryTitle] = useState('');
+      const [bankReferencesDat, setBankReferencesDat] = useState('');
+      const [otherBankNameDat, setOtherBankNameDat] = useState('');
+      const [otherBankCountryDat, setOtherBankCountryDat] = useState('');
 
-// LES BONS
-// otherBankAccount
-// savingsAccount
-// currentAccount
-// titleAccount
-// dat
-// bankReferencesSavings
-// otherBankNameSavings
-// otherBankCountrySavings
-// bankReferencesCurrent
-// otherBankNameCurrent
-// otherBankCountryCurrent
-// bankReferencesTitle
-// otherBankNameTitle
-// otherBankCountryTitle
-// bankReferencesDat
-// otherBankNameDat
-// otherBankCountryDat
-// cashPayments
-// relationsIranKoreaSyriaCuba S
-// transactionsInTaxHavens
-// cryptocurrencyPayments
-// relationsInternationalSanctions S
-// transactionsLowTaxation
-// politicallyExposedClients
-// offshoreCompanyPayments
-// crossBorderTransactions
 
-    
-      const handleChange = (e) => {
-        setAnswers({ ...answers, [e.target.name]: e.target.value });
-      };
-    
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        // Envoyer les réponses à l'endroit approprié ou effectuer d'autres actions nécessaires
-        console.log(answers);
-      };
-    
+    // Fonction d'envoie des informations du questionnaire Two
+    const updateQuizTwo= async (event) => {
+      event.preventDefault();
+      setIsLoggingIn(true);
+      
+      try {
 
-    //   POUR LES BANQUES
-    const [hasOtherBankAccount, setHasOtherBankAccount] = useState(false);
-    const [bankAccountDetails, setBankAccountDetails] = useState({
-      country: '',
-      bankName: '',
-      accountTypes: [],
-    });
-  
-    const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setBankAccountDetails((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }));
+        const dataTable = {
+          savingsAccount:Object.assign({},savingsAccount),
+          currentAccount:Object.assign({},currentAccount),
+          titleAccount:Object.assign({},titleAccount),
+          datAccount:Object.assign({},datAccount),
+          foreignCurrencyAccount:Object.assign({},foreignCurrencyAccount),
+
+        }
+
+          const dataa = {
+            otherBankAccount:otherBankAccount,
+            savingsAccount:dataTable?.savingsAccount[0],
+            currentAccount:dataTable?.currentAccount[0],
+            titleAccount:dataTable?.titleAccount[0],
+            dat:dataTable?.datAccount[0],
+            foreignCurrencyAccount:dataTable?.foreignCurrencyAccount[0],
+            bankReferencesSavings:bankReferencesSavings,
+            otherBankNameSavings:otherBankNameSavings,
+            otherBankCountrySavings:otherBankCountrySavings,
+            bankReferencesCurrent:bankReferencesCurrent,
+            otherBankNameCurrent:otherBankNameCurrent,
+            otherBankCountryCurrent:otherBankCountryCurrent,
+            bankReferencesTitle:bankReferencesTitle,
+            otherBankNameTitle:otherBankNameTitle,
+            otherBankCountryTitle:otherBankCountryTitle,
+            bankReferencesDat:bankReferencesDat,
+            otherBankNameDat:otherBankNameDat,
+            otherBankCountryDat:otherBankCountryDat,
+            cashPayments:answers?.cashPayments,
+            transactionsInTaxHavens:answers?.transactionsInTaxHavens,
+            cryptocurrencyPayments:answers?.cryptocurrencyPayments,
+            transactionsLowTaxation:answers?.transactionsLowTaxation,
+            politicallyExposedClients:answers?.politicallyExposedClients,
+            offshoreCompanyPayments:answers?.offshoreCompanyPayments,
+            crossBorderTransactions:answers?.crossBorderTransactions
+          }
+
+              const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+              const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-quiz-two`, {
+              method:"PUT",
+              body: JSON.stringify(dataa),
+              headers: {
+                  'Content-Type': 'application/json',
+                  Authorization:  `Bearer ${token}`
+              }
+              })
+              const data = await result.json();
+          
+              /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+              * sinon on affiche le message de succès
+              */
+              if (data.message) {
+              setMessageError(data.message)
+              setIsLoggingIn(false);
+              Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  html: `<p> ${messageError} </p>` ,
+                  showConfirmButton: false,
+                  timer: 10000
+              })
+              }else{
+                  Swal.fire({
+                      position: 'center',
+                      icon: 'success',
+                      html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                      showConfirmButton: false,
+                      timer: 5000
+                  }),
+                  setTimeout(() => {
+                      if (currentKycEntrepriseStatut==="1") {
+                          Router.push("/profil/kyc/entreprise/resultat-kyc"); 
+          
+                      }else{
+                          Router.push("/profil/kyc/entreprise/questionnaire-aml-three"); 
+                      }
+                  }, 5000)
+              }
+              // Fin condition 
+          } catch {
+          setIsLoggingIn(false);
+          }
     };
-  
-    const handleCheckboxChange = (e) => {
-      const { name, checked } = e.target;
-      if (checked) {
-        setBankAccountDetails((prevState) => ({
-          ...prevState,
-          accountTypes: [...prevState.accountTypes, name],
-        }));
+    // Fin
+
+    const handleChange = (e) => {
+      setAnswers({ ...answers, [e.target.name]: e.target.value });
+    };
+
+
+    // Les handles des questions de checkbox de la partie banque
+    const handleOptionSavingsAccount = (event) => {
+      const value = event.target.value;
+      const isChecked = event.target.checked;
+
+      if (isChecked) {
+          setSavingsAccount([...savingsAccount, value]);
       } else {
-        setBankAccountDetails((prevState) => ({
-          ...prevState,
-          accountTypes: prevState.accountTypes.filter((type) => type !== name),
-        }));
+          setSavingsAccount("");
       }
     };
 
-    //   FIN BANQUE
+    const handleOptionCurrentAccount = (event) => {
+        const value = event.target.value;
+        const isChecked = event.target.checked;
 
+        if (isChecked) {
+            setCurrentAccount([...currentAccount, value]);
+        } else {
+            setCurrentAccount("");
+        }
+    };
 
+    const handleOptionTitleAccount = (event) => {
+        const value = event.target.value;
+        const isChecked = event.target.checked;
 
+        if (isChecked) {
+            setTitleAccount([...titleAccount, value]);
+        } else {
+            setTitleAccount("");
+        }
+    };
 
-    
+    const handleOptionDatAccount = (event) => {
+      const value = event.target.value;
+      const isChecked = event.target.checked;
+
+      if (isChecked) {
+          setDatAccount([...datAccount, value]);
+      } else {
+          setDatAccount("");
+      }
+    };
+
+    const handleOptionForeignCurrencyAccount = (event) => {
+      const value = event.target.value;
+      const isChecked = event.target.checked;
+
+      if (isChecked) {
+          setForeignCurrencyAccount([...foreignCurrencyAccount, value]);
+      } else {
+          setForeignCurrencyAccount("");
+      }
+    };
+
+    // FIN
+
+    // RECUPERER TOUS LES PAYS
+    useEffect(async() => {
+      const getAllCountries = async () => {
+      const resCountry = await fetch(`${API_URL}/api/country/find-all`, {
+          headers: {
+          'Content-Type': 'application/json',
+          },
+      })
+        .then((resCountry) => resCountry.json())
+        .then((allCountry) => {
+        setAllCountry(allCountry)
+        }) 
+      };
+      await getAllCountries();
+    }, []);
+    // FIN
+
+    // RECUPERER TOUTES LES BANQUES 
+    useEffect(async() => {
+                
+      const getAllBank = async () => {
+      const resBank = await fetch(`${API_URL}/api/bank/find-all`, {
+          headers: {
+          'Content-Type': 'application/json',
+          },
+      })
+          .then((resBank) => resBank.json())
+          .then((data) => {
+          setAllBank(data)
+
+          }) 
+      };
+      await getAllBank();
+    }, []);
+    // FIN
+
    // La barre de progression de KYC du profil entreprise
    const stepsEntreprise = ["AML","Identité","Représentant", "Bénéficiaire","Control", "Politique", "Opérations", "Fonds", "Financière", "Documents"];
 
@@ -169,63 +298,39 @@ const CQuestionnaireAmlTwo = () => {
                 <div className='col-lg-3 col-md-12'></div>
 
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={updateQuizTwo}>
 
 
 
 
-                        <div className="mt-3">
-                <label>Avez-vous un compte bancaire dans une autre institution ?</label>
-                <select
-                    className="form-control mt-2"
-                    name="hasOtherBankAccount"
-                    value={hasOtherBankAccount.toString()}
-                    onChange={(e) => setHasOtherBankAccount(e.target.value === "true")}
-                >
-                    <option value="true">Oui</option>
-                    <option value="false">Non</option>
-                </select>
-                
-              </div>
+                          <div className="mt-3">
+                            <label>Avez-vous un compte bancaire dans une autre institution ?</label>
+                            <select
+                                className="form-control mt-2"
+                                name="hasOtherBankAccount"
+                                value={otherBankAccount}
+                                onChange={(e) => setOtherBankAccount(e.target.value)}
+                            >
+                                <option defaultValue="">Choisissez</option>
 
-              {hasOtherBankAccount && (
-                <>
-                  <div className="mt-3">
-                    <label>Pays :</label>
-                    <select
-                        className="form-control mt-2"
-                        name="country"
-                        value={bankAccountDetails.country}
-                        onChange={handleInputChange}
-                    >
-                        <option value="">Sélectionnez un pays</option>
-                        <option value="France">France</option>
-                        <option value="États-Unis">États-Unis</option>
-                        <option value="Royaume-Uni">Royaume-Uni</option>
-                        {/* Ajoutez d'autres options de pays ici */}
-                    </select>
-                    </div>
+                                <option value="true">Oui</option>
+                                <option value="false">Non</option>
+                            </select>
+                            
+                          </div>
 
-                  <div className="mt-3">
-                    <label>Nom de la banque :</label>
-                    <input
-                      type="text"
-                      name="bankName"
-                      className="form-control mt-2"
-                      value={bankAccountDetails.bankName}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-
-                  <div className="mt-3">
+                          {otherBankAccount ==="true" && (
+                            <>
+                  <div className="mt-3 mb-5">
                     <label>Type de compte :</label>
                     <div className="mt-2">
                       <label>
                         <input
                           type="checkbox"
-                          name="compteCourant"
-                          checked={bankAccountDetails.accountTypes.includes('compteCourant')}
-                          onChange={handleCheckboxChange}
+                          name="Compte courant"
+                          value="Compte courant"
+                          checked={currentAccount.includes('Compte courant')}
+                          onChange={handleOptionCurrentAccount}
                         />
                         Compte courant
                       </label>
@@ -233,9 +338,10 @@ const CQuestionnaireAmlTwo = () => {
                       <label>
                         <input
                           type="checkbox"
-                          name="compteEpargne"
-                          checked={bankAccountDetails.accountTypes.includes('compteEpargne')}
-                          onChange={handleCheckboxChange}
+                          name="Compte épargne"
+                          value="Compte épargne"
+                          checked={savingsAccount.includes('Compte épargne')}
+                          onChange={handleOptionSavingsAccount}
                         />
                         Compte épargne
                       </label>
@@ -243,9 +349,10 @@ const CQuestionnaireAmlTwo = () => {
                       <label>
                         <input
                           type="checkbox"
-                          name="DAT"
-                          checked={bankAccountDetails.accountTypes.includes('DAT')}
-                          onChange={handleCheckboxChange}
+                          name="Compte DAT"
+                          value="Compte DAT"
+                          checked={datAccount.includes('Compte DAT')}
+                          onChange={handleOptionDatAccount}
                         />
                         DAT
                       </label>
@@ -253,26 +360,472 @@ const CQuestionnaireAmlTwo = () => {
                       <label>
                         <input
                           type="checkbox"
-                          name="compteTitres"
-                          checked={bankAccountDetails.accountTypes.includes('compteTitres')}
-                          onChange={handleCheckboxChange}
+                          name="Compte titre"
+                          value="Compte titre"
+                          checked={titleAccount.includes('Compte titre')}
+                          onChange={handleOptionTitleAccount}
                         />
-                        Compte titres
+                        Compte titre
                       </label>
                       <br />
                       <label>
                         <input
                           type="checkbox"
-                          name="compteDevisesEtrangeres"
-                          checked={bankAccountDetails.accountTypes.includes('compteDevisesEtrangeres')}
-                          onChange={handleCheckboxChange}
+                          name="Compte en devises étrangères"
+                          value="Compte en devises étrangères"
+                          checked={foreignCurrencyAccount.includes('Compte en devises étrangères')}
+                          onChange={handleOptionForeignCurrencyAccount}
                         />
-                        Compte en devises étrangères
+                          Compte en devises étrangères
                       </label>
                     </div>
                   </div>
-                </>
-              )}
+               
+
+                          {/* LES CHAMPS A RENSEIGNER QUAND L'UTISATEUR A UN COMPTE BANCAIRE D'EPARGNE*/}
+                          {savingsAccount[0]==="Compte épargne"? (
+                            <>
+                            <label className="text-center mb-2 colorRed">
+                                Les informations du compte d'épargne
+                            </label>
+                            {/* Question 7 */}
+                            <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="otherBankCountrySavings"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Pays de la banque de votre compte d'épargne existant
+                                </label>
+                                <select 
+                                className="form-control"
+                                id="otherBankCountrySavings"
+                                required
+                                defaultValue={otherBankCountrySavings} 
+                                onChange={(event)=>setOtherBankCountrySavings(event.target.value)}
+                                >
+                                    <option defaultValue="">Choisissez</option>
+                                    {allCountry?(
+                                        allCountry.map((data) => (
+                                        <optgroup className='single-cryptocurrency-box'
+                                                key={data.id}>
+                                        <option  value={data.code}>{data.libelle}</option>
+                                        </optgroup>
+                                    ))):("")}
+                                </select>
+                            </div >
+
+                            {otherBankCountrySavings==="CI" || otherBankCountrySavings==="TG" || otherBankCountrySavings==="BJ" || otherBankCountrySavings==="BF" || otherBankCountrySavings==="TD" || otherBankCountrySavings==="GA" || otherBankCountrySavings==="CG" || otherBankCountrySavings==="CF" || otherBankCountrySavings==="GQ" || otherBankCountrySavings==="CM" || otherBankCountrySavings==="GW" || otherBankCountrySavings==="ML" || otherBankCountrySavings==="NE" || otherBankCountrySavings==="SN" ?(
+                                
+                                <div className='form-group mb-6 mt-3'>
+                                    <label
+                                        htmlFor="bankNameSavings"
+                                        className="text-blackish-blue mb-2"
+                                    >
+                                     Nom de la banque de votre compte d'épargne
+                                    </label>
+                                    <select 
+                                        placeholder='Banque'
+                                        className='form-control'
+                                        defaultValue={otherBankNameSavings} 
+                                        onChange={(event)=>setOtherBankNameSavings(event.target.value)}
+                                    >
+                                        <option>Choisissez</option>
+                                        {/* Afficher les Banques d'un pays */}
+                                        {allBank.map((data) => (
+                                            data.countryIso===otherBankCountrySavings?
+                                                <optgroup className='single-cryptocurrency-box' key={data.id}>
+                                                    <option value={data.bankName}>{data.bankName}</option>
+                                                </optgroup>
+                                            :" "
+                                        ))}
+                                        {/* Fin */}
+                                </select>
+                                </div>
+                            ):(
+                                <div className="form-group mb-6 mt-3">
+                                    <label
+                                        htmlFor="bankNameSavings"
+                                        className="text-blackish-blue mb-2"
+                                    >
+                                    Nom de la banque de votre compte d'épargne
+                                    </label>
+                                    <div className='form-group '>
+                                        <input
+                                            type='text'
+                                            id='bankNameSavings'
+                                            className='form-control'
+                                            placeholder="Nom de la banque de votre compte d'épargne"
+                                            defaultValue={otherBankNameSavings} 
+                                            onChange={(event)=>setOtherBankNameSavings(event.target.value)}
+                                        />
+                                    </div>
+                                </div >
+                            )}
+
+                            {/* Fin Q3 */}
+                                
+                            {/* Question 6 */}
+                            <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="bankReferencesSavings"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Références de la banque de votre compte d'épargne
+                                </label>
+                                <div className='form-group'>
+                                    <input
+                                        type='text'
+                                        id='bankReferencesSavings'
+                                        className='form-control'
+                                        placeholder=" Références de la banque de votre compte d'épargne"
+                                        defaultValue={bankReferencesSavings} 
+                                        onChange={(event)=>setBankReferencesSavings(event.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            
+                            
+                            {/* Fin */}
+
+                             
+                            </>
+                            ):("")}
+                            {/* **********FIN CONDITION DE COMPTE BANCAIRE D'EPARGNE******** */}
+
+                            {/* LES CHAMPS A RENSEIGNER QUAND L'UTISATEUR A UN COMPTE BANCAIRE COURANT*/}
+                            {currentAccount[0]==="Compte courant"? (
+                            <>
+                            <label className="text-center mb-2 colorRed">
+                                Les informations du compte courant
+                            </label>
+                                 {/* Question 7 */}
+                             <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="otherBankCountryCurrent"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Pays de la banque de votre compte courant existant
+                                </label>
+                                <select 
+                                className="form-control  bgColorRed"
+                                id="otherBankCountryCurrent"
+                                required
+                                defaultValue={otherBankCountryCurrent} 
+                                onChange={(event)=>setOtherBankCountryCurrent(event.target.value)}
+                                >
+                                    <option defaultValue="">Choisissez</option>
+                                    {allCountry?(
+                                        allCountry.map((data) => (
+                                            <optgroup className='single-cryptocurrency-box'
+                                                    key={data.id}>
+                                            <option  value={data.code}>{data.libelle}</option>
+                                            </optgroup>
+                                        ))
+                                    ):("")}
+                                </select>
+                            </div >
+
+                            {otherBankCountryCurrent==="CI" || otherBankCountryCurrent==="TG" || otherBankCountryCurrent==="BJ" || otherBankCountryCurrent==="BF" || otherBankCountryCurrent==="TD" || otherBankCountryCurrent==="GA" || otherBankCountryCurrent==="CG" || otherBankCountryCurrent==="CF" || otherBankCountryCurrent==="GQ" || otherBankCountryCurrent==="CM" || otherBankCountryCurrent==="GW" || otherBankCountryCurrent==="ML" || otherBankCountryCurrent==="NE" || otherBankCountryCurrent==="SN" ?(
+                                <div className='form-group mb-6 mt-3'>
+                                    <label
+                                        htmlFor="bankNameSavings"
+                                        className="text-blackish-blue mb-2"
+                                    >
+                                        Nom de la banque de votre compte courant
+                                    </label>
+                                    <select 
+                                        placeholder='Banque'
+                                        className='form-control'
+                                        defaultValue={otherBankNameCurrent} 
+                                        onChange={(event)=>setOtherBankNameCurrent(event.target.value)}
+                                    >
+                                        <option>Choisissez</option>
+                                        {/* Afficher les Banques d'un pays */}
+                                        {allBank.map((data) => (
+                                            data.countryIso===otherBankCountryCurrent?
+                                                <optgroup className='single-cryptocurrency-box' key={data.id}>
+                                                    <option value={data.bankName}>{data.bankName}</option>
+                                                </optgroup>
+                                            :" "
+                                        ))}
+                                        {/* Fin */}
+                                </select>
+                                </div>
+                            ):(
+                                <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="bankNameCurrent"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                  Nom de la banque de votre compte courant
+                                </label>
+                                <div className='form-group '>
+                                    <input
+                                        type='text'
+                                        id='bankNameCurrentCurrent'
+                                        className='form-control'
+                                        placeholder='Nom de la banque de votre compte courant'
+                                        defaultValue={otherBankNameCurrent} 
+                                        onChange={(event)=>setOtherBankNameCurrent(event.target.value)}
+                                    />
+                                </div>
+                            </div >
+                            )}
+                            
+                            {/* Question 6 */}
+                            <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="bankReferencesCurrent"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Références de la banque de votre compte courant
+                                </label>
+                                <div className='form-group'>
+                                    <input
+                                        type='text'
+                                        id='bankReferencesCurrent'
+                                        className='form-control'
+                                        placeholder='Références de la banque de votre compte courant'
+                                        defaultValue={bankReferencesCurrent} 
+                                        onChange={(event)=>setBankReferencesCurrent(event.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            
+                           
+                            {/* Fin */}
+                            
+                            </>
+                            ):("")}
+                            {/* ***********FIN CONDITION S'IL A UN COMPTE BANCAIRE COURANT**** */}
+                            
+                            {/* LES CHAMPS A RENSEIGNER QUAND L'UTISATEUR A UN COMPTE BANCAIRE TITRE*/}
+                            {titleAccount[0]==="Compte titre"? (
+                            <>
+                            <label className="text-center mb-2 colorRed">
+                                Les informations du compte titre
+                            </label>
+                                {/* Question 7 */}
+                             <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="otherBankCountryTitle"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Pays de la banque de votre compte titre existant
+                                </label>
+                                <select 
+                                className="form-control"
+                                id="otherBankCountryTitle"
+                                required
+                                defaultValue={otherBankCountryTitle} 
+                                onChange={(event)=>setOtherBankCountryTitle(event.target.value)}
+                                >
+                                    <option defaultValue="">Choisissez</option>
+                                    {allCountry?(
+                                        allCountry.map((data) => (
+                                            <optgroup className='single-cryptocurrency-box'
+                                                    key={data.id}>
+                                            <option  value={data.code}>{data.libelle}</option>
+                                            </optgroup>
+                                        ))
+                                    ):("")}
+                                </select>
+                            </div >
+
+                            {otherBankCountryTitle==="CI" || otherBankCountryTitle==="TG" || otherBankCountryTitle==="BJ" || otherBankCountryTitle==="BF" || otherBankCountryTitle==="TD" || otherBankCountryTitle==="GA" || otherBankCountryTitle==="CG" || otherBankCountryTitle==="CF" || otherBankCountryTitle==="GQ" || otherBankCountryTitle==="CM" || otherBankCountryTitle==="GW" || otherBankCountryTitle==="ML" || otherBankCountryTitle==="NE" || otherBankCountryTitle==="SN" ?(
+                                <div className='form-group mb-6 mt-3'>
+                                    <label
+                                        htmlFor="bankNameSavings"
+                                        className="text-blackish-blue mb-2"
+                                    >
+                                        Nom de la banque de votre compte titre
+
+                                    </label>
+                                    <select 
+                                        placeholder='Banque'
+                                        className='form-control'
+                                        defaultValue={otherBankNameTitle} 
+                                        onChange={(event)=>setOtherBankNameTitle(event.target.value)}
+                                    >
+                                        <option>Choisissez</option>
+                                        {/* Afficher les Banques d'un pays */}
+                                        {allBank.map((data) => (
+                                            data.countryIso===otherBankCountryTitle?
+                                                <optgroup className='single-cryptocurrency-box' key={data.id}>
+                                                    <option value={data.bankName}>{data.bankName}</option>
+                                                </optgroup>
+                                            :" "
+                                        ))}
+                                        {/* Fin */}
+                                </select>
+                                </div>
+                            ):(
+                                <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="bankNameTitle"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                  Nom de la banque de votre compte titre
+                                </label>
+                                <div className='form-group '>
+                                    <input
+                                        type='text'
+                                        id='bankNameCurrentTitle'
+                                        className='form-control'
+                                        placeholder='Nom de la banque de votre compte titre'
+                                        defaultValue={otherBankNameTitle} 
+                                        onChange={(event)=>setOtherBankNameTitle(event.target.value)}
+                                    />
+                                </div>
+                            </div >
+                            )}
+
+                            
+                           
+                            {/* Fin Q3 */}
+                            {/* Question 6 */}
+                            <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="bankReferencesTitle"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Références de la banque de votre compte titre
+                                </label>
+                                <div className='form-group'>
+                                    <input
+                                        type='text'
+                                        id='bankReferencesTitle'
+                                        className='form-control'
+                                        placeholder='Références de la banque de votre compte titre'
+                                        defaultValue={bankReferencesTitle} 
+                                        onChange={(event)=>setBankReferencesTitle(event.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            
+                            
+                            {/* Fin */}
+                            
+                             
+                            </>
+                            ):("")}
+                            {/* **************FIN CONDITION COMPTE TITRE*********** */}
+                            
+                            {/* LES CHAMPS A RENSEIGNER QUAND L'UTISATEUR A UN COMPTE BANCAIRE DAT*/}
+                            {datAccount[0]==="Compte DAT"? (
+                            <>
+                            <label className="text-center mb-2 colorRed">
+                                Les informations du compte DAT
+                            </label>
+                                {/* Question 7 */}
+                            <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="otherBankCountryDat"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Pays de la banque de votre compte DAT existant
+                                </label>
+                                <select 
+                                className="form-control"
+                                id="otherBankCountryDat"
+                                required
+                                defaultValue={otherBankCountryDat} 
+                                onChange={(event)=>setOtherBankCountryDat(event.target.value)}
+                                >
+                                    <option defaultValue="">Choisissez</option>
+                                    {allCountry?(
+                                        allCountry.map((data) => (
+                                            <optgroup className='single-cryptocurrency-box'
+                                                    key={data.id}>
+                                            <option  value={data.code}>{data.libelle}</option>
+                                            </optgroup>
+                                        ))
+                                    ):("")}
+                                </select>
+                            </div >
+
+                            {otherBankCountryDat==="CI" || otherBankCountryDat==="TG" || otherBankCountryDat==="BJ" || otherBankCountryDat==="BF" || otherBankCountryDat==="TD" || otherBankCountryDat==="GA" || otherBankCountryDat==="CG" || otherBankCountryDat==="CF" || otherBankCountryDat==="GQ" || otherBankCountryDat==="CM" || otherBankCountryDat==="GW" || otherBankCountryDat==="ML" || otherBankCountryDat==="NE" || otherBankCountryDat==="SN" ?(
+                                <div className='form-group mb-6 mt-3'>
+                                    <label
+                                        htmlFor="bankNameSavings"
+                                        className="text-blackish-blue mb-2"
+                                    >
+                                        Nom de la banque de votre compte DAT
+
+                                    </label>
+                                    <select 
+                                        placeholder='Banque'
+                                        className='form-control'
+                                        defaultValue={otherBankNameDat} 
+                                        onChange={(event)=>setOtherBankNameDat(event.target.value)}
+                                    >
+                                        <option>Choisissez</option>
+                                        {/* Afficher les Banques d'un pays */}
+                                        {allBank.map((data) => (
+                                            data.countryIso===otherBankCountryDat?
+                                                <optgroup className='single-cryptocurrency-box' key={data.id}>
+                                                    <option value={data.bankName}>{data.bankName}</option>
+                                                </optgroup>
+                                            :" "
+                                        ))}
+                                        {/* Fin */}
+                                </select>
+                                </div>
+                            ):(
+                                <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="bankNameDat"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                  Nom de la banque de votre compte DAT
+                                </label>
+                                <div className='form-group '>
+                                    <input
+                                        type='text'
+                                        id='bankNameCurrentDat'
+                                        className='form-control'
+                                        placeholder='Nom de la banque de votre compte DAT'
+                                        defaultValue={otherBankNameDat} 
+                                        onChange={(event)=>setOtherBankNameDat(event.target.value)}
+                                    />
+                                </div>
+                            </div >
+                            )}
+
+
+
+                            {/* Fin Q3 */}
+                            {/* Question 6 */}
+                            <div className="form-group mb-6 mt-3">
+                                <label
+                                    htmlFor="bankReferencesDat"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Références de la banque de votre compte DAT
+                                </label>
+                                <div className='form-group'>
+                                    <input
+                                        type='text'
+                                        id='bankReferencesDat'
+                                        className='form-control'
+                                        placeholder='Références de la banque de votre compte DAT'
+                                        defaultValue={bankReferencesDat} 
+                                        onChange={(event)=>setBankReferencesDat(event.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+
+                            {/* Fin */}
+
+                            
+                            </>
+                            ):("")}
+                            {/* **************FIN CONDITION COMPTE DAT********** */}
+                            </>
+                          )}
+                           
+                            {/* ****************FIN PARTIE BANQUE************************ */}
 
                             <div className='mt-3'>
                                 <label>
@@ -385,13 +938,7 @@ const CQuestionnaireAmlTwo = () => {
                                     </Link>                          
                                 </div>
                                 <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                    <Link href='/profil/kyc/entreprise/questionnaire-aml-three/' className="align-right">
-                                        <a
-                                        className=""
-                                        >
-                                            <button className="btn btn-primary " type='button'  > Suivant </button>
-                                        </a>   
-                                    </Link>                          
+                                  <button className="btn btn-primary " type='submit' disabled={isLoggingIn}> Suivant </button>
                                 </div>
                             </div> 
                         </form>     

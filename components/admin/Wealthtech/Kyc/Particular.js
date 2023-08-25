@@ -60,7 +60,8 @@ const ValidParticular = () => {
     const [allKycForParticular, setAllKycForParticular] = useState();
     const [oneKycForParticular, setOneKycForParticular] = useState();
     const [idKycForParticular, setIdKycForParticular] = useState();
-
+    const [oneCountry, setOneCountry] = useState();
+    
     // states du formulaire de validation
     const [validQuiz, setValidQuiz] = useState();
     const [validQuizTwo, setValidQuizTwo] = useState();
@@ -85,22 +86,7 @@ const ValidParticular = () => {
     const [profileLevel, setProfileLevel] = useState();
     const [comment, setComment] = useState();
     const [kycParticularId, setKycParticularId] = useState();
-    
-     
-    // classificationRisk,
-    // sourcesDiverse, 
-    // highRisk, 
-    // anotherHighRisk, 
-    // whichOne,
-    // levelRisk, 
-    // levelRiskRevision,
-    // profileLevel, 
-    // comment
-    
-    
 
-
-    
 
 
     useEffect(() => {
@@ -184,7 +170,34 @@ const ValidParticular = () => {
         };
       
         getOneKycForParticular(idKycForParticular);
+    }
+    // FIN
+
+    // RECUPERER UNE SEULE LIGNE DE PAYS
+    if (userById?.nativeCountry) {
+        const getOneCountry = async () => {
+          try {
+            const result = await fetch(`${API_URL}/api/country/find-one/${userById?.nativeCountry}`, {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+      
+            if (!result.ok) {
+              throw new Error('Failed to fetch pays data');
+            }
+      
+            const data = await result.json();
+            setOneCountry(data);
+          } catch (error) {
+            // Handle errors appropriately, e.g., set an error state.
+            console.error('Error fetching pays data:', error);
+          }
+        };
+      
+        getOneCountry();
       }
+    //   FIN
       
     
 
@@ -301,8 +314,6 @@ const ValidParticular = () => {
         }
     // Fin
 
-    console.log("dataa=>",idKycForParticular)
-
     // ****************PARTIE CLASSIFICATION*************************
     const addClassification= async (event) => {
         setIsLoggingIn(true);
@@ -323,7 +334,6 @@ const ValidParticular = () => {
                 kyc_particularId:kycParticularId
                 
             }
-            console.log("dataa=>",dataa)
             // Condition pour forcer l'utilisateur à choisir au moins une reponse
             if (idKycForParticular) {
                 
@@ -383,7 +393,7 @@ const ValidParticular = () => {
         
     };
     // ****************FIN CLASSIFICATION****************************
-
+    
      // FONCTION POUR FORMATER LA DATE
      const formatDate = (_updatedAt) =>{
         const maDate = moment(_updatedAt).format('DD/MM/YYYY');
@@ -743,7 +753,7 @@ const ValidParticular = () => {
 
                                             <div className='col-lg-6 col-md-6'>
                                                 <b> Pays de Naissance :</b><br/>
-                                                {oneKycForParticular?.nativeCountry? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.nativeCountry }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                {oneCountry?.libelle? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneCountry?.libelle}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
 
                                             <div className='col-lg-6 col-md-6'>

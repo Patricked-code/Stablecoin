@@ -133,7 +133,7 @@ const CQuestionnaire = () => {
         const token = localStorage.getItem('tokenEnCours')
         
             const getKycForEntreprise = async () => {
-            const resKyc = await fetch(`${API_URL}/api/kyc/entreprise/find-kyc-entreprise-for-user`, {
+            const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-of-user`, {
                 headers: {
                 'Content-Type': 'application/json',
                 Authorization:  `Bearer ${token}`,
@@ -194,12 +194,12 @@ const CQuestionnaire = () => {
                 multiplePayment:multiplePayment
             }
 
-            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.operationA||dataa?.operationB||dataa?.operationC||dataa?.operationD||dataa?.operationE||dataa?.operationF||dataa?.operationG||dataa?.eShop||dataa?.multiplePayment) {
+            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.spentG||dataa?.spentH||dataa?.spentI||dataa?.operationA||dataa?.operationB||dataa?.operationC||dataa?.operationD||dataa?.operationE||dataa?.operationF||dataa?.operationG||dataa?.eShop||dataa?.multiplePayment) {
                 
                 
                 const token = localStorage.getItem('tokenEnCours') //Le token récuperé
 
-                const result = await fetch(`${API_URL}/api/kyc/entreprise/add-kyc-questionnaires`, {
+                const result = await fetch(`${API_URL}/api/kyc/business/add-kyc-quiz`, {
                 method:"POST",
                 body: JSON.stringify(dataa),
                 headers: {
@@ -250,7 +250,7 @@ const CQuestionnaire = () => {
             setIsLoggingIn(false);
             }
         
-    }, [spentA,spentB,spentC,spentD,spentE,operationA,operationB,operationC,operationD,operationE,operationF,operationG,eShop,multiplePayment]);
+    }, [spentA,spentB,spentC,spentD,spentE,spentF,spentG,spentH,spentI,operationA,operationB,operationC,operationD,operationE,operationF,operationG,eShop,multiplePayment]);
     // Fin
 
 
@@ -299,12 +299,12 @@ const CQuestionnaire = () => {
                 multiplePayment:multiplePayment
             }
 
-            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.operationA||dataa?.operationB||dataa?.operationC||dataa?.operationD||dataa?.operationE||dataa?.operationF||dataa?.operationG||dataa?.eShop||dataa?.multiplePayment) {
+            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.spentG||dataa?.spentH||dataa?.spentI||dataa?.operationA||dataa?.operationB||dataa?.operationC||dataa?.operationD||dataa?.operationE||dataa?.operationF||dataa?.operationG||dataa?.eShop||dataa?.multiplePayment) {
                 
                 
                 const token = localStorage.getItem('tokenEnCours') //Le token récuperé
 
-                const result = await fetch(`${API_URL}/api/kyc/entreprise/update-kyc-questionnaires`, {
+                const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-quiz`, {
                 method:"PUT",
                 body: JSON.stringify(dataa),
                 headers: {
@@ -360,7 +360,7 @@ const CQuestionnaire = () => {
             setIsLoggingIn(false);
             }
         
-    }, [spentA,spentB,spentC,spentD,spentE,operationA,operationB,operationC,operationD,operationE,operationF,operationG,eShop,multiplePayment]);
+    }, [spentA,spentB,spentC,spentD,spentE,spentF,spentG,spentH,spentI,operationA,operationB,operationC,operationD,operationE,operationF,operationG,eShop,multiplePayment]);
     // Fin
 
 
@@ -827,13 +827,7 @@ const CQuestionnaire = () => {
                                 </select>
                             </div >
                             {/* Fin Q3 */}
-                            {/* descriptionFluxFinancierHorsAfriqueEuro */}
-    {/* descriptionFluxFinancierZoneEuro */}
-    {/* descriptionFluxFinancierAutres */}
-    {/* descriptionFluxSortantUEMOA */}
-    {/* descriptionFluxSortantHorsAfrique */}
-    descriptionFluxSortantZoneEuro
-    descriptionFluxSortantAutres
+                           
                             {/* Question 4 */}
                             {statutQ3==="Oui" ? (
                                 <>
@@ -901,7 +895,7 @@ const CQuestionnaire = () => {
                                             name="operationC"
                                             id='operationC-check' 
                                             value={descriptionFluxFinancierAutres}
-                                            checked={operationC.includes(`{descriptionFluxFinancierAutres}`)}
+                                            checked={operationC.includes(`${descriptionFluxFinancierAutres}`)}
                                             onChange={handleOptionOperationC}
                                             />
                                         <p className=" mx-2 mb-0">

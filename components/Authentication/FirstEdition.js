@@ -601,7 +601,7 @@ const [serviceD, setServiceD] = useState([]);
     })
       .then((resNationality) => resNationality.json())
       .then((allNationality) => {
-      setAllNationality(allNationality)
+        setAllNationality(allNationality)
       }) 
     };
     await getAllNationality();

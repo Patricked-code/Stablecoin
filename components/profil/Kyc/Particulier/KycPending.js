@@ -57,6 +57,7 @@ const KycPendingParticular = () => {
     const [kycForParticularUser, setKycForParticularUser] = useState();
     const [oneKycForParticular, setOneKycForParticular] = useState();
     const [idKycForParticular, setIdKycForParticular] = useState();
+    const [oneCountry, setOneCountry] = useState();
 
     // states du formulaire de validation
     const [validQuiz, setValidQuiz] = useState();
@@ -163,8 +164,34 @@ const KycPendingParticular = () => {
             };
             getOneKycForParticular(idKycForParticular);
     }
-   
     // FIN
+
+    // RECUPERER UNE SEULE LIGNE DE PAYS
+    if (currentUser?.nativeCountry) {
+        const getOneCountry = async (_countryId) => {
+          try {
+            const result = await fetch(`${API_URL}/api/country/find-one/${_countryId}`, {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+      
+            if (!result.ok) {
+              throw new Error('Failed to fetch pays data');
+            }
+      
+            const data = await result.json();
+            setOneCountry(data);
+            console.log("Data =>",data)
+          } catch (error) {
+            // Handle errors appropriately, e.g., set an error state.
+            console.error('Error fetching pays data:', error);
+          }
+        };
+      
+        getOneCountry(currentUser?.nativeCountry);
+      }
+    //   FIN
 
     // La fonction qui vérifie si un lien est un lien pdf
     function isPdfLink(link) {
@@ -598,7 +625,7 @@ const KycPendingParticular = () => {
 
                                             <div className='col-lg-6 col-md-6'>
                                                 <b> Pays de Naissance :</b><br/>
-                                                {oneKycForParticular?.nativeCountry? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.nativeCountry }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                {oneCountry?.libelle? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneCountry?.libelle }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
 
                                             <div className='col-lg-6 col-md-6'>

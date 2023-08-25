@@ -27,40 +27,17 @@ const CBeneficiaireEffectifTwo = () => {
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
+    const [allCountry, setAllCountry] = useState();
+    const [allNationality, setAllNationality] = useState();
+    const [kycForEntreprise, setKycForEntreprise] = useState();
+    const [kycBeneficiary, setKycBeneficiary] = useState();
 
     // States du formulaire
-    // socialReason
-    // firstName
-    // lastName
-    // issuingCountry
-    // nativeCountry
-    // countryRegistration
-    // dateBirth
-    // nationality
-    // email
-    // typeDocIdentity
-    // identityDocNumber
-    // mobile
-    // phoneFixe
-    // startDate
-    // numberRccm
-    // expirationDate
-    // typeBeneficiary
-    {/* POUR PIECE D'IDENTITE */}
-    // frontIdentityFile
-    // backIdentityFile 
-    // frontIdentityPhoto
-    // backIdentityPhoto
-    {/* FIN */}
-
-    
-    
-    
     const [socialReason, setSocialReason] = useState();
     const [firstName, setFirstName] = useState();
     const [lastName, setLastName] = useState();
     const [issuingCountry, setIssuingCountry] = useState();
-    const [nativeCountry, setNativeCountry] = useState();
+    const [residenceCountry, setResidenceCountry] = useState();
     const [dateBirth, setDateBirth] = useState();
     const [nationality, setNationality] = useState();
     const [percentControl, setPercentControl] = useState();
@@ -75,21 +52,9 @@ const CBeneficiaireEffectifTwo = () => {
     const [startDate, setStartDate] = useState();
     const [numberRccm, setNumberRccm] = useState();
     
-    const [frontIdentityFile, setFrontIdentityFile ] = useState();
-    const [backIdentityFile, setCackIdentityFile ] = useState();
-    const [frontIdentityPhoto, setFrontIdentityPhoto ] = useState();
-    const [backIdentityPhoto, setCackIdentityPhoto ] = useState();
+    const [frontIdentity, setFrontIdentity ] = useState();
+    const [backIdentity, setBackIdentity ] = useState();
 
-    
-    // Pour la signature
-    const signatureRef = useRef(null)
-    const [signatureData, setSignatureData] = useState(null)
-
-    // Fonction pour sauvegarder une signature
-    const save = () => {
-        const data = signatureRef.current.getTrimmedCanvas().toDataURL('image/png')
-        setSignatureData(data)
-    }
 
     // STATES POUR PRENDRE PHOTO WEBCAMP (IDENTITE)
     const [statutDocIdentite, setStatutDocIdentite] = React.useState();
@@ -101,6 +66,8 @@ const CBeneficiaireEffectifTwo = () => {
     const [imageRecto, setImageRecto] = useState(null)
     const [imageVerso, setImageVerso] = useState(null)
     // FIN
+
+
 
     // LES FONCTIONS POUR PRENDRE PHOTO (IDENTITE)
     // Fonction pour prendre photo du Recto
@@ -118,77 +85,219 @@ const CBeneficiaireEffectifTwo = () => {
     // Fin
     // FIN
 
+       
+        // Partie importation du fichier
+       const [createObjectURL, setCreateObjectURL] = useState(null);
 
-    // STATES POUR PRENDRE PHOTO WEBCAMP (IDENTITE)
-    const [statutDocDomicile, setStatutDocDomicile] = React.useState();
-    const [statutRectoDomicile, setStatutRectoDomicile] = React.useState("0");
-    const [statutVersoDomicile, setStatutVersoDomicile] = React.useState("0");
-    const webcamRefRectoDomicile = useRef(null)
-    const webcamRefVersoDomicile = useRef(null)
-    const [imageRectoDomicile, setImageRectoDomicile] = useState(null)
-    const [imageVersoDomicile, setImageVersoDomicile] = useState(null)
-    // FIN
+       // Les fichiers de justificatif d'identité du representant
+       const uploadToClientIdentityFront = (event) => {
+           if (event.target.files && event.target.files[0]) {
+           const i = event.target.files[0];
+   
+           setFrontIdentity(i);
+           setCreateObjectURL(URL.createObjectURL(i));
+           }
+       };
+   
+   
+       const uploadToClientIdentityBack = (event) => {
+           if (event.target.files && event.target.files[0]) {
+           const i = event.target.files[0];
+   
+           setBackIdentity(i);
+           setCreateObjectURL(URL.createObjectURL(i));
+           }
+       };
+       // Fin
+    
 
-    // LES FONCTIONS POUR PRENDRE PHOTO (DOMICILE)
-    // Fonction pour prendre photo du Recto
-    const captureRectoDomicile = () => {
-        const image = webcamRefRectoDomicile.current.getScreenshot()
-        setImageRectoDomicile(image)
+    // FONCTION D'ENVOIE DES DONNEES DU BENEFICIARE EFFECTIF
+    const addBenefiary = async (event) => {
+        event.preventDefault();
+        setIsLoggingIn(true);
+
+        const token = localStorage.getItem('tokenEnCours')
+        const body = new FormData();
+        body.append("socialReason", socialReason);
+        body.append("lastName", lastName);
+        body.append("firstName", firstName);
+        body.append("issuingCountry", issuingCountry);
+        body.append("residenceCountry", residenceCountry);
+        body.append("countryRegistration", countryRegistration);
+        body.append("dateBirth", dateBirth);
+        body.append("nationality", nationality);
+        body.append("email", email);
+        body.append("mobile", mobile);
+        body.append("phoneFixe", phoneFixe);
+        body.append("startDate", startDate);
+        body.append("expirationDate", expirationDate);
+        body.append("numberRccm", numberRccm);
+        body.append("percentControl", percentControl);
+        body.append("typeBeneficiary", typeBeneficiary);
+        body.append("typeDocIdentity", typeDocIdentity);
+        body.append("identityDocNumber", identityDocNumber);
+        body.append("frontIdentityFile", statutDocIdentite==="0"?frontIdentity:"");
+        body.append("backIdentityFile", statutDocIdentite==="0"?backIdentity:"");
+        body.append("frontIdentityPhoto", statutDocIdentite==="1"?imageRecto:"");
+        body.append("backIdentityPhoto", statutDocIdentite==="1"?imageVerso:"");
+    
+        
+            const result = await fetch(`${API_URL}/api/kyc/business/add-kyc-beneficiary`, {
+                method:"POST",
+                body,
+                headers: {
+                    // 'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`,
+                    },
+            })    
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                * sinon on affiche le message de succès
+                */
+            if (result?.status===200) {
+                setTimeout(() => {
+                    if (currentKycStatut==="1") {
+                        Router.push("/profil/kyc/particulier/resultat-kyc"); 
+                    }else{
+                        if (kycBeneficiary?.length+1 == kycForEntreprise?.numberBeneficial) {
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'success',
+                                html: `<p> Vous avez ${kycBeneficiary?.length + 1}  bénéfiaire(s) effectif(s) avec succès. </p>` ,
+                                showConfirmButton: false,
+                                timer: 5000
+                            })
+                            
+                            Router.push("/profil/kyc/entreprise/structure-control-one"); 
+                        }else{
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'success',
+                                html: `<p> Vous avez ajouté ${kycBeneficiary?.length + 1} bénéfiaire(s) effectif(s) avec succès. </p>` ,
+                                showConfirmButton: false,
+                                timer: 1000
+                            })
+
+                            setTimeout(() => {
+                                window.location.reload()
+                            }, 1000)
+                        }
+                    }
+                }, 5000)
+                
+                }else{
+                    // setMessageError(data.message)
+
+                    setIsLoggingIn(false);
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        html: `<p> Désolé une erreur s'est produite,Veuillez réessayer svp. </p>` ,
+                        showConfirmButton: false,
+                        timer: 10000
+                    })
+                    
+                }
     }
-    // Fin
-
-    // Fonction pour prendre photo du verso
-    const captureVersoDomicile = () => {
-        const image = webcamRefVersoDomicile.current.getScreenshot()
-        setImageVersoDomicile(image)
-    }
-    // Fin
     // FIN
 
-    
 
-    
-    
-    
-                            
-                            
-                            
-                            
-                            
-                            
-    
+    // RECUPERER TOUS LES PAYS
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+        
+            const getAllCountries = async () => {
+            const resCountry = await fetch(`${API_URL}/api/country/find-all`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
 
+                },
+            })
+                .then((resCountry) => resCountry.json())
+                .then((allCountry) => {
+                setAllCountry(allCountry)
+                }) 
 
-
-
-    // State de la question 2
-    const [spentA, setSpentA] = useState([]);
-    const [spentB, setSpentB] = useState([]);
-    const [spentC, setSpentC] = useState([]);
-    const [spentD, setSpentD] = useState([]);
-    const [spentE, setSpentE] = useState([]);
-    const [spentF, setSpentF] = useState([]);
-
-    // State de la question 4
-    const [frequencyA, setFrequencyA] = useState([]);
-    const [frequencyB, setFrequencyB] = useState([]);
-    const [frequencyC, setFrequencyC] = useState([]);
-
-    // State de la question 5
-    const [incomeTypeA, setIncomeTypeA] = useState([]);
-    const [incomeTypeB, setIncomeTypeB] = useState([]);
-    const [incomeTypeC, setIncomeTypeC] = useState([]);
-
-    // State de la question 1 et 3
-    const [statutQ1, setStatutQ1] = useState();
-    const [statutQ3, setStatutQ3] = useState();
-    
+            };
+            
+            await getAllCountries();
+    }, []);
     // FIN
 
-    const [kycForParticular, setKycForParticular] = useState();
+    // RECUPERER TOUTES LES NATIONALITES
+    useEffect(async() => {
+        const getAllNationality = async () => {
+        const resCountry = await fetch(`${API_URL}/api/country/find-all-nationnality`, {
+            headers: {
+            'Content-Type': 'application/json',
+            },
+        })
+        .then((resNationality) => resNationality.json())
+        .then((allNationality) => {
+            setAllNationality(allNationality)
+        }) 
+        };
+        await getAllNationality();
+    }, []);
+    // FIN
+
+
+    // RECUPERER KYC DE L'ENTREPRISE
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+        
+            const getKycForEntreprise = async () => {
+            const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-of-user`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((resKyc) => resKyc.json())
+                .then((data) => {
+                setKycForEntreprise(data)
+
+                }) 
+            };
+            await getKycForEntreprise();
+    }, []);
+    // FIN
+
+    // RECUPERER LES DONNEES DU KYC DU BENEFIAIRE EFFECTIF DE L'ENTREPRISE CONNECTEE
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+        
+            const getKycBeneficiary = async () => {
+            const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-beneficiary-of-user-signIn`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((resKyc) => resKyc.json())
+                .then((data) => {
+                setKycBeneficiary(data)
+
+                }) 
+            };
+            await getKycBeneficiary();
+    }, []);
+    // FIN
+    
+    
+    
+                            
+                            
+                            
+                            
+                            
+                            
+    
 
 
 
+
+    
     const [currentKycStatut, setCurrentKycStatut] = useState();
 
     //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
@@ -197,371 +306,7 @@ const CBeneficiaireEffectifTwo = () => {
         setCurrentKycStatut(kycStatut)
     }, [currentKycStatut]);
     // Fin
-
-
-    // RECUPERER KYC DE L'UTILISATEUR
-    useEffect(async() => {
-        const token = localStorage.getItem('tokenEnCours')
-        
-            const getKycForParticular = async () => {
-            const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-kyc-particular-for-user`, {
-                headers: {
-                'Content-Type': 'application/json',
-                Authorization:  `Bearer ${token}`,
-                },
-            })
-                .then((resKyc) => resKyc.json())
-                .then((data) => {
-                setKycForParticular(data)
-                }) 
-            };
-            // console.log("Banques =>",allBank)
-            await getKycForParticular();
-    }, []);
-    // FIN
-
-
-
-
-
-
-
-
-    // Fonction d'envoie des informations du questionnaire
-    const addQuestionnaire= useCallback(async () => {
-        setIsLoggingIn(true);
-        
-        try {
-            const dataTable = {
-                spentA:Object.assign({},spentA),
-                spentB:Object.assign({},spentB),
-                spentC:Object.assign({},spentC),
-                spentD:Object.assign({},spentD),
-                spentE:Object.assign({},spentE),
-                spentF:Object.assign({},spentF),
-                frequencyA:Object.assign({},frequencyA),
-                frequencyB:Object.assign({},frequencyB),
-                frequencyC:Object.assign({},frequencyC),
-                incomeTypeA:Object.assign({}, incomeTypeA),
-                incomeTypeB:Object.assign({},incomeTypeB),
-                incomeTypeC:Object.assign({},incomeTypeC)
-            }
-
-            const dataa = {
-                spentA:dataTable?.spentA[0],
-                spentB:dataTable?.spentB[0],
-                spentC:dataTable?.spentC[0],
-                spentD:dataTable?.spentD[0],
-                spentE:dataTable?.spentE[0],
-                spentF:dataTable?.spentF[0],
-                frequencyA:dataTable?.frequencyA[0],
-                frequencyB:dataTable?.frequencyB[0],
-                frequencyC:dataTable?.frequencyC[0],
-                incomeTypeA:dataTable?.incomeTypeA[0],
-                incomeTypeB:dataTable?.incomeTypeB[0],
-                incomeTypeC:dataTable?.incomeTypeC[0],
-                
-            }
-            // Condition pour forcer l'utilisateur à choisir au moins une reponse
-            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
-                
-                
-                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
-
-                const result = await fetch(`${API_URL}/api/kyc/particular/add-kyc-questionnaires`, {
-                method:"POST",
-                body: JSON.stringify(dataa),
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization:  `Bearer ${token}`
-                }
-                })
-                const data = await result.json();
-            
-                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-                * sinon on affiche le message de succès
-                */
-                if (data.message) {
-                setMessageError(data.message)
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> ${messageError} </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-                }else{
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'success',
-                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
-                        showConfirmButton: false,
-                        timer: 5000
-                    }),
-                    setTimeout(() => {
-                    Router.push("/profil/kyc/particulier/seconde-phase"); 
-                    }, 5000)
-                }
-                // Fin condition 
-            }else{
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-            }
-            
-            } catch {
-            setIsLoggingIn(false);
-            }
-        
-    }, [spentA,spentB,spentC,spentD,spentE,spentF,frequencyA,frequencyB,frequencyC,incomeTypeA,incomeTypeB,incomeTypeC]);
-    // Fin
-
-
-     // Fonction d'envoie des informations du questionnaire
-     const updateQuestionnaire= useCallback(async () => {
-        setIsLoggingIn(true);
-        
-        try {
-            const dataTable = {
-                spentA:Object.assign({},spentA),
-                spentB:Object.assign({},spentB),
-                spentC:Object.assign({},spentC),
-                spentD:Object.assign({},spentD),
-                spentE:Object.assign({},spentE),
-                spentF:Object.assign({},spentF),
-                frequencyA:Object.assign({},frequencyA),
-                frequencyB:Object.assign({},frequencyB),
-                frequencyC:Object.assign({},frequencyC),
-                incomeTypeA:Object.assign({}, incomeTypeA),
-                incomeTypeB:Object.assign({},incomeTypeB),
-                incomeTypeC:Object.assign({},incomeTypeC)
-            }
-
-            const dataa = {
-                spentA:dataTable?.spentA[0],
-                spentB:dataTable?.spentB[0],
-                spentC:dataTable?.spentC[0],
-                spentD:dataTable?.spentD[0],
-                spentE:dataTable?.spentE[0],
-                spentF:dataTable?.spentF[0],
-                frequencyA:dataTable?.frequencyA[0],
-                frequencyB:dataTable?.frequencyB[0],
-                frequencyC:dataTable?.frequencyC[0],
-                incomeTypeA:dataTable?.incomeTypeA[0],
-                incomeTypeB:dataTable?.incomeTypeB[0],
-                incomeTypeC:dataTable?.incomeTypeC[0],
-                
-            }
-            // Condition pour forcer l'utilisateur à choisir au moins une reponse
-            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
-                
-                
-                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
-
-                const result = await fetch(`${API_URL}/api/kyc/particular/update-kyc-questionnaires`, {
-                method:"PUT",
-                body: JSON.stringify(dataa),
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization:  `Bearer ${token}`
-                }
-                })
-                const data = await result.json();
-            
-                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-                * sinon on affiche le message de succès
-                */
-                if (data.message) {
-                setMessageError(data.message)
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> ${messageError} </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-                }else{
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'success',
-                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
-                        showConfirmButton: false,
-                        timer: 5000
-                    }),
-                    setTimeout(() => {
-                        if (currentKycStatut==="1") {
-                            Router.push("/profil/kyc/particulier/resultat-kyc"); 
-        
-                        }else{
-                            Router.push("/profil/kyc/particulier/seconde-phase"); 
-                        }
-                    }, 5000)
-                }
-                // Fin condition 
-            }else{
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-            }
-            
-            } catch {
-            setIsLoggingIn(false);
-            }
-        
-    }, [spentA,spentB,spentC,spentD,spentE,spentF,frequencyA,frequencyB,frequencyC,incomeTypeA,incomeTypeB,incomeTypeC]);
-    // Fin
-
-// Les handles de la 2è question
-  const handleOptionSpentA = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentA([...spentA, value]);
-    } else {
-        setSpentA("");
-    }
-  };
-
-const handleOptionSpentB = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentB([...spentB, value]);
-    } else {
-        setSpentB("");
-    }
-};
-
-const handleOptionSpentC = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentC([...spentC, value]);
-    } else {
-        setSpentC("");
-    }
-};
-
-const handleOptionSpentD = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentD([...spentD, value]);
-    } else {
-        setSpentD("");
-    }
-};
-
-const handleOptionSpentE = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentE([...spentE, value]);
-    } else {
-        setSpentE("");
-    }
-};
-
-const handleOptionSpentF = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setSpentF([...spentF, value]);
-    } else {
-        setSpentF("");
-    }
-};
-
-// FIN
-
-
-// Les handles de la 4è question
-const handleOptionFrequencyA = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setFrequencyA([...frequencyA, value]);
-    } else {
-        setFrequencyA("");
-    }
-};
-
-const handleOptionFrequencyB = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setFrequencyB([...frequencyB, value]);
-    } else {
-        setFrequencyB("");
-    }
-};
-
-const handleOptionFrequencyC = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setFrequencyC([...frequencyC, value]);
-    } else {
-        setFrequencyC("");
-    }
-};
-// FIN
- 
-// Les handles de la 5è question
-const handleOptionIncomeTypeA = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setIncomeTypeA([...incomeTypeA, value]);
-    } else {
-        setIncomeTypeA("");
-    }
-};
-
-const handleOptionIncomeTypeB = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setIncomeTypeB([...incomeTypeB, value]);
-    } else {
-        setIncomeTypeB("");
-    }
-};
-
-const handleOptionIncomeTypeC = (event) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-
-    if (isChecked) {
-        setIncomeTypeC([...incomeTypeC, value]);
-    } else {
-        setIncomeTypeC("");
-    }
-};
-
+    
      // La barre de progression de KYC du profil entreprise
    const stepsEntreprise = ["AML","Identité","Représentant", "Bénéficiaire","Control", "Politique", "Opérations", "Fonds", "Financière", "Documents"];
 
@@ -598,7 +343,7 @@ const handleOptionIncomeTypeC = (event) => {
             <div className='row'>
                 <div className='col-lg-3 col-md-12'></div>
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
-                        <form className=''>
+                        <form className='' onSubmit={addBenefiary}>
                             <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="typeBeneficiary"
@@ -722,7 +467,7 @@ const handleOptionIncomeTypeC = (event) => {
                                                     />
                                                 </div>
                                             </div >
-                                            <div className="form-group mb-6 mt-3">
+                                            <div className='form-group form-group mb-6 mt-3'>
                                                 <label
                                                     htmlFor="issuingCountry"
                                                     className="text-blackish-blue mb-2"
@@ -730,18 +475,23 @@ const handleOptionIncomeTypeC = (event) => {
                                                     Pays émetteur du document d'identité
                                                 </label>
                                                 <select 
-                                                className="form-control"
-                                                id="issuingCountry"
-                                                required
-                                                defaultValue={issuingCountry} 
-                                                onChange={(event)=>setIssuingCountry(event.target.value)}
+                                                    className="form-control"
+                                                    id="issuingCountry"
+                                                    required
+                                                    defaultValue={issuingCountry} 
+                                                    onChange={(event)=>setIssuingCountry(event.target.value)}
                                                 >
-                                                <option defaultValue="">Choisissez</option>
-                                                    <optgroup className='single-cryptocurrency-box'>
-                                                        <option  value="CNI">Côte d'Ivoire</option>
-                                                        <option  value="Passeport">Mali</option>
-                                                    </optgroup>
+                                                    <option>Pays </option>
+                                                    {/* Parcourir les pays */}
+                                                    {allCountry?(
+                                                    allCountry.map((data) => (
+                                                        <optgroup className='single-cryptocurrency-box'
+                                                                key={data.id}>
+                                                            <option  value={data.libelle}>{data.libelle}</option>
+                                                        </optgroup>
+                                                    ))):("")}
                                                 </select>
+                                                {/* Fin */}
                                             </div>
 
                                             {/* PARTIE DE LA MANIERE A ENVOYER LES FICHIERS */}
@@ -815,7 +565,7 @@ const handleOptionIncomeTypeC = (event) => {
                                                             name="myImage"
                                                             id='frontIdentity'
                                                             accept="application/pdf, image/*"
-                                                            // onChange={uploadToClientRecto}
+                                                            onChange={uploadToClientIdentityFront}
                                                         />
                                                     </div>
                                                     <div className="form-group mb-6">
@@ -830,7 +580,7 @@ const handleOptionIncomeTypeC = (event) => {
                                                             name="myImage"
                                                             id='backIdentity'
                                                             accept="application/pdf, image/*"
-                                                            // onChange={uploadToClientVerso}
+                                                            onChange={uploadToClientIdentityBack}
                                                         />
                                                     </div>
                                                 </>
@@ -952,26 +702,30 @@ const handleOptionIncomeTypeC = (event) => {
                                             ) : ("")}
                                             {/* ****************FIN PRENDRE PHOTO**************** */}
 
-                                                    <div className="form-group mb-6 mt-3">
+                                            <div className='form-group mt-3'>
                                                         <label
-                                                            htmlFor="nationality"
+                                                            htmlFor="email"
                                                             className="text-blackish-blue mb-2"
                                                         >
-                                                            Nationalité
+                                                        Votre nationalité
                                                         </label>
                                                         <select 
-                                                        className="form-control"
-                                                        id="nationality"
-                                                        required
+                                                        className='form-control'
+                                                        placeholder='Nationalité '
                                                         defaultValue={nationality} 
                                                         onChange={(event)=>setNationality(event.target.value)}
                                                         >
-                                                        <option defaultValue="">Choisissez</option>
-                                                            <optgroup className='single-cryptocurrency-box'>
-                                                                <option  value="CNI">Ivoirienne</option>
-                                                                <option  value="Passeport">Malienne</option>
+                                                            <option>Votre nationalité</option>
+                                                            {/* Parcourir les nationalités */}
+                                                            {allNationality?(
+                                                            allNationality.map((data) => (
+                                                            <optgroup className='single-cryptocurrency-box'
+                                                                    key={data.id}>
+                                                            <option  value={data.libelle}>{data.libelle}</option>
                                                             </optgroup>
+                                                                ))):("")}
                                                         </select>
+                                                        {/* Fin */}
                                                     </div>
                                                     
                                                     <div className="form-group mb-6 mt-3">
@@ -993,46 +747,62 @@ const handleOptionIncomeTypeC = (event) => {
                                                         </div>
                                                     </div >
 
-                                                    <div className="form-group mb-6 mt-3">
+                                                    <div className='form-group form-group mb-6 mt-3'>
                                                         <label
-                                                            htmlFor="nativeCountry"
+                                                            htmlFor="residenceCountry"
                                                             className="text-blackish-blue mb-2"
                                                         >
                                                             Pays de résidence  
                                                         </label>
                                                         <select 
-                                                        className="form-control"
-                                                        id="nativeCountry"
-                                                        required
-                                                        defaultValue={nativeCountry} 
-                                                        onChange={(event)=>setNativeCountry(event.target.value)}
+                                                            className="form-control"
+                                                            id="residenceCountry"
+                                                            required
+                                                            defaultValue={residenceCountry} 
+                                                            onChange={(event)=>setResidenceCountry(event.target.value)}
                                                         >
-                                                        <option defaultValue="">Choisissez</option>
-                                                            <optgroup className='single-cryptocurrency-box'>
-                                                                <option  value="CNI">Côte d'Ivoire</option>
-                                                                <option  value="Passeport">Mali</option>
-                                                            </optgroup>
+                                                        <option>Pays de Résidence </option>
+                                                        {/* Parcourir les pays */}
+                                                        {allCountry?(
+                                                        allCountry.map((data) => (
+                                                        <optgroup className='single-cryptocurrency-box'
+                                                                key={data.id}>
+                                                            <option  value={data.code}>{data.libelle}</option>
+                                                        </optgroup>
+                                                            ))):("")}
                                                         </select>
+                                                        {/* Fin */}
                                                     </div>
 
-                                                    <div className="form-group mb-6 mt-3">
-                                                <label
-                                                    htmlFor="mobile"
-                                                    className="text-blackish-blue mb-2"
-                                                >
-                                                    Téléphone mobile 
-                                                </label>
-                                                <div className='form-group'>
-                                                    <input
-                                                        type='text'
-                                                        id='mobile'
-                                                        className='form-control'
-                                                        placeholder='Téléphone mobile'
-                                                        defaultValue={mobile} 
-                                                        onChange={(event)=>setMobile(event.target.value)}
-                                                    />
-                                                </div>
-                                            </div>
+                                                    <div className=" form-group mb-6 mt-3 ">
+                                                        <label
+                                                            htmlFor="mobile"
+                                                            className="text-blackish-blue mb-2"
+                                                        >
+                                                            Téléphone mobile 
+                                                        </label>
+                                                        <div className=" input-group flex-nowrap ">
+                                                            <span  className="input-group-text " id="addon-wrapping">
+                                                            {allCountry?(
+                                                            allCountry.map((data) => (
+                                                                data.code == residenceCountry ?(
+                                                                <i key={data.id}>{data.indicator}</i>
+                                                                
+                                                                ):('')
+                                                            ))
+                                                            ):("")}
+                                                            </span>
+                                                            <input
+                                                            className="form-control"
+                                                            type="text"
+                                                            id="contact"
+                                                            placeholder="Numéro téléphone mobile"
+                                                            required
+                                                            defaultValue={mobile} 
+                                                            onChange={(event)=>setMobile(event.target.value)}
+                                                            />
+                                                        </div>
+                                                    </div>
                                             
                                                 </>
                                             ):('')}
@@ -1076,47 +846,62 @@ const handleOptionIncomeTypeC = (event) => {
                                                             />
                                                         </div>
                                                     </div >
-                    
-                                                    <div className="form-group mb-6 mt-3">
+                                                    <div className='form-group form-group mb-6 mt-3'>
                                                         <label
-                                                            htmlFor="nativeCountry"
+                                                            htmlFor="residenceCountry"
                                                             className="text-blackish-blue mb-2"
                                                         >
                                                             Pays d'immatriculation 
                                                         </label>
                                                         <select 
-                                                        className="form-control"
-                                                        id="countryRegistration"
-                                                        required
-                                                        defaultValue={countryRegistration} 
-                                                        onChange={(event)=>setCountryRegistration(event.target.value)}
-                                                        >
-                                                        <option defaultValue="">Choisissez</option>
-                                                            <optgroup className='single-cryptocurrency-box'>
-                                                                <option  value="CNI">Côte d'Ivoire</option>
-                                                                <option  value="Passeport">Mali</option>
+                                                            className="form-control"
+                                                            id="countryRegistration"
+                                                            required
+                                                            defaultValue={countryRegistration} 
+                                                            onChange={(event)=>setCountryRegistration(event.target.value)}
+                                                            >
+                                                            <option>Pays de Résidence </option>
+                                                            {/* Parcourir les pays */}
+                                                            {allCountry?(
+                                                            allCountry.map((data) => (
+                                                            <optgroup className='single-cryptocurrency-box'
+                                                                    key={data.id}>
+                                                                <option  value={data.code}>{data.libelle}</option>
                                                             </optgroup>
+                                                                ))):("")}
                                                         </select>
+                                                        {/* Fin */}
                                                     </div>
-                                                    <div className="form-group mb-6 mt-3">
-                                                <label
-                                                    htmlFor="phoneFixe"
-                                                    className="text-blackish-blue mb-2"
-                                                >
-                                                    Téléphone fixe
-                                                </label>
-                                                <div className='form-group'>
-                                                    <input
-                                                        type='text'
-                                                        id='phoneFixe'
-                                                        className='form-control'
-                                                        placeholder='Téléphone fixe'
-                                                        defaultValue={phoneFixe} 
-                                                        onChange={(event)=>setPhoneFixe(event.target.value)}
-                                                    />
-                                                </div>
+                                                    <div className=" form-group mb-6 mt-3 ">
+                                                        <label
+                                                            htmlFor="mobile"
+                                                            className="text-blackish-blue mb-2"
+                                                        >
+                                                            Téléphone fixe
+                                                        </label>
+                                                        <div className=" input-group flex-nowrap ">
+                                                            <span  className="input-group-text " id="addon-wrapping">
+                                                            {allCountry?(
+                                                            allCountry.map((data) => (
+                                                                data.code == countryRegistration ?(
+                                                                <i key={data.id}>{data.indicator}</i>
+                                                                
+                                                                ):('')
+                                                            ))
+                                                            ):("")}
+                                                            </span>
+                                                            <input
+                                                                type='text'
+                                                                id='phoneFixe'
+                                                                className='form-control'
+                                                                placeholder='Téléphone fixe'
+                                                                defaultValue={phoneFixe} 
+                                                                onChange={(event)=>setPhoneFixe(event.target.value)}
+                                                            />
+                                                        </div>
                                                     </div>
-                                                    <div className="form-group mb-6 mt-3">
+                                                    
+                                            <div className="form-group mb-6 mt-3">
                                                 <label
                                                     htmlFor="startDate"
                                                     className="text-blackish-blue mb-2"
@@ -1176,56 +961,20 @@ const handleOptionIncomeTypeC = (event) => {
                                                 </div>
                                             </div >
                                             
-
-                            
-
-                            
-                            
-                            
-                            
-
-
-
-
-
-
-
-
-
-
-
-                            
-
-
-
-
-
-
-
-
-
-
-
-
-                            {/* <p className="colorRed mb-7 ">
-                                NB : Aucun retour n'est permis sur cette page donc, répondez correctement aux questions
-                            </p> */}
-
-                            {/* {kycForParticular?.userId ? (
-                                <button className="btn btn-primary " type='button' onClick={updateQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
-                            ) : (
-                                <button className="btn btn-primary " type='button' onClick={addQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
-                            )} */}
-
-                            
-                            {/* <button className="btn btn-primary "  disabled={isLoggingIn}>Suivant</button> */}
                             </>
                             ) : ("")}
+
+                            <label
+                                htmlFor="backDomicile mb-3 "
+                                className='colorRed'
+                            >
+                                NB: Vous avez ajouté {kycBeneficiary?.length}/{kycForEntreprise?.numberBeneficial} bénéficiaire(s) effectif(s)
+                            </label>
 
                             <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
                                 {typeBeneficiary|| !typeBeneficiary ?(
                                     
-                                    <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                    <div className={`form-group mb-6 mt-3  ${!typeBeneficiary?"col-lg-12 col-md-12":" col-lg-6 col-md-6"}`} >
                                         <Link href='/profil/kyc/entreprise/beneficiaire-effectif-one/' className="align-right">
                                         
                                             <a
@@ -1237,16 +986,23 @@ const handleOptionIncomeTypeC = (event) => {
                                     </div>
                                 ):("")}
                                 {typeBeneficiary ? (
-                                    <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        <Link href='/profil/kyc/entreprise/structure-control-one/' className="align-right">
-                                        
-                                            <a
-                                            className=""
-                                            >
-                                                <button className="btn btn-primary " type='button'  > Suivant </button>
-                                            </a>   
-                                        </Link>                          
-                                    </div>
+                                    <>
+                                        {kycBeneficiary?.length == kycForEntreprise?.numberBeneficial ? (
+                                            <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                                <Link href='/profil/kyc/entreprise/structure-control-one' className="align-right">
+                                                    <a
+                                                    className=""
+                                                    >
+                                                        <button className="btn btn-primary " type='button'  > Suivant </button>
+                                                    </a>   
+                                                </Link>
+                                            </div>
+                                        ) : (
+                                            <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                                <button className="btn btn-primary " type='submit'  disabled={isLoggingIn}  > Suivant </button>                        
+                                            </div>
+                                        )}
+                                    </>
                                 ):("")}
                             </div>
                         </form>       
