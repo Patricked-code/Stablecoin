@@ -1,24 +1,10 @@
 import { useCallback, useState, useEffect,useRef } from 'react';
 import React from "react";
-import axios from 'axios';
 import Link from 'next/link';
-import { Icon } from '@iconify/react';
-
-
-// Pour Magic
-import { magic } from "../../../../magic";
-import { ethers } from "ethers";
-import Loading from "../../../loading";
+import { Table } from '@nextui-org/react';
 import Router from "next/router";
 import Swal from 'sweetalert2';
-import Web3 from "web3";
 import ProgressBar from '../ProgressBar';
-
-// Pour la signature
-import SignatureCanvas from 'react-signature-canvas'
-// Pour camera photo
-import Webcam from 'react-webcam'
-
 // FIN
 
 const CIformationFinanciereThree = () => {
@@ -27,147 +13,325 @@ const CIformationFinanciereThree = () => {
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
+    const [currentKycStatut, setCurrentKycStatut] = useState();
+    const [kycFinancialAnnualId, setKycFinancialAnnualId] = useState();
 
-    // ***********LA BONNE PARTIE ***********************
-    const [m1Ca, setM1Ca] = useState('');
-    const [m1Charges, setM1Charges] = useState('');
-    const [m1Resultat, setM1Resultat] = useState('');
-    const [m1Transactions, setM1Transactions] = useState('');
+
+
+    // ***********LA BONNE PARTIE STATE DU FORMULAIRE***********************
+    const [mOneCa, setMOneCa] = useState('');
+    const [mOneCharges, setMOneCharges] = useState('');
+    const [mOneResultat, setMOneResultat] = useState('');
+    const [mOneTransactions, setMOneTransactions] = useState('');
   
-    const [m2Ca, setM2Ca] = useState('');
-    const [m2Charges, setM2Charges] = useState('');
-    const [m2Resultat, setM2Resultat] = useState('');
-    const [m2Transactions, setM2Transactions] = useState('');
+    const [mTwoCa, setMTwoCa] = useState('');
+    const [mTwoCharges, setMTwoCharges] = useState('');
+    const [mTwoResultat, setMTwoResultat] = useState('');
+    const [mTwoTransactions, setMTwoTransactions] = useState('');
   
-    const [m3Ca, setM3Ca] = useState('');
-    const [m3Charges, setM3Charges] = useState('');
-    const [m3Resultat, setM3Resultat] = useState('');
-    const [m3Transactions, setM3Transactions] = useState('');
+    const [mThreeCa, setMThreeCa] = useState('');
+    const [mThreeCharges, setMThreeCharges] = useState('');
+    const [mThreeResultat, setMThreeResultat] = useState('');
+    const [mThreeTransactions, setMThreeTransactions] = useState('');
   
-    const [m4Ca, setM4Ca] = useState('');
-    const [m4Charges, setM4Charges] = useState('');
-    const [m4Resultat, setM4Resultat] = useState('');
-    const [m4Transactions, setM4Transactions] = useState('');
+    const [mFourCa, setMFourCa] = useState('');
+    const [mFourCharges, setMFourCharges] = useState('');
+    const [mFourResultat, setMFourResultat] = useState('');
+    const [mFourTransactions, setMFourTransactions] = useState('');
   
+
     const handleM1CaChange = (e) => {
-      setM1Ca(e.target.value);
+      setMOneCa(e.target.value);
     };
   
     const handleM1ChargesChange = (e) => {
-      setM1Charges(e.target.value);
+      setMOneCharges(e.target.value);
     };
   
     const handleM1ResultatChange = (e) => {
-      setM1Resultat(e.target.value);
+      setMOneResultat(e.target.value);
     };
   
     const handleM1TransactionsChange = (e) => {
-      setM1Transactions(e.target.value);
+      setMOneTransactions(e.target.value);
     };
   
     const handleM2CaChange = (e) => {
-      setM2Ca(e.target.value);
+      setMTwoCa(e.target.value);
     };
   
     const handleM2ChargesChange = (e) => {
-      setM2Charges(e.target.value);
+      setMTwoCharges(e.target.value);
     };
   
     const handleM2ResultatChange = (e) => {
-      setM2Resultat(e.target.value);
+      setMTwoResultat(e.target.value);
     };
   
     const handleM2TransactionsChange = (e) => {
-      setM2Transactions(e.target.value);
+      setMTwoTransactions(e.target.value);
     };
   
     const handleM3CaChange = (e) => {
-      setM3Ca(e.target.value);
+      setMThreeCa(e.target.value);
     };
   
     const handleM3ChargesChange = (e) => {
-      setM3Charges(e.target.value);
+      setMThreeCharges(e.target.value);
     };
   
     const handleM3ResultatChange = (e) => {
-      setM3Resultat(e.target.value);
+      setMThreeResultat(e.target.value);
     };
   
     const handleM3TransactionsChange = (e) => {
-      setM3Transactions(e.target.value);
+      setMThreeTransactions(e.target.value);
     };
   
     const handleM4CaChange = (e) => {
-      setM4Ca(e.target.value);
+      setMFourCa(e.target.value);
     };
   
     const handleM4ChargesChange = (e) => {
-      setM4Charges(e.target.value);
+      setMFourCharges(e.target.value);
     };
   
     const handleM4ResultatChange = (e) => {
-      setM4Resultat(e.target.value);
+      setMFourResultat(e.target.value);
     };
   
     const handleM4TransactionsChange = (e) => {
-      setM4Transactions(e.target.value);
+      setMFourTransactions(e.target.value);
     };
-  
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      // Effectuer des actions avec les données du formulaire
-      console.log({
-        m1Ca,
-        m1Charges,
-        m1Resultat,
-        m1Transactions,
-        m2Ca,
-        m2Charges,
-        m2Resultat,
-        m2Transactions,
-        m3Ca,
-        m3Charges,
-        m3Resultat,
-        m3Transactions,
-        m4Ca,
-        m4Charges,
-        m4Resultat,
-        m4Transactions
-      });
-    };
-
     // ***********FIN DE LA BONNE PARTIE*******************
 
-    // LES CHAMPS DE LA TABLE
-    //     m1Ca,
-    //     m1Charges,
-    //     m1Resultat,
-    //     m1Transactions,
-    //     m2Ca,
-    //     m2Charges,
-    //     m2Resultat,
-    //     m2Transactions,
-    //     m3Ca,
-    //     m3Charges,
-    //     m3Resultat,
-    //     m3Transactions,
-    //     m4Ca,
-    //     m4Charges,
-    //     m4Resultat,
-    //     m4Transactions
-        // periode
-    
 
+    // ENVOIES DES DONNEES DES INFORMATIONS FINANCIERES (Annuelle) 
+    const addFinancialInformationAnnual = async (e) => {
+      e.preventDefault();
+      setIsLoggingIn(true);
+
+      // Combiner les données du formulaire de différentes sections
+      
+      try {
+          // Prepare data
+          const dataa = {
+            period: "Annuelle",
+            periodOneCa: mOneCa,
+            periodOneCharges: mOneCharges,
+            periodOneResultat: mOneResultat,
+            periodOneTransactions: mOneTransactions,
+            periodTwoCa: mTwoCa,
+            periodTwoCharges: mTwoCharges,
+            periodTwoResultat: mTwoResultat,
+            periodTwoTransactions: mTwoTransactions,
+            periodThreeCa: mThreeCa,
+            periodThreeCharges: mThreeCharges,
+            periodThreeResultat: mThreeResultat,
+            periodThreeTransactions: mThreeTransactions,
+            periodFourCa: mFourCa,
+            periodFourCharges: mFourCharges,
+            periodFourResultat: mFourResultat,
+            periodFourTransactions: mFourTransactions
+          };
+        
+        
+          const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+          // Envoyer une requête POST en utilisant fetch
+          const response = await fetch(`${API_URL}/api/kyc/business/add-kyc-financial-information`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  Authorization:  `Bearer ${token}`
+
+              },
+              body: JSON.stringify(dataa),
+          });
+
+          // Parse the response data
+          const data = await response.json();
+          /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+          * sinon on affiche le message de succès
+          */
+          if (data.message) {
+              setMessageError(data.message)
+              setIsLoggingIn(false);
+              Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  html: `<p> ${messageError} </p>` ,
+                  showConfirmButton: false,
+                  timer: 10000
+              })
+          }else{
+              Swal.fire({
+                  position: 'center',
+                  icon: 'success',
+                  html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                  showConfirmButton: false,
+                  timer: 5000
+              }),
+              setTimeout(() => {
+                  if (currentKycStatut==="1") {
+                      Router.push("/profil/kyc/entreprise/resultat-kyc"); 
+                  }else{
+                      Router.push("/profil/kyc/entreprise/information-financiere-four"); 
+                  }
+              }, 5000)
+          }
+          // Fin condition 
+                  
+      } catch (error) {
+          setIsLoggingIn(false);
+      }
+    };
+    // FIN
+
+  // ENVOIES DES DONNEES DES INFORMATIONS FINANCIERES (ANNUELLE) 
+  const updateFinancialInformationAnnual = async (e) => {
+    e.preventDefault();
+    setIsLoggingIn(true);
+
+    // Combiner les données du formulaire de différentes sections
+    
+    try {
+        // Prepare data
+        const dataa = {
+          period: "Annuelle",
+          periodOneCa: mOneCa,
+          periodOneCharges: mOneCharges,
+          periodOneResultat: mOneResultat,
+          periodOneTransactions: mOneTransactions,
+          periodTwoCa: mTwoCa,
+          periodTwoCharges: mTwoCharges,
+          periodTwoResultat: mTwoResultat,
+          periodTwoTransactions: mTwoTransactions,
+          periodThreeCa: mThreeCa,
+          periodThreeCharges: mThreeCharges,
+          periodThreeResultat: mThreeResultat,
+          periodThreeTransactions: mThreeTransactions,
+          periodFourCa: mFourCa,
+          periodFourCharges: mFourCharges,
+          periodFourResultat: mFourResultat,
+          periodFourTransactions: mFourTransactions
+        };
+      
+      
+        const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+        // Envoyer une requête POST en utilisant fetch
+        const response = await fetch(`${API_URL}/api/kyc/business/update-kyc-financial-information/${kycFinancialAnnualId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+
+            },
+            body: JSON.stringify(dataa),
+        });
+
+        // Parse the response data
+        const data = await response.json();
+        /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+        * sinon on affiche le message de succès
+        */
+        if (data.message) {
+            setMessageError(data.message)
+            setIsLoggingIn(false);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p> ${messageError} </p>` ,
+                showConfirmButton: false,
+                timer: 10000
+            })
+        }else{
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 5000
+            }),
+            setTimeout(() => {
+                if (currentKycStatut==="1") {
+                    Router.push("/profil/kyc/entreprise/resultat-kyc"); 
+                }else{
+                    Router.push("/profil/kyc/entreprise/information-financiere-four"); 
+                }
+            }, 5000)
+        }
+        // Fin condition 
+                
+    } catch (error) {
+        setIsLoggingIn(false);
+    }
+  };
+  // FIN
+
+
+  // RECUPERER LES DONNEES DU KYC DE FINANCEMENT INFORMATIQUE (ANNUELLE) DE L'ENTREPRISE CONNECTEE 
+  useEffect(async() => {
+    const token = localStorage.getItem('tokenEnCours')
+    
+        const getKycFinancialMontly = async () => {
+        const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-annual-of-user-signIn`, {
+            headers: {
+            'Content-Type': 'application/json',
+            Authorization:  `Bearer ${token}`,
+            },
+        })
+            .then((resKyc) => resKyc.json())
+            .then((data) => {
+            setKycFinancialAnnualId(data?.id)
+
+            }) 
+        };
+        await getKycFinancialMontly();
+  }, []);
+  // FIN
 
     // La barre de progression de KYC du profil entreprise
    const stepsEntreprise = ["AML","Identité","Représentant", "Bénéficiaire","Control", "Politique", "Opérations", "Fonds", "Financière", "Documents"];
 
-   const activeStepEntreprise = 6;
+   const activeStepEntreprise = 7;
     // Fin
+
+    // ********************************************************************************
+  // LA PARTIE POUR EVITER L'AFFICHAGE DES LA BARRE DE PROGRSSION SUR MOBILE
+// ********************************************************************************
+  
+// Utilisez un état local pour stocker la largeur de l'écran
+  const [windowWidth, setWindowWidth] = useState(0);
+  // Utilisez useEffect pour obtenir la largeur de l'écran une fois que le composant est monté
+  useEffect(() => {
+    // Obtenez la largeur de l'écran et mettez à jour l'état local
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    // Ajoutez un gestionnaire d'événement pour redimensionner la fenêtre
+    window.addEventListener('resize', handleResize);
+
+    // Appelez handleResize une fois pour obtenir la largeur initiale
+    handleResize();
+
+    // Nettoyez le gestionnaire d'événement lors du démontage du composant
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // Conditionnez l'affichage de ProgressBar en fonction de la largeur de l'écran
+  const showProgressBar = windowWidth >= 1180; // Par exemple, considérez les écrans de 768 pixels ou plus comme des ordinateurs
+  
+  // *****************FIN LA PARTIE POUR EVITER L'AFFICHAGE DES LA BARRE DE PROGRSSION SUR MOBILE*****
+
 
   return (
     <>
-      <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />
+      {showProgressBar && <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />}
 
         <div className='mt-15' >
             <div className=' mx-15'>
@@ -193,228 +357,236 @@ const CIformationFinanciereThree = () => {
 
             {/* Les cards */}
             <div className='row'>
-                <div className='col-lg-3 col-md-12'></div>
-                    <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
+                    <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-12 col-md-12'>
                         <h4>Information financière sur les 4 dernières années</h4>
                         {/* FORM A */}
-                        <form onSubmit={handleSubmit}>
-                            {/* PARTIE N1 */}
-                            <label className='mt-3'><b>N-1</b></label><br/>
-                            <label>
-                                CA mensuel :
-                                <select 
-                                    value={m1Ca} 
-                                    onChange={handleM1CaChange}
-                                >
-                                    <option value="">Sélectionner un élément</option>
-                                    <option value="CA < 10.000.000 FCFA (15.000€)">CA &lt; 10.000.000 FCFA (15.000€)</option>
-                                    <option value="1O.000.000 FCFA < CA < 65.000.000FCFA">1O.000.000 FCFA &lt; CA &lt; 65.000.000FCFA</option>
-                                    <option value="CA > 65.900.000FCFA (100.000 €)">CA &gt; 65.900.000FCFA (100.000 €)</option>
-                                </select>
-                            </label>
+                        <form onSubmit={kycFinancialAnnualId?updateFinancialInformationAnnual:addFinancialInformationAnnual}>
+                          <Table
+                              aria-label="Example table with static content"
+                              css={{
+                                  height: "auto",
+                                  minWidth: "100%",
+                              }}
+                          >
+                            <Table.Header>
+                                <Table.Column><p className="gr-text-8 pt-3 pb-0 px-2 ">Période</p></Table.Column>
+                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">CA mensuel</p></Table.Column>
+                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Charges mensuelles</p></Table.Column>
+                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Résultat net Mensuel(%CA)</p></Table.Column>
+                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nombre moyen de transactions mensuelles financières (bancaires)</p></Table.Column>
+                            </Table.Header>
+                              <Table.Body>
+                                      <Table.Row >                       
+                                          <Table.Cell ><p className=" py-0 "> N-1 </p></Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                              <select 
+                                                  value={mOneCa} 
+                                                  onChange={handleM1CaChange}
+                                              >
+                                                  <option value="">Sélectionner un élément</option>
+                                                  <option value="CA < 10.000.000 FCFA (15.000€)">CA &lt; 10.000.000 FCFA (15.000€)</option>
+                                                  <option value="1O.000.000 FCFA < CA < 65.000.000FCFA">1O.000.000 FCFA &lt; CA &lt; 65.000.000FCFA</option>
+                                                  <option value="CA > 65.900.000FCFA (100.000 €)">CA &gt; 65.900.000FCFA (100.000 €)</option>
+                                              </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                              <select value={mOneCharges} onChange={handleM1ChargesChange}>
+                                                <option value="">Sélectionner un élément</option>
+                                                <option value="Charges< 10%CA">Charges &lt; 10%CA</option>
+                                                <option value="10%CA<Charges<50% CA">10%CA &lt; Charges &lt; 50%CA</option>
+                                                <option value="50%CA<Charges<100%CA">50%CA &lt; Charges &lt; 100%CA</option>
+                                                <option value="Charges > CA">Charges &gt; CA</option>
+                                              </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                              <select value={mOneResultat} onChange={handleM1ResultatChange}>
+                                              <option value="">Sélectionner un élément</option>
+                                              <option value="Résultat<0">Résultat &lt; 0</option>
+                                              <option value="0<Résultat<10% CA">0 &lt; Résultat &lt; 10% CA</option>
+                                              <option value="10%CA<Résultat<20%CA">10%CA &lt; Résultat &lt; 20%CA</option>
+                                              <option value="Résultat > 20%CA">Résultat &gt; 20%CA</option>
+                                              </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                              <select value={mOneTransactions} onChange={handleM1TransactionsChange}>
+                                                <option value="">Sélectionner un élément</option>
+                                                <option value="0">0</option>
+                                                <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                <option value="Transactions > 51">Transactions &gt; 51</option>
+                                              </select>
+                                            </p>
+                                          </Table.Cell>
+                                      </Table.Row >
+                                      <Table.Row >                       
+                                          <Table.Cell ><p className=" py-0 "> N-2 </p></Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                              <select value={mTwoCa} onChange={handleM2CaChange}>
+                                                <option value="">Sélectionner un élément</option>
+                                                <option value="CA < 10.000.000 FCFA (15.000€)">CA &lt; 10.000.000 FCFA (15.000€)</option>
+                                                <option value="1O.000.000 FCFA < CA < 65.000.000FCFA">1O.000.000 FCFA &lt; CA &lt; 65.000.000FCFA</option>
+                                                <option value="CA > 65.900.000FCFA (100.000 €)">CA &gt; 65.900.000FCFA (100.000 €)</option>
+                                              </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                              <select value={mTwoCharges} onChange={handleM2ChargesChange}>
+                                                <option value="">Sélectionner un élément</option>
+                                                <option value="Charges< 10%CA">Charges &lt; 10%CA</option>
+                                                <option value="10%CA<Charges<50% CA">10%CA &lt; Charges &lt; 50%CA</option>
+                                                <option value="50%CA<Charges<100%CA">50%CA &lt; Charges &lt; 100%CA</option>
+                                                <option value="Charges > CA">Charges &gt; CA</option>
+                                              </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                              <select value={mTwoResultat} onChange={handleM2ResultatChange}>
+                                                <option value="">Sélectionner un élément</option>
+                                                <option value="Résultat<0">Résultat &lt; 0</option>
+                                                <option value="0<Résultat<10% CA">0 &lt; Résultat &lt; 10% CA</option>
+                                                <option value="10%CA<Résultat<20%CA">10%CA &lt; Résultat &lt; 20%CA</option>
+                                                <option value="Résultat > 20%CA">Résultat &gt; 20%CA</option>
+                                              </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                              <select value={mTwoTransactions} onChange={handleM2TransactionsChange}>
+                                                <option value="">Sélectionner un élément</option>
+                                                <option value="0">0</option>
+                                                <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                <option value="Transactions > 51">Transactions &gt; 51</option>
+                                              </select>
+                                            </p>
+                                          </Table.Cell>
+                                      </Table.Row >
+                                      <Table.Row >                       
+                                          <Table.Cell ><p className=" py-0 "> N-3 </p></Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                              <select value={mThreeCa} onChange={handleM3CaChange}>
+                                                <option value="">Sélectionner un élément</option>
+                                                <option value="CA < 10.000.000 FCFA (15.000€)">CA &lt; 10.000.000 FCFA (15.000€)</option>
+                                                <option value="1O.000.000 FCFA < CA < 65.000.000FCFA">1O.000.000 FCFA &lt; CA &lt; 65.000.000FCFA</option>
+                                                <option value="CA > 65.900.000FCFA (100.000 €)">CA &gt; 65.900.000FCFA (100.000 €)</option>
+                                              </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                              <select value={mThreeCharges} onChange={handleM3ChargesChange}>
+                                                <option value="">Sélectionner un élément</option>
+                                                <option value="Charges< 10%CA">Charges &lt; 10%CA</option>
+                                                <option value="10%CA<Charges<50% CA">10%CA &lt; Charges &lt; 50%CA</option>
+                                                <option value="50%CA<Charges<100%CA">50%CA &lt; Charges &lt; 100%CA</option>
+                                                <option value="Charges > CA">Charges &gt; CA</option>
+                                              </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                              <select value={mThreeResultat} onChange={handleM3ResultatChange}>
+                                                <option value="">Sélectionner un élément</option>
+                                                <option value="Résultat<0">Résultat &lt; 0</option>
+                                                <option value="0<Résultat<10% CA">0 &lt; Résultat &lt; 10% CA</option>
+                                                <option value="10%CA<Résultat<20%CA">10%CA &lt; Résultat &lt; 20%CA</option>
+                                                <option value="Résultat > 20%CA">Résultat &gt; 20%CA</option>
+                                              </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                              <select value={mThreeTransactions} onChange={handleM3TransactionsChange}>
+                                                <option value="">Sélectionner un élément</option>
+                                                <option value="0">0</option>
+                                                <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                <option value="Transactions > 51">Transactions &gt; 51</option>
+                                              </select>
+                                            </p>
+                                          </Table.Cell>
+                                      </Table.Row >
+                                      <Table.Row >                       
+                                          <Table.Cell ><p className=" py-0 "> N-4 </p></Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                              <select value={mFourCa} onChange={handleM4CaChange}>
+                                                <option value="">Sélectionner un élément</option>
+                                                <option value="CA < 10.000.000 FCFA (15.000€)">CA &lt; 10.000.000 FCFA (15.000€)</option>
+                                                <option value="1O.000.000 FCFA < CA < 65.000.000FCFA">1O.000.000 FCFA &lt; CA &lt; 65.000.000FCFA</option>
+                                                <option value="CA > 65.900.000FCFA (100.000 €)">CA &gt; 65.900.000FCFA (100.000 €)</option>
+                                              </select>
+                                            </p>
+                                            </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                              <select value={mFourCharges} onChange={handleM4ChargesChange}>
+                                                <option value="">Sélectionner un élément</option>
+                                                <option value="Charges< 10%CA">Charges &lt; 10%CA</option>
+                                                <option value="10%CA<Charges<50% CA">10%CA &lt; Charges &lt; 50%CA</option>
+                                                <option value="50%CA<Charges<100%CA">50%CA &lt; Charges &lt; 100%CA</option>
+                                                <option value="Charges > CA">Charges &gt; CA</option>
+                                              </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                              <select value={mFourResultat} onChange={handleM4ResultatChange}>
+                                                <option value="">Sélectionner un élément</option>
+                                                <option value="Résultat<0">Résultat &lt; 0</option>
+                                                <option value="0<Résultat<10% CA">0 &lt; Résultat &lt; 10% CA</option>
+                                                <option value="10%CA<Résultat<20%CA">10%CA &lt; Résultat &lt; 20%CA</option>
+                                                <option value="Résultat > 20%CA">Résultat &gt; 20%CA</option>
+                                              </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                              <select value={mFourTransactions} onChange={handleM4TransactionsChange}>
+                                                <option value="">Sélectionner un élément</option>
+                                                <option value="0">0</option>
+                                                <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                <option value="Transactions > 51">Transactions &gt; 51</option>
+                                              </select>
+                                            </p>
+                                          </Table.Cell>
+                                      </Table.Row >
+                                                          
+                                      
+                              </Table.Body>
+                          </Table>
 
-                            <label className="mt-3">
-                                Charges mensuelles :
-                                <select value={m1Charges} onChange={handleM1ChargesChange}>
-                                <option value="">Sélectionner un élément</option>
-                                <option value="Charges< 10%CA">Charges &lt; 10%CA</option>
-                                <option value="10%CA<Charges<50% CA">10%CA &lt; Charges &lt; 50%CA</option>
-                                <option value="50%CA<Charges<100%CA">50%CA &lt; Charges &lt; 100%CA</option>
-                                <option value="Charges > CA">Charges &gt; CA</option>
-                                </select>
-                            </label>
-
-                            <label className="mt-3">
-                                Résultat net Mensuel (%CA) :
-                                <select value={m1Resultat} onChange={handleM1ResultatChange}>
-                                <option value="">Sélectionner un élément</option>
-                                <option value="Résultat<0">Résultat &lt; 0</option>
-                                <option value="0<Résultat<10% CA">0 &lt; Résultat &lt; 10% CA</option>
-                                <option value="10%CA<Résultat<20%CA">10%CA &lt; Résultat &lt; 20%CA</option>
-                                <option value="Résultat > 20%CA">Résultat &gt; 20%CA</option>
-                                </select>
-                            </label>
-
-                            <label className="mt-3">
-                                Nombre moyen de transactions mensuelles financières (bancaires) :
-                                <select value={m1Transactions} onChange={handleM1TransactionsChange}>
-                                <option value="">Sélectionner un élément</option>
-                                <option value="0">0</option>
-                                <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label>
-                            {/* FIN PARTIE N1 */}
-
-
-                            {/* PARTIE N2 */}
-                            <label className='mt-3'><b>N-2</b></label><br/>
-                            <label>
-                                CA mensuel :
-                                <select value={m2Ca} onChange={handleM2CaChange}>
-                                <option value="">Sélectionner un élément</option>
-                                <option value="CA < 10.000.000 FCFA (15.000€)">CA &lt; 10.000.000 FCFA (15.000€)</option>
-                                <option value="1O.000.000 FCFA < CA < 65.000.000FCFA">1O.000.000 FCFA &lt; CA &lt; 65.000.000FCFA</option>
-                                <option value="CA > 65.900.000FCFA (100.000 €)">CA &gt; 65.900.000FCFA (100.000 €)</option>
-                                </select>
-                            </label>
-
-                            <label className='mt-3'>
-                                Charges mensuelles :
-                                <select value={m2Charges} onChange={handleM2ChargesChange}>
-                                <option value="">Sélectionner un élément</option>
-                                <option value="Charges< 10%CA">Charges &lt; 10%CA</option>
-                                <option value="10%CA<Charges<50% CA">10%CA &lt; Charges &lt; 50%CA</option>
-                                <option value="50%CA<Charges<100%CA">50%CA &lt; Charges &lt; 100%CA</option>
-                                <option value="Charges > CA">Charges &gt; CA</option>
-                                </select>
-                            </label>
-
-                            <label className='mt-3'>
-                                Résultat net Mensuel (%CA) :
-                                <select value={m2Resultat} onChange={handleM2ResultatChange}>
-                                <option value="">Sélectionner un élément</option>
-                                <option value="Résultat<0">Résultat &lt; 0</option>
-                                <option value="0<Résultat<10% CA">0 &lt; Résultat &lt; 10% CA</option>
-                                <option value="10%CA<Résultat<20%CA">10%CA &lt; Résultat &lt; 20%CA</option>
-                                <option value="Résultat > 20%CA">Résultat &gt; 20%CA</option>
-                                </select>
-                            </label>
-
-                            <label className='mt-3'>
-                                Nombre moyen de transactions mensuelles financières (bancaires) :
-                                <select value={m2Transactions} onChange={handleM2TransactionsChange}>
-                                <option value="">Sélectionner un élément</option>
-                                <option value="0">0</option>
-                                <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label>
-                            {/* FIN PARTIE N2 */}
-
-
-                            {/* PARTIE N3 */}
-                            <label className='mt-3'><b>N-3</b></label><br/>
-                            <label>
-                                CA mensuel :
-                                <select value={m3Ca} onChange={handleM3CaChange}>
-                                <option value="">Sélectionner un élément</option>
-                                <option value="CA < 10.000.000 FCFA (15.000€)">CA &lt; 10.000.000 FCFA (15.000€)</option>
-                                <option value="1O.000.000 FCFA < CA < 65.000.000FCFA">1O.000.000 FCFA &lt; CA &lt; 65.000.000FCFA</option>
-                                <option value="CA > 65.900.000FCFA (100.000 €)">CA &gt; 65.900.000FCFA (100.000 €)</option>
-                                </select>
-                            </label>
-                            <label className='mt-3'>
-                                Charges mensuelles :
-                                <select value={m3Charges} onChange={handleM3ChargesChange}>
-                                <option value="">Sélectionner un élément</option>
-                                <option value="Charges< 10%CA">Charges &lt; 10%CA</option>
-                                <option value="10%CA<Charges<50% CA">10%CA &lt; Charges &lt; 50%CA</option>
-                                <option value="50%CA<Charges<100%CA">50%CA &lt; Charges &lt; 100%CA</option>
-                                <option value="Charges > CA">Charges &gt; CA</option>
-                                </select>
-                            </label>
-
-                            <label className='mt-3'>
-                                Résultat net Mensuel (%CA) :
-                                <select value={m3Resultat} onChange={handleM3ResultatChange}>
-                                <option value="">Sélectionner un élément</option>
-                                <option value="Résultat<0">Résultat &lt; 0</option>
-                                <option value="0<Résultat<10% CA">0 &lt; Résultat &lt; 10% CA</option>
-                                <option value="10%CA<Résultat<20%CA">10%CA &lt; Résultat &lt; 20%CA</option>
-                                <option value="Résultat > 20%CA">Résultat &gt; 20%CA</option>
-                                </select>
-                            </label>
-
-                            <label className='mt-3'>
-                                Nombre moyen de transactions mensuelles financières (bancaires) :
-                                <select value={m3Transactions} onChange={handleM3TransactionsChange}>
-                                <option value="">Sélectionner un élément</option>
-                                <option value="0">0</option>
-                                <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label>
-                            {/* FIN PARTIE N3 */}
-
-
-                            {/* PARTIE N4 */}
-                            <label className='mt-3'><b>N-4</b></label><br/>
-                            <label>
-                                CA mensuel :
-                                <select value={m4Ca} onChange={handleM4CaChange}>
-                                <option value="">Sélectionner un élément</option>
-                                <option value="CA < 10.000.000 FCFA (15.000€)">CA &lt; 10.000.000 FCFA (15.000€)</option>
-                                <option value="1O.000.000 FCFA < CA < 65.000.000FCFA">1O.000.000 FCFA &lt; CA &lt; 65.000.000FCFA</option>
-                                <option value="CA > 65.900.000FCFA (100.000 €)">CA &gt; 65.900.000FCFA (100.000 €)</option>
-                                </select>
-                            </label>
-
-                            <label className='mt-3'>
-                                Charges mensuelles :
-                                <select value={m4Charges} onChange={handleM4ChargesChange}>
-                                <option value="">Sélectionner un élément</option>
-                                <option value="Charges< 10%CA">Charges &lt; 10%CA</option>
-                                <option value="10%CA<Charges<50% CA">10%CA &lt; Charges &lt; 50%CA</option>
-                                <option value="50%CA<Charges<100%CA">50%CA &lt; Charges &lt; 100%CA</option>
-                                <option value="Charges > CA">Charges &gt; CA</option>
-                                </select>
-                            </label>
-
-                            <label className='mt-3'>
-                                Résultat net Mensuel (%CA) :
-                                <select value={m4Resultat} onChange={handleM4ResultatChange}>
-                                <option value="">Sélectionner un élément</option>
-                                <option value="Résultat<0">Résultat &lt; 0</option>
-                                <option value="0<Résultat<10% CA">0 &lt; Résultat &lt; 10% CA</option>
-                                <option value="10%CA<Résultat<20%CA">10%CA &lt; Résultat &lt; 20%CA</option>
-                                <option value="Résultat > 20%CA">Résultat &gt; 20%CA</option>
-                                </select>
-                            </label>
-
-                            <label className='mt-3'>
-                                Nombre moyen de transactions mensuelles financières (bancaires) :
-                                <select value={m4Transactions} onChange={handleM4TransactionsChange}>
-                                <option value="">Sélectionner un élément</option>
-                                <option value="0">0</option>
-                                <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label>
-                            {/* FIN PARTIE M3 */}
-
-
-                            {/* <button type="submit">Soumettre</button> */}
-
-                            <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                          <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
                                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                      <Link href='/profil/kyc/entreprise/information-financiere-two/' className="align-right">
+                                      <Link href='/profil/kyc/entreprise/information-financiere-two' className="align-right">
                                             <a
                                             className=""
                                             >
-                                                <button className="btn btn-primary " type='button'> Précédente </button>
+                                                <button className="btn btn-primary " type='button'> Précédente</button>
                                             </a>   
                                       </Link>
                                     </div>
                                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        <Link href='/profil/kyc/entreprise/information-financiere-four/' className="align-right">
-                                            <a
-                                            className=""
-                                            >
-                                                <button className="btn btn-primary " type='button'> Suivant </button>
-                                            </a>   
-                                        </Link>
+                                      <button className="btn btn-primary" type='submit' disabled={isLoggingIn}> Suivant </button>
                                     </div>
+                                    
                               </div>
-                            </form>
+                        </form>
                         
                              
                     </div>
-                <div className='col-lg-3 col-md-12'></div>
             </div>
         </div>
     </>

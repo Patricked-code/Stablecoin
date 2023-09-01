@@ -182,7 +182,6 @@ const KycPendingParticular = () => {
       
             const data = await result.json();
             setOneCountry(data);
-            console.log("Data =>",data)
           } catch (error) {
             // Handle errors appropriately, e.g., set an error state.
             console.error('Error fetching pays data:', error);

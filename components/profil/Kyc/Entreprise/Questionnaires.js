@@ -551,10 +551,41 @@ const CQuestionnaire = () => {
    const activeStepEntreprise = -1;
    // Fin
 
+// ********************************************************************************
+  // LA PARTIE POUR EVITER L'AFFICHAGE DES LA BARRE DE PROGRSSION SUR MOBILE
+// ********************************************************************************
+  
+// Utilisez un état local pour stocker la largeur de l'écran
+  const [windowWidth, setWindowWidth] = useState(0);
+  // Utilisez useEffect pour obtenir la largeur de l'écran une fois que le composant est monté
+  useEffect(() => {
+    // Obtenez la largeur de l'écran et mettez à jour l'état local
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    // Ajoutez un gestionnaire d'événement pour redimensionner la fenêtre
+    window.addEventListener('resize', handleResize);
+
+    // Appelez handleResize une fois pour obtenir la largeur initiale
+    handleResize();
+
+    // Nettoyez le gestionnaire d'événement lors du démontage du composant
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // Conditionnez l'affichage de ProgressBar en fonction de la largeur de l'écran
+  const showProgressBar = windowWidth >= 1180; // Par exemple, considérez les écrans de 768 pixels ou plus comme des ordinateurs
+  
+  // *****************FIN LA PARTIE POUR EVITER L'AFFICHAGE DES LA BARRE DE PROGRSSION SUR MOBILE*****
+
+
 
   return (
     <>
-        <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />
+        {showProgressBar && <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />}
     
 
         <div className='' >
@@ -591,7 +622,7 @@ const CQuestionnaire = () => {
                                     htmlFor="Q1"
                                     className="text-blackish-blue mb-2"
                                 >
-                                   Avez-vous des dépenses ou payer vous des charges récurrentes mensuelles ou annuelles dans le cadre des activités de votre entreprises ( Assurances, loyers, abonnement "internet, eau, courant, transports", remboursement de crédit, salaires, cotisations, fournisseurs )
+                                   Avez-vous des dépenses ou payez-vous des charges récurrentes mensuelles ou annuelles dans le cadre des activités de votre entreprises ( Assurances, loyers, abonnement "internet, eau, courant, transports", remboursement de crédit, salaires, cotisations, fournisseurs )
                                 </label>
                                 <select 
                                 className="form-control"

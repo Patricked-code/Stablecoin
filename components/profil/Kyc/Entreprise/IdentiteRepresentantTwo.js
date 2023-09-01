@@ -4,6 +4,8 @@ import Link from 'next/link';
 import Router from "next/router";
 import Swal from 'sweetalert2';
 import ProgressBar from '../ProgressBar';
+import moment from 'moment';
+
 
 // Pour la signature
 import SignatureCanvas from 'react-signature-canvas'
@@ -155,12 +157,16 @@ const CIdentiteRepresentantTwo = () => {
       }
     // Fin
 
+    const currentDate = new Date();//definir la date actuelle
+
     // FONCTION D'ENVOIE DES DONNEES DU REPRESENTANT LEGAL
     const addRepresentatives = async (event) => {
         event.preventDefault();
         setIsLoggingIn(true);
 
         const token = localStorage.getItem('tokenEnCours')
+        if (dateBirth < formatDate(currentDate) && expirationDate > formatDate(currentDate)) {
+
         const body = new FormData();
         body.append("lastName", lastName);
         body.append("firstName", firstName);
@@ -241,6 +247,16 @@ const CIdentiteRepresentantTwo = () => {
                     })
                     
                 }
+        }else{
+            setIsLoggingIn(false);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p> Désolé la date de naissance doit être inférieure à la date du jour <br/> Et la date d'expiration doit être supérieure à la date du jour. </p>` ,
+                showConfirmButton: false,
+                timer: 10000
+            })
+        }
     }
     // FIN
 
@@ -359,7 +375,12 @@ const CIdentiteRepresentantTwo = () => {
 
 
 
-
+    // FONCTION POUR FORMATER LA DATE
+    const formatDate = (_updatedAt) =>{
+        const maDate = moment(_updatedAt).format('YYYY-MM-DD');
+        return  maDate
+    }
+    //  FIN
 
 
 
@@ -370,9 +391,40 @@ const CIdentiteRepresentantTwo = () => {
    const activeStepEntreprise = 1;
     // Fin
 
+    // ********************************************************************************
+  // LA PARTIE POUR EVITER L'AFFICHAGE DES LA BARRE DE PROGRSSION SUR MOBILE
+// ********************************************************************************
+  
+// Utilisez un état local pour stocker la largeur de l'écran
+  const [windowWidth, setWindowWidth] = useState(0);
+  // Utilisez useEffect pour obtenir la largeur de l'écran une fois que le composant est monté
+  useEffect(() => {
+    // Obtenez la largeur de l'écran et mettez à jour l'état local
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    // Ajoutez un gestionnaire d'événement pour redimensionner la fenêtre
+    window.addEventListener('resize', handleResize);
+
+    // Appelez handleResize une fois pour obtenir la largeur initiale
+    handleResize();
+
+    // Nettoyez le gestionnaire d'événement lors du démontage du composant
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // Conditionnez l'affichage de ProgressBar en fonction de la largeur de l'écran
+  const showProgressBar = windowWidth >= 1180; // Par exemple, considérez les écrans de 768 pixels ou plus comme des ordinateurs
+  
+  // *****************FIN LA PARTIE POUR EVITER L'AFFICHAGE DES LA BARRE DE PROGRSSION SUR MOBILE*****
+
+
   return (
     <>
-      <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />
+      {showProgressBar && <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />}
 
         <div className='mt-15' >
             <div className=' mx-15'>
@@ -401,13 +453,19 @@ const CIdentiteRepresentantTwo = () => {
                 <div className='col-lg-3 col-md-12'></div>
 
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
+                        <h5
+                            htmlFor="lastName"
+                            className="text-blackish-blue mb-2 colorRed"
+                        >
+                            Veuillez renseigner les informations du représentant n° {kycRepresentative?.length + 1}
+                        </h5>
                         <form className='' onSubmit={addRepresentatives}>
                         <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="lastName"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Nom du représentation légal
+                                    Nom du représentation légal {kycRepresentative?.length}
                                 </label>
                                 <div className='form-group'>
                                     <input
@@ -734,7 +792,6 @@ const CIdentiteRepresentantTwo = () => {
 
                             <div className='form-group mt-3'>
                                 <label
-                                    htmlFor="email"
                                     className="text-blackish-blue mb-2"
                                 >
                                    Votre nationalité
@@ -767,7 +824,7 @@ const CIdentiteRepresentantTwo = () => {
                                 </label>
                                 <div className='form-group'>
                                     <input
-                                        type='text'
+                                        type='email'
                                         id='dateBirth'
                                         className='form-control'
                                         placeholder='Email'
@@ -865,7 +922,7 @@ const CIdentiteRepresentantTwo = () => {
                                     </span>
                                     <input
                                     className="form-control"
-                                    type="text"
+                                    type="number"
                                     id="contact"
                                     placeholder="Numéro téléphone mobile"
                                     required

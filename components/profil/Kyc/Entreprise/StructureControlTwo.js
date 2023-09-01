@@ -3,6 +3,8 @@ import React from "react";
 import axios from 'axios';
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
+import moment from 'moment';
+
 
 
 // Pour Magic
@@ -111,7 +113,8 @@ const CStructureControlTwo = () => {
         }
     };
     // Fin
- 
+
+    const currentDate = new Date();//definir la date actuelle
 
     // FONCTION D'ENVOIE DES DONNEES DU BENEFICIARE EFFECTIF
     const addStructure = async (event) => {
@@ -143,8 +146,10 @@ const CStructureControlTwo = () => {
         body.append("frontIdentityPhoto", statutDocIdentite==="1"?imageRecto:"");
         body.append("backIdentityPhoto", statutDocIdentite==="1"?imageVerso:"");
     
-  
-    
+
+        if (typePartner==="Personne physique") {
+            if (dateBirth < formatDate(currentDate) && expirationDate > formatDate(currentDate)) {
+        
             const result = await fetch(`${API_URL}/api/kyc/business/add-kyc-structure`, {
                 method:"POST",
                 body,
@@ -165,7 +170,7 @@ const CStructureControlTwo = () => {
                             Swal.fire({
                                 position: 'center',
                                 icon: 'success',
-                                html: `<p> Vous avez ${kycStructure?.length + 1}  bénéfiaire(s) effectif(s) avec succès. </p>` ,
+                                html: `<p> Vous avez ${kycStructure?.length + 1}  associé(s) avec succès. </p>` ,
                                 showConfirmButton: false,
                                 timer: 5000
                             })
@@ -175,7 +180,7 @@ const CStructureControlTwo = () => {
                             Swal.fire({
                                 position: 'center',
                                 icon: 'success',
-                                html: `<p> Vous avez ajouté ${kycStructure?.length + 1} bénéfiaire(s) effectif(s) avec succès. </p>` ,
+                                html: `<p> Vous avez ajouté ${kycStructure?.length + 1} associé(s) avec succès. </p>` ,
                                 showConfirmButton: false,
                                 timer: 1000
                             })
@@ -200,8 +205,89 @@ const CStructureControlTwo = () => {
                     })
                     
                 }
+            
+        }else{
+            setIsLoggingIn(false);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p> Désolé la date de naissance doit être inférieure à la date du jour <br/> Et la date d'expiration doit être supérieure à la date du jour. </p>` ,
+                showConfirmButton: false,
+                timer: 10000
+            })
+        }
+        }
+        else if (typePartner==="Personne morale"){
+            if (startDate < formatDate(currentDate)) {
+                const result = await fetch(`${API_URL}/api/kyc/business/add-kyc-structure`, {
+                    method:"POST",
+                    body,
+                    headers: {
+                        // 'Content-Type': 'application/json',
+                        Authorization:  `Bearer ${token}`,
+                        },
+                })    
+                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                    * sinon on affiche le message de succès
+                    */
+                if (result?.status===200) {
+                    setTimeout(() => {
+                        if (currentKycStatut==="1") {
+                            Router.push("/profil/kyc/particulier/resultat-kyc"); 
+                        }else{
+                            if (kycStructure?.length+1 == kycForEntreprise?.numberAssociates) {
+                                Swal.fire({
+                                    position: 'center',
+                                    icon: 'success',
+                                    html: `<p> Vous avez ${kycStructure?.length + 1}  associé(s) avec succès. </p>` ,
+                                    showConfirmButton: false,
+                                    timer: 5000
+                                })
+                                
+                                Router.push("/profil/kyc/entreprise/politiquement-exposees-one"); 
+                            }else{
+                                Swal.fire({
+                                    position: 'center',
+                                    icon: 'success',
+                                    html: `<p> Vous avez ajouté ${kycStructure?.length + 1} associé(s) avec succès. </p>` ,
+                                    showConfirmButton: false,
+                                    timer: 1000
+                                })
+
+                                setTimeout(() => {
+                                    window.location.reload()
+                                }, 1000)
+                            }
+                        }
+                    }, 5000)
+                    
+                    }else{
+                        // setMessageError(data.message)
+
+                        setIsLoggingIn(false);
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            html: `<p> Désolé une erreur s'est produite,Veuillez réessayer svp. </p>` ,
+                            showConfirmButton: false,
+                            timer: 10000
+                        })
+                        
+                    }
+                
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> Désolé la date de création doit être inférieure à la date du jour. </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+            }
+        }
+        // FIN
     }
-    // FIN
 
 
     // RECUPERER TOUS LES PAYS
@@ -286,6 +372,13 @@ const CStructureControlTwo = () => {
             await getKycStructure();
     }, []);
     // FIN
+
+    // FONCTION POUR FORMATER LA DATE
+    const formatDate = (_updatedAt) =>{
+        const maDate = moment(_updatedAt).format('YYYY-MM-DD');
+        return  maDate
+    }
+    //  FIN
  
 
      // La barre de progression de KYC du profil entreprise
@@ -324,6 +417,12 @@ const CStructureControlTwo = () => {
             <div className='row'>
                 <div className='col-lg-3 col-md-12'></div>
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
+                        <h5
+                            htmlFor="lastName"
+                            className="text-blackish-blue mb-2 colorRed"
+                        >
+                            Veuillez renseigner les informations de l'associé n° {kycStructure?.length + 1}
+                        </h5>
                         <form className='' onSubmit={addStructure}>
                             <div className="form-group mb-6 mt-3">
                                 <label
@@ -774,7 +873,7 @@ const CStructureControlTwo = () => {
                                             </span>
                                             <input
                                                 className="form-control"
-                                                type="text"
+                                                type="number"
                                                 id="contact"
                                                 placeholder="Numéro téléphone mobile"
                                                 required
@@ -841,7 +940,7 @@ const CStructureControlTwo = () => {
                                             defaultValue={countryRegistration} 
                                             onChange={(event)=>setCountryRegistration(event.target.value)}
                                             >
-                                            <option>Pays de Résidence </option>
+                                            <option>Pays d'immatriculation </option>
                                             {/* Parcourir les pays */}
                                             {allCountry?(
                                             allCountry.map((data) => (
@@ -872,7 +971,7 @@ const CStructureControlTwo = () => {
                                             ):("")}
                                             </span>
                                             <input
-                                                type='text'
+                                                type='number'
                                                 id='phoneFixe'
                                                 className='form-control'
                                                 placeholder='Téléphone fixe'
@@ -913,7 +1012,7 @@ const CStructureControlTwo = () => {
                                 </label>
                                 <div className='form-group'>
                                     <input
-                                        type='text'
+                                        type='email'
                                         id='dateBirth'
                                         className='form-control'
                                         placeholder='Email'
@@ -927,14 +1026,17 @@ const CStructureControlTwo = () => {
                                     htmlFor="percentControl"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    % Participation/ Contrôle
+                                    % Participation/ Contrôle (de 0-100)
                                 </label>
                                 <div className='form-group'>
                                     <input
-                                        type='text'
+                                        type='number'
                                         id='percentControl'
                                         className='form-control'
                                         placeholder='% Participation/ Contrôle'
+                                        min="0"   
+                                        max="100" 
+                                        step="1"
                                         defaultValue={percentControl} 
                                         onChange={(event)=>setPercentControl(event.target.value)}
                                     />

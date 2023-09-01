@@ -49,17 +49,17 @@ const CDocumentLegaux = () => {
     const [modalFile, setModalFile] = React.useState(false);
 
 // LES BONS
-// registerFile * ok
+// registerFile * ok I
 // registerphoto
-// dfeFile ok
+// dfeFile ok I
 // dfePhoto
-// copyStatutesFile OK
+// copyStatutesFile OK I
 // copyStatutesPhoto
-// delegationPowersFile OK
+// delegationPowersFile OK I
 // delegationPowersPhoto
-// pvAppointmentFile OK
+// pvAppointmentFile OK I
 // pvAppointmentPhoto
-// mapLocationFile OK
+// mapLocationFile OK I
 // mapLocationPhoto
 // factureFile* OK
 // facturePhoto*
@@ -139,10 +139,10 @@ const CDocumentLegaux = () => {
 
     const uploadToClientRegistre = (event) => {
         if (event.target.files && event.target.files[0]) {
-        const i = event.target.files[0];
+            const i = event.target.files[0];
 
-        setTradeRegistry(i);
-        setCreateObjectURL(URL.createObjectURL(i));
+            setTradeRegistry(i);
+            setCreateObjectURL(URL.createObjectURL(i));
         }
     };
 
@@ -213,7 +213,7 @@ const CDocumentLegaux = () => {
     }
     // FIN
 
-    // La barre de progression de KYC du profil entreprise
+   // La barre de progression de KYC du profil entreprise
    const stepsEntreprise = ["AML","Identité","Représentant", "Bénéficiaire","Control", "Politique", "Opérations", "Fonds", "Financière", "Documents"];
 
    const activeStepEntreprise = 7;

@@ -89,7 +89,7 @@ const CPolitiquementExposeesTwo = () => {
                                 Swal.fire({
                                     position: 'center',
                                     icon: 'success',
-                                    html: `<p> Vous avez ${kycPoliticallyExposed?.length + 1} membre(s) avec succès. </p>` ,
+                                    html: `<p> Vous avez ${kycPoliticallyExposed?.length + 1} personne(s) avec succès. </p>` ,
                                     showConfirmButton: false,
                                     timer: 5000
                                 })
@@ -98,7 +98,7 @@ const CPolitiquementExposeesTwo = () => {
                                 Swal.fire({
                                     position: 'center',
                                     icon: 'success',
-                                    html: `<p> Vous avez ajouté ${kycPoliticallyExposed?.length + 1} membre(s) avec succès. </p>` ,
+                                    html: `<p> Vous avez ajouté ${kycPoliticallyExposed?.length + 1} personne(s) avec succès. </p>` ,
                                     showConfirmButton: false,
                                     timer: 1000
                                 })
@@ -197,9 +197,39 @@ const CPolitiquementExposeesTwo = () => {
    const activeStepEntreprise = 4;
     // Fin
 
+    // ********************************************************************************
+  // LA PARTIE POUR EVITER L'AFFICHAGE DES LA BARRE DE PROGRSSION SUR MOBILE
+// ********************************************************************************
+  
+// Utilisez un état local pour stocker la largeur de l'écran
+  const [windowWidth, setWindowWidth] = useState(0);
+  // Utilisez useEffect pour obtenir la largeur de l'écran une fois que le composant est monté
+  useEffect(() => {
+    // Obtenez la largeur de l'écran et mettez à jour l'état local
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    // Ajoutez un gestionnaire d'événement pour redimensionner la fenêtre
+    window.addEventListener('resize', handleResize);
+
+    // Appelez handleResize une fois pour obtenir la largeur initiale
+    handleResize();
+
+    // Nettoyez le gestionnaire d'événement lors du démontage du composant
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // Conditionnez l'affichage de ProgressBar en fonction de la largeur de l'écran
+  const showProgressBar = windowWidth >= 1180; // Par exemple, considérez les écrans de 768 pixels ou plus comme des ordinateurs
+  
+  // *****************FIN LA PARTIE POUR EVITER L'AFFICHAGE DES LA BARRE DE PROGRSSION SUR MOBILE*****
+
   return (
     <>
-      <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />
+      {showProgressBar && <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />}
 
         <div className='mt-15' >
             <div className=' mx-15'>
@@ -227,6 +257,12 @@ const CPolitiquementExposeesTwo = () => {
             <div className='row'>
                 <div className='col-lg-3 col-md-12'></div>
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
+                        <h5
+                            htmlFor="lastName"
+                            className="text-blackish-blue mb-2 colorRed"
+                        >
+                            Veuillez renseigner les informations du membre n° {kycPoliticallyExposed?.length + 1}
+                        </h5>
                         <form className='' onSubmit={addPoliticallyExposed}>
                             
                             <div className="form-group mb-6 mt-3">
@@ -315,7 +351,7 @@ const CPolitiquementExposeesTwo = () => {
                                 htmlFor="backDomicile mb-3 "
                                 className='colorRed'
                             >
-                                NB: Vous avez ajouté {kycPoliticallyExposed?.length}/{kycForEntreprise?.numberPoliticallyExposed} membre(s)
+                                NB: Vous avez ajouté {kycPoliticallyExposed?.length}/{kycForEntreprise?.numberPoliticallyExposed} personne(s)
                             </label>
                             <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
                                 <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">

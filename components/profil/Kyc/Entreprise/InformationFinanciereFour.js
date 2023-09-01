@@ -1,8 +1,8 @@
 import { useCallback, useState, useEffect,useRef } from 'react';
 import React from "react";
-import axios from 'axios';
 import Link from 'next/link';
-import { Icon } from '@iconify/react';
+import { Table } from '@nextui-org/react';
+
 
 
 // Pour Magic
@@ -27,7 +27,11 @@ const CIformationFinanciereFour = () => {
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
-
+    const [currentKycStatut, setCurrentKycStatut] = useState();
+    const [kycTransactionMontlyId, setKycTransactionMontlyId] = useState();
+    
+    
+    
     // ***********LA BONNE PARTIE ***********************
 
 // *******************ANGLAIS*****
@@ -162,44 +166,256 @@ const [otherCurrencyOthersReceived, setOtherCurrencyOthersReceived] = useState('
       const handleAutreDvseRecuesAutresChange = (e) => {
         setOtherCurrencyOthersReceived(e.target.value);
       };
-  
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      // Effectuer des actions avec les données du formulaire
-      console.log({
-        nationalBankIssued,
-        nationalOthersIssued,
-        nationalBankReceived,
-        nationalOthersReceived,
-        cfaUemoaBankIssued,
-        cfaUemoaOthersIssued,
-        cfaUemoaBankReceived,
-        cfaUemoaOthersReceived,
-        cfaOutsideUemoaBankIssued,
-        cfaOutsideUemoaOthersIssued,
-        cfaOutsideUemoaBankReceived,
-        cfaOutsideUemoaOthersReceived,
-        euroBankIssued,
-        euroOthersIssued,
-        euroBankReceived,
-        euroOthersReceived
-      });
-    };
-
     // ***********FIN DE LA BONNE PARTIE*******************
 
-    // LES CHAMPS DE LA TABLE
-    
+    // ENVOIES DES DONNEES DES TRANSACTIONS FINANCIERES (MENSUELLE) 
+    const addFinancialTransactionMontly = async (e) => {
+        e.preventDefault();
+        setIsLoggingIn(true);
+  
+        // Combiner les données du formulaire de différentes sections
+        
+        try {
+            // Prepare data
+            const dataa = {
+                period: "Mensuelle",
+                periodMonthly:true,
+                nationalBankIssued: nationalBankIssued,
+                nationalOthersIssued: nationalOthersIssued,
+                nationalBankReceived: nationalBankReceived,
+                nationalOthersReceived: nationalOthersReceived,
+                cfaUemoaBankIssued: cfaUemoaBankIssued,
+                cfaUemoaOthersIssued: cfaUemoaOthersIssued,
+                cfaUemoaBankReceived: cfaUemoaBankReceived,
+                cfaUemoaOthersReceived: cfaUemoaOthersReceived,
+                cfaOutsideUemoaBankIssued: cfaOutsideUemoaBankIssued,
+                cfaOutsideUemoaOthersIssued: cfaOutsideUemoaOthersIssued,
+                cfaOutsideUemoaBankReceived: cfaOutsideUemoaBankReceived,
+                cfaOutsideUemoaOthersReceived: cfaOutsideUemoaOthersReceived,
+                euroBankIssued: euroBankIssued,
+                euroOthersIssued: euroOthersIssued,
+                euroBankReceived: euroBankReceived,
+                euroOthersReceived: euroOthersReceived,
+                dollarBankIssued: dollarBankIssued,
+                dollarOthersIssued: dollarOthersIssued,
+                dollarBankReceived: dollarBankReceived,
+                dollarOthersReceived: dollarOthersReceived,
+                otherCurrencyBankIssued: otherCurrencyBankIssued,
+                otherCurrencyOthersIssued: otherCurrencyOthersIssued,
+                otherCurrencyBankReceived: otherCurrencyBankReceived,
+                otherCurrencyOthersReceived: otherCurrencyOthersReceived,
+                
+            };
+            
+            
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+  
+            // Envoyer une requête POST en utilisant fetch
+            const response = await fetch(`${API_URL}/api/kyc/business/add-kyc-financial-transaction`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`
+  
+                },
+                body: JSON.stringify(dataa),
+            });
+  
+            // Parse the response data
+            const data = await response.json();
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message) {
+                setMessageError(data.message)
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+            }else{
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                    showConfirmButton: false,
+                    timer: 5000
+                }),
+                setTimeout(() => {
+                    if (currentKycStatut==="1") {
+                        Router.push("/profil/kyc/entreprise/resultat-kyc"); 
+                    }else{
+                        Router.push("/profil/kyc/entreprise/information-financiere-five"); 
+                    }
+                }, 5000)
+            }
+            // Fin condition 
+                    
+        } catch (error) {
+            setIsLoggingIn(false);
+        }
+      };
+      // FIN
+
+    // ENVOIES (Modification) DES DONNEES DES TRANSACTIONS FINANCIERES (MENSUELLE) 
+    const updateFinancialTransactionMontly = async (e) => {
+        e.preventDefault();
+        setIsLoggingIn(true);
+  
+        // Combiner les données du formulaire de différentes sections
+        
+        try {
+            // Prepare data
+            const dataa = {
+                period: "Mensuelle",
+                periodMonthly:true,
+                nationalBankIssued: nationalBankIssued,
+                nationalOthersIssued: nationalOthersIssued,
+                nationalBankReceived: nationalBankReceived,
+                nationalOthersReceived: nationalOthersReceived,
+                cfaUemoaBankIssued: cfaUemoaBankIssued,
+                cfaUemoaOthersIssued: cfaUemoaOthersIssued,
+                cfaUemoaBankReceived: cfaUemoaBankReceived,
+                cfaUemoaOthersReceived: cfaUemoaOthersReceived,
+                cfaOutsideUemoaBankIssued: cfaOutsideUemoaBankIssued,
+                cfaOutsideUemoaOthersIssued: cfaOutsideUemoaOthersIssued,
+                cfaOutsideUemoaBankReceived: cfaOutsideUemoaBankReceived,
+                cfaOutsideUemoaOthersReceived: cfaOutsideUemoaOthersReceived,
+                euroBankIssued: euroBankIssued,
+                euroOthersIssued: euroOthersIssued,
+                euroBankReceived: euroBankReceived,
+                euroOthersReceived: euroOthersReceived,
+                dollarBankIssued: dollarBankIssued,
+                dollarOthersIssued: dollarOthersIssued,
+                dollarBankReceived: dollarBankReceived,
+                dollarOthersReceived: dollarOthersReceived,
+                otherCurrencyBankIssued: otherCurrencyBankIssued,
+                otherCurrencyOthersIssued: otherCurrencyOthersIssued,
+                otherCurrencyBankReceived: otherCurrencyBankReceived,
+                otherCurrencyOthersReceived: otherCurrencyOthersReceived,
+                
+            };
+            
+            
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+  
+            // Envoyer une requête POST en utilisant fetch
+            const response = await fetch(`${API_URL}/api/kyc/business/update-kyc-financial-transaction/${kycTransactionMontlyId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`
+  
+                },
+                body: JSON.stringify(dataa),
+            });
+  
+            // Parse the response data
+            const data = await response.json();
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message) {
+                setMessageError(data.message)
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+            }else{
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                    showConfirmButton: false,
+                    timer: 5000
+                }),
+                setTimeout(() => {
+                    if (currentKycStatut==="1") {
+                        Router.push("/profil/kyc/entreprise/resultat-kyc"); 
+                    }else{
+                        Router.push("/profil/kyc/entreprise/information-financiere-five"); 
+                    }
+                }, 5000)
+            }
+            // Fin condition 
+                    
+        } catch (error) {
+            setIsLoggingIn(false);
+        }
+    };
+      // FIN
+
+
+
+       // RECUPERER LES DONNEES DU KYC DE FINANCEMENT TRANSACTION (MENSUELLE) DE L'ENTREPRISE CONNECTEE 
+        useEffect(async() => {
+            const token = localStorage.getItem('tokenEnCours')
+            
+                const getKycTransactionMontly = async () => {
+                const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-transaction-monthly-of-user-signIn`, {
+                    headers: {
+                    'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`,
+                    },
+                })
+                    .then((resKyc) => resKyc.json())
+                    .then((data) => {
+                    setKycTransactionMontlyId(data?.id)
+
+                    }) 
+                };
+                await getKycTransactionMontly();
+        }, []);
+        // FIN
+
 
    // La barre de progression de KYC du profil entreprise
    const stepsEntreprise = ["AML","Identité","Représentant", "Bénéficiaire","Control", "Politique", "Opérations", "Fonds", "Financière", "Documents"];
 
-   const activeStepEntreprise = 6;
+   const activeStepEntreprise = 7;
     // Fin
+
+    // ********************************************************************************
+  // LA PARTIE POUR EVITER L'AFFICHAGE DES LA BARRE DE PROGRSSION SUR MOBILE
+// ********************************************************************************
+  
+// Utilisez un état local pour stocker la largeur de l'écran
+  const [windowWidth, setWindowWidth] = useState(0);
+  // Utilisez useEffect pour obtenir la largeur de l'écran une fois que le composant est monté
+  useEffect(() => {
+    // Obtenez la largeur de l'écran et mettez à jour l'état local
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    // Ajoutez un gestionnaire d'événement pour redimensionner la fenêtre
+    window.addEventListener('resize', handleResize);
+
+    // Appelez handleResize une fois pour obtenir la largeur initiale
+    handleResize();
+
+    // Nettoyez le gestionnaire d'événement lors du démontage du composant
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // Conditionnez l'affichage de ProgressBar en fonction de la largeur de l'écran
+  const showProgressBar = windowWidth >= 1180; // Par exemple, considérez les écrans de 768 pixels ou plus comme des ordinateurs
+  
+  // *****************FIN LA PARTIE POUR EVITER L'AFFICHAGE DES LA BARRE DE PROGRSSION SUR MOBILE*****
+
 
   return (
     <>
-      <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />
+      {showProgressBar && <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />}
 
         <div className='mt-15' >
             <div className=' mx-15'>
@@ -225,382 +441,382 @@ const [otherCurrencyOthersReceived, setOtherCurrencyOthersReceived] = useState('
 
             {/* Les cards */}
             <div className='row'>
-                <div className='col-lg-3 col-md-12'></div>
-                    <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
+                    <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-12 col-md-12'>
                         <h4 className='mb-3'>Nombre de Transactions financières mensuelles moyennes</h4>
                         {/* FORM A */}
-                        <form onSubmit={handleSubmit}>
-                            {/* National */}
+                        <form onSubmit={kycTransactionMontlyId?updateFinancialTransactionMontly:addFinancialTransactionMontly}>
+                          <Table
+                              aria-label="Example table with static content"
+                              css={{
+                                  height: "auto",
+                                  minWidth: "100%",
+                              }}
+                          >
+                            
+                            <Table.Header>
+                                <Table.Column><p className="gr-text-8 pt-3 pb-0 px-2 ">Zone</p></Table.Column>
+                                <Table.Column><p className="gr-text-8 pt-3 pb-0 "><b className='colorRed'>EMISES</b><br/> Virement bancaire </p></Table.Column>
+                                <Table.Column><p className="gr-text-8 pt-3 pb-0 "><b className='colorRed'>EMISES</b><br/> Autres Transactions </p></Table.Column>
+                                <Table.Column><p className="gr-text-8 pt-3 pb-0 "><b className='colorRed'>RECUES</b><br/> Virement bancaire </p></Table.Column>
+                                <Table.Column><p className="gr-text-8 pt-3 pb-0 "><b className='colorRed'>RECUES</b><br/> Autres Transactions </p></Table.Column>
+                            </Table.Header>
+                              <Table.Body>
+                                      <Table.Row >  
+                                          {/* Remise                      */}
+                                          <Table.Cell ><p className=" py-0 "> National </p></Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select 
+                                                    className=''
+                                                    value={nationalBankIssued} 
+                                                    onChange={handleNationalEmisesbancaireChange}
+                                                >
+                                                    <option value="">Sélectionnez un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select className='' value={nationalOthersIssued} onChange={handleNationalEmisesAutresChange}>
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select className='' value={nationalBankReceived} onChange={handleNationalRecuesbancaireChange}>
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select className='' value={nationalOthersReceived} onChange={handleNationalRecuesAutresChange}>
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                      </Table.Row >
+                                      <Table.Row >                       
+                                          <Table.Cell ><p className=" py-0 ">Zone UEMOA CFA</p></Table.Cell>
+                                          {/* REMISES */}
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select className='' value={cfaUemoaBankIssued} onChange={handleCfaUemoaEmisesbancaireChange}>
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select className='' value={cfaUemoaOthersIssued} onChange={handleCfaUemoaEmisesAutresChange}>
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
 
-                            {/* PARTIE REMISES */}
-                            <h5 className='form-control text-center'><b>National</b></h5>
-                            <label className=''><b>Emises</b></label><br/>
-                            <label>
-                                Virement bancaire : <br/>
-                                <select 
-                                    className=''
-                                    value={nationalBankIssued} 
-                                    onChange={handleNationalEmisesbancaireChange}
-                                >
-                                    <option value="">Sélectionnez un élément</option>
-                                    <option value="0">0</option>
-                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                    <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label>
+                                          {/* RECU */}
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select className='' value={cfaUemoaBankReceived} onChange={handleCfaUemoaRecuesbancaireChange}>
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select className='' value={cfaUemoaOthersReceived} onChange={handleCfaUemoaRecuesAutresChange}>
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                      </Table.Row >
+                                      <Table.Row >                       
+                                          <Table.Cell ><p className=" py-0 ">Afrique Hors UEMOA </p></Table.Cell>
+                                          {/* REMISE */}
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select className='' value={cfaOutsideUemoaBankIssued} onChange={handleCfaHorsUemoaEmisesbancaireChange}>
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select className='' value={cfaOutsideUemoaOthersIssued} onChange={handleCfaHorsUemoaEmisesAutresChange}>
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                          {/* RECUES */}
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select className='' value={cfaOutsideUemoaBankReceived} onChange={handleCfaHorsUemoaRecuesbancaireChange}>
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select className='' value={cfaOutsideUemoaOthersReceived} onChange={handleCfaHorsUemoaRecuesAutresChange}>
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                      </Table.Row >
+                                      <Table.Row >                       
+                                          <Table.Cell ><p className=" py-0 ">En euros ou dans la zone EURO </p></Table.Cell>
+                                          {/* REMISE */}
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select className='' value={euroBankIssued} onChange={handleEuroEmisesbancaireChange}>
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                            </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select className='' value={euroOthersIssued} onChange={handleEuroEmisesAutresChange}>
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                          {/* RECUES */}
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select className='' value={euroBankReceived} onChange={handleEuroRecuesbancaireChange}>
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select className='' value={euroOthersReceived} onChange={handleEuroRecuesAutresChange}>
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                      </Table.Row >
+                                      <Table.Row >                       
+                                          <Table.Cell ><p className=" py-0 ">En dollars US </p></Table.Cell>
+                                          {/* REMISE */}
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select
+                                                    className=''
+                                                    value={dollarBankIssued}
+                                                    onChange={handleDollarEmisesbancaireChange}
+                                                >
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                            </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select
+                                                    className=''
+                                                    value={dollarOthersIssued}
+                                                    onChange={handleDollarEmisesAutresChange}
+                                                >
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                          {/* RECUES */}
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select
+                                                    className=''
+                                                    value={dollarBankReceived}
+                                                    onChange={handleDollarRecuesbancaireChange}
+                                                >
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select
+                                                    className=''
+                                                    value={dollarOthersReceived}
+                                                    onChange={handleDollarRecuesAutresChange}
+                                                >
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                      </Table.Row >
+                                      <Table.Row >                       
+                                          <Table.Cell ><p className=" py-0 ">Autre devises </p></Table.Cell>
+                                          {/* REMISE */}
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select
+                                                    className=''
+                                                    value={otherCurrencyBankIssued}
+                                                    onChange={handleAutreDvseEmisesbancaireChange}
+                                                >
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                            </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select
+                                                    className=''
+                                                    value={otherCurrencyOthersIssued}
+                                                    onChange={handleAutreDvseEmisesAutresChange}
+                                                >
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                          {/* RECUES */}
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select
+                                                    className=''
+                                                    value={otherCurrencyBankReceived}
+                                                    onChange={handleAutreDvseRecuesbancaireChange}
+                                                >
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                          <Table.Cell >
+                                            <p className=" py-0 ">
+                                                <select
+                                                    className=''
+                                                    value={otherCurrencyOthersReceived}
+                                                    onChange={handleAutreDvseRecuesAutresChange}
+                                                >
+                                                    <option value="">Sélectionner un élément</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
+                                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
+                                                    <option value="Transactions > 51">Transactions &gt; 51</option>
+                                                </select>
+                                            </p>
+                                          </Table.Cell>
+                                      </Table.Row >
 
-                            <label className="mt-3">
-                                Autres transactions (mobile money, remittance , CB) :<br/>
-                                <select className='' value={nationalOthersIssued} onChange={handleNationalEmisesAutresChange}>
-                                    <option value="">Sélectionner un élément</option>
-                                    <option value="0">0</option>
-                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                    <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label><br/>
+                                      
+                                                          
+                                      
+                              </Table.Body>
+                          </Table>
 
-                            {/* PARTIE RECUES */}
-                            <label className='mt-3'><b>Reçues</b></label><br/>
-                            <label className="">
-                                Virement bancaire :<br/>
-                                <select className='' value={nationalBankReceived} onChange={handleNationalRecuesbancaireChange}>
-                                <option value="">Sélectionner un élément</option>
-                                    <option value="0">0</option>
-                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                    <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label>
-
-                            <label className="mt-3">
-                                Autres transactions (mobile money, remittance , CB) : <br/>
-                                <select className='' value={nationalOthersReceived} onChange={handleNationalRecuesAutresChange}>
-                                    <option value="">Sélectionner un élément</option>
-                                    <option value="0">0</option>
-                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                    <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label>
-                            {/* FIN PARTIE National */}
-
-                            {/* Zone UEMOA CFA */}
-                            {/* PARTIE REMISES */}
-                            <h5 className='form-control text-center mt-3'><b>Zone UEMOA CFA</b></h5>
-
-                            <label className=''><b>Emises</b></label><br/>
-                            <label>
-                                Virement bancaire :<br/>
-                                <select className='' value={cfaUemoaBankIssued} onChange={handleCfaUemoaEmisesbancaireChange}>
-                                    <option value="">Sélectionner un élément</option>
-                                    <option value="0">0</option>
-                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                    <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label>
-
-                            <label className='mt-3'>
-                                Autres transactions (mobile money, remittance , CB) : <br/>
-                                <select className='' value={cfaUemoaOthersIssued} onChange={handleCfaUemoaEmisesAutresChange}>
-                                    <option value="">Sélectionner un élément</option>
-                                    <option value="0">0</option>
-                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                    <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label><br/>
-
-                            {/* RECUES */}
-                            <label className='mt-3'><b>Reçues</b></label><br/>
-                            <label className=''>
-                                Virement bancaire :<br/>
-                                <select className='' value={cfaUemoaBankReceived} onChange={handleCfaUemoaRecuesbancaireChange}>
-                                    <option value="">Sélectionner un élément</option>
-                                    <option value="0">0</option>
-                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                    <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label>
-
-                            <label className='mt-3'>
-                                Autres transactions (mobile money, remittance , CB) : <br/>
-                                <select className='' value={cfaUemoaOthersReceived} onChange={handleCfaUemoaRecuesAutresChange}>
-                                    <option value="">Sélectionner un élément</option>
-                                    <option value="0">0</option>
-                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                    <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label>
-                            {/* FIN PARTIE Zone UEMOA CFA */}
-
-                            {/* Afrique Hors UEMOA */}
-                            {/* PARTIE REMISES */}
-                            <h5 className='form-control text-center mt-3'><b>Afrique Hors UEMOA </b></h5>
-
-                            <label className=''><b>Emises</b></label><br/>
-                            <label>
-                                Virement bancaire :<br/>
-                                <select className='' value={cfaOutsideUemoaBankIssued} onChange={handleCfaHorsUemoaEmisesbancaireChange}>
-                                <option value="">Sélectionner un élément</option>
-                                    <option value="0">0</option>
-                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                    <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label>
-                            <label className='mt-3'>
-                                Autres transactions (mobile money, remittance , CB) : <br/>
-                                <select className='' value={cfaOutsideUemoaOthersIssued} onChange={handleCfaHorsUemoaEmisesAutresChange}>
-                                    <option value="">Sélectionner un élément</option>
-                                    <option value="0">0</option>
-                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                    <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label><br/>
-
-                            {/* RECUES */}
-                            <label className='mt-3'><b>Reçues</b></label><br/>
-                            <label className=''>
-                                Virement bancaire : <br/>
-                                <select className='' value={cfaOutsideUemoaBankReceived} onChange={handleCfaHorsUemoaRecuesbancaireChange}>
-                                    <option value="">Sélectionner un élément</option>
-                                    <option value="0">0</option>
-                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                    <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label>
-
-                            <label className='mt-3'>
-                                Autres transactions (mobile money, remittance , CB) :<br/>
-                                <select className='' value={cfaOutsideUemoaOthersReceived} onChange={handleCfaHorsUemoaRecuesAutresChange}>
-                                    <option value="">Sélectionner un élément</option>
-                                    <option value="0">0</option>
-                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                    <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label>
-                            {/* FIN PARTIE Afrique Hors UEMOA */}
-
-                            {/* En euros ou dans la zone EURO */}
-                            {/* PARTIE REMISES */}
-                            <h5 className='form-control text-center mt-3'><b>En euros ou dans la zone EURO</b></h5>
-
-                            <label className=''><b>Emises</b></label><br/>
-                            <label>
-                                Virement bancaire :<br/>
-                                <select className='' value={euroBankIssued} onChange={handleEuroEmisesbancaireChange}>
-                                    <option value="">Sélectionner un élément</option>
-                                    <option value="0">0</option>
-                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                    <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label>
-
-                            <label className='mt-3'>
-                                Autres transactions (mobile money, remittance , CB) :<br/>
-                                <select className='' value={euroOthersIssued} onChange={handleEuroEmisesAutresChange}>
-                                    <option value="">Sélectionner un élément</option>
-                                    <option value="0">0</option>
-                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                    <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label><br/>
-
-                            {/* PARTIE RECUES */}
-                            <label className='mt-3'><b>Reçues</b></label><br/>
-                            <label className=''>
-                                Virement bancaire :<br/>
-                                <select className='' value={euroBankReceived} onChange={handleEuroRecuesbancaireChange}>
-                                    <option value="">Sélectionner un élément</option>
-                                    <option value="0">0</option>
-                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                    <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label>
-
-                            <label className='mt-3'>
-                                Autres transactions (mobile money, remittance , CB) : <br/>
-                                <select className='' value={euroOthersReceived} onChange={handleEuroRecuesAutresChange}>
-                                    <option value="">Sélectionner un élément</option>
-                                    <option value="0">0</option>
-                                    <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                    <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                    <option value="Transactions > 51">Transactions &gt; 51</option>
-                                </select>
-                            </label>
-                            {/* FIN PARTIE M3 */}
-
-                             {/* PARTIE N4 */}
-                            <h5 className='form-control text-center mt-3'><b>En dollars US</b></h5>
-
-                            <label className=''><b>Emises</b></label><br/>
-                            <label className="">
-                            Virement bancaire :<br/>
-                            <select
-                                className=''
-                                value={dollarBankIssued}
-                                onChange={handleDollarEmisesbancaireChange}
-                            >
-                                <option value="">Sélectionner un élément</option>
-                                <option value="0">0</option>
-                                <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                <option value="Transactions > 51">Transactions &gt; 51</option>
-                            </select>
-                            </label>
-
-                            <label className="mt-3">
-                            Autres transactions (mobile money, remittance , CB) :<br/>
-                            <select
-                                className=''
-                                value={dollarOthersIssued}
-                                onChange={handleDollarEmisesAutresChange}
-                            >
-                                <option value="">Sélectionner un élément</option>
-                                <option value="0">0</option>
-                                <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                <option value="Transactions > 51">Transactions &gt; 51</option>
-                            </select>
-                            </label><br/>
-
-                            <label className='mt-3'><b>Reçues</b></label><br/>
-                            <label className="">
-                            Virement bancaire :<br/>
-                            <select
-                                className=''
-                                value={dollarBankReceived}
-                                onChange={handleDollarRecuesbancaireChange}
-                            >
-                                <option value="">Sélectionner un élément</option>
-                                <option value="0">0</option>
-                                <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                <option value="Transactions > 51">Transactions &gt; 51</option>
-                            </select>
-                            </label>
-
-                            <label className="mt-3">
-                            Autres transactions (mobile money, remittance , CB) :<br/>
-                            <select
-                                className=''
-                                value={dollarOthersReceived}
-                                onChange={handleDollarRecuesAutresChange}
-                            >
-                                <option value="">Sélectionner un élément</option>
-                                <option value="0">0</option>
-                                <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                <option value="Transactions > 51">Transactions &gt; 51</option>
-                            </select>
-                            </label>
-
-                            <h5 className='form-control text-center mt-3'><b>Autre devises</b></h5>
-
-                            <label className=''><b>Emises</b></label><br/>
-                            <label className="">
-                            Virement bancaire :<br/>
-                            <select
-                                className=''
-                                value={otherCurrencyBankIssued}
-                                onChange={handleAutreDvseEmisesbancaireChange}
-                            >
-                                <option value="">Sélectionner un élément</option>
-                                <option value="0">0</option>
-                                <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                <option value="Transactions > 51">Transactions &gt; 51</option>
-                            </select>
-                            </label>
-
-                            <label className="mt-3">
-                            Autres transactions (mobile money, remittance , CB) :<br/>
-                            <select
-                                className=''
-                                value={otherCurrencyOthersIssued}
-                                onChange={handleAutreDvseEmisesAutresChange}
-                            >
-                                <option value="">Sélectionner un élément</option>
-                                <option value="0">0</option>
-                                <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                <option value="Transactions > 51">Transactions &gt; 51</option>
-                            </select>
-                            </label><br/>
-
-                            <label className='mt-3'><b>Reçues</b></label><br/>
-                            <label className="">
-                            Virement bancaire :<br/>
-                            <select
-                                className=''
-                                value={otherCurrencyBankReceived}
-                                onChange={handleAutreDvseRecuesbancaireChange}
-                            >
-                                <option value="">Sélectionner un élément</option>
-                                <option value="0">0</option>
-                                <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                <option value="Transactions > 51">Transactions &gt; 51</option>
-                            </select>
-                            </label>
-
-                            <label className="mt-3">
-                            Autres transactions (mobile money, remittance , CB) : <br/>
-                            <select
-                                className=''
-                                value={otherCurrencyOthersReceived}
-                                onChange={handleAutreDvseRecuesAutresChange}
-                            >
-                                <option value="">Sélectionner un élément</option>
-                                <option value="0">0</option>
-                                <option value="1&lt;transactions&lt;10">1 &lt; transactions &lt; 10</option>
-                                <option value="10&lt;transactions&lt;50">10 &lt; transactions &lt; 50</option>
-                                <option value="Transactions > 51">Transactions &gt; 51</option>
-                            </select>
-                            </label>
-
-                            {/* ... */}
-
-
-
-                            {/* <button type="submit">Soumettre</button> */}
-
-                            <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                          <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
                                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                      <Link href='/profil/kyc/entreprise/information-financiere-three/' className="align-right">
+                                      <Link href='/profil/kyc/entreprise/information-financiere-three' className="align-right">
                                             <a
                                             className=""
                                             >
-                                                <button className="btn btn-primary " type='button'> Précédente </button>
+                                                <button className="btn btn-primary " type='button'> Précédente</button>
                                             </a>   
                                       </Link>
                                     </div>
                                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        <Link href='/profil/kyc/entreprise/information-financiere-five/' className="align-right">
-                                            <a
-                                            className=""
-                                            >
-                                                <button className="btn btn-primary " type='button'> Suivant </button>
-                                            </a>   
-                                        </Link>
+                                      <button className="btn btn-primary" type='submit' disabled={isLoggingIn}> Suivant </button>
                                     </div>
+                                    
                               </div>
-                            </form>
+                        </form>
                         
                              
                     </div>
-                <div className='col-lg-3 col-md-12'></div>
             </div>
         </div>
     </>

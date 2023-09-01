@@ -1,11 +1,82 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
 import CDocumentLegaux from '../../../../components/profil/Kyc/Entreprise/DocumentsLegaux';
+import CDocumentsIdentites from '../../../../components/profil/Kyc/Entreprise/Documents_legaux/DocumentsIdentites';
+import CFactureEtJustPouvoirs from '../../../../components/profil/Kyc/Entreprise/Documents_legaux/FactureEtJustPouvoir';
+import CPvEtLocalisation from '../../../../components/profil/Kyc/Entreprise/Documents_legaux/PvEtLocalisation';
+import CRegistreEtDfe from '../../../../components/profil/Kyc/Entreprise/Documents_legaux/RegistreEtDfe';
+import CStatusEtDelegation from '../../../../components/profil/Kyc/Entreprise/Documents_legaux/StatutsEtDelegation';
+import ProgressBar from '../../../../components/profil/Kyc/ProgressBar';
 import SidebarProfil from '../../../../components/profil/SideBar/Sidebar';
+// import ProgressBar from '../../../../ProgressBar';
 
 
 
 const documentLegaux = () => {
+  // Variable de l'url de l'api
+  const API_URL =process.env.NEXT_PUBLIC_URL_API
   const [showSidebar, setShowSidebar] = useState(false);
+  const [kycDocument, setKycDocument] = useState(false);
+
+  // RECUPERER LES DONNEES DU KYC DE STRUCTURE DE CONTROL DE L'ENTREPRISE CONNECTEE
+  useEffect(async() => {
+    const token = localStorage.getItem('tokenEnCours')
+    
+        const getKycDocument = async () => {
+        const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-legal-documents-of-user-signIn`, {
+            headers: {
+            'Content-Type': 'application/json',
+            Authorization:  `Bearer ${token}`,
+            },
+        })
+            .then((resKyc) => resKyc.json())
+            .then((data) => {
+            setKycDocument(data)
+            // console.log("setKycDocument=>",data)
+
+            }) 
+        };
+        await getKycDocument();
+  }, []);
+  // FIN
+
+
+
+    // La barre de progression de KYC du profil entreprise
+    const stepsEntreprise = ["AML","Identité","Représentant", "Bénéficiaire","Control", "Politique", "Opérations", "Fonds", "Financière", "Documents"];
+    const activeStepEntreprise = 8;
+
+   
+
+// ********************************************************************************
+  // LA PARTIE POUR EVITER L'AFFICHAGE DES LA BARRE DE PROGRSSION SUR MOBILE
+// ********************************************************************************
+  
+// Utilisez un état local pour stocker la largeur de l'écran
+  const [windowWidth, setWindowWidth] = useState(0);
+  // Utilisez useEffect pour obtenir la largeur de l'écran une fois que le composant est monté
+  useEffect(() => {
+    // Obtenez la largeur de l'écran et mettez à jour l'état local
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    // Ajoutez un gestionnaire d'événement pour redimensionner la fenêtre
+    window.addEventListener('resize', handleResize);
+
+    // Appelez handleResize une fois pour obtenir la largeur initiale
+    handleResize();
+
+    // Nettoyez le gestionnaire d'événement lors du démontage du composant
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // Conditionnez l'affichage de ProgressBar en fonction de la largeur de l'écran
+  const showProgressBar = windowWidth >= 1180; // Par exemple, considérez les écrans de 768 pixels ou plus comme des ordinateurs
+  
+  // *****************FIN LA PARTIE POUR EVITER L'AFFICHAGE DES LA BARRE DE PROGRSSION SUR MOBILE*****
 
   return (
     <>
@@ -22,9 +93,53 @@ const documentLegaux = () => {
             {/* FIN */}
           </aside>
 
+
           {/* CONTENU PROFIL */}
-          <CDocumentLegaux />
+          {showProgressBar && <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />}
+
+        <div className='' >
+            <div className=' mx-15'>
+                <div className='py-10'>
+                <br/><br/><h1 className='text-center'>Documents légaux de l'entreprise</h1>
+                </div>
+            </div>
+
+            {/* Les images de fond */}
+            <div className='shape1'>
+            {/* <img src='/images/shape/shape1.png' alt='image' /> */}
+            </div>
+            <div className='shape2 mb-5'><br/>
+            <img src='/images/shape/shape2.png' alt='image' />
+            </div>
+            <div className='shape3'>
+            {/* <img src='/images/shape/shape3.png' alt='image' /> */}
+            </div>
+            <div className='shape4'>
+                <img src='/images/shape/shape4.png' alt='image' />
+            </div>
+            {/* Fin des images de fond */}
+
+            {/* Les cards */}
+            <div className='row'>
+                <div className='col-lg-3 col-md-12'></div>
+
+                    <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
+                  
+          <CRegistreEtDfe kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe}/>
+          <CStatusEtDelegation kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe} kycCopyStatutes={kycDocument?.copyStatutes} kycDelegationPowers={kycDocument?.delegationPowers}/>
+          <CPvEtLocalisation kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe} kycCopyStatutes={kycDocument?.copyStatutes} kycDelegationPowers={kycDocument?.delegationPowers} kycPvAppointment={kycDocument?.pvAppointment} kycMapLocation={kycDocument?.mapLocation}/>
+          <CFactureEtJustPouvoirs kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe} kycCopyStatutes={kycDocument?.copyStatutes} kycDelegationPowers={kycDocument?.delegationPowers} kycPvAppointment={kycDocument?.pvAppointment} kycMapLocation={kycDocument?.mapLocation} kycFacture={kycDocument?.facture} kycProofPower={kycDocument?.proofPower} />
+          <CDocumentsIdentites kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe} kycCopyStatutes={kycDocument?.copyStatutes} kycDelegationPowers={kycDocument?.delegationPowers} kycPvAppointment={kycDocument?.pvAppointment} kycMapLocation={kycDocument?.mapLocation} kycFacture={kycDocument?.facture} kycProofPower={kycDocument?.proofPower} kycIdentity={kycDocument?.identity}/>
+          {/* <CDocumentLegaux /> */}
+
+          </div>
+                <div className='col-lg-3 col-md-12'></div>
+            </div>
+        </div>
+
           {/* FIN */}
+
+
 
         </main>
     </>

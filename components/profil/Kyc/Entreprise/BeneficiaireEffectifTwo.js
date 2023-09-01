@@ -3,6 +3,8 @@ import React from "react";
 import axios from 'axios';
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
+import moment from 'moment';
+
 
 
 // Pour Magic
@@ -110,6 +112,7 @@ const CBeneficiaireEffectifTwo = () => {
        };
        // Fin
     
+       const currentDate = new Date();//definir la date actuelle
 
     // FONCTION D'ENVOIE DES DONNEES DU BENEFICIARE EFFECTIF
     const addBenefiary = async (event) => {
@@ -117,6 +120,7 @@ const CBeneficiaireEffectifTwo = () => {
         setIsLoggingIn(true);
 
         const token = localStorage.getItem('tokenEnCours')
+
         const body = new FormData();
         body.append("socialReason", socialReason);
         body.append("lastName", lastName);
@@ -141,62 +145,145 @@ const CBeneficiaireEffectifTwo = () => {
         body.append("frontIdentityPhoto", statutDocIdentite==="1"?imageRecto:"");
         body.append("backIdentityPhoto", statutDocIdentite==="1"?imageVerso:"");
     
+        if (typeBeneficiary==="Personne physique") {
+            if (dateBirth < formatDate(currentDate) && expirationDate > formatDate(currentDate)) {
         
-            const result = await fetch(`${API_URL}/api/kyc/business/add-kyc-beneficiary`, {
-                method:"POST",
-                body,
-                headers: {
-                    // 'Content-Type': 'application/json',
-                    Authorization:  `Bearer ${token}`,
-                    },
-            })    
-            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-                * sinon on affiche le message de succès
-                */
-            if (result?.status===200) {
-                setTimeout(() => {
-                    if (currentKycStatut==="1") {
-                        Router.push("/profil/kyc/particulier/resultat-kyc"); 
-                    }else{
-                        if (kycBeneficiary?.length+1 == kycForEntreprise?.numberBeneficial) {
-                            Swal.fire({
-                                position: 'center',
-                                icon: 'success',
-                                html: `<p> Vous avez ${kycBeneficiary?.length + 1}  bénéfiaire(s) effectif(s) avec succès. </p>` ,
-                                showConfirmButton: false,
-                                timer: 5000
-                            })
-                            
-                            Router.push("/profil/kyc/entreprise/structure-control-one"); 
+                const result = await fetch(`${API_URL}/api/kyc/business/add-kyc-beneficiary`, {
+                    method:"POST",
+                    body,
+                    headers: {
+                        // 'Content-Type': 'application/json',
+                        Authorization:  `Bearer ${token}`,
+                        },
+                })    
+                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                    * sinon on affiche le message de succès
+                    */
+                if (result?.status===200) {
+                    setTimeout(() => {
+                        if (currentKycStatut==="1") {
+                            Router.push("/profil/kyc/particulier/resultat-kyc"); 
                         }else{
-                            Swal.fire({
-                                position: 'center',
-                                icon: 'success',
-                                html: `<p> Vous avez ajouté ${kycBeneficiary?.length + 1} bénéfiaire(s) effectif(s) avec succès. </p>` ,
-                                showConfirmButton: false,
-                                timer: 1000
-                            })
-
-                            setTimeout(() => {
-                                window.location.reload()
-                            }, 1000)
+                            if (kycBeneficiary?.length+1 == kycForEntreprise?.numberBeneficial) {
+                                Swal.fire({
+                                    position: 'center',
+                                    icon: 'success',
+                                    html: `<p> Vous avez ${kycBeneficiary?.length + 1}  bénéfiaire(s) effectif(s) avec succès. </p>` ,
+                                    showConfirmButton: false,
+                                    timer: 5000
+                                })
+                                
+                                Router.push("/profil/kyc/entreprise/structure-control-one"); 
+                            }else{
+                                Swal.fire({
+                                    position: 'center',
+                                    icon: 'success',
+                                    html: `<p> Vous avez ajouté ${kycBeneficiary?.length + 1} bénéfiaire(s) effectif(s) avec succès. </p>` ,
+                                    showConfirmButton: false,
+                                    timer: 1000
+                                })
+    
+                                setTimeout(() => {
+                                    window.location.reload()
+                                }, 1000)
+                            }
                         }
-                    }
-                }, 5000)
-                
-                }else{
-                    // setMessageError(data.message)
-
-                    setIsLoggingIn(false);
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'error',
-                        html: `<p> Désolé une erreur s'est produite,Veuillez réessayer svp. </p>` ,
-                        showConfirmButton: false,
-                        timer: 10000
-                    })
+                    }, 5000)
                     
-                }
+                    }else{
+                        // setMessageError(data.message)
+    
+                        setIsLoggingIn(false);
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            html: `<p> Désolé une erreur s'est produite,Veuillez réessayer svp. </p>` ,
+                            showConfirmButton: false,
+                            timer: 10000
+                        })
+                        
+                    }
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> Désolé la date de naissance doit être inférieure à la date du jour <br/> Et la date d'expiration doit être supérieure à la date du jour. </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+            }
+        }
+        else if (typeBeneficiary==="Personne morale"){
+            if (startDate < formatDate(currentDate)) {
+        
+                const result = await fetch(`${API_URL}/api/kyc/business/add-kyc-beneficiary`, {
+                    method:"POST",
+                    body,
+                    headers: {
+                        // 'Content-Type': 'application/json',
+                        Authorization:  `Bearer ${token}`,
+                        },
+                })    
+                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                    * sinon on affiche le message de succès
+                    */
+                if (result?.status===200) {
+                    setTimeout(() => {
+                        if (currentKycStatut==="1") {
+                            Router.push("/profil/kyc/particulier/resultat-kyc"); 
+                        }else{
+                            if (kycBeneficiary?.length+1 == kycForEntreprise?.numberBeneficial) {
+                                Swal.fire({
+                                    position: 'center',
+                                    icon: 'success',
+                                    html: `<p> Vous avez ${kycBeneficiary?.length + 1}  bénéfiaire(s) effectif(s) avec succès. </p>` ,
+                                    showConfirmButton: false,
+                                    timer: 5000
+                                })
+                                
+                                Router.push("/profil/kyc/entreprise/structure-control-one"); 
+                            }else{
+                                Swal.fire({
+                                    position: 'center',
+                                    icon: 'success',
+                                    html: `<p> Vous avez ajouté ${kycBeneficiary?.length + 1} bénéfiaire(s) effectif(s) avec succès. </p>` ,
+                                    showConfirmButton: false,
+                                    timer: 1000
+                                })
+    
+                                setTimeout(() => {
+                                    window.location.reload()
+                                }, 1000)
+                            }
+                        }
+                    }, 5000)
+                    
+                    }else{
+                        // setMessageError(data.message)
+    
+                        setIsLoggingIn(false);
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            html: `<p> Désolé une erreur s'est produite,Veuillez réessayer svp. </p>` ,
+                            showConfirmButton: false,
+                            timer: 10000
+                        })
+                        
+                    }
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> Désolé la date de création doit être inférieure à la date du jour. </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+            }
+        }
+        
     }
     // FIN
 
@@ -295,7 +382,12 @@ const CBeneficiaireEffectifTwo = () => {
     
 
 
-
+    // FONCTION POUR FORMATER LA DATE
+    const formatDate = (_updatedAt) =>{
+        const maDate = moment(_updatedAt).format('YYYY-MM-DD');
+        return  maDate
+    }
+    //  FIN
 
     
     const [currentKycStatut, setCurrentKycStatut] = useState();
@@ -313,9 +405,40 @@ const CBeneficiaireEffectifTwo = () => {
    const activeStepEntreprise = 2;
     // Fin
 
+    // ********************************************************************************
+  // LA PARTIE POUR EVITER L'AFFICHAGE DES LA BARRE DE PROGRSSION SUR MOBILE
+// ********************************************************************************
+  
+// Utilisez un état local pour stocker la largeur de l'écran
+  const [windowWidth, setWindowWidth] = useState(0);
+  // Utilisez useEffect pour obtenir la largeur de l'écran une fois que le composant est monté
+  useEffect(() => {
+    // Obtenez la largeur de l'écran et mettez à jour l'état local
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    // Ajoutez un gestionnaire d'événement pour redimensionner la fenêtre
+    window.addEventListener('resize', handleResize);
+
+    // Appelez handleResize une fois pour obtenir la largeur initiale
+    handleResize();
+
+    // Nettoyez le gestionnaire d'événement lors du démontage du composant
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // Conditionnez l'affichage de ProgressBar en fonction de la largeur de l'écran
+  const showProgressBar = windowWidth >= 1180; // Par exemple, considérez les écrans de 768 pixels ou plus comme des ordinateurs
+  
+  // *****************FIN LA PARTIE POUR EVITER L'AFFICHAGE DES LA BARRE DE PROGRSSION SUR MOBILE*****
+
+
   return (
     <>
-      <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />
+      {showProgressBar && <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />}
 
         <div className='mt-15' >
             <div className=' mx-15'>
@@ -343,6 +466,13 @@ const CBeneficiaireEffectifTwo = () => {
             <div className='row'>
                 <div className='col-lg-3 col-md-12'></div>
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
+                        <h5
+                            htmlFor="lastName"
+                            className="text-blackish-blue mb-2 colorRed"
+                        >
+                            Veuillez renseigner les informations du Bénéficiaire n° {kycBeneficiary?.length + 1}
+                        </h5>
+                        
                         <form className='' onSubmit={addBenefiary}>
                             <div className="form-group mb-6 mt-3">
                                 <label
@@ -704,7 +834,6 @@ const CBeneficiaireEffectifTwo = () => {
 
                                             <div className='form-group mt-3'>
                                                         <label
-                                                            htmlFor="email"
                                                             className="text-blackish-blue mb-2"
                                                         >
                                                         Votre nationalité
@@ -794,7 +923,7 @@ const CBeneficiaireEffectifTwo = () => {
                                                             </span>
                                                             <input
                                                             className="form-control"
-                                                            type="text"
+                                                            type="number"
                                                             id="contact"
                                                             placeholder="Numéro téléphone mobile"
                                                             required
@@ -860,7 +989,7 @@ const CBeneficiaireEffectifTwo = () => {
                                                             defaultValue={countryRegistration} 
                                                             onChange={(event)=>setCountryRegistration(event.target.value)}
                                                             >
-                                                            <option>Pays de Résidence </option>
+                                                            <option>Pays d'immatriculation </option>
                                                             {/* Parcourir les pays */}
                                                             {allCountry?(
                                                             allCountry.map((data) => (
@@ -891,7 +1020,7 @@ const CBeneficiaireEffectifTwo = () => {
                                                             ):("")}
                                                             </span>
                                                             <input
-                                                                type='text'
+                                                                type='number'
                                                                 id='phoneFixe'
                                                                 className='form-control'
                                                                 placeholder='Téléphone fixe'
@@ -933,7 +1062,7 @@ const CBeneficiaireEffectifTwo = () => {
                                                 </label>
                                                 <div className='form-group'>
                                                     <input
-                                                        type='text'
+                                                        type='email'
                                                         id='dateBirth'
                                                         className='form-control'
                                                         placeholder='Email'
@@ -947,14 +1076,17 @@ const CBeneficiaireEffectifTwo = () => {
                                                     htmlFor="percentControl"
                                                     className="text-blackish-blue mb-2"
                                                 >
-                                                    % Participation/ Contrôle
+                                                    % Participation/ Contrôle (de 0-100)
                                                 </label>
                                                 <div className='form-group'>
                                                     <input
-                                                        type='text'
+                                                        type='number'
                                                         id='percentControl'
                                                         className='form-control'
                                                         placeholder='% Participation/ Contrôle'
+                                                        min="0"   // Définir la valeur minimale autorisée
+                                                        max="100" // Définir la valeur maximale autorisée
+                                                        step="1"  // Définir le pas d'incrémentation (1 pour les entiers)
                                                         defaultValue={percentControl} 
                                                         onChange={(event)=>setPercentControl(event.target.value)}
                                                     />
