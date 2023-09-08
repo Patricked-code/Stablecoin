@@ -50,6 +50,8 @@ const ValidEntreprise = () => {
     const [currentUser, setCurrentUser] = useState();
     const [provider, setProvider] = useState(null);
     const [isLoggingIn, setIsLoggingIn] = useState(false);
+    const [allCountry, setAllCountry] = useState();
+
 
     // States de validationde Kyc
     const [etape, setEtape] = useState();
@@ -123,7 +125,7 @@ const ValidEntreprise = () => {
     const token = localStorage.getItem('tokenEnCours')
     
         const getAllKycForEntreprise = async () => {
-        const resKyc = await fetch(`${API_URL}/api/kyc/entreprise/find-all-kyc-entreprise`, {
+        const resKyc = await fetch(`${API_URL}/api/kyc/business/find-All-kyc`, {
             headers: {
             'Content-Type': 'application/json',
             Authorization:  `Bearer ${token}`,
@@ -132,34 +134,46 @@ const ValidEntreprise = () => {
             .then((resKyc) => resKyc.json())
             .then((data) => {
             setAllKycForEntreprise(data)
+
             }) 
+
         };
-        // console.log("Banques =>",allBank)
         await getAllKycForEntreprise();
     }, []);
     // FIN
 
 
     // RECUPERER UNE SEULE LIGNE DE KYC DE L'ENTREPRISE
-    if (idKycForEntreprise) {
-        console.log("idKycForEntreprise=>",idKycForEntreprise)
-        // return
-        // useEffect(async() => {
-            const getOneKycForEntreprise = async (_idKycForEntreprise) => {
-            const resKyc = await fetch(`${API_URL}/api/kyc/entreprise/find-one-kyc-entreprise/${_idKycForEntreprise}`, {
+    useEffect(() => {
+        const getUserById = async (_idKycForEntreprise) => {
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+        try {
+            const resKyc = await fetch(`${API_URL}/api/kyc/business/find-one-kyc/${_idKycForEntreprise}`, {
                 headers: {
                 'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+
                 },
-            })
-                .then((resKyc) => resKyc.json())
-                .then((data) => {
-                setOneKycForEntreprise(data)
-                }) 
-            };
-            // console.log("Banques =>",allBank)
-            getOneKycForEntreprise(idKycForEntreprise);
-        // }, []);
-    }
+            });
+    
+            if (!resKyc.ok) {
+            throw new Error('Failed to fetch user data');
+            }
+    
+            const data = await resKyc.json();
+            setOneKycForEntreprise(data)
+            
+        } catch (error) {
+            // Handle errors appropriately, e.g., set an error state.
+            console.error('Error fetching user data:', error);
+        }
+        };
+    
+        if (idKycForEntreprise) {
+        getUserById(idKycForEntreprise);
+        }
+    }, [idKycForEntreprise]);
    
     // FIN
 
@@ -248,6 +262,56 @@ const ValidEntreprise = () => {
         }
     // Fin
 
+
+    // RECUPERER TOUS LES PAYS
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+        
+            const getAllCountries = async () => {
+            const resCountry = await fetch(`${API_URL}/api/country/find-all`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+
+                },
+            })
+                .then((resCountry) => resCountry.json())
+                .then((allCountry) => {
+                setAllCountry(allCountry)
+                }) 
+
+            };
+            
+            await getAllCountries();
+    }, []);
+    // FIN
+
+    // RECUPERER UNE SEULE LIGNE DE PAYS PAR SON
+    // if (userById?.nativeCountry) {
+    //     const getOneCountry = async () => {
+    //       try {
+    //         const result = await fetch(`${API_URL}/api/country/find-one/${userById?.nativeCountry}`, {
+    //           headers: {
+    //             'Content-Type': 'application/json',
+    //           },
+    //         });
+      
+    //         if (!result.ok) {
+    //           throw new Error('Failed to fetch pays data');
+    //         }
+      
+    //         const data = await result.json();
+    //         setOneCountry(data);
+    //       } catch (error) {
+    //         // Handle errors appropriately, e.g., set an error state.
+    //         console.error('Error fetching pays data:', error);
+    //       }
+    //     };
+      
+    //     getOneCountry();
+    //   }
+    //   FIN
+
   return (
     <>
 
@@ -291,29 +355,39 @@ const ValidEntreprise = () => {
                                         >
                                         <Table.Header>
                                             {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom & prenom </p></Table.Column> */}
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Questionnaires</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Documents</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Domicile</p></Table.Column>
+                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">AML</p></Table.Column>
                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Identité</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Photo</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Signature</p></Table.Column>
+                                            <Table.Column><p className="gr-text-8 pt-3 mx-2 pb-0 ">Représentant</p></Table.Column>
+                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Bénéficiaire</p></Table.Column>
+                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Control</p></Table.Column>
+                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Politique</p></Table.Column>
+                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Opérations</p></Table.Column>
+                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Fonds</p></Table.Column>
+                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Financière</p></Table.Column>
+                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Documents</p></Table.Column>
                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
                                         </Table.Header>
                                             <Table.Body>
                                                 {allKycForEntreprise?.map((data) => (
-                                                    <Table.Row key={data?.id}>                       
-                                                        {/* <Table.Cell ><p className=" py-0 ">Koné Arouna</p></Table.Cell> */}
-                                                        
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(1)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validQuiz==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(2)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validLegalDocuments==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(3)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validResidence==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(4)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validIdentity==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(5)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validPhoto==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(6)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validSignature==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 ">{data.validQuiz==1 && data.validLegalDocuments==1 && data.validIdentity==1 && data.validResidence==1 && data.validPhoto==1 && data.validSignature==1 ? (<b className='colorGreen'>Valider</b>):(<b className='colorRed'>En cours</b>)}</p></Table.Cell>
+                                                    <Table.Row key={data?.id}> 
+                                                  
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(1)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validAml==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(2)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validIdentity==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(3)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validRepresentative==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(4)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validBeneficiary==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(5)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validStructure==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(6)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validPoliticallyExposed==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(7)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validFinancialOperation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(8)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validFundOrigin==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(9)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validFinancialInformation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(10)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validLegalDocument==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
+                                                        <Table.Cell ><p className=" py-0 ">{data.validAml==1 && data.validIdentity==1 && data.validRepresentative==1 && data.validBeneficiary==1 && data.validStructure==1 && data.validPoliticallyExposed==1 && data.validFinancialOperation==1 && data.validFundOrigin==1 && data.validFinancialInformation==1 && data.validLegalDocument==1? (<b className='colorGreen'>Valider</b>):(<b className='colorRed'>En cours</b>)}</p></Table.Cell>
                                                         <Table.Cell ><p className=" py-0 ">{formatDate(data?.createdAt)}</p></Table.Cell>
+                                                         {/* validFinancialTransaction */}
+                                                                                                                                                                                                                                            
+ 
                                                         <Table.Cell>
                                                             <div className="d-flex py-0 ">
                                                                 <p className="text-center">
@@ -356,53 +430,215 @@ const ValidEntreprise = () => {
                                 {/* Les questionnaires */}
                                 {etape===1 ? (
                                     <>
-                                        <div className='my-5'>
-                                            <h3 className='text-center'>Les questionnaires</h3>
-                                        </div>
-                                        <div className="input-group ">
-                                        
-                                            <div className='mx-5 '>
-                                                <div className=''>
-                                                    <b>1) Les dépenses récurrentes :</b><br/>
-                                                    {oneKycForEntreprise?.spentA? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.spentA }</p>): ("")}
-                                                    {oneKycForEntreprise?.spentB? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.spentB }</p>): ("")}
-                                                    {oneKycForEntreprise?.spentC? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.spentC }</p>): ("")}
-                                                    {oneKycForEntreprise?.spentD? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.spentD }</p>): ("")}
-                                                    {oneKycForEntreprise?.spentE? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.spentE }</p>): ("")}
-                                                    {/* {oneKycForEntreprise?.spentF? (<p className='mb-1'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.spentF }</p>): ("")} */}
+                                        {/* Questionnaire Aml 1 */}
+                                        <div>
+                                            <div className='my-5'>
+                                                <h3 className='text-center'>Les questionnaires AML 1</h3>
+                                            </div>
+                                            <div className="input-group ">
+                                            
+                                                <div className='mx-5 '>
+                                                    <div className=''>
+                                                        <b>Les charges récurrentes mensuelles ou annuelles dans le cadre des activités de votre entreprises :</b><br/>
+                                                        {oneKycForEntreprise?.spentA? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.spentA }</p>): ("")}
+                                                        {oneKycForEntreprise?.spentB? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.spentB }</p>): ("")}
+                                                        {oneKycForEntreprise?.spentC? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.spentC }</p>): ("")}
+                                                        {oneKycForEntreprise?.spentD? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.spentD }</p>): ("")}
+                                                        {oneKycForEntreprise?.spentE? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.spentE }</p>): ("")}
+                                                        {oneKycForEntreprise?.spentF? (<p className='mb-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.spentF }</p>): ("")}
+                                                        {oneKycForEntreprise?.spentG? (<p className='mb-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.spentG }</p>): ("")}
+                                                        {oneKycForEntreprise?.spentH? (<p className='mb-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.spentH }</p>): ("")}
+                                                        {oneKycForEntreprise?.spentI? (<p className='mb-1'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.spentI }</p>): ("")}
 
-                                                    {!oneKycForEntreprise?.spentA && !oneKycForEntreprise?.spentB && !oneKycForEntreprise?.spentC && !oneKycForEntreprise?.spentD && !oneKycForEntreprise?.spentE ? (<p className='my-1'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
-                                                </div>
+                                                        {!oneKycForEntreprise?.spentA && !oneKycForEntreprise?.spentB && !oneKycForEntreprise?.spentC && !oneKycForEntreprise?.spentD && !oneKycForEntreprise?.spentE && !oneKycForEntreprise?.spentF && !oneKycForEntreprise?.spentG && !oneKycForEntreprise?.spentH && !oneKycForEntreprise?.spentI ? (<p className='my-1'><Icon icon="bx:x" className='colorRed' />Aucune charge récurrente</p>): ("")}
+                                                    </div>
 
-                                                <div className='mx-10 '>
-                                                    <b>2) Les opérations financières transfrontalières dans le cadre des activités de votre entreprise concernent  :</b><br/>
-                                                    {oneKycForEntreprise?.operationA? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.operationA}</p>): ("")}
-                                                    {oneKycForEntreprise?.operationB? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.operationB}</p>): ("")}
-                                                    {oneKycForEntreprise?.operationC? (<p className='mb-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.operationC}</p>): ("")}
-                                                    {oneKycForEntreprise?.operationD? (<p className='mb-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.operationD}</p>): ("")}
-                                                    {oneKycForEntreprise?.operationE? (<p className='mb-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.operationE}</p>): ("")}
-                                                    {oneKycForEntreprise?.operationF? (<p className='mb-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.operationF}</p>): ("")}
-                                                    {oneKycForEntreprise?.operationG? (<p className='mb-2'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.operationG}</p>): ("")}
+                                                    <div className='mx-10 '>
+                                                        <b>Les opérations financières transfrontalières dans le cadre des activités de votre entreprise concernent  :</b><br/>
+                                                        {oneKycForEntreprise?.operationA? (<p className='mt-3'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.operationA}</p>): ("")}
+                                                        {oneKycForEntreprise?.operationB? (<p className='mt-3'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.operationB}</p>): ("")}
+                                                        {oneKycForEntreprise?.operationC? (<p className='mb-3'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.operationC}</p>): ("")}
+                                                        {oneKycForEntreprise?.operationD? (<p className='mb-3'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.operationD}</p>): ("")}
+                                                        {oneKycForEntreprise?.operationE? (<p className='mb-3'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.operationE}</p>): ("")}
+                                                        {oneKycForEntreprise?.operationF? (<p className='mb-3'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.operationF}</p>): ("")}
+                                                        {oneKycForEntreprise?.operationG? (<p className='mb-3'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.operationG}</p>): ("")}
+                                                        
+
+                                                        {!oneKycForEntreprise?.operationA && !oneKycForEntreprise?.operationB && !oneKycForEntreprise?.operationC && !oneKycForEntreprise?.operationD && !oneKycForEntreprise?.operationE && !oneKycForEntreprise?.operationF && !oneKycForEntreprise?.operationG ? (<p className='mt-2'><Icon icon="bx:x" className='colorRed' />Aucune opération financière transfrontalière</p>): ("")}
+                                                    </div>
+
+                                                    <div className='mt-3'>
+                                                        <b>Avez-vous une boutique en ligne ? :</b><br/>
+                                                        {oneKycForEntreprise?.eShop? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.eShop}</p>): ("Aucune réponse")}
+
+                                                    </div>
+
+                                                    <div className='mt-3'>
+                                                        <b>Seriez intéressés par une solution digitale (paiement/ encaissement) qui vous permettra de recevoir et d'effectuer des paiements instantanés de vos clients et à vos fournisseurs, quelque soit leur pays de résidence, les moyens de paiements que ces derniers utilisent ? :</b><br/>
+                                                        {oneKycForEntreprise?.multiplePayment? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.multiplePayment}</p>): ("Aucune réponse")}
+
+                                                    </div>
                                                     
-
-                                                    {!oneKycForEntreprise?.operationA && !oneKycForEntreprise?.operationB && !oneKycForEntreprise?.operationC && !oneKycForEntreprise?.operationD && !oneKycForEntreprise?.operationE && !oneKycForEntreprise?.operationF && !oneKycForEntreprise?.operationG ? (<p className='mt-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
                                                 </div>
-
-                                                <div className=''>
-                                                    <b>3) Avez-vous une boutique en ligne ? :</b><br/>
-                                                    {oneKycForEntreprise?.eShop? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.eShop}</p>): ("Aucune réponse")}
-
-                                                </div>
-
-                                                <div className=''>
-                                                    <b>4) Seriez intéressés par une solution digitale (paiement/ encaissement) qui vous permettra de recevoir et d'effectuer des paiements instantanés de vos clients et à vos fournisseurs, quelque soit leur pays de résidence, les moyens de paiements que ces derniers utilisent ? :</b><br/>
-                                                    {oneKycForEntreprise?.multiplePayment? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.multiplePayment}</p>): ("Aucune réponse")}
-
-                                                </div>
-                                                
                                             </div>
                                         </div>
+                                        {/*Fin Questionnaire Aml 1 */}
+
+                                        {/* Questionnaire Aml 2 */}
+                                        <div>
+                                            <div className='my-5'>
+                                                <h3 className='text-center'>Les questionnaires AML 2</h3>
+                                            </div>
+                                            <div className="input-group ">
+                                            
+                                                <div className='mx-5 '>
+                                                    {/* Partie banque */}
+                                                    <div className=''>
+                                                        <b>Avez-vous un compte bancaire dans une autre institution ? </b><br/>
+                                                        {oneKycForEntreprise?.otherBankAccount? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise?.otherBankAccount}</p>): (<p className='mt-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                    </div>
+                                                    {oneKycForEntreprise?.otherBankAccount==="Oui"? (
+                                                        <>
+                                                            <b> Nature du ou des comptes :</b><br/>
+
+                                                            {oneKycForEntreprise?.savingsAccount? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.savingsAccount }</p>): ("")}
+                                                            {oneKycForEntreprise?.currentAccount? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.currentAccount }</p>): ("")}
+                                                            {oneKycForEntreprise?.titleAccount? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.titleAccount }</p>): ("")}
+                                                            {oneKycForEntreprise?.datAccount? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.datAccount }</p>): ("")}
+                                                            {oneKycForEntreprise?.foreignCurrencyAccount? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.foreignCurrencyAccount}</p>): ("")}
+                                                        
+                                                            {!oneKycForEntreprise?.savingsAccount && !oneKycForEntreprise?.currentAccount && !oneKycForEntreprise?.titleAccount && !oneKycForEntreprise?.datAccount && !oneKycForEntreprise?.foreignCurrencyAccount? (<p className='my-1'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>): ("")}
+                                                    
+                                                            {/* Si l'utilisateur a choisi compte d'épargne */}
+                                                            {oneKycForEntreprise?.savingsAccount? (
+                                                                <>
+                                                                
+                                                                    <b>{oneKycForEntreprise?.otherBankCountrySavings}Pays de la banque de votre compte d'épargne existant :</b><br/>
+                                                                    {oneKycForEntreprise?.otherBankCountrySavings? (
+                                                                        <>
+                                                                            {allCountry?.map((data) => (
+                                                                                data?.code===oneKycForEntreprise?.otherBankCountrySavings?
+                                                                                <p className='mt-0' key={data?.id}><Icon icon="bx:check-double" color="#208454" />
+                                                                                    {data?.libelle}
+                                                                                </p>
+                                                                                :''
+                                                                            ))}
+                                                                        </>
+                                                                    ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                
+                                                                    <b>Nom de la banque de votre compte d'épargne :</b><br/>
+                                                                    {oneKycForEntreprise?.otherBankNameSavings? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.otherBankNameSavings }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    
+                                                                    <b> Références de la banque de votre compte d'épargne :</b><br/>
+                                                                    {oneKycForEntreprise?.bankReferencesSavings? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.bankReferencesSavings }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+
+                                                                </>
+                                                                
+                                                            ):("")}
+                                                            {/* fin */}
+
+
+                                                            {/* Si l'utilisateur a choisi compte courant */}
+                                                            {oneKycForEntreprise?.currentAccount? (
+                                                                <>
+                                                                    <b> Pays de la banque de votre compte courant existant :</b><br/>
+                                                                    {oneKycForEntreprise?.otherBankCountryCurrent? (
+                                                                        <>
+                                                                            {allCountry?.map((data) => (
+                                                                                data?.code===oneKycForEntreprise?.otherBankCountryCurrent?
+                                                                                <p className='mt-0' key={data?.id}><Icon icon="bx:check-double" color="#208454" />
+                                                                                    {data?.libelle}
+                                                                                </p>
+                                                                                :''
+                                                                            ))}
+                                                                        </>
+                                                                    ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    
+                                                                    <b> Nom de la banque de votre compte courant :</b><br/>
+                                                                    {oneKycForEntreprise?.otherBankNameCurrent? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.otherBankNameCurrent }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    
+                                                                    <b> Références de la banque de votre compte courant :</b><br/>
+                                                                    {oneKycForEntreprise?.bankReferencesCurrent? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.bankReferencesCurrent }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+
+                                                                </>
+                                                                
+                                                            ):("")}
+                                                            {/* fin */}
+
+                                                            {/* Si l'utilisateur a choisi compte titre */}
+                                                            {oneKycForEntreprise?.titleAccount? (
+                                                                <>
+                                                                    
+                                                                    <b> Pays de la banque de votre compte titre existant :</b><br/>
+                                                                    {oneKycForEntreprise?.otherBankCountryTitle? (
+                                                                        <>
+                                                                            {allCountry?.map((data) => (
+                                                                                data?.code===oneKycForEntreprise?.otherBankCountryTitle?
+                                                                                <p className='mt-0' key={data?.id}><Icon icon="bx:check-double" color="#208454" />
+                                                                                    {data?.libelle}
+                                                                                </p>
+                                                                                :''
+                                                                            ))}
+                                                                        </>
+                                                                    ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    
+                                                                    <b> Nom de la banque de votre compte titre :</b><br/>
+                                                                    {oneKycForEntreprise?.otherBankNameTitle? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.otherBankNameTitle }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    
+                                                                    <b> Références de la banque de votre compte titre :</b><br/>
+                                                                    {oneKycForEntreprise?.bankReferencesTitle? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.bankReferencesTitle }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+
+                                                                </>
+                                                                
+                                                            ):("")}
+                                                            {/* fin */}
+
+                                                            {/* Si l'utilisateur a choisi compte DAT */}
+                                                            {oneKycForEntreprise?.dat? (
+                                                                <>
+                                                                    
+                                                                    <b> Pays de la banque de votre compte DAT existant :</b><br/>
+                                                                    {oneKycForEntreprise?.otherBankCountryDat? (
+                                                                        <>
+                                                                            {allCountry?.map((data) => (
+                                                                                data?.code===oneKycForEntreprise?.otherBankCountryDat?
+                                                                                <p className='mt-0' key={data?.id}><Icon icon="bx:check-double" color="#208454" />
+                                                                                    {data?.libelle}
+                                                                                </p>
+                                                                                :''
+                                                                            ))}
+                                                                        </>
+                                                                    ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    
+                                                                    <b> Nom de la banque de votre compte DAT :</b><br/>
+                                                                    {oneKycForEntreprise?.otherBankNameDat? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.otherBankNameDat }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    
+                                                                    <b> Références de la banque de votre compte DAT :</b><br/>
+                                                                    {oneKycForEntreprise?.bankReferencesDat? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.bankReferencesDat }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+
+                                                                </>
+                                                                
+                                                            ):("")}
+                                                            {/* fin */}
+
+                                                        </>
+                                                    ):("")}
+                                                    {/* Fin partie banque */}
+
+                                                    
+                                                    <div className='mt-3'>
+                                                        <b>Seriez intéressés par une solution digitale (paiement/ encaissement) qui vous permettra de recevoir et d'effectuer des paiements instantanés de vos clients et à vos fournisseurs, quelque soit leur pays de résidence, les moyens de paiements que ces derniers utilisent ? :</b><br/>
+                                                        {oneKycForEntreprise?.multiplePayment? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.multiplePayment}</p>): ("Aucune réponse")}
+
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {/*Fin Questionnaire Aml 2 */}
+
                                     </>
+
                                 ): ("")}
 
                                 {/* Les documents légaux */}

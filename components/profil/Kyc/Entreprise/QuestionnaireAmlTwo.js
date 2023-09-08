@@ -344,13 +344,13 @@ const CQuestionnaireAmlTwo = () => {
                             >
                                 <option defaultValue="">Choisissez</option>
 
-                                <option value="true">Oui</option>
-                                <option value="false">Non</option>
+                                <option value="Oui">Oui</option>
+                                <option value="Non">Non</option>
                             </select>
                             
                           </div>
 
-                          {otherBankAccount ==="true" && (
+                          {otherBankAccount ==="Oui" && (
                             <>
                   <div className="mt-3 mb-5">
                     <label>Type de compte :</label>

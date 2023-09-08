@@ -90,7 +90,17 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/resultat-kyc"||
       pathname === "/profil/wallet"||
       pathname === "/profil/paiements/paiements-attente"||
-      
+      // KYC OPCVM
+      pathname === "/profil/kyc/opcvm/questionnaire-one"||
+      pathname === "/profil/kyc/opcvm/questionnaire-two"||
+      pathname === "/profil/kyc/opcvm/questionnaire-three"||
+      pathname === "/profil/kyc/opcvm/questionnaire-four"||
+      pathname === "/profil/kyc/opcvm/questionnaire-five"||
+      pathname === "/profil/kyc/opcvm/questionnaire-six"||
+      pathname === "/profil/kyc/opcvm/questionnaire-seven"||
+      pathname === "/profil/kyc/opcvm/questionnaire-eight"||
+      pathname === "/profil/kyc/opcvm/questionnaire-nine"||
+
       // LES ROUTES DE LA PARTIE DU PROFIL INSTITUTION
       pathname === "/profil/institution/depot-cash"||
       pathname === "/profil/institution/retrait-cash"||
@@ -187,6 +197,17 @@ const Layout = ({ children }) => {
       // pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/wallet"||
       pathname === "/profil/paiements/paiements-attente"||
+
+      // KYC OPCVM
+      pathname === "/profil/kyc/opcvm/questionnaire-one"||
+      pathname === "/profil/kyc/opcvm/questionnaire-two"||
+      pathname === "/profil/kyc/opcvm/questionnaire-three"||
+      pathname === "/profil/kyc/opcvm/questionnaire-four"||
+      pathname === "/profil/kyc/opcvm/questionnaire-five"||
+      pathname === "/profil/kyc/opcvm/questionnaire-six"||
+      pathname === "/profil/kyc/opcvm/questionnaire-seven"||
+      pathname === "/profil/kyc/opcvm/questionnaire-eight"||
+      pathname === "/profil/kyc/opcvm/questionnaire-nine"||
 
       // LES ROUTES DE LA PARTIE DU PROFIL INSTITUTION
       pathname === "/profil/institution/depot-cash"||

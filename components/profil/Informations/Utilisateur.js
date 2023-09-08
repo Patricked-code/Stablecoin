@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Icon } from '@iconify/react';
 import moment from 'moment';
 import copy from "copy-to-clipboard"; 
+import QRCode from 'qrcode.react';
 
 
 
@@ -46,6 +47,7 @@ const InfosUtilisateur = () => {
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
     const [currentUser, setCurrentUser] = useState();
+    const [currentUserAddress, setCurrentUserAddress] = useState();
     const [provider, setProvider] = useState(null);
     const [dataCountryOfUser, setDataCountryOfUser] = useState(null);
 
@@ -72,6 +74,7 @@ const InfosUtilisateur = () => {
                   const signer = provider.getSigner();
                   const network = await provider.getNetwork();
                   const userAddress = await signer.getAddress();
+                  setCurrentUserAddress(userAddress)
                   //const userBalance = ethers.utils.formatEther(await provider.getBalance(userAddress))
                   // FIN
     
@@ -149,6 +152,12 @@ const InfosUtilisateur = () => {
     const handleShow = () => setShow(true);
     // Fin
 
+    // Modal du Qr code
+    const [showQr, setShowQr] = useState(false);
+    const handleCloseQr = () => setShowQr(false);
+    const handleShowQr = () => setShowQr(true);
+    // Fin
+
 
   return (
     <>
@@ -218,7 +227,7 @@ const InfosUtilisateur = () => {
                                 </div>
                             </div>
 
-
+                            {/* Bouton du Pop up d'identifiant */}
                             <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
                                 <div className='cryptocurrency-slides'>
                                     <div className='single-cryptocurrency-box'>
@@ -229,7 +238,26 @@ const InfosUtilisateur = () => {
                                             type="button"
                                             onClick={handleShow}
                                         >
-                                            Mon Identifiant
+                                            Mon identifiant
+                                        </Button>
+                                        {/* Fin */}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Bouton du Pop up de Qr code */}
+                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                <div className='cryptocurrency-slides'>
+                                    <div className='single-cryptocurrency-box'>
+                                        <div className='btn-box'>
+                                        <Button
+                                            block
+                                            color="primary"
+                                            type="button"
+                                            onClick={handleShowQr}
+                                        >
+                                            Mon Qr code
                                         </Button>
                                         {/* Fin */}
                                         </div>
@@ -501,11 +529,11 @@ const InfosUtilisateur = () => {
 
      
             { /* ********************************************************************************** */}
-                {/* MODAL DU CODE DE PARRAINAGE'*/}
+                {/* MODAL DU CODE D'IDENTIFIANT*/}
             {/* ********************************************************************************** */}
             <Modal show={show} className="mt-15" onHide={handleClose}>
                 <Modal.Header closeButton id="bgcolor">
-                <Modal.Title className="" >Copiez votre Identifiant</Modal.Title>
+                <Modal.Title className="" >Copiez votre identifiant</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                   <div className="input-group flex-nowrap">
@@ -524,6 +552,29 @@ const InfosUtilisateur = () => {
             </Modal>
             {/* *****************************************FIN****************************************** */}
 
+
+            { /* ********************************************************************************** */}
+                {/* MODAL DU CODE D'IDENTIFIANT*/}
+            {/* ********************************************************************************** */}
+            <Modal show={showQr} className="mt-15" onHide={handleCloseQr}>
+                <Modal.Header closeButton id="bgcolor">
+                <Modal.Title className="" >Mon Qr code</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className='text-center my-30'>
+                        <QRCode
+                        className='text-center'
+                        value={currentUserAddress}
+                        size={256}
+                        fgColor="#000000"
+                        bgColor="#ffffff"
+                        level="L"
+                        renderAs="svg"
+                        />
+                    </div>
+                </Modal.Body>
+            </Modal>
+            {/* Fin */}
 
 
 

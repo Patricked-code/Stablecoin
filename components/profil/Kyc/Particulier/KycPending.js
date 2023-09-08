@@ -58,6 +58,8 @@ const KycPendingParticular = () => {
     const [oneKycForParticular, setOneKycForParticular] = useState();
     const [idKycForParticular, setIdKycForParticular] = useState();
     const [oneCountry, setOneCountry] = useState();
+    const [allCountry, setAllCountry] = useState();
+
 
     // states du formulaire de validation
     const [validQuiz, setValidQuiz] = useState();
@@ -275,6 +277,29 @@ const KycPendingParticular = () => {
             }
         }
     // Fin
+
+    // RECUPERER TOUS LES PAYS
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+        
+            const getAllCountries = async () => {
+            const resCountry = await fetch(`${API_URL}/api/country/find-all`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+
+                },
+            })
+                .then((resCountry) => resCountry.json())
+                .then((allCountry) => {
+                setAllCountry(allCountry)
+                }) 
+
+            };
+            
+            await getAllCountries();
+    }, []);
+    // FIN
 
   return (
     <>
@@ -497,8 +522,17 @@ const KycPendingParticular = () => {
                                                         <>
                                                          
                                                             <b>Pays de la banque de votre compte d'épargne existant :</b><br/>
-                                                            {oneKycForParticular?.otherBankCountrySavings? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankCountrySavings }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                           
+                                                            {oneKycForParticular?.otherBankCountrySavings? (
+                                                                <>
+                                                                    {allCountry?.map((data) => (
+                                                                        data?.code===oneKycForParticular?.otherBankCountrySavings?
+                                                                        <p className='mt-0' key={data?.id}><Icon icon="bx:check-double" color="#208454" />
+                                                                            {data?.libelle}
+                                                                        </p>
+                                                                        :''
+                                                                    ))}
+                                                                </>
+                                                            ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                             <b>Nom de la banque de votre compte d'épargne :</b><br/>
                                                             {oneKycForParticular?.otherBankNameSavings? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankNameSavings }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                             
@@ -515,13 +549,23 @@ const KycPendingParticular = () => {
                                                     {oneKycForParticular?.currentAccount? (
                                                         <>
                                                             <b> Pays de la banque de votre compte courant existant :</b><br/>
-                                                            {oneKycForParticular?.otherBankCountryCourant? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankCountryCourant }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                           
+                                                            {oneKycForParticular?.otherBankCountryCurrent? (
+                                                                <>
+                                                                    {allCountry?.map((data) => (
+                                                                        data?.code===oneKycForParticular?.otherBankCountryCurrent?
+                                                                        <p className='mt-0' key={data?.id}><Icon icon="bx:check-double" color="#208454" />
+                                                                            {data?.libelle}
+                                                                        </p>
+                                                                        :''
+                                                                    ))}
+                                                                </>
+                                                            ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+
                                                             <b> Nom de la banque de votre compte courant :</b><br/>
-                                                            {oneKycForParticular?.otherBankNameCourant? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankNameCourant }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            {oneKycForParticular?.otherBankNameCurrent? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankNameCurrent }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                             
                                                             <b> Références de la banque de votre compte courant :</b><br/>
-                                                            {oneKycForParticular?.bankReferencesCourant? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.bankReferencesCourant }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            {oneKycForParticular?.bankReferencesCurrent? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.bankReferencesCurrent }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
 
                                                         </>
                                                         
@@ -533,8 +577,18 @@ const KycPendingParticular = () => {
                                                         <>
                                                             
                                                             <b> Pays de la banque de votre compte titre existant :</b><br/>
-                                                            {oneKycForParticular?.otherBankCountryTitle? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankCountryTitle }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                           
+                                                            {oneKycForParticular?.otherBankCountryTitle? (
+                                                                <>
+                                                                    {allCountry?.map((data) => (
+                                                                        data?.code===oneKycForParticular?.otherBankCountryTitle?
+                                                                        <p className='mt-0' key={data?.id}><Icon icon="bx:check-double" color="#208454" />
+                                                                            {data?.libelle}
+                                                                        </p>
+                                                                        :''
+                                                                    ))}
+                                                                </>
+                                                            ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            
                                                             <b> Nom de la banque de votre compte titre :</b><br/>
                                                             {oneKycForParticular?.otherBankNameTitle? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.otherBankNameTitle }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                             

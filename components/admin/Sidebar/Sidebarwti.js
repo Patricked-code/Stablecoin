@@ -106,7 +106,7 @@ const logaout = useCallback(() => {
             </Link>
 
             <div className='nav-list'>
-            {currentUser?.firstName && currentUser?.lastName ? (
+            {!currentUser?.entreprise? (
                 <span className='nav-link-icon text-white mx-1'>{currentUser?.firstName} {currentUser?.lastName}</span>
             ) :('')}
             {currentUser?.entreprise? (
