@@ -18,11 +18,9 @@ const CQuestionnaireAmlThree = () => {
     transactionAmountHigher: '',
     relationsSanctionedCountries: '',
     highRiskCountryPayments: '',
-    restrictedGoodsTransactions: '',
     relationsIllegalActivities: '',
     noCooperativeJurisdictionPayments: '',
     offshoreBankAccountsTransactions: '',
-    frequentClientsTransactions: '',
     thirdPartyCashPayments: '',
     transactionsTerrorismLinks: ''
   });
@@ -206,18 +204,6 @@ const showProgressBar = windowWidth >= 1180; // Par exemple, considérez les éc
                 </select>
               </div>
 
-              {/* Question 13 */}
-              <div className='mt-3'>
-                <label>
-                  Effectuez-vous des transactions impliquant des marchandises soumises à des restrictions d'exportation ou de contrôle, telles que des armes, des produits chimiques dangereux ou des technologies sensibles, notamment dans des secteurs tels que la recherche scientifique, la défense ou l'aérospatiale ?
-                </label>
-                <select className='form-control mt-2' name="restrictedGoodsTransactions" onChange={handleChange}>
-                  <option value="">Choisissez une option</option>
-                  <option value="Oui">Oui</option>
-                  <option value="Non">Non</option>
-                </select>
-              </div>
-
               {/* Question 14 */}
               <div className='mt-3'>
                 <label>
@@ -248,18 +234,6 @@ const showProgressBar = windowWidth >= 1180; // Par exemple, considérez les éc
                   Effectuez-vous des transactions impliquant des comptes bancaires offshores ou des sociétés-écrans dans le but de dissimuler l'identité des parties ou la source des fonds, notamment dans des secteurs tels que la finance internationale, l'investissement ou le commerce international ?
                 </label>
                 <select className='form-control mt-2' name="offshoreBankAccountsTransactions" onChange={handleChange}>
-                  <option value="">Choisissez une option</option>
-                  <option value="Oui">Oui</option>
-                  <option value="Non">Non</option>
-                </select>
-              </div>
-
-              {/* Question 17 */}
-              <div className='mt-3'>
-                <label>
-                  Avez-vous des clients qui effectuent des transactions fréquentes de montants importants sans justification économique claire, notamment dans des secteurs tels que l'immobilier de luxe, la joaillerie ou la gestion de patrimoine ?
-                </label>
-                <select className='form-control mt-2' name="frequentClientsTransactions" onChange={handleChange}>
                   <option value="">Choisissez une option</option>
                   <option value="Oui">Oui</option>
                   <option value="Non">Non</option>

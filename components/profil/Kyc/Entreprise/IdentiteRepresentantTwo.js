@@ -794,7 +794,7 @@ const CIdentiteRepresentantTwo = () => {
                                 <label
                                     className="text-blackish-blue mb-2"
                                 >
-                                   Votre nationalité
+                                   Nationalité du représentant
                                 </label>
                                 <select 
                                 className='form-control'
@@ -802,7 +802,7 @@ const CIdentiteRepresentantTwo = () => {
                                 defaultValue={nationality} 
                                 onChange={(event)=>setNationality(event.target.value)}
                                 >
-                                    <option>Votre nationalité</option>
+                                    <option>Nationalité du représentant</option>
                                     {/* Parcourir les nationalités */}
                                     {allNationality?(
                                     allNationality.map((data) => (

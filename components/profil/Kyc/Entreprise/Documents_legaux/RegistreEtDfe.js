@@ -90,8 +90,8 @@ const [dfeFile, setDfeFile] = useState(null)
 
         const body = new FormData();
         
-        body.append("registerFile", typeDocRegistre==="0"?registerFile:null);
-        body.append("registerPhoto", typeDocRegistre==="1"?imageRegister:null);
+        body.append("registerFile", typeDocRegistre==="0"?registerFile:"");
+        body.append("registerPhoto", typeDocRegistre==="1"?imageRegister:"");
         
         const result = await fetch(`${API_URL}/api/kyc/business/add-kyc-register`, {
             method:"POST",
@@ -148,8 +148,8 @@ const [dfeFile, setDfeFile] = useState(null)
 
         const body = new FormData();
         
-        body.append("registerFile", typeDocRegistre==="0"?registerFile:null);
-        body.append("registerPhoto", typeDocRegistre==="1"?imageRegister:null);
+        body.append("registerFile", typeDocRegistre==="0"?registerFile:"");
+        body.append("registerPhoto", typeDocRegistre==="1"?imageRegister:"");
         
         const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-register`, {
             method:"PUT",
@@ -272,8 +272,8 @@ const [dfeFile, setDfeFile] = useState(null)
 
         const body = new FormData();
         
-        body.append("dfeFile", typeDocDfe==="0"?dfeFile:null);
-        body.append("dfePhoto", typeDocDfe==="1"?imageDfe:null);
+        body.append("dfeFile", typeDocDfe==="0"?dfeFile:"");
+        body.append("dfePhoto", typeDocDfe==="1"?imageDfe:"");
         
         const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-dfe`, {
             method:"PUT",

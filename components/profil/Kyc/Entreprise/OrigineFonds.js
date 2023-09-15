@@ -359,7 +359,7 @@ const COrigneFonds = () => {
                                                 <option defaultValue="">Choisissez</option>
                                                 <optgroup className='single-cryptocurrency-box'>
                                                     <option value="Oui">Oui</option>
-                                                    <option value="NON">Non</option>
+                                                    <option value="Non">Non</option>
                                                     <option value="Peut être">Peut être</option>
                                                 </optgroup>
                                             </select>
@@ -416,7 +416,7 @@ const COrigneFonds = () => {
                                                 <option defaultValue="">Choisissez</option>
                                                 <optgroup className='single-cryptocurrency-box'>
                                                     <option value="Oui">Oui</option>
-                                                    <option value="NON">Non</option>
+                                                    <option value="Non">Non</option>
                                                     <option value="Peut être">Peut être</option>
                                                 </optgroup>
                                             </select>

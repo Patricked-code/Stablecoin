@@ -84,8 +84,8 @@ const [delegationPowersFile, setDelegationPowersFile] = useState(null)
 
         const body = new FormData();
         
-        body.append("copyStatutesFile", typeDocCopyStatutes==="0"?copyStatutesFile:null);
-        body.append("copyStatutesPhoto", typeDocCopyStatutes==="1"?imageCopyStatutes:null);
+        body.append("copyStatutesFile", typeDocCopyStatutes==="0"?copyStatutesFile:"");
+        body.append("copyStatutesPhoto", typeDocCopyStatutes==="1"?imageCopyStatutes:"");
         
         const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-copyStatutes`, {
             method:"PUT",
@@ -204,8 +204,8 @@ const [delegationPowersFile, setDelegationPowersFile] = useState(null)
 
         const body = new FormData();
         
-        body.append("delegationPowersFile", typeDocDelegationPowers==="0"?delegationPowersFile:null);
-        body.append("delegationPowersPhoto", typeDocDelegationPowers==="1"?imageDelegationPowers:null);
+        body.append("delegationPowersFile", typeDocDelegationPowers==="0"?delegationPowersFile:"");
+        body.append("delegationPowersPhoto", typeDocDelegationPowers==="1"?imageDelegationPowers:"");
         
         const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-delegation-powers`, {
             method:"PUT",

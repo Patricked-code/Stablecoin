@@ -14,10 +14,12 @@ const CQuestionnaireFive = () => {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
 
-    // LES BONS
-    // divestment
+    //State du formulaire
     const [selectedOption, setSelectedOption] = useState('');
     const [pointing, setPointing] = useState(); 
+    
+    // Question
+    const question = "Lequel des énoncés suivants correspondrait le mieux à votre situation ?";
     
     // Les réponses des questions
     const answerOne = "Je ne suis pas actuellement en mesure de faire face à toutes mes obligations financières sans m’endetter davantage.";
@@ -51,7 +53,64 @@ const CQuestionnaireFive = () => {
           default:
             setPointing(""); // Aucune sélection
         }
-      };
+    };
+
+
+    // Fonction d'envoie (Modifier) des données de questionFive
+    const updateQuestionFive= async (event) => {
+      event.preventDefault();
+      setIsLoggingIn(true);
+      try {
+
+          const dataa = {
+            questionFive: question,
+            answerFive: selectedOption,
+            pointingFive: pointing,
+          }
+
+              const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+              const result = await fetch(`${API_URL}/api/profile/opcvm/update-questionFive`, {
+              method:"PUT",
+              body: JSON.stringify(dataa),
+              headers: {
+                  'Content-Type': 'application/json',
+                  Authorization:  `Bearer ${token}`
+              }
+              })
+              const data = await result.json();
+          
+              /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+              * sinon on affiche le message de succès
+              */
+              if (data.message) {
+              setMessageError(data.message)
+              setIsLoggingIn(false);
+              Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  html: `<p> ${messageError} </p>` ,
+                  showConfirmButton: false,
+                  timer: 10000
+              })
+              }else{
+                Swal.fire({
+                  position: 'center',
+                  icon: 'success',
+                  html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                  showConfirmButton: false,
+                  timer: 5000
+                }),
+                setTimeout(() => {
+                  Router.push("/profil/kyc/opcvm/questionnaire-six"); 
+                }, 5000)
+              }
+              // Fin condition 
+          } catch {
+          setIsLoggingIn(false);
+          }
+    };
+    // Fin
 
 
     
@@ -119,10 +178,10 @@ const CQuestionnaireFive = () => {
               <div className='col-lg-3 col-md-12'></div>
               <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
                 <label className='mb-3'>
-                    Lequel des énoncés suivants correspondrait le mieux à votre situation ?
+                    {question}
                 </label>
                 {/* FORM  */}
-                <form >
+                <form onSubmit={updateQuestionFive}>
                  <div className='form-group'>
                     <label className='gr-check-input d-flex'>
                       <input
@@ -197,14 +256,7 @@ const CQuestionnaireFive = () => {
                     </div>
                    
                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                        <Link href='/profil/kyc/opcvm/questionnaire-six' className="align-right">
-                                <a
-                                className=""
-                                >
-                                <button className="btn btn-primary " type='button'> Suivant</button>
-                                </a>   
-                        </Link>
-                      {/* <button className="btn btn-primary" type='submit' disabled={isLoggingIn}> Suivant </button> */}
+                      <button className="btn btn-primary" type='submit' disabled={isLoggingIn}> Suivante </button>
                     </div>
                   </div>
                 </form>

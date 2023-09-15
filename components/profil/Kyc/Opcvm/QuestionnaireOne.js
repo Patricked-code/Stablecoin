@@ -13,13 +13,15 @@ const CQuestionnaireOne = () => {
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
-
-    // LES BONS
-    // divestment
+    const [questionnaireForUser, setQuestionnaireForUser] = useState();
+    
+    // State du formulaire
     const [selectedOption, setSelectedOption] = useState('');
-    const [pointing, setPointing] = useState(); // Pointage initial à 0
-    // console.log("pointing=>",pointing)
-    // console.log("titre=>2",selectedOption)
+    const [pointing, setPointing] = useState(); 
+
+    // Question
+    const question = "Si vous détenez des investissements financiers dans des OPCVM, quand aurez-vous besoin de toucher à votre portefeuille d’investissement que ce soit au moyen de retraits réguliers ou du retrait d’une somme forfaitaire importante ?"
+
     const handleOptionChange = (event) => {
         const selectedValue = event.target.value;
         setSelectedOption(selectedValue);
@@ -46,6 +48,138 @@ const CQuestionnaireOne = () => {
         }
       };
 
+      // Fonction d'envoie des données de questionOne
+      const addQuestionOne= async (event) => {
+          event.preventDefault();
+          setIsLoggingIn(true);
+          try {
+
+              const dataa = {
+                questionOne: question,
+                answerOne: selectedOption,
+                pointingOne: pointing,
+              }
+
+                  const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+                  const result = await fetch(`${API_URL}/api/profile/opcvm/add-questionOne`, {
+                  method:"POST",
+                  body: JSON.stringify(dataa),
+                  headers: {
+                      'Content-Type': 'application/json',
+                      Authorization:  `Bearer ${token}`
+                  }
+                  })
+                  const data = await result.json();
+              
+                  /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                  * sinon on affiche le message de succès
+                  */
+                  if (data.message) {
+                  setMessageError(data.message)
+                  setIsLoggingIn(false);
+                  Swal.fire({
+                      position: 'center',
+                      icon: 'error',
+                      html: `<p> ${messageError} </p>` ,
+                      showConfirmButton: false,
+                      timer: 10000
+                  })
+                  }else{
+                    Swal.fire({
+                      position: 'center',
+                      icon: 'success',
+                      html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                      showConfirmButton: false,
+                      timer: 5000
+                    }),
+                    setTimeout(() => {
+                      Router.push("/profil/kyc/opcvm/questionnaire-two"); 
+                    }, 5000)
+                  }
+                  // Fin condition 
+              } catch {
+              setIsLoggingIn(false);
+              }
+      };
+      // Fin
+
+    // Fonction d'envoie (Modifier) des données de questionOne
+    const updateQuestionOne= async (event) => {
+        event.preventDefault();
+        setIsLoggingIn(true);
+        try {
+
+            const dataa = {
+              questionOne: question,
+              answerOne: selectedOption,
+              pointingOne: pointing,
+            }
+
+                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+                const result = await fetch(`${API_URL}/api/profile/opcvm/update-questionOne`, {
+                method:"PUT",
+                body: JSON.stringify(dataa),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`
+                }
+                })
+                const data = await result.json();
+            
+                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                * sinon on affiche le message de succès
+                */
+                if (data.message) {
+                setMessageError(data.message)
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+                }else{
+                  Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                    showConfirmButton: false,
+                    timer: 5000
+                  }),
+                  setTimeout(() => {
+                    Router.push("/profil/kyc/opcvm/questionnaire-two"); 
+                  }, 5000)
+                }
+                // Fin condition 
+            } catch {
+            setIsLoggingIn(false);
+            }
+    };
+    // Fin
+
+    // Recuperer les donnees du questionnaire de l'utilisateur connecté
+    useEffect(async() => {
+      const token = localStorage.getItem('tokenEnCours')
+          const getQuestionnaireForUser = async () => {
+          const result = await fetch(`${API_URL}/api/profile/opcvm/find-profile-opcvm-questionnaire-of-user-signIn`, {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+              },
+          })
+              .then((result) => result.json())
+              .then((data) => {
+                  setQuestionnaireForUser(data)
+                  console.log("Data=>", data?.userId)
+              }) 
+          };
+          await getQuestionnaireForUser();
+    }, []);
+    // FIN
+
     
     // La barre de progression de KYC du profil entreprise
    const stepsOpcvm = ["Question 1","Question 2","Question 3", "Question 4","Question 5", "Question 6", "Question 7", "Question 8", "Question 9"];
@@ -53,7 +187,7 @@ const CQuestionnaireOne = () => {
    const activeStepOpcvm = -1;
     // Fin
 
-    // ********************************************************************************
+// ********************************************************************************
   // LA PARTIE POUR EVITER L'AFFICHAGE DES LA BARRE DE PROGRSSION SUR MOBILE
 // ********************************************************************************
   
@@ -111,10 +245,10 @@ const CQuestionnaireOne = () => {
               <div className='col-lg-3 col-md-12'></div>
               <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
                 <label className='mb-3'>
-                  Si vous détenez des investissements financiers dans des OPCVM, quand aurez-vous besoin de toucher à votre portefeuille d’investissement que ce soit au moyen de retraits réguliers ou du retrait d’une somme forfaitaire importante ?
+                  {question}
                 </label>
                 {/* FORM  */}
-                <form >
+                <form onSubmit={questionnaireForUser?.userId || !questionnaireForUser?.userId==undefined? updateQuestionOne : addQuestionOne}>
                   <div className='form-group'>
                     <label>
                       <input
@@ -175,21 +309,10 @@ const CQuestionnaireOne = () => {
                           Plus de 20 ans
                     </label>
                   </div>
+
                   {/* Les boutons */}
                   <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
-                    {/* <div className="form-group mb-6 mt-3 col-lg-6 col-md-6"> */}
-                    
-                      <Link href='/profil/kyc/opcvm/questionnaire-two' className="align-right">
-                            <a
-                            className=""
-                            >
-                              <button className="btn btn-primary " type='button'> Suivant</button>
-                            </a>   
-                      </Link>
-                    {/* </div> */}
-                    {/* <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                      <button className="btn btn-primary" type='submit' disabled={isLoggingIn}> Suivant </button>
-                    </div> */}
+                      <button className="btn btn-primary" type='submit' disabled={isLoggingIn}> Suivante </button>
                   </div>
                 </form>
               </div>

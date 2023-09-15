@@ -584,7 +584,7 @@ const CBeneficiaireEffectifTwo = () => {
                                                     htmlFor="expirationDate"
                                                     className="text-blackish-blue mb-2"
                                                 >
-                                                    Date d’expiration
+                                                    Date d’expiration du document d'identité
                                                 </label>
                                                 <div className='form-group'>
                                                     <input
@@ -836,7 +836,7 @@ const CBeneficiaireEffectifTwo = () => {
                                                         <label
                                                             className="text-blackish-blue mb-2"
                                                         >
-                                                        Votre nationalité
+                                                        Nationalité
                                                         </label>
                                                         <select 
                                                         className='form-control'
@@ -844,7 +844,7 @@ const CBeneficiaireEffectifTwo = () => {
                                                         defaultValue={nationality} 
                                                         onChange={(event)=>setNationality(event.target.value)}
                                                         >
-                                                            <option>Votre nationalité</option>
+                                                            <option>Nationalité</option>
                                                             {/* Parcourir les nationalités */}
                                                             {allNationality?(
                                                             allNationality.map((data) => (

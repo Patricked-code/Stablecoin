@@ -442,7 +442,7 @@ const [otherCurrencyOthersReceived, setOtherCurrencyOthersReceived] = useState('
             {/* Les cards */}
             <div className='row'>
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-12 col-md-12'>
-                        <h4 className='mb-3'>Nombre de Transactions financières mensuelles moyennes</h4>
+                        <h4 className='mb-3'>Nombre de transactions financières mensuelles moyennes</h4>
                         {/* FORM A */}
                         <form onSubmit={kycTransactionMontlyId?updateFinancialTransactionMontly:addFinancialTransactionMontly}>
                           <Table
@@ -461,8 +461,9 @@ const [otherCurrencyOthersReceived, setOtherCurrencyOthersReceived] = useState('
                                 <Table.Column><p className="gr-text-8 pt-3 pb-0 "><b className='colorRed'>RECUES</b><br/> Autres Transactions </p></Table.Column>
                             </Table.Header>
                               <Table.Body>
+                                      {/* National */}
                                       <Table.Row >  
-                                          {/* Remise                      */}
+                                          {/* Emise */}
                                           <Table.Cell ><p className=" py-0 "> National </p></Table.Cell>
                                           <Table.Cell >
                                             <p className=" py-0 ">
@@ -490,6 +491,7 @@ const [otherCurrencyOthersReceived, setOtherCurrencyOthersReceived] = useState('
                                                 </select>
                                             </p>
                                           </Table.Cell>
+                                          {/* Emise */}
                                           <Table.Cell >
                                             <p className=" py-0 ">
                                                 <select className='' value={nationalBankReceived} onChange={handleNationalRecuesbancaireChange}>
@@ -513,9 +515,11 @@ const [otherCurrencyOthersReceived, setOtherCurrencyOthersReceived] = useState('
                                             </p>
                                           </Table.Cell>
                                       </Table.Row >
+
+                                      {/* Zone UEMOA CFA */}
                                       <Table.Row >                       
                                           <Table.Cell ><p className=" py-0 ">Zone UEMOA CFA</p></Table.Cell>
-                                          {/* REMISES */}
+                                          {/* EMISES */}
                                           <Table.Cell >
                                             <p className=" py-0 ">
                                                 <select className='' value={cfaUemoaBankIssued} onChange={handleCfaUemoaEmisesbancaireChange}>
@@ -563,9 +567,11 @@ const [otherCurrencyOthersReceived, setOtherCurrencyOthersReceived] = useState('
                                             </p>
                                           </Table.Cell>
                                       </Table.Row >
+
+                                      {/* Afrique Hors UEMOA */}
                                       <Table.Row >                       
                                           <Table.Cell ><p className=" py-0 ">Afrique Hors UEMOA </p></Table.Cell>
-                                          {/* REMISE */}
+                                          {/* EMISE */}
                                           <Table.Cell >
                                             <p className=" py-0 ">
                                                 <select className='' value={cfaOutsideUemoaBankIssued} onChange={handleCfaHorsUemoaEmisesbancaireChange}>
@@ -612,9 +618,11 @@ const [otherCurrencyOthersReceived, setOtherCurrencyOthersReceived] = useState('
                                             </p>
                                           </Table.Cell>
                                       </Table.Row >
+
+                                      {/* En euros ou dans la zone EURO  */}
                                       <Table.Row >                       
                                           <Table.Cell ><p className=" py-0 ">En euros ou dans la zone EURO </p></Table.Cell>
-                                          {/* REMISE */}
+                                          {/* EMISE */}
                                           <Table.Cell >
                                             <p className=" py-0 ">
                                                 <select className='' value={euroBankIssued} onChange={handleEuroEmisesbancaireChange}>
@@ -661,9 +669,11 @@ const [otherCurrencyOthersReceived, setOtherCurrencyOthersReceived] = useState('
                                             </p>
                                           </Table.Cell>
                                       </Table.Row >
+
+                                      {/* En dollars US */}
                                       <Table.Row >                       
                                           <Table.Cell ><p className=" py-0 ">En dollars US </p></Table.Cell>
-                                          {/* REMISE */}
+                                          {/* EMISE */}
                                           <Table.Cell >
                                             <p className=" py-0 ">
                                                 <select
@@ -726,9 +736,11 @@ const [otherCurrencyOthersReceived, setOtherCurrencyOthersReceived] = useState('
                                             </p>
                                           </Table.Cell>
                                       </Table.Row >
+
+                                      {/* Autre devises */}
                                       <Table.Row >                       
                                           <Table.Cell ><p className=" py-0 ">Autre devises </p></Table.Cell>
-                                          {/* REMISE */}
+                                          {/* EMISE */}
                                           <Table.Cell >
                                             <p className=" py-0 ">
                                                 <select

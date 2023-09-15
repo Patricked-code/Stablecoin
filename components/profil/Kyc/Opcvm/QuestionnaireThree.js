@@ -16,9 +16,14 @@ const CQuestionnaireThree = () => {
 
     // LES BONS
     // divestment
+
+   
     const [selectedOption, setSelectedOption] = useState('');
     const [pointing, setPointing] = useState(); 
     const [title, setTitle] = useState(); 
+    
+    // Les questions
+    const question = "Lequel des énoncés suivants correspondrait le mieux à vos connaissances sur les investissements financiers ?";
     
     // Les réponses des questions
     const answerOne = "Ma connaissance des investissements financiers est limitée.";
@@ -34,11 +39,6 @@ const CQuestionnaireThree = () => {
     const titleFour = "Très bonnes";
     const titleFive = "Excellentes";
             
-
-
-    console.log("titre=>",title)
-    console.log("pointing=>",pointing)
-    console.log("titre=>2",selectedOption)
 
     const handleOptionChange = (event) => {
         const selectedValue = event.target.value;
@@ -71,6 +71,63 @@ const CQuestionnaireThree = () => {
             setTitle("");
         }
       };
+
+    // Fonction d'envoie (Modifier) des données de questionThree
+    const updateQuestionThree= async (event) => {
+      event.preventDefault();
+      setIsLoggingIn(true);
+      try {
+
+          const dataa = {
+            questionThree: question,
+            titleTwo:title,
+            answerThree: selectedOption,
+            pointingThree: pointing,
+          }
+
+              const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+              const result = await fetch(`${API_URL}/api/profile/opcvm/update-questionThree`, {
+              method:"PUT",
+              body: JSON.stringify(dataa),
+              headers: {
+                  'Content-Type': 'application/json',
+                  Authorization:  `Bearer ${token}`
+              }
+              })
+              const data = await result.json();
+          
+              /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+              * sinon on affiche le message de succès
+              */
+              if (data.message) {
+              setMessageError(data.message)
+              setIsLoggingIn(false);
+              Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  html: `<p> ${messageError} </p>` ,
+                  showConfirmButton: false,
+                  timer: 10000
+              })
+              }else{
+                Swal.fire({
+                  position: 'center',
+                  icon: 'success',
+                  html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                  showConfirmButton: false,
+                  timer: 5000
+                }),
+                setTimeout(() => {
+                  Router.push("/profil/kyc/opcvm/questionnaire-four"); 
+                }, 5000)
+              }
+              // Fin condition 
+          } catch {
+          setIsLoggingIn(false);
+          }
+    };
+    // Fin
     
     // La barre de progression de KYC du profil entreprise
    const stepsOpcvm = ["Question 1","Question 2","Question 3", "Question 4","Question 5", "Question 6", "Question 7", "Question 8", "Question 9"];
@@ -136,10 +193,10 @@ const CQuestionnaireThree = () => {
               <div className='col-lg-3 col-md-12'></div>
               <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
                 <label className='mb-3'>
-                    Lequel des énoncés suivants correspondrait le mieux à vos connaissances sur les investissements financiers ?
+                  {question}
                 </label>
                 {/* FORM  */}
-                <form >
+                <form onSubmit={updateQuestionThree}>
                 <div className='form-group'>
                       <label className='mx-5'><b>{titleOne}</b></label>
                     <label className='gr-check-input d-flex'>
@@ -220,14 +277,7 @@ const CQuestionnaireThree = () => {
                     </div>
                    
                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                        <Link href='/profil/kyc/opcvm/questionnaire-four' className="align-right">
-                                <a
-                                className=""
-                                >
-                                <button className="btn btn-primary " type='button'> Suivant</button>
-                                </a>   
-                        </Link>
-                      {/* <button className="btn btn-primary" type='submit' disabled={isLoggingIn}> Suivant </button> */}
+                      <button className="btn btn-primary" type='submit' disabled={isLoggingIn}> Suivante </button>
                     </div>
                   </div>
                 </form>

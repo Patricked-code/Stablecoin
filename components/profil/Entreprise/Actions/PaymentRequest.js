@@ -51,7 +51,6 @@ const PaymentRequest = () => {
     const searchUserWithEmail = () =>{
       if (emailOtherUser) {
         const getUser = async (_emailOtherUser) => {
-          console.log("emailOtherUser 3=>",_emailOtherUser)
         
             const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${_emailOtherUser}`, {
                 headers: {

@@ -1,17 +1,8 @@
 import { useCallback, useState, useEffect } from 'react';
 import React from "react";
-import axios from 'axios';
 import Link from 'next/link';
-import { Icon } from '@iconify/react';
-
-
-// Pour Magic
-import { magic } from "../../../../magic";
-import { ethers } from "ethers";
-import Loading from "../../../loading";
 import Router from "next/router";
 import Swal from 'sweetalert2';
-import Web3 from "web3";
 import ProgressBar from '../ProgressBar';
 
 // FIN
@@ -27,10 +18,8 @@ const CQuestionnaireAmlTwo = () => {
     // states des questionnaires
       const [answers, setAnswers] = useState({
         cashPayments: '',
-        relationsIranKoreaSyriaCuba: '',
         transactionsInTaxHavens: '',
         cryptocurrencyPayments: '',
-        relationsInternationalSanctions: '',
         transactionsLowTaxation: '',
         politicallyExposedClients: '',
         offshoreCompanyPayments: '',
@@ -868,18 +857,6 @@ const CQuestionnaireAmlTwo = () => {
                                 <option value="Non">Non</option>
                                 </select>
                             </div>
-
-                            <div className='mt-3'>
-                                <label>
-                                Avez-vous des relations commerciales avec des individus ou des entités basés en Iran, en Corée du Nord, en Syrie ou à Cuba, notamment dans des secteurs tels que l'énergie, les télécommunications ou la construction ?
-                                </label>
-                                <select className='form-control mt-2' name="relationsIranKoreaSyriaCuba" onChange={handleChange}>
-                                <option value="">Choisissez une option</option>
-                                <option value="Oui">Oui</option>
-                                <option value="Non">Non</option>
-                                </select>
-                            </div>
-
                             <div className='mt-3'>
                                 <label>
                                 Effectuez-vous des transactions avec des banques ou des institutions financières situées dans des pays considérés comme des paradis fiscaux ou à haut risque de blanchiment d'argent, en particulier dans des zones offshore telles que les Îles Caïmans, les Îles Vierges Britanniques ou les Seychelles ?
@@ -901,18 +878,7 @@ const CQuestionnaireAmlTwo = () => {
                                 <option value="Non">Non</option>
                                 </select>
                             </div>
-
-                            <div className='mt-3'>
-                                <label>
-                                Avez-vous des relations commerciales avec des individus ou des entités figurant sur des listes de sanctions internationales, telles que la liste des personnes spécialement désignées (SDN) du Bureau of Foreign Assets Control (OFAC) aux États-Unis, notamment dans des secteurs tels que la défense, la technologie ou les transports ?
-                                </label>
-                                <select className='form-control mt-2' name="relationsInternationalSanctions" onChange={handleChange}>
-                                <option value="">Choisissez une option</option>
-                                <option value="Oui">Oui</option>
-                                <option value="Non">Non</option>
-                                </select>
-                            </div>
-
+                            
                             <div className='mt-3'>
                                 <label>
                                 Effectuez-vous des transactions d'une valeur supérieure à 5 000 euros (ou équivalent dans une autre devise) vers des pays ou des territoires à faible taux d'imposition, notamment dans des secteurs tels que la finance, la gestion de patrimoine ou l'immobilier ?

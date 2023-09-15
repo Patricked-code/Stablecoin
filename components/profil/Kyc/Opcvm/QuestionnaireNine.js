@@ -14,11 +14,13 @@ const CQuestionnaireNine = () => {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
 
-    // LES BONS
-    // divestment
+    // Les states du formulaire
     const [selectedOption, setSelectedOption] = useState('');
     const [pointing, setPointing] = useState(); 
     
+    // Question
+    const question = "Avec lequel des cinq portefeuilles fictifs suivants seriez-vous le plus à l’aise ?"
+
     // Les réponses des questions
     const answerOne = "Portefeuille A | Rendement moyen annualisé du portefeuille : 1.50%";
     const answerTwo = "Portefeuille B | Rendement moyen annualisé du portefeuille : 2.50%";
@@ -53,12 +55,67 @@ const CQuestionnaireNine = () => {
         }
     };
 
+    // Fonction d'envoie (Modifier) des données de questionNine
+    const updateQuestionNine= async (event) => {
+      event.preventDefault();
+      setIsLoggingIn(true);
+      try {
+
+          const dataa = {
+            questionNine: question,
+            answerNine: selectedOption,
+            pointingNine: pointing,
+          }
+
+              const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+              const result = await fetch(`${API_URL}/api/profile/opcvm/update-questionNine`, {
+              method:"PUT",
+              body: JSON.stringify(dataa),
+              headers: {
+                  'Content-Type': 'application/json',
+                  Authorization:  `Bearer ${token}`
+              }
+              })
+              const data = await result.json();
+          
+              /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+              * sinon on affiche le message de succès
+              */
+              if (data.message) {
+              setMessageError(data.message)
+              setIsLoggingIn(false);
+              Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  html: `<p> ${messageError} </p>` ,
+                  showConfirmButton: false,
+                  timer: 10000
+              })
+              }else{
+                Swal.fire({
+                  position: 'center',
+                  icon: 'success',
+                  html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                  showConfirmButton: false,
+                  timer: 5000
+                }),
+                setTimeout(() => {
+                  Router.push("/opcvm/type-profil"); 
+                }, 5000)
+              }
+              // Fin condition 
+          } catch {
+          setIsLoggingIn(false);
+          }
+    };
+    // Fin
 
     
     // La barre de progression de KYC du profil entreprise
    const stepsOpcvm = ["Question 1","Question 2","Question 3", "Question 4","Question 5", "Question 6", "Question 7", "Question 8", "Question 9"];
 
-   const activeStepOpcvm = -1;
+   const activeStepOpcvm = 7;
     // Fin
 
     // ********************************************************************************
@@ -119,13 +176,13 @@ const CQuestionnaireNine = () => {
               <div className='col-lg-3 col-md-12'></div>
               <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
                 <label className='mb-3'>
-                    Avec lequel des cinq portefeuilles fictifs suivants seriez-vous le plus à l’aise ?
+                    {question}
                 </label>
                 <div className=' mb-5'>
                     <img src='/images/ecfa/opcvm/evolution.jpg' alt='image' />
                 </div>
                 {/* FORM  */}
-                <form >
+                <form onSubmit={updateQuestionNine}>
                 <div className='form-group'>
                     <label className='gr-check-input d-flex'>
                       <input
@@ -199,14 +256,7 @@ const CQuestionnaireNine = () => {
                     </div>
                    
                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                        <Link href='/profil' className="align-right">
-                                <a
-                                className=""
-                                >
-                                <button className="btn btn-primary " type='button'> Suivant</button>
-                                </a>   
-                        </Link>
-                      {/* <button className="btn btn-primary" type='submit' disabled={isLoggingIn}> Suivant </button> */}
+                       <button className="btn btn-primary" type='submit' disabled={isLoggingIn}> Soumettre </button>
                     </div>
                   </div>
                 </form>

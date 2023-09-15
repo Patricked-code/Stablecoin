@@ -84,8 +84,8 @@ const [proofPowerFile, setProofPowerFile] = useState(null)
 
         const body = new FormData();
         
-        body.append("factureFile", typeDocFacture==="0"?factureFile:null);
-        body.append("facturePhoto", typeDocFacture==="1"?imageFacture:null);
+        body.append("factureFile", typeDocFacture==="0"?factureFile:"");
+        body.append("facturePhoto", typeDocFacture==="1"?imageFacture:"");
         
         const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-facture`, {
             method:"PUT",
@@ -204,8 +204,8 @@ const [proofPowerFile, setProofPowerFile] = useState(null)
 
         const body = new FormData();
         
-        body.append("proofPowerFile", typeDocProofPower==="0"?proofPowerFile:null);
-        body.append("proofPowerPhoto", typeDocProofPower==="1"?imageProofPower:null);
+        body.append("proofPowerFile", typeDocProofPower==="0"?proofPowerFile:"");
+        body.append("proofPowerPhoto", typeDocProofPower==="1"?imageProofPower:"");
         
         const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-proof-power`, {
             method:"PUT",

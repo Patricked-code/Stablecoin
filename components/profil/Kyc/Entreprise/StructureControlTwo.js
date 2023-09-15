@@ -786,7 +786,7 @@ const CStructureControlTwo = () => {
                                             htmlFor="email"
                                             className="text-blackish-blue mb-2"
                                         >
-                                            Votre nationalité
+                                            Nationalité
                                         </label>
                                         <select 
                                             className='form-control'
@@ -794,7 +794,7 @@ const CStructureControlTwo = () => {
                                             defaultValue={nationality} 
                                             onChange={(event)=>setNationality(event.target.value)}
                                         >
-                                            <option>Votre nationalité</option>
+                                            <option>Nationalité</option>
                                             {/* Parcourir les nationalités */}
                                             {allNationality?(
                                             allNationality.map((data) => (

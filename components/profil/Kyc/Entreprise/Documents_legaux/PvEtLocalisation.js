@@ -84,8 +84,8 @@ const [mapLocationFile, setMapLocationFile] = useState(null)
 
         const body = new FormData();
         
-        body.append("pvAppointmentFile", typeDocPvAppointment==="0"?pvAppointmentFile:null);
-        body.append("pvAppointmentPhoto", typeDocPvAppointment==="1"?imagePvAppointment:null);
+        body.append("pvAppointmentFile", typeDocPvAppointment==="0"?pvAppointmentFile:"");
+        body.append("pvAppointmentPhoto", typeDocPvAppointment==="1"?imagePvAppointment:"");
         
         const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-pv-appointment`, {
             method:"PUT",
@@ -203,8 +203,8 @@ const [mapLocationFile, setMapLocationFile] = useState(null)
 
         const body = new FormData();
         
-        body.append("mapLocationFile", typeDocMapLocation==="0"?mapLocationFile:null);
-        body.append("mapLocationPhoto", typeDocMapLocation==="1"?imageMapLocation:null);
+        body.append("mapLocationFile", typeDocMapLocation==="0"?mapLocationFile:"");
+        body.append("mapLocationPhoto", typeDocMapLocation==="1"?imageMapLocation:"");
         
         const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-map-location`, {
             method:"PUT",

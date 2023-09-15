@@ -1,23 +1,10 @@
 import { useCallback, useState, useEffect,useRef } from 'react';
 import React from "react";
-import axios from 'axios';
 import Link from 'next/link';
-import { Icon } from '@iconify/react';
-
-
-// Pour Magic
-import { magic } from "../../../../magic";
-import { ethers } from "ethers";
-import Loading from "../../../loading";
 import Router from "next/router";
 import Swal from 'sweetalert2';
-import Web3 from "web3";
 import ProgressBar from '../ProgressBar';
 
-// Pour la signature
-import SignatureCanvas from 'react-signature-canvas'
-
-// FIN
 
 const CPolitiquementExposeesOne = () => {
     // Variable de l'url de l'api
@@ -28,13 +15,7 @@ const CPolitiquementExposeesOne = () => {
     const [currentKycStatut, setCurrentKycStatut] = useState();
     const [familyCompany, setFamilyCompany] = useState();
 
-
-
-    // LES BONS
-    // numberAssociates
-	// fivePercent
-
-    // fivePercent
+    
     const [numberPoliticallyExposed, setNumberPoliticallyExposed] = useState();
     
 

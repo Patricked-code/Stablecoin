@@ -101,6 +101,11 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/opcvm/questionnaire-eight"||
       pathname === "/profil/kyc/opcvm/questionnaire-nine"||
 
+      pathname === "/profil/opcvm/type-profil"||
+      pathname === "/profil/opcvm/conditions-profil"||
+      
+
+
       // LES ROUTES DE LA PARTIE DU PROFIL INSTITUTION
       pathname === "/profil/institution/depot-cash"||
       pathname === "/profil/institution/retrait-cash"||
@@ -208,6 +213,9 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/opcvm/questionnaire-seven"||
       pathname === "/profil/kyc/opcvm/questionnaire-eight"||
       pathname === "/profil/kyc/opcvm/questionnaire-nine"||
+
+      pathname === "/profil/opcvm/type-profil"||
+      pathname === "/profil/opcvm/conditions-profil"||
 
       // LES ROUTES DE LA PARTIE DU PROFIL INSTITUTION
       pathname === "/profil/institution/depot-cash"||

@@ -4,6 +4,8 @@ import Link from 'next/link';
 import Webcam from 'react-webcam'// Pour camera photo
 import Router from "next/router";
 import Swal from 'sweetalert2';
+import moment from 'moment';
+
 
 
 const CDocumentsIdentites = ({kycDocumentId, kycRegister, kycDfe, kycCopyStatutes, kycDelegationPowers, kycPvAppointment, kycMapLocation, kycFacture, kycProofPower, kycIdentity}) => {
@@ -20,6 +22,8 @@ const CDocumentsIdentites = ({kycDocumentId, kycRegister, kycDfe, kycCopyStatute
     // **********************************************************************
     const [frontIdentity, setFrontIdentity ] = useState();
     const [backIdentity, setBackIdentity ] = useState();
+    const [expirationDate, setExpirationDate ] = useState();
+    
     // STATES POUR PRENDRE PHOTO WEBCAMP (IDENTITE)
     const [statutDocIdentite, setStatutDocIdentite] = React.useState();
     // const [importerIdentite, setImporterIdentite] = React.useState();
@@ -94,6 +98,7 @@ const CDocumentsIdentites = ({kycDocumentId, kycRegister, kycDfe, kycCopyStatute
     };
     // FIN
 
+    const currentDate = new Date();//definir la date actuelle
 
     // FONCTION D'AJOUT(MODIFICATION) DU FICHIER DU JUSTIFICATIF DE POUVOIRS
     const updateDocumentIdentity= async (event) => {
@@ -102,56 +107,69 @@ const CDocumentsIdentites = ({kycDocumentId, kycRegister, kycDfe, kycCopyStatute
         const token = localStorage.getItem('tokenEnCours')
 
         const body = new FormData();
+        body.append("expirationDate", expirationDate);
+        body.append("frontIdentityFile", statutDocIdentite==="0"?frontIdentity:"");
+        body.append("backIdentityFile", statutDocIdentite==="0"?backIdentity:"");
+        body.append("frontIdentityPhoto", statutDocIdentite==="1"?imageRecto:"");
+        body.append("backIdentityPhoto", statutDocIdentite==="1"?imageVerso:"");
         
-        body.append("frontIdentityFile", statutDocIdentite==="0"?frontIdentity:null);
-        body.append("backIdentityFile", statutDocIdentite==="0"?backIdentity:null);
-        body.append("frontIdentityPhoto", statutDocIdentite==="1"?imageRecto:null);
-        body.append("backIdentityPhoto", statutDocIdentite==="1"?imageVerso:null);
-        
-        const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-documents-identity`, {
-            method:"PUT",
-            body,
-            headers: {
-            // 'Content-Type': 'application/json',
-            Authorization:  `Bearer ${token}`,
-            },
-        }) 
-        
-        /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-                * sinon on affiche le message de succès
-                */
-        if (result?.status===200) {
-            Swal.fire({
-                position: 'center',
-                icon: 'success',
-                html: `<p> Votre ficher a été ajouté avec succès.</p>` ,
-                showConfirmButton: false,
-                timer: 5000
-            }),
-            setTimeout(() => {
-                if (currentKycEntrepriseStatut==="1") {
-                    Router.push("/profil/kyc/entreprise/resultat-kyc"); 
-
-                }else{
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 1000)
-                }
-            }, 5000)
-
+        // Si la date d'expiration est supérieure à la date du jour
+        if ( expirationDate > formatDate(currentDate)) {
+            const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-documents-identity`, {
+                method:"PUT",
+                body,
+                headers: {
+                // 'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            }) 
             
-            }else{
-                // setMessageError(data.message)
-                setIsLoggingIn(false);
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                    * sinon on affiche le message de succès
+                    */
+            if (result?.status===200) {
                 Swal.fire({
                     position: 'center',
-                    icon: 'error',
-                    html: `<p> Désolé une erreur s'est produite,Veuillez réessayer svp. </p>` ,
+                    icon: 'success',
+                    html: `<p> Votre ficher a été ajouté avec succès.</p>` ,
                     showConfirmButton: false,
-                    timer: 10000
-                })
-            }
-            // Fin condition 
+                    timer: 5000
+                }),
+                setTimeout(() => {
+                    if (currentKycEntrepriseStatut==="1") {
+                        Router.push("/profil/kyc/entreprise/resultat-kyc"); 
+
+                    }else{
+                        setTimeout(() => {
+                            window.location.reload()
+                        }, 1000)
+                    }
+                }, 5000)
+
+                
+                }else{
+                    // setMessageError(data.message)
+                    setIsLoggingIn(false);
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        html: `<p> Désolé une erreur s'est produite,Veuillez réessayer svp. </p>` ,
+                        showConfirmButton: false,
+                        timer: 10000
+                    })
+                }
+                // Fin condition 
+        // Sinon si la date est inférieure
+        }else{
+            setIsLoggingIn(false);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p> Désolé la date d'expiration doit être supérieure à la date du jour. </p>` ,
+                showConfirmButton: false,
+                timer: 10000
+            })
+        }
     }
     // FIN
 
@@ -212,6 +230,12 @@ const CDocumentsIdentites = ({kycDocumentId, kycRegister, kycDfe, kycCopyStatute
 
     }
 
+    // FONCTION POUR FORMATER LA DATE
+    const formatDate = (_updatedAt) =>{
+        const maDate = moment(_updatedAt).format('YYYY-MM-DD');
+        return  maDate
+    }
+    //  FIN
 
     //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
     useEffect(() => {
@@ -288,7 +312,23 @@ const CDocumentsIdentites = ({kycDocumentId, kycRegister, kycDfe, kycCopyStatute
                                         {/* SI L'UTILISATEUR CHOISIT D'IMPORTER LES DOCUMENTS */}
                                         {statutDocIdentite==="0" ? (
                                             <>
-                                            
+                                                <div className="form-group mb-6 mt-3">
+                                                    <label
+                                                        htmlFor="identityDocNumber"
+                                                        className="text-blackish-blue mb-2"
+                                                    >
+                                                        Date d'expiration du document d’identité 
+                                                    </label>
+                                                    <div className='form-group'>
+                                                        <input
+                                                            type='date'
+                                                            id='identityDocNumber'
+                                                            className='form-control'
+                                                            defaultValue={expirationDate} 
+                                                            onChange={(event)=>setExpirationDate(event.target.value)}
+                                                        />
+                                                    </div>
+                                                </div >
                                                 <div className="form-group my-6">
                                                     <label
                                                         htmlFor="frontIdentity"
@@ -327,6 +367,23 @@ const CDocumentsIdentites = ({kycDocumentId, kycRegister, kycDfe, kycCopyStatute
                                         {/* SI L'UTILISATEUR CHOISIT DE PRENDRE LES DOCUMENTS EN PHOTO */}
                                         {statutDocIdentite==="1" ? (
                                             <>
+                                                <div className="form-group mb-6 mt-3">
+                                                    <label
+                                                        htmlFor="identityDocNumber"
+                                                        className="text-blackish-blue mb-2"
+                                                    >
+                                                        Date d'expiration du document d’identité 
+                                                    </label>
+                                                    <div className='form-group'>
+                                                        <input
+                                                            type='date'
+                                                            id='identityDocNumber'
+                                                            className='form-control'
+                                                            defaultValue={expirationDate} 
+                                                            onChange={(event)=>setExpirationDate(event.target.value)}
+                                                        />
+                                                    </div>
+                                                </div >
                                                 <div className="form-group  ">
                                                 <div className='row '>
                                                     <div className='col-lg-2 col-md-2'></div>

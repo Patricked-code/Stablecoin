@@ -574,7 +574,7 @@ const CIformationFinanciereFive = () => {
             {/* Les cards */}
             <div className='row'>
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-12 col-md-12'>
-                        <h4 className='mb-3'>Nombre de Transactions financières annuelles moyennes</h4>
+                        <h4 className='mb-3'>Nombre de transactions financières annuelles moyennes</h4>
                         {/* FORM A */}
                         <form onSubmit={kycTransactionAnnualId?updateFinancialTransactionAnnual:addFinancialTransactionAnnual}>
                           <Table

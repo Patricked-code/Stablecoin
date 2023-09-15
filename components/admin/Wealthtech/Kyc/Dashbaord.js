@@ -177,7 +177,7 @@ const DashbaordWtiKyc = () => {
                                         </div>
                                         </div>
                                         <div className='btn-box'>
-                                            {/* <a href='/admin/wealthtech/kyc/validation/entreprise'> */}
+                                            <a href='/admin/wealthtech/kyc/validation/entreprise'>
                                                 <Button
                                                     block
                                                     color="primary"
@@ -185,7 +185,7 @@ const DashbaordWtiKyc = () => {
                                                 >
                                                     Voir plus
                                                 </Button>
-                                            {/* </a> */}
+                                            </a>
                                         {/* Fin */}
                                         </div>
                                     </div>

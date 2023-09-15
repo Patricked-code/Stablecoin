@@ -14,11 +14,12 @@ const CQuestionnaireEight = () => {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
 
-    // LES BONS
-    // divestment
+    // Les states du formualaire
     const [selectedOption, setSelectedOption] = useState('');
     const [pointing, setPointing] = useState(); 
     
+    // Question
+    const question = "Compte tenu des fluctuations que subit tout portefeuille de placement, combien de temps seriez-vous prêt à attendre avant que vos placements reprennent la valeur qu’ils ont perdue, le cas échéant ?"
     // Les réponses des questions
     const answerOne = "Moins de 3 mois";
     const answerTwo = "De 3 à 6 mois";
@@ -53,6 +54,62 @@ const CQuestionnaireEight = () => {
         }
     };
 
+
+    // Fonction d'envoie (Modifier) des données de questionEight
+    const updateQuestionEight= async (event) => {
+      event.preventDefault();
+      setIsLoggingIn(true);
+      try {
+
+          const dataa = {
+            questionEight: question,
+            answerEight: selectedOption,
+            pointingEight: pointing,
+          }
+
+              const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+              const result = await fetch(`${API_URL}/api/profile/opcvm/update-questionEight`, {
+              method:"PUT",
+              body: JSON.stringify(dataa),
+              headers: {
+                  'Content-Type': 'application/json',
+                  Authorization:  `Bearer ${token}`
+              }
+              })
+              const data = await result.json();
+          
+              /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+              * sinon on affiche le message de succès
+              */
+              if (data.message) {
+              setMessageError(data.message)
+              setIsLoggingIn(false);
+              Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  html: `<p> ${messageError} </p>` ,
+                  showConfirmButton: false,
+                  timer: 10000
+              })
+              }else{
+                Swal.fire({
+                  position: 'center',
+                  icon: 'success',
+                  html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                  showConfirmButton: false,
+                  timer: 5000
+                }),
+                setTimeout(() => {
+                  Router.push("/profil/kyc/opcvm/questionnaire-nine"); 
+                }, 5000)
+              }
+              // Fin condition 
+          } catch {
+          setIsLoggingIn(false);
+          }
+    };
+    // Fin
     
     // La barre de progression de KYC du profil entreprise
    const stepsOpcvm = ["Question 1","Question 2","Question 3", "Question 4","Question 5", "Question 6", "Question 7", "Question 8", "Question 9"];
@@ -118,10 +175,10 @@ const CQuestionnaireEight = () => {
               <div className='col-lg-3 col-md-12'></div>
               <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
                 <label className='mb-3'>
-                    Compte tenu des fluctuations que subit tout portefeuille de placement, combien de temps seriez-vous prêt à attendre avant que vos placements reprennent la valeur qu’ils ont perdue, le cas échéant ?
+                    {question}
                 </label>
                 {/* FORM  */}
-                <form >
+                <form onSubmit={updateQuestionEight}>
                  <div className='form-group'>
                     <label className='gr-check-input d-flex'>
                       <input
@@ -195,14 +252,7 @@ const CQuestionnaireEight = () => {
                     </div>
                    
                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                        <Link href='/profil/kyc/opcvm/questionnaire-nine' className="align-right">
-                                <a
-                                className=""
-                                >
-                                <button className="btn btn-primary " type='button'> Suivant</button>
-                                </a>   
-                        </Link>
-                      {/* <button className="btn btn-primary" type='submit' disabled={isLoggingIn}> Suivant </button> */}
+                        <button className="btn btn-primary" type='submit' disabled={isLoggingIn}> Suivante </button>
                     </div>
                   </div>
                 </form>

@@ -53,6 +53,8 @@ const Dashboard = () => {
     const [dataPaymentPending, setDataPaymentPending] = useState(); //state des données de paiement en entente
     const [paymentPendingLength, setPaymentPendingLength] = useState();
 
+    // States de la partie opcvm
+    const [questionnaireForUser, setQuestionnaireForUser] = useState(false);
 
 
 
@@ -1451,7 +1453,24 @@ const [montantAchat, setMontantAchat] = useState(0)
   // FIN
 
 
-
+    // Recuperer les donnees du questionnaire de l'utilisateur connecté
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+            const getQuestionnaireForUser = async () => {
+            const result = await fetch(`${API_URL}/api/profile/opcvm/find-profile-opcvm-questionnaire-of-user-signIn`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((result) => result.json())
+                .then((data) => {
+                    setQuestionnaireForUser(data)
+                }) 
+            };
+            await getQuestionnaireForUser();
+    }, []);
+    // FIN
 
 
 
@@ -1601,33 +1620,117 @@ const [montantAchat, setMontantAchat] = useState(0)
                     <div className='currency-selection text-center'>
                         <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
                             <div className='cryptocurrency-slides'>
+                                {/* Si l'utilisateur a repondu à toutes les questions */}
+                                {questionnaireForUser?.status===true? (
                                 <div className='single-cryptocurrency-box'>
-                                    <div className='d-flex align-items-center'>
-                                    <div className='bestseller-coin-image'>
-                                        <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
-                                    </div>
-                                    <div className='title'>
-                                        <h3>OPCVM</h3>
-                                        <p>Activer mon profil d'investisseur</p>
-                                    </div>
-                                    </div>
+                                    {/* Si le profil est : Sécurité */}
+                                    {questionnaireForUser?.typeProfile==="Sécurité" ? (
+                                        <div className='d-flex align-items-center'>
+                                            <div className='bestseller-coin-image mx-3 my-3'>
+                                                <img src="/images/ecfa/opcvm/profil1.jpg" className="rounded-circle"  alt='image' />
+                                            </div>
+                                            <div className='title'>
+                                                <h3>{questionnaireForUser?.typeProfile}</h3>
+                                                <p>{questionnaireForUser?.percentage}</p>
+                                            </div>
+                                        </div>
+                                    ):("")}
+
+                                    {/* Si le profil est : Conservateur */}
+                                    {questionnaireForUser?.typeProfile==="Conservateur" ? (
+                                        <div className='d-flex align-items-center'>
+                                            <div className='bestseller-coin-image mx-3 my-3'>
+                                                <img src="/images/ecfa/opcvm/profil2.jpg" className="rounded-circle"  alt='image' />
+                                            </div>
+                                            <div className='title'>
+                                                <h3>{questionnaireForUser?.typeProfile}</h3>
+                                                <p>{questionnaireForUser?.percentage}</p>
+                                            </div>
+                                        </div>
+                                    ):("")}
+
+                                    {/* Si le profil est : Equilibré */}
+                                    {questionnaireForUser?.typeProfile==="Equilibré" ? (
+                                        <div className='d-flex align-items-center'>
+                                            <div className='bestseller-coin-image mx-3 my-3'>
+                                                <img src="/images/ecfa/opcvm/profil3.jpg" className="rounded-circle"  alt='image' />
+                                            </div>
+                                            <div className='title'>
+                                                <h3>{questionnaireForUser?.typeProfile}</h3>
+                                                <p>{questionnaireForUser?.percentage}</p>
+                                            </div>
+                                        </div>
+                                    ):("")}
+
+                                    {/* Si le profil est : Croissance équilibrée */}
+                                    {questionnaireForUser?.typeProfile==="Croissance équilibrée" ? (
+                                        <div className='d-flex align-items-center'>
+                                            <div className='bestseller-coin-image mx-3 my-3'>
+                                                <img src="/images/ecfa/opcvm/profil4.jpg" className="rounded-circle"  alt='image' />
+                                            </div>
+                                            <div className='title'>
+                                                <h3>{questionnaireForUser?.typeProfile}</h3>
+                                                <p>{questionnaireForUser?.percentage}</p>
+                                            </div>
+                                        </div>
+                                    ):("")}
+
+                                    {/* Si le profil est : Croissance */}
+                                    {questionnaireForUser?.typeProfile==="Croissance" ? (
+                                        <div className='d-flex align-items-center'>
+                                            <div className='bestseller-coin-image mx-3 my-3'>
+                                                <img src="/images/ecfa/opcvm/profil5.jpg" className="rounded-circle"  alt='image' />
+                                            </div>
+                                            <div className='title'>
+                                                <h3>{questionnaireForUser?.typeProfile}</h3>
+                                                <p>{questionnaireForUser?.percentage}</p>
+                                            </div>
+                                        </div>
+                                    ):("")}
                                     <div className='btn-box'>
-                                        <a className='nav-link' href='/profil/kyc/opcvm/questionnaire-one'>
+                                        <a className='nav-link' href='/profil/opcvm/type-profil'>
                                             <Button
                                                 block
                                                 color="success"
                                                 type="button"
                                             >
-                                                Activer maintenant
+                                                Voir mon profil investisseur
                                             </Button>
                                         </a>
                                     {/* Fin */}
                                     </div>
                                 </div>
+                                //  Sinon si l'utilisateur n'a pas encore repondu à toutes les questions
+                                ): (<div className='single-cryptocurrency-box'>
+                                <div className='d-flex align-items-center'>
+                                <div className='bestseller-coin-image'>
+                                    <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
+                                </div>
+                                <div className='title'>
+                                    <h3>OPCVM</h3>
+                                    <p>Activer mon profil d'investisseur</p>
+                                </div>
+                                </div>
+                                <div className='btn-box'>
+                                    <a className='nav-link' href='/profil/kyc/opcvm/questionnaire-one'>
+                                        <Button
+                                            block
+                                            color="success"
+                                            type="button"
+                                        >
+                                            Activer maintenant
+                                        </Button>
+                                    </a>
+                                {/* Fin */}
+                                </div>
+                            </div>)}
                             </div>
                         </div>
                     </div>
                 </div>
+
+                
+                
 
                 {/* Demander des E-WARI */}
                 {/* <div className='col-lg-6 col-md-6'> */}

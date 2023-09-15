@@ -1,17 +1,8 @@
 import { useCallback, useState, useEffect } from 'react';
 import React from "react";
-import axios from 'axios';
 import Link from 'next/link';
-import { Icon } from '@iconify/react';
-
-
-// Pour Magic
-import { magic } from "../../../../magic";
-import { ethers } from "ethers";
-import Loading from "../../../loading";
 import Router from "next/router";
 import Swal from 'sweetalert2';
-import Web3 from "web3";
 import ProgressBar from '../ProgressBar';
 
 // FIN
@@ -133,7 +124,6 @@ const CIdentiteOne = () => {
                 .then((resKyc) => resKyc.json())
                 .then((data) => {
                     setKycIdentityForUser(data)
-                    console.log("Data identity=>",data?.userId)
                 }) 
             };
             await getKycForEntreprise();
@@ -141,7 +131,7 @@ const CIdentiteOne = () => {
     // FIN
 
 
-    // Fonction d'envoie des informations du de l'identité
+    // Fonction d'envoie des informations de l'identité
     const addIdentity= async (event) => {
         event.preventDefault();
         setIsLoggingIn(true);
@@ -165,8 +155,6 @@ const CIdentiteOne = () => {
                 dateConstitution:dateConstitution,
                 registrationDate:registrationDate
             }
-            
-            console.log("OK1")
 
                 const token = localStorage.getItem('tokenEnCours') //Le token récuperé
 

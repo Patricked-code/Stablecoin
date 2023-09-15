@@ -14,11 +14,12 @@ const CQuestionnaireSeven = () => {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
 
-    // LES BONS
-    // divestment
+    // Les du formulaire
     const [selectedOption, setSelectedOption] = useState('');
     const [pointing, setPointing] = useState(); 
     
+    // Question
+    const question = "Si vous possédiez un placement dont la valeur aurait baissé de 25 % sur une période d’un an, que feriez-vous ?"
     // Les réponses des questions
     const answerOne = "Je n’en dors plus et je vendrais mon placement, même si cela entraînait une perte immédiate et j’opterais pour des placements moins risqués. Ce type de placement ne me convient pas.";
     const answerTwo = "Je conserverais mon placement jusqu’à ce qu’il reprenne sa valeur initiale, puis je le transférerais vers un placement moins volatile";
@@ -50,6 +51,62 @@ const CQuestionnaireSeven = () => {
         }
     };
 
+
+    // Fonction d'envoie (Modifier) des données de questionSeven
+    const updateQuestionSeven= async (event) => {
+      event.preventDefault();
+      setIsLoggingIn(true);
+      try {
+
+          const dataa = {
+            questionSeven: question,
+            answerSeven: selectedOption,
+            pointingSeven: pointing,
+          }
+
+              const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+              const result = await fetch(`${API_URL}/api/profile/opcvm/update-questionSeven`, {
+              method:"PUT",
+              body: JSON.stringify(dataa),
+              headers: {
+                  'Content-Type': 'application/json',
+                  Authorization:  `Bearer ${token}`
+              }
+              })
+              const data = await result.json();
+          
+              /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+              * sinon on affiche le message de succès
+              */
+              if (data.message) {
+              setMessageError(data.message)
+              setIsLoggingIn(false);
+              Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  html: `<p> ${messageError} </p>` ,
+                  showConfirmButton: false,
+                  timer: 10000
+              })
+              }else{
+                Swal.fire({
+                  position: 'center',
+                  icon: 'success',
+                  html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                  showConfirmButton: false,
+                  timer: 5000
+                }),
+                setTimeout(() => {
+                  Router.push("/profil/kyc/opcvm/questionnaire-eight"); 
+                }, 5000)
+              }
+              // Fin condition 
+          } catch {
+          setIsLoggingIn(false);
+          }
+    };
+    // Fin
     
     // La barre de progression de KYC du profil entreprise
    const stepsOpcvm = ["Question 1","Question 2","Question 3", "Question 4","Question 5", "Question 6", "Question 7", "Question 8", "Question 9"];
@@ -115,10 +172,10 @@ const CQuestionnaireSeven = () => {
               <div className='col-lg-3 col-md-12'></div>
               <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
                 <label className='mb-3'>
-                    Si vous possédiez un placement dont la valeur aurait baissé de 25 % sur une période d’un an, que feriez-vous ?
+                    {question}
                 </label>
                 {/* FORM  */}
-                <form >
+                <form onSubmit={updateQuestionSeven}>
                 <div className='form-group'>
                     <label className='gr-check-input d-flex'>
                       <input
@@ -181,14 +238,7 @@ const CQuestionnaireSeven = () => {
                     </div>
                    
                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                        <Link href='/profil/kyc/opcvm/questionnaire-eight' className="align-right">
-                                <a
-                                className=""
-                                >
-                                <button className="btn btn-primary " type='button'> Suivant</button>
-                                </a>   
-                        </Link>
-                      {/* <button className="btn btn-primary" type='submit' disabled={isLoggingIn}> Suivant </button> */}
+                       <button className="btn btn-primary" type='submit' disabled={isLoggingIn}> Suivante </button>
                     </div>
                   </div>
                 </form>

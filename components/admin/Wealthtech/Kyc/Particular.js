@@ -228,8 +228,6 @@ const ValidParticular = () => {
         getUserById(oneKycForParticular.userId);
         }
     }, [oneKycForParticular?.userId]);
-  
-    
     // FIN
    
     // FIN
@@ -841,8 +839,10 @@ const ValidParticular = () => {
                                         <div className=" row col-lg-12 col-md-12 justify-content-between">
                                             <div className='col-lg-6 col-md-6 text-center'>
                                                 <h4 className='text-center'>Recto</h4>
+                                                {/* Si le document est prise en photo */}
                                                 {oneKycForParticular?.frontReceiptPhoto? 
                                                         <img src={oneKycForParticular?.frontReceiptPhoto} className="" width={'400'} height={'400'} alt="Recto"/> : 
+                                                        // sinon
                                                         oneKycForParticular?.frontReceipt? (
                                                             <>
                                                                 {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
