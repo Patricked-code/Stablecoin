@@ -59,11 +59,10 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/particulier/justificatif-domicile"||
       pathname === "/profil/kyc/commun/selfie"||
       pathname === "/profil/kyc/commun/signature"||
-      pathname === "/profil/kyc/entreprise/questionnaire"||
-      pathname === "/profil/kyc/entreprise/documents-legaux"||
       pathname === "/profil/informations/connexion"||
       pathname === "/profil/informations/utilisateur"||
 
+      // Kyc entreprise
       pathname === "/profil/kyc/entreprise/identite-one"||
       pathname === "/profil/kyc/entreprise/justificatif-identite"||
       pathname === "/profil/kyc/entreprise/identite-representant-one"||
@@ -81,6 +80,8 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/information-financiere-three"||
       pathname === "/profil/kyc/entreprise/information-financiere-four"||
       pathname === "/profil/kyc/entreprise/information-financiere-five"||
+      pathname === "/profil/kyc/entreprise/documents-legaux"||
+      pathname === "/profil/kyc/entreprise/questionnaire"||
       pathname === "/profil/kyc/entreprise/questionnaire-aml-two"||
       pathname === "/profil/kyc/entreprise/questionnaire-aml-three"||
       pathname === "/profil/kyc/entreprise/questionnaire-aml-four"||
@@ -90,6 +91,11 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/resultat-kyc"||
       pathname === "/profil/wallet"||
       pathname === "/profil/paiements/paiements-attente"||
+
+       // POUR LES HISTORIQUES
+       pathname === "/profil/historique"||
+       pathname === "/profil/historique/stablecoin"||
+
       // KYC OPCVM
       pathname === "/profil/kyc/opcvm/questionnaire-one"||
       pathname === "/profil/kyc/opcvm/questionnaire-two"||
@@ -163,6 +169,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/particulier/justificatif-domicile"||
       pathname === "/profil/kyc/particulier/selfie-with-document"||
       pathname === "/profil/kyc/particulier/resultat-kyc"||
+      
       pathname === "/profil/action"||
       pathname === "/profil/achat/achat-carte"||
       pathname === "/profil/retrait/retrait-compte-bancaire"||
@@ -170,10 +177,10 @@ const Layout = ({ children }) => {
       pathname === "/profil/retrait/retrait-mobile"||
       pathname === "/profil/kyc/commun/selfie"||
       pathname === "/profil/kyc/commun/signature"||
-      pathname === "/profil/kyc/entreprise/questionnaire"||
-      pathname === "/profil/kyc/entreprise/documents-legaux"||
       pathname === "/profil/informations/connexion"||
       pathname === "/profil/informations/utilisateur"||
+
+      // Kyc entreprise
       pathname === "/profil/kyc/entreprise/identite-one"||
       pathname === "/profil/kyc/entreprise/justificatif-identite"||
       pathname === "/profil/kyc/entreprise/identite-representant-one"||
@@ -191,6 +198,8 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/information-financiere-three"||
       pathname === "/profil/kyc/entreprise/information-financiere-four"||
       pathname === "/profil/kyc/entreprise/information-financiere-five"||
+      pathname === "/profil/kyc/entreprise/documents-legaux"||
+      pathname === "/profil/kyc/entreprise/questionnaire"||
       pathname === "/profil/kyc/entreprise/questionnaire-aml-two"||
       pathname === "/profil/kyc/entreprise/questionnaire-aml-three"||
       pathname === "/profil/kyc/entreprise/questionnaire-aml-four"||
@@ -202,6 +211,10 @@ const Layout = ({ children }) => {
       // pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/wallet"||
       pathname === "/profil/paiements/paiements-attente"||
+
+      // POUR LES HISTORIQUES
+      pathname === "/profil/historique"||
+      pathname === "/profil/historique/stablecoin"||
 
       // KYC OPCVM
       pathname === "/profil/kyc/opcvm/questionnaire-one"||

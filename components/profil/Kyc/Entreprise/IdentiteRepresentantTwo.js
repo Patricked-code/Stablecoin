@@ -161,6 +161,7 @@ const CIdentiteRepresentantTwo = () => {
 
     // FONCTION D'ENVOIE DES DONNEES DU REPRESENTANT LEGAL
     const addRepresentatives = async (event) => {
+        try {
         event.preventDefault();
         setIsLoggingIn(true);
 
@@ -257,6 +258,12 @@ const CIdentiteRepresentantTwo = () => {
                 timer: 10000
             })
         }
+
+    } catch (error) {
+        setIsLoggingIn(false);
+        console.error(error);
+       
+    }
     }
     // FIN
 

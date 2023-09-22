@@ -26,7 +26,7 @@ const Navbar = () => {
   useEffect(() => {
 
     const toke = localStorage.getItem('tokenEnCours')
-  console.log("token me navbar =>",toke)
+    
   setToken(toke)
     magic.user.isLoggedIn().then(async (magicIsLoggedIn) => {
       if (magicIsLoggedIn) {

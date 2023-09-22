@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import Wallet from '../../../components/portefeuille.js/wallet';
-import CAccueilPortefeuille from '../../../components/profil/Portefeuille/AccueilPortefeuille';
 import SidebarProfil from '../../../components/profil/SideBar/Sidebar';
+import CHistoriqueStablecoin from '../../../components/profil/Historique/Stablecoin';
 
 
 
@@ -23,9 +22,8 @@ const index = () => {
             {/* FIN */}
           </aside>
 
-          {/* CONTENU PROFIL */}
-          {/* <Wallet/> */}
-          <CAccueilPortefeuille/>
+          {/* CONTENU */}
+            <CHistoriqueStablecoin/>
           {/* FIN */}
 
         </main>

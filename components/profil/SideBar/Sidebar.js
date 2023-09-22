@@ -4,6 +4,8 @@ import { Icon } from '@iconify/react';
 import { useRouter } from "next/router";
 import { magic } from "../../../magic";
 import { ethers } from "ethers";
+import Swal from 'sweetalert2';
+
 
 import Router from 'next/router';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -64,7 +66,6 @@ const [kycForParticular, setKycForParticular] = useState();
                   .then((result) => result.json())
                   .then((user) => {
                   setCurrentUser(user)
-
                   localStorage.setItem('currentTypeProfil', user?.codeTypeProfil); //Pour stocker le code du type de profil dans la variable local
 
                   }) 
@@ -82,7 +83,56 @@ const [kycForParticular, setKycForParticular] = useState();
     }, [provider, magic]);
     //  Fin
 
+    /**
+   * Perform logout action via Magic.
+   */
+    const logout = useCallback(() => {
+      magic.user.logout().then(() => {
+        // supprimer le token
+        localStorage.removeItem('tokenEnCours');
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          html: `<p>Vous êtes déconnecté </p>` ,
+          showConfirmButton: false,
+          timer: 5000
+      })
+        setTimeout(() => {
+          window.location.reload()
+         }, 5000)
+        Router.push("/");
+      });
+    }, [Router]);
 
+     // Obtenir l'utilisateur qui est connecté
+     useEffect(() => {
+      (async () => {
+          const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+          const getUser = async () => {
+          const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
+              headers: {
+              'Content-Type': 'application/json',
+              Authorization:  `Bearer ${token}`
+
+              },
+          })
+          .then((result) => result.json())
+          .then((user) => {
+          
+          console.log('Auth', user)
+          // On verifie si l'utilisateur est deconnecté du site
+            if (user?.message==="Accès non autorisé") {
+              logout() //Appel de la fonction de déconnexion à magic
+            }
+          }) 
+          };
+          await getUser();
+          // Fin
+
+      })();
+  }, []);
+    // Fin
 
   // RECUPERER KYC DE L'UTILISATEUR
   useEffect(async() => {
@@ -292,7 +342,13 @@ const logaout = useCallback(() => {
                 </>
                 )}
               </>
-            ) :('')}
+              // A revoir
+            ) :(
+              <Link to='/profil/kyc/entreprise/questionnaire/' className={pathname == "/profil/kyc/entreprise/questionnaire/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                    <i className='fas fa-tasks nav-link-icon'></i>
+                    <span className='nav-link-name'>KYC</span>
+              </Link>
+            )}
 
               {/* <Link to='/profil/portefeuille' className={pathname == "/profil/portefeuille" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                 <i className='fas fa-wallet nav-link-icon'></i>

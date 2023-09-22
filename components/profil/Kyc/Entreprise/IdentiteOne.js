@@ -42,12 +42,11 @@ const CIdentiteOne = () => {
     const [mobile, setMobile] = useState();
     const [city, setCity] = useState();
     
-
+    // Obtenir l'utilisateur qui est connecté
     useEffect(() => {
         (async () => {
             const token = localStorage.getItem('tokenEnCours') //Le token récuperé
 
-            // Obtenir l'utilisateur qui est connecté
             const getUser = async () => {
             const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
                 headers: {

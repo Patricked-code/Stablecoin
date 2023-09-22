@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Container, Row, Col, Collapse, Button, Modal,Form } from "react-bootstrap";
 
 import React from "react";
@@ -7,6 +7,12 @@ import Link from 'next/link';
 import { Icon } from '@iconify/react';
 import Swal from 'sweetalert2';
 
+// Pour le scanner
+import dynamic from 'next/dynamic';
+
+const QrScannerWithNoSSR = dynamic(() => import('react-qr-scanner'), {
+  ssr: false,
+});
 
 
 const PaymentRequest = () => {
@@ -75,7 +81,6 @@ const PaymentRequest = () => {
      const searchUserWithBlockchain = () =>{
       if (addressTo) {
         const getUser = async (_addressTo) => {
-          console.log("emailOtherUser 3=>",_addressTo)
         
             const result = await fetch(`${API_URL}/api/user/find-user-by-addrBlockchain?address=${_addressTo}`, {
                 headers: {
@@ -85,8 +90,6 @@ const PaymentRequest = () => {
                 .then((result) => result.json())
                 .then((user) => {
                   setInfosOtherUser(user)
-                  
-            console.log("infosOtherUser 1=>",infosOtherUser)
         
                 }) 
         
@@ -155,7 +158,6 @@ const PaymentRequest = () => {
         })
         .then(res=>{
         const data =  res.json();
-        console.log("data 1=>",res)
           if (res.status==200) {
             Swal.fire({
               position: 'center',
@@ -192,6 +194,26 @@ const PaymentRequest = () => {
   }
   // FIN
 
+
+  // ************************************************************************
+    // PARTIE SCANNER DU QR CODE
+  // *************************************************************************
+  const qrScannerRef = useRef(null);
+  const [showScanner, setShowScanner] = useState();
+  const [showInput, setShowInput] = useState();
+
+  const handleScan = (data) => {
+    if (data) {
+      setAddressTo(data?.text);
+      searchUserWithBlockchain() //Appel automatique de la fonction de recherche des informations apres avoir scanné le qr code 
+
+    }
+  };
+
+  const handleError = (error) => {
+    console.error(error);
+  };
+  // *****************************FIN SCANNER*****************************
 
 
 
@@ -258,30 +280,60 @@ const PaymentRequest = () => {
                      {/* Formulaire de la partie avec adresse blockchain  */}
                      <form onSubmit={handleSubmit}>
                         <div className="form-group my-6 ">
-                          <label
-                            htmlFor="montant"
-                            className="gr-text-8 fw-bold text-blackish-blue"
-                          >
-                            Adresse bockchain du recepteur <sup className="text-red">*</sup>
 
-                          </label>
-                          <div className="input-group flex-nowrap">
-                          <input
-                              className="form-control gr-text-11 border mt-3 bg-white"
-                              type="text"
-                              id="addressTo"
-                              placeholder="Adresse blockchain du recepteur"
-                              required
-                              defaultValue={addressTo} 
-                              onChange={(event)=>setAddressTo(event.target.value)}
+                          <div className='row'>
+                            <div className='col-lg-6 col-md-6' onClick={()=>setShowInput(0)}>
+                              <button className='my-3 py-4' onClick={()=>setShowScanner(1)} disabled={isLoggingIn}>cliquez ici pour scanner le QR code</button>
+                            </div>
                               
-                          />
-                          <span className="gr-text-8 mx-2" id="addon-wrapping">
-                            <button onClick={searchUserWithBlockchain} disabled={isLoggingIn}><Icon  icon="bx:search-alt"  />
-                            </button>
-                          </span>
+                            <div className='col-lg-6 col-md-6' onClick={()=>setShowScanner(0)}>
+                              <button className='my-3' onClick={()=>setShowInput(1)} disabled={isLoggingIn}>cliquez ici pour saisir l'adresse blockchain du recepteur</button>
+                            </div>
 
+                            <div className='col-lg-3 col-md-3'></div>
+                            <div className='col-lg-6 col-md-6'>
+                            
+                              {showScanner==1 && showInput==0? (
+                                <QrScannerWithNoSSR
+                                  ref={qrScannerRef}
+                                  onScan={handleScan}
+                                  onError={handleError}
+                                  style={{ width: '100%', height: 'auto' }}
+                                />
+                              ) : ("")}
+                            </div>
+                            
+                            <div className='col-lg-3 col-md-3'></div>
                           </div>
+                          
+                          {showScanner==0 && showInput==1 ? (
+                            <>
+                              <label
+                                htmlFor="montant"
+                                className="gr-text-8 fw-bold text-blackish-blue"
+                              >
+                                Entrez adresse bockchain du recepteur <sup className="text-red">*</sup>
+
+                              </label>
+                              <div className="input-group flex-nowrap">
+                                <input
+                                    className="form-control gr-text-11 border mt-3 bg-white"
+                                    type="text"
+                                    id="addressTo"
+                                    placeholder="Entrez adresse bockchain du recepteur"
+                                    required
+                                    defaultValue={addressTo} 
+                                    onChange={(event)=>setAddressTo(event.target.value)}
+                                    
+                                />
+                                <span className="gr-text-8 mx-2" id="addon-wrapping">
+                                  <button onClick={searchUserWithBlockchain} disabled={isLoggingIn}><Icon  icon="bx:search-alt"  />
+                                  </button>
+                                </span>
+
+                              </div>
+                            </>
+                          ) : ("")}
                         </div>
                         {infosOtherUser?.entreprise ? (
                           <p className="gr-text-8 " id="addon-wrapping">
@@ -374,7 +426,7 @@ const PaymentRequest = () => {
                             htmlFor="montant"
                             className="gr-text-8 fw-bold text-blackish-blue"
                           >
-                            Adresse email du recepteur <sup className="text-red">*</sup>
+                            Entrez adresse email du recepteur <sup className="text-red">*</sup>
 
                           </label>
                           <div className="input-group flex-nowrap">
@@ -382,7 +434,7 @@ const PaymentRequest = () => {
                               className="form-control gr-text-11 border mt-3 bg-white"
                               type="email"
                               id="email"
-                              placeholder="Adresse email du recepteur"
+                              placeholder="Entrez adresse email du recepteur"
                               required
                               defaultValue={emailOtherUser} 
                               onChange={(event)=>setEmailOtherUser(event.target.value)}
@@ -486,7 +538,7 @@ const PaymentRequest = () => {
                             htmlFor="montant"
                             className="gr-text-8 fw-bold text-blackish-blue"
                           >
-                            Identifiant du recepteur <sup className="text-red">*</sup>
+                            Entrez identifiant du recepteur <sup className="text-red">*</sup>
 
                           </label>
                           <div className="input-group flex-nowrap">
@@ -494,7 +546,7 @@ const PaymentRequest = () => {
                               className="form-control gr-text-11 border mt-3 bg-white"
                               type="text"
                               id="addressTo"
-                              placeholder="Identifiant du recepteur"
+                              placeholder="Entrez identifiant du recepteur"
                               required
                               defaultValue={codeOtherUser} 
                               onChange={(event)=>setCodeOtherUser(event.target.value)}

@@ -39,6 +39,7 @@ import {
     // Row,
     // Col,
   } from "reactstrap";
+import { id } from 'ethers/lib/utils';
 
 // FIN
 
@@ -65,7 +66,7 @@ const ValidEntreprise = () => {
     // States de l'identité
     const [identityByKycId, setIdentityByKycId] = useState();
 
-    // States des représentant legeaux
+    // States des représentant légaux
     const [allRepresentativeByKycId, setAllRepresentativeByKycId] = useState();
 
     // States des bénéficiaire effectifs
@@ -100,14 +101,69 @@ const ValidEntreprise = () => {
 
     // states du formulaire de validation
     const [validQuiz, setValidQuiz] = useState();
-    const [validLegalDocuments, setValidLegalDocuments] = useState();
+    const [validQuizTwo, setValidQuizTwo] = useState();
+    const [validQuizThree, setValidQuizThree] = useState();
+    const [validQuizFour, setValidQuizFour] = useState();
     const [validIdentity, setValidIdentity] = useState();
+    const [validFinancialOperation, setValidFinancialOperation] = useState();
+    const [validFundOrigin, setValidFundOrigin] = useState();
+
+    //Representant legal
+    const [validRepresentative, setValidRepresentative] = useState(); 
+    const [representativeId, setRepresentativeId] = useState(); 
+
+    //Bénéficiaire effectif
+    const [validBeneficiary, setValidBeneficiary] = useState(); 
+    const [beneficiaryId, setBeneficiaryId] = useState();
+    
+    //Structure de control
+    const [validStructure, setValidStructure] = useState(); 
+    const [structureId, setStructureId] = useState();
+
+    //Politiquement exposée
+    const [validPoliticallyExposed, setValidPoliticallyExposed] = useState(); 
+    const [politicallyExposedId, setPoliticallyExposedId] = useState();
+
+    //Informations financières
+    const [validFinancialInformation, setValidFinancialInformation] = useState(); 
+    const [financialInformationId, setFinancialInformationId] = useState();
+
+    //Transactions financières
+    const [validFinancialTransaction, setValidFinancialTransaction] = useState(); 
+    const [financialTransactionId, setFinancialTransactionId] = useState();
+
+    
+    // Pour les documents legaux
+    const [validRegister, setValidRegister] = useState();
+    const [validDfe, setValidDfe] = useState();
+    const [validCopyStatutes, setValidCopyStatutes] = useState();
+    const [validDelegationPowers, setValidDelegationPowers] = useState();
+    const [validPvAppointment, setValidPvAppointment] = useState();
+    const [validMapLocation, setValidMapLocation] = useState();
+    const [validFacture, setValidFacture] = useState();
+    const [validProofPower, setValidProofPower] = useState();
+    const [validIdentitySignatory, setValidIdentitySignatory] = useState();
+    
+    
+    const [validLegalDocuments, setValidLegalDocuments] = useState();
     const [validResidence, setValidResidence] = useState();
     const [validPhoto, setValidPhoto] = useState();
     const [validSignature, setValidSignature] = useState();
     const [pattern, setPattern] = useState();
 
+    // Les states d'après vérification des ligne des colonnes valid 
+    const [verifyValidRepresentative, setVerifyValidRepresentative] = useState();
+    const [verifyValidBeneficiary, setVerifyValidBeneficiary] = useState();
+    const [verifyValidAssociates, setVerifyValidAssociates] = useState();
+    const [verifyValidPoliticallyExposed, setVerifyValidPoliticallyExposed] = useState();
+    const [verifyValidFinancialInformation, setVerifyValidFinancialInformation] = useState();
+    const [verifyValidFinancialTransaction, setVerifyValidFinancialTransaction] = useState();
+    const [verifyValidLegalDocument, setVerifyValidLegalDocument] = useState();
+    const [verifyValidAml, setVerifyValidAml] = useState();
+    const [verifyValidIdentity, setVerifyValidIdentity] = useState();
+    const [verifyValidOperationAndFundOrigin, setVerifyValidOperationAndFundOrigin] = useState();
     
+
     // States d'accordion Pour la partie questionnaire
     const [isOpen1, setIsOpen1] = useState(false);
     const [isOpen2, setIsOpen2] = useState(false);
@@ -133,11 +189,6 @@ const ValidEntreprise = () => {
             break;
         }
     };
-
-    
-    
-
-
     
 
 
@@ -180,8 +231,733 @@ const ValidEntreprise = () => {
     //  Fin
 
     
-    // RECUPERER KYC DE L'ENTREPRISE
-    useEffect(async() => {
+    
+
+    // La fonction qui vérifie si un lien est un lien pdf
+    function isPdfLink(link) {
+        return link.endsWith('.pdf');
+      }
+
+
+   
+    
+    // FONCTION POUR FORMATER LA DATE
+    const formatDate = (_updatedAt) =>{
+        const maDate = moment(_updatedAt).format('DD/MM/YYYY');
+        // const maDate = moment(_updatedAt).format('DD/MM/YYYY à HH:mm');
+        return  maDate
+    }
+    //  FIN
+
+
+
+
+
+
+
+
+
+
+
+    // **************************************************************************
+        //  LES FONCTIONS DE VALIDATIONS
+    // **************************************************************************
+    // const [validKycEntreprise, setValidKycEntreprise] = useState(false)
+    // Fonction de validation des parties de kyc
+    const validKycBusiness= async () => {
+        setIsLoggingIn(true);
+        var validKycEntreprise ="";
+
+        // On verifie si tous les toutes les parties sont validées 
+        // on met le champ validKycBusiness à true sinon on le met à false 
+        if  (
+                verifyValidAml==true &&
+                verifyValidIdentity==true &&
+                verifyValidRepresentative==true &&
+                verifyValidBeneficiary==true &&
+                verifyValidAssociates==true &&
+                verifyValidPoliticallyExposed==true &&
+                verifyValidOperationAndFundOrigin==true &&
+                verifyValidFinancialInformation==true &&
+                verifyValidFinancialTransaction==true &&
+                verifyValidLegalDocument==true
+            ) {
+                validKycEntreprise = true
+
+            }else{
+                validKycEntreprise = false
+            }
+            // return
+        try {
+            const dataa = {
+                validAml:verifyValidAml,
+                validIdentity:verifyValidIdentity,
+                validRepresentative:verifyValidRepresentative,
+                validBeneficiary:verifyValidBeneficiary,
+                validStructure:verifyValidAssociates,
+                validPoliticallyExposed:verifyValidPoliticallyExposed,
+                validFinancialInformation:verifyValidFinancialInformation,
+                validFinancialTransaction:verifyValidFinancialTransaction,
+                validLegalDocument:verifyValidLegalDocument,
+                validKycBusiness:validKycEntreprise,
+                pattern:pattern
+            }
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+    
+            const result = await fetch(`${API_URL}/api/kyc/business/valid-kyc-business/${idKycForEntreprise}`, {
+            method:"PUT",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+            })
+            const data = await result.json();
+        
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message===200) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Le message a été envoyé avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 5000
+            }),
+            setTimeout(() => {
+                window.location.reload()
+            }, 5000)
+            
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${data.message} </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+                
+            }
+            // Fin condition 
+        
+            } catch {
+            setIsLoggingIn(false);
+            }
+    }
+    // Fin
+
+    // Fonction de validation des questionnaires aml
+    const validKycAml= async (event) => {
+        event.preventDefault();
+        try {
+            const dataa = {
+                validQuiz:validQuiz,
+                validQuizTwo:validQuizTwo,
+                validQuizThree:validQuizThree,
+                validQuizFour:validQuizFour,
+            }
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+    
+            const result = await fetch(`${API_URL}/api/kyc/business/valid-kyc-aml/${idKycForEntreprise}`, {
+            method:"PUT",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+            })
+            const data = await result.json();
+
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (!data.message) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Evaluation effectuée avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 5000
+            }),
+            setTimeout(() => {
+                window.location.reload()
+            }, 10000)
+            
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${data.message} </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+                
+            }
+            // Fin condition 
+        
+            } catch {
+            setIsLoggingIn(false);
+            }
+    }
+    // Fin
+
+
+// Fonction de validation des informations d'identité
+const validKycIdentity= async (event) => {
+    event.preventDefault();
+    
+    try {
+        const dataa = {
+            validIdentity:validIdentity
+        }
+        const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+        const result = await fetch(`${API_URL}/api/kyc/business/valid-kyc-identity/${identityByKycId?.id}`, {
+        method:"PUT",
+        body: JSON.stringify(dataa),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization:  `Bearer ${token}`
+        }
+        })
+        const data = await result.json();
+        
+        /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+        * sinon on affiche le message de succès
+        */
+        if (!data?.message) {
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            html: `<p> Evaluation effectuée avec succès.</p>` ,
+            showConfirmButton: false,
+            timer: 1000
+        })
+        setTimeout(() => {
+            window.location.reload()
+        }, 1000)
+        }else{
+            setIsLoggingIn(false);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p> ${data.message} </p>` ,
+                showConfirmButton: false,
+                timer: 1000
+            })
+            
+        }
+        // Fin condition 
+    
+        } catch {
+        setIsLoggingIn(false);
+        }
+    }
+    // Fin
+
+    // Fonction de validation des représentants légaux
+    const validKycRepresentative= async (event) => {
+        event.preventDefault();
+        
+        try {
+            const dataa = {
+                validRepresentative:validRepresentative
+            }
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+    
+            const result = await fetch(`${API_URL}/api/kyc/business/valid-kyc-representative/${representativeId}`, {
+            method:"PUT",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+            })
+            const data = await result.json();
+            
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (!data?.message) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Sauvegardé avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 1000
+            })
+            
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${data.message} </p>` ,
+                    showConfirmButton: false,
+                    timer: 1000
+                })
+                
+            }
+            // Fin condition 
+        
+            } catch {
+            setIsLoggingIn(false);
+            }
+    }
+    // Fin
+
+
+    // Fonction de validation des bénéficiaires effectifs
+    const validKycBeneficiary= async (event) => {
+        event.preventDefault();
+        
+        try {
+            const dataa = {
+                validBeneficiary:validBeneficiary
+            }
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+    
+            const result = await fetch(`${API_URL}/api/kyc/business/valid-kyc-beneficiary/${beneficiaryId}`, {
+            method:"PUT",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+            })
+            const data = await result.json();
+            
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (!data?.message) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Sauvegardé avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 1000
+            })
+            
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${data.message} </p>` ,
+                    showConfirmButton: false,
+                    timer: 1000
+                })
+                
+            }
+            // Fin condition 
+        
+            } catch {
+            setIsLoggingIn(false);
+            }
+    }
+    // Fin
+
+
+    // Fonction de validation des structures de controls
+    const validKycStructure= async (event) => {
+        event.preventDefault();
+        
+        try {
+            const dataa = {
+                validStructure:validStructure
+            }
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+    
+            const result = await fetch(`${API_URL}/api/kyc/business/valid-kyc-structure/${structureId}`, {
+            method:"PUT",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+            })
+            const data = await result.json();
+            
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (!data?.message) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Sauvegardé avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 1000
+            })
+            
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${data.message} </p>` ,
+                    showConfirmButton: false,
+                    timer: 1000
+                })
+                
+            }
+            // Fin condition 
+        
+            } catch {
+            setIsLoggingIn(false);
+            }
+    }
+    // Fin
+
+
+    // Fonction de validation des personnes politiquement exposées
+    const validKycPoliticallyExposed= async (event) => {
+        event.preventDefault();
+        
+        try {
+            const dataa = {
+                validPoliticallyExposed:validPoliticallyExposed
+            }
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+    
+            const result = await fetch(`${API_URL}/api/kyc/business/valid-kyc-politically-exposed/${politicallyExposedId}`, {
+            method:"PUT",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+            })
+            const data = await result.json();
+            
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (!data?.message) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Sauvegardé avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 1000
+            })
+            
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${data.message} </p>` ,
+                    showConfirmButton: false,
+                    timer: 1000
+                })
+                
+            }
+            // Fin condition 
+        
+            } catch {
+            setIsLoggingIn(false);
+            }
+    }
+    // Fin
+
+    // Fonction de validation des operations financières
+    const validKycFinancialOperation= async (event) => {
+        event.preventDefault();
+        
+        try {
+            const dataa = {
+                validFinancialOperation:validFinancialOperation
+                
+            }
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+    
+            const result = await fetch(`${API_URL}/api/kyc/business/valid-kyc-financial-operation/${idKycForEntreprise}`, {
+            method:"PUT",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+            })
+            const data = await result.json();
+            
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (!data?.message) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Evaluation effectuée avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 1000
+            })
+            setTimeout(() => {
+                window.location.reload()
+            }, 1000)
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${data.message} </p>` ,
+                    showConfirmButton: false,
+                    timer: 1000
+                })
+                
+            }
+            // Fin condition 
+        
+            } catch {
+            setIsLoggingIn(false);
+            }
+    }
+    // Fin
+
+    // Fonction de validation des origines des fonds
+    const validKycFundOrigin= async (event) => {
+        event.preventDefault();
+        
+        try {
+            const dataa = {
+                validFundOrigin:validFundOrigin
+                
+            }
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+    
+            const result = await fetch(`${API_URL}/api/kyc/business/valid-kyc-fund-origin/${idKycForEntreprise}`, {
+            method:"PUT",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+            })
+            const data = await result.json();
+            
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (!data?.message) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Evaluation effectuée avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 1000
+            })
+            setTimeout(() => {
+                window.location.reload()
+            }, 1000)
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${data.message} </p>` ,
+                    showConfirmButton: false,
+                    timer: 1000
+                })
+                
+            }
+            // Fin condition 
+        
+            } catch {
+            setIsLoggingIn(false);
+            }
+    }
+    // Fin
+
+    // Fonction de validation des informations financières
+    const validKycFinancialInformation= async (event) => {
+        event.preventDefault();
+        
+        try {
+            const dataa = {
+                validFinancialInformation:validFinancialInformation
+                
+            }
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+    
+            const result = await fetch(`${API_URL}/api/kyc/business/valid-kyc-financial-information/${financialInformationId}`, {
+            method:"PUT",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+            })
+            const data = await result.json();
+            
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (!data?.message) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Sauvegardé avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 1000
+            })
+            
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${data.message} </p>` ,
+                    showConfirmButton: false,
+                    timer: 1000
+                })
+                
+            }
+            // Fin condition 
+        
+            } catch {
+            setIsLoggingIn(false);
+            }
+    }
+    // Fin
+
+
+    // Fonction de validation des informations financières
+    const validKycFinancialTransaction= async (event) => {
+        event.preventDefault();
+        
+        try {
+            const dataa = {
+                validFinancialTransaction:validFinancialTransaction
+                
+            }
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+    
+            const result = await fetch(`${API_URL}/api/kyc/business/valid-kyc-financial-transaction/${financialTransactionId}`, {
+            method:"PUT",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+            })
+            const data = await result.json();
+            
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (!data?.message) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Sauvegardé avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 1000
+            })
+            
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${data.message} </p>` ,
+                    showConfirmButton: false,
+                    timer: 1000
+                })
+                
+            }
+            // Fin condition 
+        
+            } catch {
+            setIsLoggingIn(false);
+            }
+    }
+    // Fin
+
+    // Fonction de validation des documents légaux
+    const validKycLegalDocument= async (event) => {
+        event.preventDefault();
+        setIsLoggingIn(true);
+        try {
+            const dataa = {
+                validRegister:validRegister,
+                validDfe:validDfe,
+                validCopyStatutes:validCopyStatutes,
+                validDelegationPowers:validDelegationPowers,
+                validPvAppointment:validPvAppointment,
+                validMapLocation:validMapLocation,
+                validFacture:validFacture,
+                validProofPower:validProofPower,
+                validIdentitySignatory:validIdentitySignatory
+            }
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+    
+            const result = await fetch(`${API_URL}/api/kyc/business/valid-kyc-legal-document/${idKycForEntreprise}`, {
+            method:"PUT",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+            })
+            const data = await result.json();
+        
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (!data.message) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Evaluation effectuée avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 5000
+            }),
+            setTimeout(() => {
+                window.location.reload()
+            }, 5000)
+            
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${data.message} </p>` ,
+                    showConfirmButton: false,
+                    timer: 5000
+                })
+                
+            }
+            // Fin condition 
+        
+            } catch {
+            setIsLoggingIn(false);
+            }
+    }
+    // Fin
+
+    // ********************FIN LES FONCTIONS DE VALIDATIONS*********************
+
+
+
+
+
+
+
+
+
+
+
+
+    // ********************************************************************
+        // LES FONCTIONS DE RECUPERATION
+    // ***********************************************************************
+// RECUPERER KYC DE L'ENTREPRISE
+useEffect(async() => {
     const token = localStorage.getItem('tokenEnCours')
     
         const getAllKycForEntreprise = async () => {
@@ -222,6 +998,30 @@ const ValidEntreprise = () => {
             }
     
             const data = await resKyc.json();
+            
+            // Vérifier si tous les champs sont à true
+            const areAllFieldsValid = (
+                data?.validQuiz==true &&
+                data?.validQuizTwo==true &&
+                data?.validQuizThree==true &&
+                data?.validQuizFour==true
+            );
+
+            // Mettre à jour verifyValidAml
+            setVerifyValidAml(areAllFieldsValid);
+
+            // Vérifier si tous les champs sont à true
+            const areAllFieldsValidOperationAndFundOrigin = (
+                data?.validFinancialOperation==true &&
+                data?.validFundOrigin==true 
+            );
+
+            // Mettre à jour verifyValidAml
+            setVerifyValidOperationAndFundOrigin(areAllFieldsValidOperationAndFundOrigin);
+            
+            console.log("areAllFieldsValidOperationAndFundOrigin=>",areAllFieldsValidOperationAndFundOrigin)
+
+
             setOneKycForEntreprise(data)
             
         } catch (error) {
@@ -236,91 +1036,6 @@ const ValidEntreprise = () => {
     }, [idKycForEntreprise]);
    
     // FIN
-
-    // La fonction qui vérifie si un lien est un lien pdf
-    function isPdfLink(link) {
-        return link.endsWith('.pdf');
-      }
-
-
-    // Modal de la validation des différentes parties du kyc
-    const [showEvaluer, setShowEvaluer] = useState(false);
-    const handleCloseEvaluer = () => setShowEvaluer(false);
-    const handleShowEvaluer = () => setShowEvaluer(true);
-    // Fin
-
-    // Modal pour voir des différentes parties du kyc
-    const [showInfosKyc, setShowInfosKyc] = useState(false);
-    const handleCloseInfosKyc = () => setShowInfosKyc(false);
-    const handleShowInfosKyc = () => setShowInfosKyc(true);
-    // Fin
-    
-    // FONCTION POUR FORMATER LA DATE
-    const formatDate = (_updatedAt) =>{
-        const maDate = moment(_updatedAt).format('DD/MM/YYYY');
-        // const maDate = moment(_updatedAt).format('DD/MM/YYYY à HH:mm');
-        return  maDate
-    }
-    //  FIN
-
-    // Fonction de validation des parties de kyc
-    const validKycParticular= async () => {
-        setIsLoggingIn(true);
-        try {
-            const dataa = {
-                validQuiz:validQuiz,
-                validLegalDocuments:validLegalDocuments,
-                validIdentity:validIdentity,
-                validResidence:validResidence,
-                validPhoto:validPhoto,
-                validSignature:validSignature,
-                pattern:pattern
-            }
-            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
-    
-            const result = await fetch(`${API_URL}/api/kyc/entreprise/valid-kyc/${idKycForEntreprise}`, {
-            method:"PUT",
-            body: JSON.stringify(dataa),
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization:  `Bearer ${token}`
-            }
-            })
-            const data = await result.json();
-        
-            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-            * sinon on affiche le message de succès
-            */
-            if (data.message===200) {
-            Swal.fire({
-                position: 'center',
-                icon: 'success',
-                html: `<p> Le message a été envoyé avec succès.</p>` ,
-                showConfirmButton: false,
-                timer: 5000
-            }),
-            setTimeout(() => {
-                window.location.reload()
-            }, 10000)
-            
-            }else{
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> ${data.message} </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-                
-            }
-            // Fin condition 
-        
-            } catch {
-            setIsLoggingIn(false);
-            }
-        }
-    // Fin
 
 
     // RECUPERER TOUS LES PAYS
@@ -392,6 +1107,16 @@ const ValidEntreprise = () => {
             }
     
             const kycIdentity = await result.json();
+
+            // Vérifier si tous les champs sont à true
+            const areAllFieldsValid = (
+                kycIdentity?.validIdentity==true
+            );
+
+            // Mettre à jour verifyValidIdentity
+            setVerifyValidIdentity(areAllFieldsValid);
+
+
             setIdentityByKycId(kycIdentity);
         } catch (error) {
             // Handle errors appropriately, e.g., set an error state.
@@ -424,6 +1149,13 @@ const ValidEntreprise = () => {
             }
     
             const kycRepresentative = await result.json();
+
+            // Vérifie si toutes les lignes sont valides
+            const allValid = kycRepresentative?.every(representative => representative.validRepresentative === true);
+
+            // Met à jour verifyValidRepresentative dans l'état
+            setVerifyValidRepresentative(allValid);
+
             setAllRepresentativeByKycId(kycRepresentative);
         } catch (error) {
             // Handle errors appropriately, e.g., set an error state.
@@ -437,7 +1169,7 @@ const ValidEntreprise = () => {
     }, [oneKycForEntreprise?.id]);
     // FIN
 
-    // FONCTION POUR RECUPERER LA LISTE DES BENEFIAIRES EFFECTIFS DE L'ENTREPRISE EN FONCTION DE ID DU DE L'ENTREPRISE
+    // FONCTION POUR RECUPERER LA LISTE DES BENEFICIAIRES EFFECTIFS DE L'ENTREPRISE EN FONCTION DE ID DU DE L'ENTREPRISE
     useEffect(() => {
         const getAllBeneficiaryByKycId = async (_kycId) => {
         const token = localStorage.getItem('tokenEnCours')
@@ -455,6 +1187,13 @@ const ValidEntreprise = () => {
             }
     
             const kycBeneficiary = await result.json();
+
+            // Vérifie si toutes les lignes sont valides
+            const allValid = kycBeneficiary?.every(beneficiary => beneficiary.validBeneficiary === true);
+
+            // Met à jour verifyValidBeneficiary dans l'état
+            setVerifyValidBeneficiary(allValid);
+            
             setAllBeneficiaryByKycId(kycBeneficiary);
         } catch (error) {
             // Handle errors appropriately, e.g., set an error state.
@@ -467,7 +1206,7 @@ const ValidEntreprise = () => {
         }
     }, [oneKycForEntreprise?.id]);
     // FIN
-
+    
     // FONCTION POUR RECUPERER LA LISTE DES STRUCTURE DE CONTROLES (ASSOCIES) DE L'ENTREPRISE EN FONCTION DE ID DU DE L'ENTREPRISE
     useEffect(() => {
         const getAllAssociatesByKycId = async (_kycId) => {
@@ -486,6 +1225,13 @@ const ValidEntreprise = () => {
             }
     
             const kycAssociates = await result.json();
+
+            // Vérifie si toutes les lignes sont valides
+            const allValid = kycAssociates?.every(associates => associates.validStructure === true);
+
+            // Met à jour verifyValidAssociates dans l'état
+            setVerifyValidAssociates(allValid);
+
             setAllAssociatesByKycId(kycAssociates);
         } catch (error) {
             // Handle errors appropriately, e.g., set an error state.
@@ -517,6 +1263,13 @@ const ValidEntreprise = () => {
             }
     
             const kycPoliticallyExposed = await result.json();
+
+            // Vérifie si toutes les lignes sont valides
+            const allValid = kycPoliticallyExposed?.every(politicallyExposed => politicallyExposed.validPoliticallyExposed === true);
+
+            // Met à jour verifyValidPoliticallyExposed dans l'état
+            setVerifyValidPoliticallyExposed(allValid);
+
             setAllPoliticallyExposedByKycId(kycPoliticallyExposed);
         } catch (error) {
             // Handle errors appropriately, e.g., set an error state.
@@ -529,7 +1282,7 @@ const ValidEntreprise = () => {
         }
     }, [oneKycForEntreprise?.id]);
     // FIN 
-
+    
     // FONCTION POUR RECUPERER LES DONNEES DES OPERATIONS FINANCIERES DE L'ENTREPRISE EN FONCTION DE ID DU DE L'ENTREPRISE
     useEffect(() => {
         const getAllFinancialOperationByKycId = async (_kycId) => {
@@ -610,7 +1363,13 @@ const ValidEntreprise = () => {
                 }
     
                 const kycFinancialInformation = await result.json();
-    
+                
+                 // Vérifie si toutes les lignes sont valides
+                const allValid = kycFinancialInformation?.every(financialInformation => financialInformation.validFinancialInformation === true);
+                
+                // Met à jour verifyValidFinancialInformation dans l'état
+                setVerifyValidFinancialInformation(allValid);
+
                 // Filtrer les données où la colonne "period" est égale à "Mensuelle"
                 const monthlyFinancialInformation = kycFinancialInformation.filter(data => data.period === 'Mensuelle');
                 setOneMonthlyFinancialInformation(monthlyFinancialInformation);
@@ -653,11 +1412,17 @@ const ValidEntreprise = () => {
                 }
     
                 const kycFinancialTransaction = await result.json();
-    
+
+                // Vérifie si toutes les lignes sont valides
+                const allValid = kycFinancialTransaction?.every(financialTransaction => financialTransaction.validFinancialTransaction === true);
+
+                // Met à jour verifyValidFinancialTransaction dans l'état
+                setVerifyValidFinancialTransaction(allValid);
+
                 // Filtrer les données où la colonne "period" est égale à "Mensuelle"
                 const monthlyFinancialTransaction = kycFinancialTransaction.filter(data => data.period === 'Mensuelle');
                 setOneMonthlyFinancialTransaction(monthlyFinancialTransaction);
-                console.log("monthlyFinancialTransaction=>",monthlyFinancialTransaction)
+
                 // Filtrer les données où la colonne "period" est égale à "Annuelle"
                 const annualFinancialTransaction = kycFinancialTransaction.filter(data => data.period === 'Annuelle');
                 setOneAnnualFinancialTransaction(annualFinancialTransaction);
@@ -694,6 +1459,23 @@ const ValidEntreprise = () => {
             }
     
             const kycLegalDocument = await result.json();
+
+            // Vérifier si tous les champs sont à true
+            const areAllFieldsValid = (
+                kycLegalDocument?.validRegister==true &&
+                kycLegalDocument?.validDfe==true &&
+                kycLegalDocument?.validCopyStatutes==true &&
+                kycLegalDocument?.validDelegationPowers==true &&
+                kycLegalDocument?.validPvAppointment==true &&
+                kycLegalDocument?.validMapLocation==true &&
+                kycLegalDocument?.validFacture==true &&
+                kycLegalDocument?.validProofPower==true &&
+                kycLegalDocument?.validIdentitySignatory==true
+            );
+
+            // Mettre à jour verifyValidLegalDocument
+            setVerifyValidLegalDocument(areAllFieldsValid);
+
             setOneLegalDocumentByKycId(kycLegalDocument);
         } catch (error) {
             // Handle errors appropriately, e.g., set an error state.
@@ -735,8 +1517,20 @@ const ValidEntreprise = () => {
     //     getOneCountry();
     //   }
     //   FIN
+    const refreshPage = () =>{
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            html: `<p> Evaluation effectuée avec succès.</p>` ,
+            showConfirmButton: false,
+            timer: 1000
+        })
+        setTimeout(() => {
+            window.location.reload()
+        }, 1000)
+    }
 
-  return (
+    return (
     <>
 
         <div className='' >
@@ -819,7 +1613,7 @@ const ValidEntreprise = () => {
                                                                 <p className="text-center">
                                                                                             
                                                                     <Button type='button' onClick={()=>setIdKycForEntreprise(data?.id)}  color='success' className=''>
-                                                                        <div onClick={handleShowEvaluer}>
+                                                                        <div onClick={()=>setEtape(12)}>
                                                                             Evaluer <Icon icon="bx:chevron-down-circle"  width="30"/>
                                                                         </div>          
                                                                     </Button>
@@ -1267,6 +2061,112 @@ const ValidEntreprise = () => {
                                         </div>
                                         {/*Fin Questionnaire Aml 4 */}
 
+
+                                        {/* PARTIE EVALUATION DES QUESTIONNAIRE */}
+                                        <Form role="form" onSubmit={validKycAml}>
+                                            <div className='row justify-content-between'>
+                                                {/* Les questionnaires AML 1 */}
+                                                <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2" htmlFor='validQuiz'>
+                                                        Les questionnaires AML 1
+                                                    </label>
+                                                    {oneKycForEntreprise?.validQuiz==1 ? (
+                                                        <p className='colorGreen mx-2'><b>Evalué</b></p>
+                                                    ):(<p className='colorRed mx-2'><b>Pas encore évalué</b></p>)}
+                                                        <select 
+                                                            className="form-control"
+                                                            id="validQuiz"
+                                                            required
+                                                            defaultValue={validQuiz} 
+                                                            onChange={(event)=>setValidQuiz(event.target.value)}
+                                                        >
+                                                            <option defaultValue="">Choisissez une option</option>
+                                                            <optgroup className='single-cryptocurrency-box'>
+                                                                <option  value="true">Valider</option>
+                                                                <option  value="false">Non valider</option>
+                                                            </optgroup>
+                                                        </select>
+                                                    
+                                                </div>
+
+                                                {/* Les questionnaires AML 2 */}
+                                                <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2" htmlFor='validQuizTwo'>
+                                                        Les questionnaires AML 2
+                                                    </label>
+                                                    {oneKycForEntreprise?.validQuizTwo==1 ? (
+                                                        <p className='colorGreen mx-2'><b>Evalué</b></p>
+                                                    ):(<p className='colorRed mx-2'><b>Pas encore évalué</b></p>)}
+                                                        
+                                                        <select 
+                                                            className="form-control"
+                                                            id="validQuizTwo"
+                                                            required
+                                                            defaultValue={validQuizTwo} 
+                                                            onChange={(event)=>setValidQuizTwo(event.target.value)}
+                                                        >
+                                                            <option defaultValue="">Choisissez une option</option>
+                                                            <optgroup className='single-cryptocurrency-box'>
+                                                                <option  value="true">Valider</option>
+                                                                <option  value="false">Non valider</option>
+                                                            </optgroup>
+                                                        </select>
+                                                </div>
+
+                                                {/* Les questionnaires AML 3 */}
+                                                <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2" htmlFor='validQuizThree'>
+                                                        Les questionnaires AML 3
+                                                    </label>
+                                                    {oneKycForEntreprise?.validQuizThree==1 ? (
+                                                        <p className='colorGreen mx-2'><b>Evalué</b></p>
+                                                    ):(<p className='colorRed mx-2'><b>Pas encore évalué</b></p>)}
+                                                        <select 
+                                                            className="form-control"
+                                                            id="validQuizThree"
+                                                            required
+                                                            defaultValue={validQuizThree} 
+                                                            onChange={(event)=>setValidQuizThree(event.target.value)}
+                                                        >
+                                                            <option defaultValue="">Choisissez une option</option>
+                                                            <optgroup className='single-cryptocurrency-box'>
+                                                                <option  value="true">Valider</option>
+                                                                <option  value="false">Non valider</option>
+                                                            </optgroup>
+                                                        </select>
+                                                </div>
+
+                                                {/* Les questionnaires AML 4 */}
+                                                <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2" htmlFor='validQuizFour'>
+                                                        Les questionnaires AML 4
+                                                    </label>
+                                                    {oneKycForEntreprise?.validQuizFour==1 ? (
+                                                       <p className='colorGreen mx-2'><b>Evalué</b></p>
+                                                    ):(<p className='colorRed mx-2'><b>Pas encore évalué</b></p>)} 
+                                                        
+                                                        <select 
+                                                            className="form-control"
+                                                            id="validQuizFour"
+                                                            required
+                                                            defaultValue={validQuizFour} 
+                                                            onChange={(event)=>setValidQuizFour(event.target.value)}
+                                                        >
+                                                            <option defaultValue="">Choisissez une option</option>
+                                                            <optgroup className='single-cryptocurrency-box'>
+                                                                <option  value="true">Valider</option>
+                                                                <option  value="false">Non valider</option>
+                                                            </optgroup>
+                                                        </select>
+                                                </div>
+                                            </div>
+
+                                            <Button  type='submit'  color="primary"  disabled={isLoggingIn}>
+                                                Soumettre les évaluations
+                                            </Button>
+                                        </Form>
+                                        {/* FIN EVALUATION */}
+
                                     </>
 
                                 ): ("")}
@@ -1385,15 +2285,51 @@ const ValidEntreprise = () => {
                                                 {identityByKycId?.registrationDate? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(identityByKycId.registrationDate)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
                                         </div>
+
+
+                                        {/* PARTIE EVALUATION DES IDENTITES */}
+                                        <Form role="form" onSubmit={validKycIdentity}>
+                                            <div className='row justify-content-between'>
+                                                
+                                                <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2" htmlFor='validQuizFour'>
+                                                        <b>Approuve-vous ces réponses ? </b>
+                                                    </label>
+                                                    {identityByKycId?.validIdentity==1 ? (
+                                                       <p className='colorGreen mx-2'><b>Evalué</b></p>
+                                                    ):(<p className='colorRed mx-2'><b>Pas encore évalué</b></p>)} 
+                                                        
+                                                    <div className="input-group flex-nowrap">
+                                                        <select 
+                                                            className="form-control gr-text-11 border mt-3"
+                                                            id="validSignature"
+                                                            required
+                                                            defaultValue={validIdentity} 
+                                                            onChange={(event)=>setValidIdentity(event.target.value)}
+                                                        >
+                                                            <option defaultValue="">Choisissez une option</option>
+                                                            <optgroup className='single-cryptocurrency-box'>
+                                                                <option  value="true">Oui</option>
+                                                                <option  value="false">Non</option>
+                                                            </optgroup>
+                                                        </select>
+                                                        <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
+                                                            <button type='submit' disabled={isLoggingIn}>Soumettre</button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Form>
+                                        {/* FIN EVALUATION */}
                                     </>
                                 ): ("")}
 
 
-                                {/* Representants legeaux*/}
+                                {/* Representants légaux*/}
                                 {etape===3 ? (
                                     <>
                                         <div className='my-5'>
-                                            <h3 className='text-center'>Représentants légeaux</h3>
+                                            <h3 className='text-center'>Représentants légaux</h3>
                                         </div>
                                         <div className='my-5 mx-5'>
                                         
@@ -1411,17 +2347,18 @@ const ValidEntreprise = () => {
                                                     <div className='' key={index}>
                                                         <h5 className='colorRed mt-5'>Les informations du représentant légal {index + 1}</h5>
                                                         <div className='form-group my-3 col-lg-6 col-md-6'>
-                                                            <form>
+                                                            <form onSubmit={validKycRepresentative}>
                                                                 <label className="mx-2  mb-2" htmlFor='validSignature'>
                                                                     Les informations de ce représentant légal sont-elles correctes?
-                                                                </label>
+                                                                </label><br/>
+                                                                <label>{data?.validRepresentative==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
                                                                 <div className="input-group flex-nowrap">
                                                                     <select 
                                                                         className="form-control gr-text-11 border mt-3"
                                                                         id="validSignature"
                                                                         required
-                                                                        // defaultValue={validSignature} 
-                                                                        // onChange={(event)=>setValidSignature(event.target.value)}
+                                                                        defaultValue={validRepresentative} 
+                                                                        onChange={(event)=>setValidRepresentative(event.target.value)}
                                                                     >
                                                                         <option defaultValue="">Choisissez une option</option>
                                                                         <optgroup className='single-cryptocurrency-box'>
@@ -1430,7 +2367,7 @@ const ValidEntreprise = () => {
                                                                         </optgroup>
                                                                     </select>
                                                                     <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
-                                                                        <button  disabled={isLoggingIn}>Envoyer</button>
+                                                                        <button type='submit' onClick={()=>setRepresentativeId(data?.id)} disabled={isLoggingIn}>Sauvegarder</button>
                                                                     </span>
                                                                 </div>
                                                                 
@@ -1685,20 +2622,20 @@ const ValidEntreprise = () => {
                                                                             {isPdfLink(`${API_URL}/${data?.backDomicileFile}`) ? (
                                                                                 <>
                                                                                     <div className="hero-btn  text-center ">
-                                                                                    <a
-                                                                                        className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                                                        role="button"
-                                                                                        data-toggle="dropdown"
-                                                                                        aria-haspopup="true"
-                                                                                        aria-expanded="false"
-                                                                                        href={`${API_URL}/${data?.backDomicileFile}`}
-                                                                                        target="_blank"
-                                                                                    >
-                                                                                    <p className="gr-text-8 bgColorblue text-white mb-0">
-                                                                                        <Icon icon="bx:show-alt" width="50" />
-                                                                                        Veuillez cliquer ici pour voir le fichier
-                                                                                    </p>
-                                                                                    </a>
+                                                                                        <a
+                                                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                                            role="button"
+                                                                                            data-toggle="dropdown"
+                                                                                            aria-haspopup="true"
+                                                                                            aria-expanded="false"
+                                                                                            href={`${API_URL}/${data?.backDomicileFile}`}
+                                                                                            target="_blank"
+                                                                                        >
+                                                                                        <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                                            <Icon icon="bx:show-alt" width="50" />
+                                                                                            Veuillez cliquer ici pour voir le fichier
+                                                                                        </p>
+                                                                                        </a>
                                                                                     </div>
                                                                                 </>
                                                                             ) : (
@@ -1728,6 +2665,28 @@ const ValidEntreprise = () => {
                                                         {/* fin Signature du représentant */}
                                                     </div>
                                                 ))}
+                                                
+                                                {/* Le bouton qui permettre d'actualiser la page */}
+                                                <div className='row'>
+                                                    <div className='col-lg-4 col-md-4'></div>
+                                                
+                                                    <div className="hero-btn col-lg-4 col-md-4'  text-center my-3">
+                                                        <a
+                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                            role="button"
+                                                            data-toggle="dropdown"
+                                                            aria-haspopup="true"
+                                                            aria-expanded="false"
+                                                            onClick={refreshPage}
+                                                            target="_blank"
+                                                        >
+                                                        <p className="gr-text-8 bgColorblue text-white mb-0 py-2">
+                                                            Soumettre les évaluations
+                                                        </p>
+                                                        </a>
+                                                    </div>
+                                                    <div className='col-lg-4 col-md-4'></div>
+                                                </div>
                                             </>
                                         ):("")}
                                         </div>
@@ -1756,17 +2715,19 @@ const ValidEntreprise = () => {
                                                     <div className='' key={index}>
                                                         <h5 className='colorRed mt-5'>Les informations du bénéficiaire effectif {index + 1}</h5>
                                                         <div className='form-group my-3 col-lg-6 col-md-6'>
-                                                            <form>
+                                                            <form onSubmit={validKycBeneficiary}>
                                                                 <label className="mx-2  mb-2" htmlFor='validSignature'>
                                                                     Les informations de ce bénéficiaire effectif sont-elles correctes?
-                                                                </label>
+                                                                </label><br/>
+                                                                <label>{data?.validBeneficiary==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+
                                                                 <div className="input-group flex-nowrap">
                                                                     <select 
                                                                         className="form-control gr-text-11 border mt-3"
                                                                         id="validSignature"
                                                                         required
-                                                                        // defaultValue={validSignature} 
-                                                                        // onChange={(event)=>setValidSignature(event.target.value)}
+                                                                        defaultValue={validBeneficiary} 
+                                                                        onChange={(event)=>setValidBeneficiary(event.target.value)}
                                                                     >
                                                                         <option defaultValue="">Choisissez une option</option>
                                                                         <optgroup className='single-cryptocurrency-box'>
@@ -1775,7 +2736,7 @@ const ValidEntreprise = () => {
                                                                         </optgroup>
                                                                     </select>
                                                                     <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
-                                                                        <button  disabled={isLoggingIn}>Envoyer</button>
+                                                                        <button type='submit' onClick={()=>setBeneficiaryId(data?.id)}  disabled={isLoggingIn}>Envoyer</button>
                                                                     </span>
                                                                 </div>
                                                                 
@@ -2067,6 +3028,28 @@ const ValidEntreprise = () => {
 
                                                     </div>
                                                 ))}
+
+                                                 {/* Le bouton qui permettre d'actualiser la page */}
+                                                 <div className='row'>
+                                                    <div className='col-lg-4 col-md-4'></div>
+                                                
+                                                    <div className="hero-btn col-lg-4 col-md-4'  text-center my-3">
+                                                        <a
+                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                            role="button"
+                                                            data-toggle="dropdown"
+                                                            aria-haspopup="true"
+                                                            aria-expanded="false"
+                                                            onClick={refreshPage}
+                                                            target="_blank"
+                                                        >
+                                                        <p className="gr-text-8 bgColorblue text-white mb-0 py-2">
+                                                            Soumettre les évaluations
+                                                        </p>
+                                                        </a>
+                                                    </div>
+                                                    <div className='col-lg-4 col-md-4'></div>
+                                                </div>
                                             </>
                                         ):("")}
                                         </div>
@@ -2103,17 +3086,19 @@ const ValidEntreprise = () => {
                                                     <div className='' key={index}>
                                                         <h5 className='colorRed mt-5'>Les informations de l'associé {index + 1}</h5>
                                                         <div className='form-group my-3 col-lg-6 col-md-6'>
-                                                            <form>
+                                                            <form onSubmit={validKycStructure}>
                                                                 <label className="mx-2  mb-2" htmlFor='validSignature'>
                                                                     Les informations de cet associé sont-elles correctes?
-                                                                </label>
+                                                                </label><br/>
+                                                                <label>{data?.validStructure==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+
                                                                 <div className="input-group flex-nowrap">
                                                                     <select 
                                                                         className="form-control gr-text-11 border mt-3"
                                                                         id="validSignature"
                                                                         required
-                                                                        // defaultValue={validSignature} 
-                                                                        // onChange={(event)=>setValidSignature(event.target.value)}
+                                                                        defaultValue={validStructure} 
+                                                                        onChange={(event)=>setValidStructure(event.target.value)}
                                                                     >
                                                                         <option defaultValue="">Choisissez une option</option>
                                                                         <optgroup className='single-cryptocurrency-box'>
@@ -2122,7 +3107,7 @@ const ValidEntreprise = () => {
                                                                         </optgroup>
                                                                     </select>
                                                                     <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
-                                                                        <button  disabled={isLoggingIn}>Envoyer</button>
+                                                                        <button type='submit' onClick={()=>setStructureId(data?.id)}  disabled={isLoggingIn}>Envoyer</button>
                                                                     </span>
                                                                 </div>
                                                                 
@@ -2414,13 +3399,35 @@ const ValidEntreprise = () => {
 
                                                     </div>
                                                 ))}
+
+                                                 {/* Le bouton qui permettre d'actualiser la page */}
+                                                 <div className='row'>
+                                                    <div className='col-lg-4 col-md-4'></div>
+                                                
+                                                    <div className="hero-btn col-lg-4 col-md-4'  text-center my-3">
+                                                        <a
+                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                            role="button"
+                                                            data-toggle="dropdown"
+                                                            aria-haspopup="true"
+                                                            aria-expanded="false"
+                                                            onClick={refreshPage}
+                                                            target="_blank"
+                                                        >
+                                                        <p className="gr-text-8 bgColorblue text-white mb-0 py-2">
+                                                            Soumettre les évaluations
+                                                        </p>
+                                                        </a>
+                                                    </div>
+                                                    <div className='col-lg-4 col-md-4'></div>
+                                                </div>
                                             </>
                                         ):("")}
                                         </div>
                                     </>
                                 ): ("")}
 
-                                {/* Politiquement exposé */}
+                                {/* Personnes politiquement exposé */}
                                 {etape===6 ? (
                                     <>
                                         <div className='my-5'>
@@ -2442,17 +3449,19 @@ const ValidEntreprise = () => {
                                                     <div className='' key={index}>
                                                         <h5 className='colorRed mt-5'>Les informations de personne politiquement exposée {index + 1}</h5>
                                                         <div className='form-group my-3 col-lg-6 col-md-6'>
-                                                            <form>
+                                                            <form onSubmit={validKycPoliticallyExposed}>
                                                                 <label className="mx-2  mb-2" htmlFor='validSignature'>
                                                                     Les informations de cette personne sont-elles correctes?
-                                                                </label>
+                                                                </label><br/>
+                                                                <label>{data?.validPoliticallyExposed==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+
                                                                 <div className="input-group flex-nowrap">
                                                                     <select 
                                                                         className="form-control gr-text-11 border mt-3"
                                                                         id="validSignature"
                                                                         required
-                                                                        // defaultValue={validSignature} 
-                                                                        // onChange={(event)=>setValidSignature(event.target.value)}
+                                                                        defaultValue={validPoliticallyExposed} 
+                                                                        onChange={(event)=>setValidPoliticallyExposed(event.target.value)}
                                                                     >
                                                                         <option defaultValue="">Choisissez une option</option>
                                                                         <optgroup className='single-cryptocurrency-box'>
@@ -2461,7 +3470,7 @@ const ValidEntreprise = () => {
                                                                         </optgroup>
                                                                     </select>
                                                                     <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
-                                                                        <button  disabled={isLoggingIn}>Envoyer</button>
+                                                                        <button type='submit' onClick={()=>setPoliticallyExposedId(data?.id)}  disabled={isLoggingIn}>Envoyer</button>
                                                                     </span>
                                                                 </div>
                                                                 
@@ -2497,13 +3506,35 @@ const ValidEntreprise = () => {
                                                             </div>
                                                     </div>
                                                 ))}
+
+                                                 {/* Le bouton qui permettre d'actualiser la page */}
+                                                 <div className='row'>
+                                                    <div className='col-lg-4 col-md-4'></div>
+                                                
+                                                    <div className="hero-btn col-lg-4 col-md-4'  text-center my-3">
+                                                        <a
+                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                            role="button"
+                                                            data-toggle="dropdown"
+                                                            aria-haspopup="true"
+                                                            aria-expanded="false"
+                                                            onClick={refreshPage}
+                                                            target="_blank"
+                                                        >
+                                                        <p className="gr-text-8 bgColorblue text-white mb-0 py-2">
+                                                            Soumettre les évaluations
+                                                        </p>
+                                                        </a>
+                                                    </div>
+                                                    <div className='col-lg-4 col-md-4'></div>
+                                                </div>
                                             </>
                                         ):("")}
                                         </div>
                                     </>
                                 ): ("")}
 
-                                {/* Personnes politiquement exposées */}
+                                {/* Description des opérations financières */}
                                 {etape===7 ? (
                                     <>
                                         <div className='my-5'>
@@ -2521,14 +3552,49 @@ const ValidEntreprise = () => {
                                                 </div>
                                             ))}
                                         </div>
+
+                                        {/* PARTIE EVALUATION DES OPERATIONS FINANCIERES */}
+                                        <Form role="form" onSubmit={validKycFinancialOperation}>
+                                            <div className='row justify-content-between'>
+                                                
+                                                <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2" htmlFor='validQuizFour'>
+                                                        <b>Approuve-vous ces réponses ? </b>
+                                                    </label>
+                                                    {oneKycForEntreprise?.validFinancialOperation==1 ? (
+                                                       <p className='colorGreen mx-2'><b>Evalué</b></p>
+                                                    ):(<p className='colorRed mx-2'><b>Pas encore évalué</b></p>)} 
+                                                        
+                                                    <div className="input-group flex-nowrap">
+                                                        <select 
+                                                            className="form-control gr-text-11 border mt-3"
+                                                            id="validSignature"
+                                                            required
+                                                            defaultValue={validFinancialOperation} 
+                                                            onChange={(event)=>setValidFinancialOperation(event.target.value)}
+                                                        >
+                                                            <option defaultValue="">Choisissez une option</option>
+                                                            <optgroup className='single-cryptocurrency-box'>
+                                                                <option  value="true">Oui</option>
+                                                                <option  value="false">Non</option>
+                                                            </optgroup>
+                                                        </select>
+                                                        <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
+                                                            <button type='submit' disabled={isLoggingIn}>Soumettre</button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Form>
+                                        {/* FIN EVALUATION */}
                                     </>
                                 ):("")}
 
-                                {/* Fonds d'investissement */}
+                                {/* Origine Fonds */}
                                 {etape===8 ? (
                                     <>
                                         <div className='my-5'>
-                                            <h3 className='text-center'>Description des opérations financières</h3>
+                                            <h3 className='text-center'>Origine des fonds</h3>
                                         </div>
 
                                         <div className='row mx-5 my-5'>
@@ -2542,6 +3608,41 @@ const ValidEntreprise = () => {
                                                 </div>
                                             ))}
                                         </div>
+
+                                        {/* PARTIE EVALUATION DES ORGINES DES FONDS */}
+                                        <Form role="form" onSubmit={validKycFundOrigin}>
+                                            <div className='row justify-content-between'>
+                                                
+                                                <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2" htmlFor='validQuizFour'>
+                                                        <b>Approuve-vous ces réponses ? </b>
+                                                    </label>
+                                                    {oneKycForEntreprise?.validFundOrigin==1 ? (
+                                                       <p className='colorGreen mx-2'><b>Evalué</b></p>
+                                                    ):(<p className='colorRed mx-2'><b>Pas encore évalué</b></p>)} 
+                                                        
+                                                    <div className="input-group flex-nowrap">
+                                                        <select 
+                                                            className="form-control gr-text-11 border mt-3"
+                                                            id="validSignature"
+                                                            required
+                                                            defaultValue={validFundOrigin} 
+                                                            onChange={(event)=>setValidFundOrigin(event.target.value)}
+                                                        >
+                                                            <option defaultValue="">Choisissez une option</option>
+                                                            <optgroup className='single-cryptocurrency-box'>
+                                                                <option  value="true">Oui</option>
+                                                                <option  value="false">Non</option>
+                                                            </optgroup>
+                                                        </select>
+                                                        <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
+                                                            <button type='submit' disabled={isLoggingIn}>Soumettre</button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Form>
+                                        {/* FIN EVALUATION */}
                                     </>
                                 ):("")}
 
@@ -2561,6 +3662,39 @@ const ValidEntreprise = () => {
                                                 </b>
                                             </h5>
                                         </div>
+                                        {oneMonthlyFinancialInformation?.map((data, index)=>(
+                                            <div className='row'>
+                                                <div className="col-lg-4 col-md-4"></div>
+                                                <form onSubmit={validKycFinancialInformation} className="text-center col-lg-4 col-md-4">
+                                                    <label className="mx-2  mb-2" htmlFor='validSignature'>
+                                                        Approuvez-vous la réponse ?
+                                                    </label><br/>
+                                                    <label>{data?.validFinancialInformation==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+                                                    
+                                                    <div className="input-group flex-nowrap ">
+                                                        <select 
+                                                            className="form-control gr-text-11 border mt-3"
+                                                            id="validSignature"
+                                                            required
+                                                            defaultValue={validFinancialInformation} 
+                                                            onChange={(event)=>setValidFinancialInformation(event.target.value)}
+                                                        >
+                                                            <option defaultValue="">Choisissez une option</option>
+                                                            <optgroup className='single-cryptocurrency-box'>
+                                                                <option  value="true">Oui</option>
+                                                                <option  value="false">Non</option>
+                                                            </optgroup>
+                                                        </select>
+                                                        <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
+                                                            <button type='submit' onClick={()=>setFinancialInformationId(data?.id)}  disabled={isLoggingIn}>Envoyer</button>
+                                                        </span>
+                                                    </div>
+                                                    
+                                                    
+                                                </form>
+                                                <div className="col-lg-4 col-md-4"></div>
+                                            </div>
+                                        ))}
                                         <Table
                                         aria-label="Example table with static content"
                                         css={{
@@ -2651,6 +3785,37 @@ const ValidEntreprise = () => {
                                                 </b>
                                             </h5>
                                         </div>
+                                        {oneQuarterlyFinancialInformation?.map((data, index)=>(
+                                            <div className='row'>
+                                                <div className="col-lg-4 col-md-4"></div>
+                                                <form onSubmit={validKycFinancialInformation} className="text-center col-lg-4 col-md-4">
+                                                    <label className="mx-2  mb-2" htmlFor='validSignature'>
+                                                        Approuvez-vous la réponse ?
+                                                    </label><br/>
+                                                    <label>{data?.validFinancialInformation==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+                                                    
+                                                    <div className="input-group flex-nowrap ">
+                                                        <select 
+                                                            className="form-control gr-text-11 border mt-3"
+                                                            id="validSignature"
+                                                            required
+                                                            defaultValue={validFinancialInformation} 
+                                                            onChange={(event)=>setValidFinancialInformation(event.target.value)}
+                                                        >
+                                                            <option defaultValue="">Choisissez une option</option>
+                                                            <optgroup className='single-cryptocurrency-box'>
+                                                                <option  value="true">Oui</option>
+                                                                <option  value="false">Non</option>
+                                                            </optgroup>
+                                                        </select>
+                                                        <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
+                                                            <button type='submit' onClick={()=>setFinancialInformationId(data?.id)}  disabled={isLoggingIn}>Envoyer</button>
+                                                        </span>
+                                                    </div>
+                                                </form>
+                                                <div className="col-lg-4 col-md-4"></div>
+                                            </div>
+                                        ))}
                                         <Table
                                             aria-label="Example table with static content"
                                             css={{
@@ -2740,6 +3905,37 @@ const ValidEntreprise = () => {
                                                 </b>
                                             </h5>
                                         </div>
+                                        {oneAnnualFinancialInformation?.map((data, index)=>(
+                                            <div className='row'>
+                                                <div className="col-lg-4 col-md-4"></div>
+                                                <form onSubmit={validKycFinancialInformation} className="text-center col-lg-4 col-md-4">
+                                                    <label className="mx-2  mb-2" htmlFor='validSignature'>
+                                                        Approuvez-vous la réponse ?
+                                                    </label><br/>
+                                                    <label>{data?.validFinancialInformation==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+                                                    
+                                                    <div className="input-group flex-nowrap ">
+                                                        <select 
+                                                            className="form-control gr-text-11 border mt-3"
+                                                            id="validSignature"
+                                                            required
+                                                            defaultValue={validFinancialInformation} 
+                                                            onChange={(event)=>setValidFinancialInformation(event.target.value)}
+                                                        >
+                                                            <option defaultValue="">Choisissez une option</option>
+                                                            <optgroup className='single-cryptocurrency-box'>
+                                                                <option  value="true">Oui</option>
+                                                                <option  value="false">Non</option>
+                                                            </optgroup>
+                                                        </select>
+                                                        <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
+                                                            <button type='submit' onClick={()=>setFinancialInformationId(data?.id)}  disabled={isLoggingIn}>Envoyer</button>
+                                                        </span>
+                                                    </div>
+                                                </form>
+                                                <div className="col-lg-4 col-md-4"></div>
+                                            </div>
+                                        ))}
                                         <Table
                                             aria-label="Example table with static content"
                                             css={{
@@ -2821,104 +4017,31 @@ const ValidEntreprise = () => {
                                         </Table>
                                         {/* Fin partie annuelle */}
                                         
-                                        {/* ******Fin Autre information financière**** */}
-                                        
-
-                                        {/* ******Transactions**** */}
-                                        <div className='my-5'>
-                                            <h3 className='text-center'>Transactions</h3>
+                                        {/* Le bouton qui permettre d'actualiser la page */}
+                                        <div className='row'>
+                                            <div className='col-lg-4 col-md-4'></div>
+                                                
+                                            <div className="hero-btn col-lg-4 col-md-4'  text-center my-3">
+                                                <a
+                                                    className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                    role="button"
+                                                    data-toggle="dropdown"
+                                                    aria-haspopup="true"
+                                                    aria-expanded="false"
+                                                    onClick={refreshPage}
+                                                    target="_blank"
+                                                >
+                                                <p className="gr-text-8 bgColorblue text-white mb-0 py-2">
+                                                    Soumettre les évaluations
+                                                </p>
+                                                </a>
+                                            </div>
+                                            <div className='col-lg-4 col-md-4'></div>
                                         </div>
-                                         {/* Partie annuelle */}
-                                         <div className='mt-5'>
-                                            <h5 className='text-center'>
-                                                <b>
-                                                    Information financière sur les 4 dernières années
-                                                </b>
-                                            </h5>
-                                        </div>
-                                        <Table
-                                            aria-label="Example table with static content"
-                                            css={{
-                                                height: "auto",
-                                                minWidth: "100%",
-                                            }}
-                                        >
-                                                <Table.Header>
-                                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 px-2 ">Période</p></Table.Column>
-                                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">CA mensuel</p></Table.Column>
-                                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Charges mensuelles</p></Table.Column>
-                                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Résultat net Mensuel(%CA)</p></Table.Column>
-                                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nombre moyen de transactions mensuelles financières (bancaires)</p></Table.Column>
-                                                </Table.Header>
-                                                {oneAnnualFinancialInformation?.map((data, index)=>(
-                                                <Table.Body key={index}>
-                                                    <Table.Row >                       
-                                                        <Table.Cell ><p className=" py-0 "> N-1 </p></Table.Cell>
-                                                        <Table.Cell >
-                                                            {data?.periodOneCa? (<p className=" py-0 ">{data?.periodOneCa}</p>):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </Table.Cell>
-                                                        <Table.Cell >
-                                                            {data?.periodOneCa? (<p className="py-0 ">{data?.periodOneCharges}</p>):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </Table.Cell>
-                                                        <Table.Cell >
-                                                            {data?.periodOneCa? (<p className="py-0 ">{data?.periodOneResultat}</p>):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </Table.Cell>
-                                                        <Table.Cell >
-                                                            {data?.periodOneCa? (<p className="py-0 ">{data?.periodOneTransactions}</p>):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </Table.Cell>
-                                                    </Table.Row >
-                                                    <Table.Row >                       
-                                                        <Table.Cell ><p className=" py-0 "> N-2 </p></Table.Cell>
-                                                        <Table.Cell >
-                                                            {data?.periodOneCa? (<p className="py-0 ">{data?.periodTwoCa}</p>):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </Table.Cell>
-                                                        <Table.Cell >
-                                                            {data?.periodOneCa? (<p className="py-0 ">{data?.periodTwoCharges}</p>):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </Table.Cell>
-                                                        <Table.Cell >
-                                                            {data?.periodOneCa? (<p className="py-0">{data?.periodTwoResultat}</p>):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </Table.Cell>
-                                                        <Table.Cell >
-                                                            {data?.periodOneCa? (<p className="py-0">{data?.periodTwoTransactions}</p>):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </Table.Cell>
-                                                    </Table.Row >
-                                                    <Table.Row >                       
-                                                        <Table.Cell ><p className=" py-0 "> N-3 </p></Table.Cell>
-                                                        <Table.Cell >
-                                                            {data?.periodOneCa? (<p className="py-0">{data?.periodThreeCa}</p>):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </Table.Cell>
-                                                        <Table.Cell >
-                                                            {data?.periodOneCa? (<p className="py-0">{data?.periodThreeCharges}</p>):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </Table.Cell>
-                                                        <Table.Cell >
-                                                            {data?.periodOneCa? (<p className="py-0">{data?.periodThreeResultat}</p>):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </Table.Cell>
-                                                        <Table.Cell >
-                                                            {data?.periodOneCa? (<p className="py-0">{data?.periodThreeTransactions}</p>):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </Table.Cell>
-                                                    </Table.Row >
-                                                    <Table.Row >                       
-                                                        <Table.Cell ><p className=" py-0 "> N-4 </p></Table.Cell>
-                                                        <Table.Cell >
-                                                            {data?.periodOneCa? (<p className="py-0">{data?.periodFourCa}</p>):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </Table.Cell>
-                                                        <Table.Cell >
-                                                            {data?.periodOneCa? (<p className="py-0">{data?.periodFourCharges}</p>):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </Table.Cell>
-                                                        <Table.Cell >
-                                                            {data?.periodOneCa? (<p className="py-0">{data?.periodFourResultat}</p>):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </Table.Cell>
-                                                        <Table.Cell >
-                                                            {data?.periodOneCa? (<p className="py-0">{data?.periodFourTransactions}</p>):(<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </Table.Cell>
-                                                    </Table.Row >
-                                                </Table.Body> 
-                                            ))}  
-                                        </Table>
-                                        {/* Fin partie annuelle */}
-                                        
                                     </>
                                 ):("")}
+                                {/* ******Fin Autre information financière**** */}
+
 
                                 {/* Informations sur les transactions */}
                                 {etape===10 ? (
@@ -2934,6 +4057,39 @@ const ValidEntreprise = () => {
                                                 </b>
                                             </h5>
                                         </div>
+                                        {oneMonthlyFinancialTransaction?.map((data, index)=>(
+                                            <div className='row'>
+                                                <div className="col-lg-4 col-md-4"></div>
+                                                <form onSubmit={validKycFinancialTransaction} className="text-center col-lg-4 col-md-4">
+                                                    <label className="mx-2  mb-2" htmlFor='validSignature'>
+                                                        Approuvez-vous la réponse ?
+                                                    </label><br/>
+                                                    <label>{data?.validFinancialTransaction==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+                                                    
+                                                    <div className="input-group flex-nowrap ">
+                                                        <select 
+                                                            className="form-control gr-text-11 border mt-3"
+                                                            id="validSignature"
+                                                            required
+                                                            defaultValue={validFinancialTransaction} 
+                                                            onChange={(event)=>setValidFinancialTransaction(event.target.value)}
+                                                        >
+                                                            <option defaultValue="">Choisissez une option</option>
+                                                            <optgroup className='single-cryptocurrency-box'>
+                                                                <option  value="true">Oui</option>
+                                                                <option  value="false">Non</option>
+                                                            </optgroup>
+                                                        </select>
+                                                        <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
+                                                            <button type='submit' onClick={()=>setFinancialTransactionId(data?.id)}  disabled={isLoggingIn}>Envoyer</button>
+                                                        </span>
+                                                    </div>
+                                                    
+                                                    
+                                                </form>
+                                                <div className="col-lg-4 col-md-4"></div>
+                                            </div>
+                                        ))}
                                         <Table
                                             aria-label="Example table with static content"
                                             css={{
@@ -3078,6 +4234,37 @@ const ValidEntreprise = () => {
                                                 </b>
                                             </h5>
                                         </div>
+                                        {oneAnnualFinancialTransaction?.map((data, index)=>(
+                                            <div className='row'>
+                                                <div className="col-lg-4 col-md-4"></div>
+                                                <form onSubmit={validKycFinancialTransaction} className="text-center col-lg-4 col-md-4">
+                                                    <label className="mx-2  mb-2" htmlFor='validSignature'>
+                                                        Approuvez-vous la réponse ?
+                                                    </label><br/>
+                                                    <label>{data?.validFinancialTransaction==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+                                                    
+                                                    <div className="input-group flex-nowrap ">
+                                                        <select 
+                                                            className="form-control gr-text-11 border mt-3"
+                                                            id="validSignature"
+                                                            required
+                                                            defaultValue={validFinancialTransaction} 
+                                                            onChange={(event)=>setValidFinancialTransaction(event.target.value)}
+                                                        >
+                                                            <option defaultValue="">Choisissez une option</option>
+                                                            <optgroup className='single-cryptocurrency-box'>
+                                                                <option  value="true">Oui</option>
+                                                                <option  value="false">Non</option>
+                                                            </optgroup>
+                                                        </select>
+                                                        <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
+                                                            <button type='submit' onClick={()=>setFinancialTransactionId(data?.id)}  disabled={isLoggingIn}>Envoyer</button>
+                                                        </span>
+                                                    </div>
+                                                </form>
+                                                <div className="col-lg-4 col-md-4"></div>
+                                            </div>
+                                        ))}
                                         <Table
                                             aria-label="Example table with static content"
                                             css={{
@@ -3269,478 +4456,928 @@ const ValidEntreprise = () => {
 
                                         </div>
                                         {/* Fin partie des monnnaies et des pays les plus utilisés */}
+                                        
 
+                                        {/* Le bouton qui permettre d'actualiser la page */}
+                                        <div className='row'>
+                                            <div className='col-lg-4 col-md-4'></div>
+                                                
+                                            <div className="hero-btn col-lg-4 col-md-4'  text-center my-3">
+                                                <a
+                                                    className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                    role="button"
+                                                    data-toggle="dropdown"
+                                                    aria-haspopup="true"
+                                                    aria-expanded="false"
+                                                    onClick={refreshPage}
+                                                    target="_blank"
+                                                >
+                                                <p className="gr-text-8 bgColorblue text-white mb-0 py-2">
+                                                    Soumettre les évaluations
+                                                </p>
+                                                </a>
+                                            </div>
+                                            <div className='col-lg-4 col-md-4'></div>
+                                        </div>
                                     </>
                                 ):("")}
 
                                 {/* Les documents legaux */}
                                 {etape===11 ? (
                                     <>
+                                        <form onSubmit={validKycLegalDocument}>
+                                            <div className='my-5'>
+                                                <h3 className='text-center'>Documents légaux de l'entreprise</h3>
+                                            </div>
+
+                                            
+                                            {/* Extrait de registre de commerce && le DFE  */}
+                                            <div className='mt-5 mb-3'>
+                                                <h5 className='text-center'>
+                                                    <b>
+                                                        Extrait de registre de commerce && le DFE 
+                                                    </b>
+                                                </h5>
+                                            </div>
+
+                                            {/* Extrait de registre de commerce */}
+                                            <div className=" row col-lg-12 col-md-12 mx-5 justify-content-between">
+                                                <div className='col-lg-6 col-md-6 text-center'>
+                                                    <p className='text-center'>Extrait de registre de commerce</p>
+                                                    
+                                                    {/* Partie évaluation */}
+                                                    <div className='row mb-3'>
+                                                        <div className='col-lg-3 col-md-3'></div>
+                                                        <div className='col-lg-6 col-md-6'>
+                                                            <label className="mx-2  mb-2" htmlFor='validRegister'>
+                                                                Approuvez-vous ce fichier ?
+                                                            </label><br/>
+                                                            <label>{oneLegalDocumentByKycId?.validRegister==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+                                                            <div className="input-group flex-nowrap">
+                                                                <select 
+                                                                    className="form-control gr-text-11 border mt-3"
+                                                                    id="validRegister"
+                                                                    required
+                                                                    defaultValue={validRegister} 
+                                                                    onChange={(event)=>setValidRegister(event.target.value)}
+                                                                >
+                                                                    <option defaultValue="">Choisissez une option</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                        <option  value="true">Oui</option>
+                                                                        <option  value="false">Non</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div className='col-lg-3 col-md-3'></div>
+                                                    </div>
+                                                    {/* Fin Partie évaluation */}
+
+                                                                    
+                                                    {/* Si le document est prise en photo */}
+                                                    {oneLegalDocumentByKycId?.registerPhoto ? 
+                                                        <img src={oneLegalDocumentByKycId?.registerPhoto} className="" width={'400'} height={'400'} alt="Not"/> :(
+                                                            // Sinon
+                                                            <>
+                                                                {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
+                                                                {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.frontIdentityFile}`) ? (
+                                                                    <>
+
+                                                                        <div className="hero-btn  text-center ">
+                                                                        <a
+                                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                            role="button"
+                                                                            oneLegalDocumentByKycId-toggle="dropdown"
+                                                                            aria-haspopup="true"
+                                                                            aria-expanded="false"
+                                                                            href={`${API_URL}/${oneLegalDocumentByKycId?.registerFile}`} 
+                                                                            // download
+                                                                            // onClick={handleShow}
+                                                                            target="_blank"
+                                                                        >
+                                                                        <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                            <Icon icon="bx:show-alt" width="50" />
+                                                                            Veuillez cliquer ici pour voir le fichier
+                                                                        </p>
+                                                                        </a>
+                                                                        </div>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        {oneLegalDocumentByKycId?.registerFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.registerFile}`} className="" width={'400'} height={'400'} alt="Recto"/> : "Pas de fichier"}
+                                                                    </>
+                                                                )}
+                                                            </>
+                                                        )
+                                                    } 
+                                                </div>
+
+                                                {/* Le DFE */}
+                                                <div className='col-lg-6 col-md-6 text-center'>
+                                                    <p className='text-center'>Le DFE</p>
+
+                                                    {/* Partie évaluation */}
+                                                    <div className='row mb-3'>
+                                                        <div className='col-lg-3 col-md-3'></div>
+                                                        <div className='col-lg-6 col-md-6'>
+                                                            <label className="mx-2  mb-2" htmlFor='validDfe'>
+                                                                Approuvez-vous ce fichier ?
+                                                            </label><br/>
+                                                            <label>{oneLegalDocumentByKycId?.validDfe==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+                                                            <div className="input-group flex-nowrap">
+                                                                <select 
+                                                                    className="form-control gr-text-11 border mt-3"
+                                                                    id="validDfe"
+                                                                    required
+                                                                    defaultValue={validDfe} 
+                                                                    onChange={(event)=>setValidDfe(event.target.value)}
+                                                                >
+                                                                    <option defaultValue="">Choisissez une option</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                        <option  value="true">Oui</option>
+                                                                        <option  value="false">Non</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div className='col-lg-3 col-md-3'></div>
+                                                    </div>
+                                                    {/* Fin Partie évaluation */}
+
+                                                    {/* Si le document est prise en photo */}
+                                                    {oneLegalDocumentByKycId?.dfePhoto? 
+                                                        <img src={oneLegalDocumentByKycId?.dfePhoto} className="" width={'400'} height={'400'} alt="Recto"/> :(
+                                                            // Sinon
+                                                            <>
+                                                                {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
+                                                                {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.dfeFile}`) ? (
+                                                                    <>
+                                                                        <div className="hero-btn  text-center ">
+                                                                        <a
+                                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                            role="button"
+                                                                            oneLegalDocumentByKycId-toggle="dropdown"
+                                                                            aria-haspopup="true"
+                                                                            aria-expanded="false"
+                                                                            href={`${API_URL}/${oneLegalDocumentByKycId?.dfeFile}`}
+                                                                            target="_blank"
+                                                                        >
+                                                                        <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                            <Icon icon="bx:show-alt" width="50" />
+                                                                            Veuillez cliquer ici pour voir le fichier
+                                                                        </p>
+                                                                        </a>
+                                                                        </div>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        {oneLegalDocumentByKycId?.dfeFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.dfeFile}`} width={'400'} height={'400'} alt="Verso"/> : "Pas de verso de justificatif d'identité"}
+                                                                    </>
+                                                                )}
+                                                            </>
+                                                        )
+                                                    }
+                                                </div>
+                                            </div>
+                                            {/*Fin Extrait de registre de commerce && DFE */}
+
+
+                                            {/*Copie des statuts && Délégation de pouvoirs*/}
+                                            <div className='mt-5 mb-3'>
+                                                <h5 className='text-center'>
+                                                    <b>
+                                                        Copie des statuts && Délégation de pouvoirs
+                                                    </b>
+                                                </h5>
+                                            </div>
+
+                                            {/* Copie des statuts */}
+                                            <div className=" row col-lg-12 col-md-12 mx-5 justify-content-between">
+                                                <div className='col-lg-6 col-md-6 text-center'>
+                                                    <p className='text-center'>Copie des statuts</p>
+
+                                                    {/* Partie évaluation */}
+                                                    <div className='row mb-3'>
+                                                        <div className='col-lg-3 col-md-3'></div>
+                                                        <div className='col-lg-6 col-md-6'>
+                                                            <label className="mx-2  mb-2" htmlFor='validCopyStatutes'>
+                                                                Approuvez-vous ce fichier ?
+                                                            </label><br/>
+                                                            <label>{oneLegalDocumentByKycId?.validCopyStatutes==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+                                                            <div className="input-group flex-nowrap">
+                                                                <select 
+                                                                    className="form-control gr-text-11 border mt-3"
+                                                                    id="validCopyStatutes"
+                                                                    required
+                                                                    defaultValue={validCopyStatutes} 
+                                                                    onChange={(event)=>setValidCopyStatutes(event.target.value)}
+                                                                >
+                                                                    <option defaultValue="">Choisissez une option</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                        <option  value="true">Oui</option>
+                                                                        <option  value="false">Non</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div className='col-lg-3 col-md-3'></div>
+                                                    </div>
+                                                    {/* Fin Partie évaluation */}
+
+                                                    {/* Si le document est prise en photo */}
+                                                    {oneLegalDocumentByKycId?.copyStatutesPhoto? 
+                                                        <img src={oneLegalDocumentByKycId?.copyStatutesPhoto} className="" width={'400'} height={'400'} /> :(
+                                                            // Sinon
+                                                            <>
+                                                                {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
+                                                                {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.copyStatutesFile}`) ? (
+                                                                    <>
+                                                                        <div className="hero-btn  text-center ">
+                                                                        <a
+                                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                            role="button"
+                                                                            oneLegalDocumentByKycId-toggle="dropdown"
+                                                                            aria-haspopup="true"
+                                                                            aria-expanded="false"
+                                                                            href={`${API_URL}/${oneLegalDocumentByKycId?.copyStatutesFile}`} 
+                                                                            // download
+                                                                            // onClick={handleShow}
+                                                                            target="_blank"
+                                                                        >
+                                                                        <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                            <Icon icon="bx:show-alt" width="50" />
+                                                                            Veuillez cliquer ici pour voir le fichier
+                                                                        </p>
+                                                                        </a>
+                                                                        </div>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        {oneLegalDocumentByKycId?.copyStatutesFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.copyStatutesFile}`} className="" width={'400'} height={'400'} alt="Recto"/> : "Pas de fichier"}
+                                                                    </>
+                                                                )}
+                                                            </>
+                                                        )
+                                                    } 
+                                                </div>
+
+                                                {/* Délégation de pouvoirs */}
+                                                <div className='col-lg-6 col-md-6 text-center'>
+                                                    <p className='text-center'>Délégation de pouvoirs</p>
+                                                    
+                                                    {/* Partie évaluation */}
+                                                    <div className='row mb-3'>
+                                                        <div className='col-lg-3 col-md-3'></div>
+                                                        <div className='col-lg-6 col-md-6'>
+                                                            <label className="mx-2  mb-2" htmlFor='validDelegationPowers'>
+                                                                Approuvez-vous ce fichier ?
+                                                            </label><br/>
+                                                            <label>{oneLegalDocumentByKycId?.validDelegationPowers==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+                                                            <div className="input-group flex-nowrap">
+                                                                <select 
+                                                                    className="form-control gr-text-11 border mt-3"
+                                                                    id="validDelegationPowers"
+                                                                    required
+                                                                    defaultValue={validDelegationPowers} 
+                                                                    onChange={(event)=>setValidDelegationPowers(event.target.value)}
+                                                                >
+                                                                    <option defaultValue="">Choisissez une option</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                        <option  value="true">Oui</option>
+                                                                        <option  value="false">Non</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div className='col-lg-3 col-md-3'></div>
+                                                    </div>
+                                                    {/* Fin Partie évaluation */}
+                                                    
+                                                    {/* Si le document est prise en photo */}
+                                                    {oneLegalDocumentByKycId?.delegationPowersPhoto? 
+                                                        <img src={oneLegalDocumentByKycId?.delegationPowersPhoto} className="" width={'400'} height={'400'}/> :(
+                                                            // Sinon
+                                                            <>
+                                                                {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
+                                                                {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.delegationPowersFile}`) ? (
+                                                                    <>
+                                                                        <div className="hero-btn  text-center ">
+                                                                        <a
+                                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                            role="button"
+                                                                            oneLegalDocumentByKycId-toggle="dropdown"
+                                                                            aria-haspopup="true"
+                                                                            aria-expanded="false"
+                                                                            href={`${API_URL}/${oneLegalDocumentByKycId?.delegationPowersFile}`}
+                                                                            target="_blank"
+                                                                        >
+                                                                        <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                            <Icon icon="bx:show-alt" width="50" />
+                                                                            Veuillez cliquer ici pour voir le fichier
+                                                                        </p>
+                                                                        </a>
+                                                                        </div>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        {oneLegalDocumentByKycId?.delegationPowersFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.delegationPowersFile}`} width={'400'} height={'400'} alt="Verso"/> : "Pas de fichier"}
+                                                                    </>
+                                                                )}
+                                                            </>
+                                                        )
+                                                    }
+                                                </div>
+                                            </div>
+                                            {/*Fin Copie des statuts && Délégation de pouvoirs */}
+                                            
+
+                                            {/*PV de nomination des dirigeants publication journal officiel && Plan de localisation géographique*/}
+                                            <div className='mt-5 mb-3'>
+                                                <h5 className='text-center'>
+                                                    <b>
+                                                        PV de nomination des dirigeants publication journal officiel && Plan de localisation géographique
+                                                    </b>
+                                                </h5>
+                                            </div>
+
+                                            {/* PV de nomination des dirigeants publication journal officiel */}
+                                            <div className=" row col-lg-12 col-md-12 mx-5 justify-content-between">
+                                                <div className='col-lg-6 col-md-6 text-center'>
+                                                    <p className='text-center'>PV de nomination des dirigeants publication journal officiel</p>
+                                                    
+                                                    {/* Partie évaluation */}
+                                                    <div className='row mb-3'>
+                                                        <div className='col-lg-3 col-md-3'></div>
+                                                        <div className='col-lg-6 col-md-6'>
+                                                            <label className="mx-2  mb-2" htmlFor='validPvAppointment'>
+                                                                Approuvez-vous ce fichier ?
+                                                            </label><br/>
+                                                            <label>{oneLegalDocumentByKycId?.validPvAppointment==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+                                                            <div className="input-group flex-nowrap">
+                                                                <select 
+                                                                    className="form-control gr-text-11 border mt-3"
+                                                                    id="validPvAppointment"
+                                                                    required
+                                                                    defaultValue={validPvAppointment} 
+                                                                    onChange={(event)=>setValidPvAppointment(event.target.value)}
+                                                                >
+                                                                    <option defaultValue="">Choisissez une option</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                        <option  value="true">Oui</option>
+                                                                        <option  value="false">Non</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div className='col-lg-3 col-md-3'></div>
+                                                    </div>
+                                                    {/* Fin Partie évaluation */}
+                                                    
+                                                    {/* Si le document est prise en photo */}
+                                                    {oneLegalDocumentByKycId?.pvAppointmentPhoto? 
+                                                        <img src={oneLegalDocumentByKycId?.pvAppointmentPhoto} className="" width={'400'} height={'400'} /> :(
+                                                            // Sinon
+                                                            <>
+                                                                {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
+                                                                {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.pvAppointmentFile}`) ? (
+                                                                    <>
+                                                                        <div className="hero-btn  text-center ">
+                                                                        <a
+                                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                            role="button"
+                                                                            oneLegalDocumentByKycId-toggle="dropdown"
+                                                                            aria-haspopup="true"
+                                                                            aria-expanded="false"
+                                                                            href={`${API_URL}/${oneLegalDocumentByKycId?.pvAppointmentFile}`} 
+                                                                            // download
+                                                                            // onClick={handleShow}
+                                                                            target="_blank"
+                                                                        >
+                                                                        <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                            <Icon icon="bx:show-alt" width="50" />
+                                                                            Veuillez cliquer ici pour voir le fichier
+                                                                        </p>
+                                                                        </a>
+                                                                        </div>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        {oneLegalDocumentByKycId?.pvAppointmentFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.pvAppointmentFile}`} className="" width={'400'} height={'400'} alt="Recto"/> : "Pas de fichier"}
+                                                                    </>
+                                                                )}
+                                                            </>
+                                                        )
+                                                    } 
+                                                </div>
+
+                                                {/* Plan de localisation géographique */}
+                                                <div className='col-lg-6 col-md-6 text-center'>
+                                                    <p className='text-center'>Plan de localisation géographique</p>
+
+                                                    {/* Partie évaluation */}
+                                                    <div className='row mb-3'>
+                                                        <div className='col-lg-3 col-md-3'></div>
+                                                        <div className='col-lg-6 col-md-6'>
+                                                            <label className="mx-2  mb-2" htmlFor='validMapLocation'>
+                                                                Approuvez-vous ce fichier ?
+                                                            </label><br/>
+                                                            <label>{oneLegalDocumentByKycId?.validMapLocation==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+                                                            <div className="input-group flex-nowrap">
+                                                                <select 
+                                                                    className="form-control gr-text-11 border mt-3"
+                                                                    id="validMapLocation"
+                                                                    required
+                                                                    defaultValue={validMapLocation} 
+                                                                    onChange={(event)=>setValidMapLocation(event.target.value)}
+                                                                >
+                                                                    <option defaultValue="">Choisissez une option</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                        <option  value="true">Oui</option>
+                                                                        <option  value="false">Non</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div className='col-lg-3 col-md-3'></div>
+                                                    </div>
+                                                    {/* Fin Partie évaluation */}
+
+                                                    {/* Si le document est prise en photo */}
+                                                    {oneLegalDocumentByKycId?.mapLocationPhoto? 
+                                                        <img src={oneLegalDocumentByKycId?.mapLocationPhoto} className="" width={'400'} height={'400'}/> :(
+                                                            // Sinon
+                                                            <>
+                                                                {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
+                                                                {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.mapLocationFile}`) ? (
+                                                                    <>
+                                                                        <div className="hero-btn  text-center ">
+                                                                        <a
+                                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                            role="button"
+                                                                            oneLegalDocumentByKycId-toggle="dropdown"
+                                                                            aria-haspopup="true"
+                                                                            aria-expanded="false"
+                                                                            href={`${API_URL}/${oneLegalDocumentByKycId?.mapLocationFile}`}
+                                                                            target="_blank"
+                                                                        >
+                                                                        <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                            <Icon icon="bx:show-alt" width="50" />
+                                                                            Veuillez cliquer ici pour voir le fichier
+                                                                        </p>
+                                                                        </a>
+                                                                        </div>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        {oneLegalDocumentByKycId?.mapLocationFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.mapLocationFile}`} width={'400'} height={'400'} alt="Verso"/> : "Pas de fichier"}
+                                                                    </>
+                                                                )}
+                                                            </>
+                                                        )
+                                                    }
+                                                </div>
+                                            </div>
+                                            {/*Fin PV de nomination des dirigeants publication journal officiel && Plan de localisation géographique*/}
+
+                                            
+                                            {/*Facture eau / électricité ou contrat de bail && La copie du justificatif de pouvoir conféré au signataire*/}
+                                            <div className='mt-5 mb-3'>
+                                                <h5 className='text-center'>
+                                                    <b>
+                                                        Facture eau / électricité ou contrat de bail && La copie du justificatif de pouvoir conféré au signataire
+                                                    </b>
+                                                </h5>
+                                            </div>
+
+                                            {/* Facture eau / électricité ou contrat de bail */}
+                                            <div className=" row col-lg-12 col-md-12 mx-5 justify-content-between">
+                                                <div className='col-lg-6 col-md-6 text-center'>
+                                                    <p className='text-center'>Facture eau / électricité ou contrat de bail</p>
+
+                                                    {/* Partie évaluation */}
+                                                    <div className='row mb-3'>
+                                                        <div className='col-lg-3 col-md-3'></div>
+                                                        <div className='col-lg-6 col-md-6'>
+                                                            <label className="mx-2  mb-2" htmlFor='validFacture'>
+                                                                Approuvez-vous ce fichier ?
+                                                            </label><br/>
+                                                            <label>{oneLegalDocumentByKycId?.validFacture==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+                                                            <div className="input-group flex-nowrap">
+                                                                <select 
+                                                                    className="form-control gr-text-11 border mt-3"
+                                                                    id="validFacture"
+                                                                    required
+                                                                    defaultValue={validFacture} 
+                                                                    onChange={(event)=>setValidFacture(event.target.value)}
+                                                                >
+                                                                    <option defaultValue="">Choisissez une option</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                        <option  value="true">Oui</option>
+                                                                        <option  value="false">Non</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div className='col-lg-3 col-md-3'></div>
+                                                    </div>
+                                                    {/* Fin Partie évaluation */}
+
+                                                    {/* Si le document est prise en photo */}
+                                                    {oneLegalDocumentByKycId?.facturePhoto? 
+                                                        <img src={oneLegalDocumentByKycId?.facturePhoto} className="" width={'400'} height={'400'} /> :(
+                                                            // Sinon
+                                                            <>
+                                                                {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
+                                                                {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.factureFile}`) ? (
+                                                                    <>
+                                                                        <div className="hero-btn  text-center ">
+                                                                        <a
+                                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                            role="button"
+                                                                            oneLegalDocumentByKycId-toggle="dropdown"
+                                                                            aria-haspopup="true"
+                                                                            aria-expanded="false"
+                                                                            href={`${API_URL}/${oneLegalDocumentByKycId?.factureFile}`} 
+                                                                            // download
+                                                                            // onClick={handleShow}
+                                                                            target="_blank"
+                                                                        >
+                                                                        <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                            <Icon icon="bx:show-alt" width="50" />
+                                                                            Veuillez cliquer ici pour voir le fichier
+                                                                        </p>
+                                                                        </a>
+                                                                        </div>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        {oneLegalDocumentByKycId?.factureFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.factureFile}`} className="" width={'400'} height={'400'} alt="Recto"/> : "Pas de fichier"}
+                                                                    </>
+                                                                )}
+                                                            </>
+                                                        )
+                                                    } 
+                                                </div>
+
+                                                {/* La copie du justificatif de pouvoir conféré au signataire */}
+                                                <div className='col-lg-6 col-md-6 text-center'>
+                                                    <p className='text-center'>La copie du justificatif de pouvoir conféré au signataire</p>
+                                                    
+                                                    {/* Partie évaluation */}
+                                                    <div className='row mb-3'>
+                                                        <div className='col-lg-3 col-md-3'></div>
+                                                        <div className='col-lg-6 col-md-6'>
+                                                            <label className="mx-2  mb-2" htmlFor='validProofPower'>
+                                                                Approuvez-vous ce fichier ?
+                                                            </label><br/>
+                                                            <label>{oneLegalDocumentByKycId?.validProofPower==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+                                                            <div className="input-group flex-nowrap">
+                                                                <select 
+                                                                    className="form-control gr-text-11 border mt-3"
+                                                                    id="validProofPower"
+                                                                    required
+                                                                    defaultValue={validProofPower} 
+                                                                    onChange={(event)=>setValidProofPower(event.target.value)}
+                                                                >
+                                                                    <option defaultValue="">Choisissez une option</option>
+                                                                    <optgroup className='single-cryptocurrency-box'>
+                                                                        <option  value="true">Oui</option>
+                                                                        <option  value="false">Non</option>
+                                                                    </optgroup>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div className='col-lg-3 col-md-3'></div>
+                                                    </div>
+                                                    {/* Fin Partie évaluation */}
+                                                    
+                                                    {/* Si le document est prise en photo */}
+                                                    {oneLegalDocumentByKycId?.proofPowerPhoto? 
+                                                        <img src={oneLegalDocumentByKycId?.proofPowerPhoto} className="" width={'400'} height={'400'}/> :(
+                                                            // Sinon
+                                                            <>
+                                                                {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
+                                                                {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.proofPowerFile}`) ? (
+                                                                    <>
+                                                                        <div className="hero-btn  text-center ">
+                                                                        <a
+                                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                            role="button"
+                                                                            oneLegalDocumentByKycId-toggle="dropdown"
+                                                                            aria-haspopup="true"
+                                                                            aria-expanded="false"
+                                                                            href={`${API_URL}/${oneLegalDocumentByKycId?.proofPowerFile}`}
+                                                                            target="_blank"
+                                                                        >
+                                                                        <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                            <Icon icon="bx:show-alt" width="50" />
+                                                                            Veuillez cliquer ici pour voir le fichier
+                                                                        </p>
+                                                                        </a>
+                                                                        </div>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        {oneLegalDocumentByKycId?.proofPowerFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.proofPowerFile}`} width={'400'} height={'400'} alt="Verso"/> : "Pas de fichier"}
+                                                                    </>
+                                                                )}
+                                                            </>
+                                                        )
+                                                    }
+                                                </div>
+                                            </div>
+                                            {/*Fin Facture eau / électricité ou contrat de bail && La copie du justificatif de pouvoir conféré au signataire*/}
+
+                                            {/*Justificatif d'identité du signataire du bulletin de souscription */}
+                                            <div className='mt-5 mb-3'>
+                                                <h5 className='text-center'>
+                                                    <b>
+                                                        Justificatif d'identité du signataire du bulletin de souscription
+                                                    </b>
+                                                </h5>
+                                            </div>
+                                            {/* Partie évaluation */}
+                                            <div className='row mb-3 text-center'>
+                                                <div className='col-lg-3 col-md-3'></div>
+                                                <div className='col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2" htmlFor='validIdentitySignatory'>
+                                                        Approuvez-vous ce fichier ?
+                                                    </label><br/>
+                                                    <label>{oneLegalDocumentByKycId?.validIdentitySignatory==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+                                                    <div className="input-group flex-nowrap">
+                                                        <select 
+                                                            className="form-control gr-text-11 border mt-3"
+                                                            id="validIdentitySignatory"
+                                                            required
+                                                            defaultValue={validIdentitySignatory} 
+                                                            onChange={(event)=>setValidIdentitySignatory(event.target.value)}
+                                                        >
+                                                            <option defaultValue="">Choisissez une option</option>
+                                                            <optgroup className='single-cryptocurrency-box'>
+                                                                <option  value="true">Oui</option>
+                                                                <option  value="false">Non</option>
+                                                            </optgroup>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div className='col-lg-3 col-md-3'></div>
+                                            </div>
+                                            {/* Fin Partie évaluation */}
+
+                                            <div className='mt-3 text-center'>
+                                                <b>
+                                                    Date d'expiration du document d’identité
+                                                </b><br/>
+                                                {oneLegalDocumentByKycId?.expirationDate? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(oneLegalDocumentByKycId.expirationDate)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+                                            {/* Documents de justificatif d'identité */}
+                                            <div className=" row col-lg-12 col-md-12 mx-5 justify-content-between">
+                                                <div className='col-lg-6 col-md-6 text-center'>
+                                                    <p className='text-center'>Recto du justificatif d'identité du signataire du bulletin de souscription </p>
+                                                    {/* Si le document est prise en photo */}
+                                                    {oneLegalDocumentByKycId?.frontIdentityPhoto? 
+                                                        <img src={oneLegalDocumentByKycId?.frontIdentityPhoto} className="" width={'400'} height={'400'} alt="Recto"/> :(
+                                                            // Sinon
+                                                            <>
+                                                                {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
+                                                                {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.frontIdentityFile}`) ? (
+                                                                    <>
+                                                                        <div className="hero-btn  text-center ">
+                                                                        <a
+                                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                            role="button"
+                                                                            oneLegalDocumentByKycId-toggle="dropdown"
+                                                                            aria-haspopup="true"
+                                                                            aria-expanded="false"
+                                                                            href={`${API_URL}/${oneLegalDocumentByKycId?.frontIdentityFile}`} 
+                                                                            // download
+                                                                            // onClick={handleShow}
+                                                                            target="_blank"
+                                                                        >
+                                                                        <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                            <Icon icon="bx:show-alt" width="50" />
+                                                                            Veuillez cliquer ici pour voir le fichier
+                                                                        </p>
+                                                                        </a>
+                                                                        </div>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        {oneLegalDocumentByKycId?.frontIdentityFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.frontIdentityFile}`} className="" width={'400'} height={'400'} alt="Recto"/> : "Pas de recto de justificatif d'identité"}
+                                                                    </>
+                                                                )}
+                                                            </>
+                                                        )
+                                                    } 
+                                                </div>
+
+                                                <div className='col-lg-6 col-md-6 text-center'>
+                                                    <p className='text-center'>Verso du justificatif d'identité du signataire du bulletin de souscription</p>
+                                                    {/* Si le document est prise en photo */}
+                                                    {oneLegalDocumentByKycId?.backIdentityPhoto? 
+                                                        <img src={oneLegalDocumentByKycId?.backIdentityPhoto} className="" width={'400'} height={'400'} alt="Recto"/> :(
+                                                            // Sinon
+                                                            <>
+                                                                {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
+                                                                {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.backIdentityFile}`) ? (
+                                                                    <>
+                                                                        <div className="hero-btn  text-center ">
+                                                                        <a
+                                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                            role="button"
+                                                                            oneLegalDocumentByKycId-toggle="dropdown"
+                                                                            aria-haspopup="true"
+                                                                            aria-expanded="false"
+                                                                            href={`${API_URL}/${oneLegalDocumentByKycId?.backIdentityFile}`}
+                                                                            target="_blank"
+                                                                        >
+                                                                        <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                            <Icon icon="bx:show-alt" width="50" />
+                                                                            Veuillez cliquer ici pour voir le fichier
+                                                                        </p>
+                                                                        </a>
+                                                                        </div>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        {oneLegalDocumentByKycId?.backIdentityFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.backIdentityFile}`} width={'400'} height={'400'} alt="Verso"/> : "Pas de verso de justificatif d'identité"}
+                                                                    </>
+                                                                )}
+                                                            </>
+                                                        )
+                                                    }
+                                                </div>
+                                            </div>
+                                            {/*Fin Documents de justificatif d'identité */}
+
+                                            {/* Le bouton qui permettre d'actualiser la page */}
+                                            <div className='row my-3'>
+                                                <div className='col-lg-3 col-md-3'></div>
+                                                    <button
+                                                     type='submit'
+                                                     className="gr-text-8 hero-btn bgColorblue col-lg-6 col-md-6 text-center text-white mb-0 py-2"
+                                                     role="button"
+                                                        data-toggle="dropdown"
+                                                        aria-haspopup="true"
+                                                        aria-expanded="false"
+                                                    >
+                                                        Soumettre les évaluations
+                                                    </button>
+                                                <div className='col-lg-3 col-md-3'></div>
+                                            </div>
+                                        </form>
+
+                                    </>
+                                ):("")}
+
+
+
+
+
+
+
+
+
+                                {/* ****************************************************************************************** */}
+                                    {/* Pour le formulaire d'évaluation */}
+                                {/* ****************************************************************************************** */}
+                                {etape===12 ? (
+                                    <>
                                         <div className='my-5'>
-                                            <h3 className='text-center'>Documents légaux de l'entreprise</h3>
+                                            <h3 className='text-center'>Validation du KYC</h3>
                                         </div>
+                                        <Form role="form">
+                                            <div className='row justify-content-between'>
 
+                                                {/* Questionnaires AML */}
+                                                <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2" >
+                                                        Questionnaires AML  
+                                                    </label>
+                                                    {!oneKycForEntreprise?.validAml==1 ? (
+                                                        <p className='colorRed mx-2'><b>En cours d'évaluation</b></p>
+                                                    ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                                                </div>
+
+                                                {/* Justificatif d'identité */}
+                                                <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2" >
+                                                    Justificatif d'identité  
+                                                    </label>
+                                                    {!oneKycForEntreprise?.validIdentity==1 ? (
+                                                        <p className='colorRed mx-2'><b>En cours d'évaluation</b></p>
+                                                    ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                                                </div>
+
+                                                {/* Représentants légaux */}
+                                                <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2" >
+                                                        Représentants légaux 
+                                                    </label>
+                                                    {!oneKycForEntreprise?.validRepresentative==1 ? (
+                                                        <p className='colorRed mx-2'><b>En cours d'évaluation</b></p>
+                                                    ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                                                </div>
+
+                                                {/* Bénéficiaires effectifs */}
+                                                <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2" >
+                                                        Bénéficiaires effectifs
+                                                    </label>
+                                                    {!oneKycForEntreprise?.validBeneficiary==1 ? (
+                                                        <p className='colorRed mx-2'><b>En cours d'évaluation</b></p>
+                                                    ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                                                </div>
+                                                
+                                                {/* Structure de contrôle */}
+                                                <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2" >
+                                                        Structure de contrôle
+                                                    </label>
+                                                    {!oneKycForEntreprise?.validStructure==1 ? (
+                                                        <p className='colorRed mx-2'><b>En cours d'évaluation</b></p>
+                                                    ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                                                </div>
+
+                                                {/* Personnes politiquement exposées */}
+                                                <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2" >
+                                                        Personnes politiquement exposées  
+                                                    </label>
+                                                    {!oneKycForEntreprise?.validPoliticallyExposed==1 ? (
+                                                        <p className='colorRed mx-2'><b>En cours d'évaluation</b></p>
+                                                    ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                                                </div>
+                                                
+                                                {/* Opérations financières */}
+                                                <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2" >
+                                                        Opérations financières   
+                                                    </label>
+                                                    {!oneKycForEntreprise?.validFinancialOperation==1 ? (
+                                                        <p className='colorRed mx-2'><b>En cours d'évaluation</b></p>
+                                                    ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                                                </div>
+
+                                                {/*  Origines des fonds */}
+                                                <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2" >
+                                                        Origines des fonds   
+                                                    </label>
+                                                    {!oneKycForEntreprise?.validFundOrigin==1 ? (
+                                                        <p className='colorRed mx-2'><b>En cours d'évaluation</b></p>
+                                                    ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                                                </div>
+
+                                                 {/* Informations financières */}
+                                                 <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2" >
+                                                        Informations financières   
+                                                    </label>
+                                                    {!oneKycForEntreprise?.validFinancialInformation==1 ? (
+                                                        <p className='colorRed mx-2'><b>En cours d'évaluation</b></p>
+                                                    ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                                                </div>
+
+                                                {/* Transactions financières */}
+                                                <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2">
+                                                        Transactions financières 
+                                                    </label>
+                                                    {!oneKycForEntreprise?.validFinancialTransaction==1 ? (
+                                                        <p className='colorRed mx-2'><b>En cours d'évaluation</b></p>
+                                                    ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                                                </div>
+
+                                                {/* Documents légaux */}
+                                                <div className='form-group my-3 col-lg-6 col-md-6'>
+                                                    <label className="mx-2  mb-2">
+                                                        Documents légaux
+                                                    </label>
+                                                    {!oneKycForEntreprise?.validLegalDocument==1 ? (
+                                                        <p className='colorRed mx-2'><b>En cours d'évaluation</b></p>
+                                                    ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
+                                                </div>
+                                            </div>
                                         
-                                        {/* Extrait de registre de commerce && le DFE  */}
-                                        <div className='mt-5 mb-3'>
-                                            <h5 className='text-center'>
-                                                <b>
-                                                    Extrait de registre de commerce && le DFE 
-                                                </b>
-                                            </h5>
-                                        </div>
-
-                                         {/* Extrait de registre de commerce */}
-                                         <div className=" row col-lg-12 col-md-12 mx-5 justify-content-between">
-                                            <div className='col-lg-6 col-md-6 text-center'>
-                                                <p className='text-center'>Extrait de registre de commerce</p>
-                                                {/* Si le document est prise en photo */}
-                                                {oneLegalDocumentByKycId?.registerPhoto ? 
-                                                    <img src={oneLegalDocumentByKycId?.registerPhoto} className="" width={'400'} height={'400'} alt="Not"/> :(
-                                                        // Sinon
-                                                        <>
-                                                            {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
-                                                            {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.frontIdentityFile}`) ? (
-                                                                <>
-
-                                                                    <div className="hero-btn  text-center ">
-                                                                    <a
-                                                                        className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                                        role="button"
-                                                                        oneLegalDocumentByKycId-toggle="dropdown"
-                                                                        aria-haspopup="true"
-                                                                        aria-expanded="false"
-                                                                        href={`${API_URL}/${oneLegalDocumentByKycId?.registerFile}`} 
-                                                                        // download
-                                                                        // onClick={handleShow}
-                                                                        target="_blank"
-                                                                    >
-                                                                    <p className="gr-text-8 bgColorblue text-white mb-0">
-                                                                        <Icon icon="bx:show-alt" width="50" />
-                                                                        Veuillez cliquer ici pour voir le fichier
-                                                                    </p>
-                                                                    </a>
-                                                                    </div>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    {oneLegalDocumentByKycId?.registerFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.registerFile}`} className="" width={'400'} height={'400'} alt="Recto"/> : "Pas de fichier"}
-                                                                </>
-                                                            )}
-                                                        </>
-                                                    )
-                                                } 
+                                            <div className="form-group mb-6">
+                                                <label className="mx-2  mb-2" htmlFor='contenu'>
+                                                    Les remarques ici
+                                                </label>
+                                                <textarea
+                                                    className="form-control gr-text-11 border  bg-white"
+                                                    type="text"
+                                                    id="contenu"
+                                                    placeholder="Les remarques ici"
+                                                    defaultValue={pattern} 
+                                                    onChange={(event)=>setPattern(event.target.value)}
+                                                />
                                             </div>
 
-                                            {/* Le DFE */}
-                                            <div className='col-lg-6 col-md-6 text-center'>
-                                                <p className='text-center'>Le DFE</p>
-                                                {/* Si le document est prise en photo */}
-                                                {oneLegalDocumentByKycId?.dfePhoto? 
-                                                    <img src={oneLegalDocumentByKycId?.dfePhoto} className="" width={'400'} height={'400'} alt="Recto"/> :(
-                                                        // Sinon
-                                                        <>
-                                                            {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
-                                                            {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.dfeFile}`) ? (
-                                                                <>
-                                                                    <div className="hero-btn  text-center ">
-                                                                    <a
-                                                                        className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                                        role="button"
-                                                                        oneLegalDocumentByKycId-toggle="dropdown"
-                                                                        aria-haspopup="true"
-                                                                        aria-expanded="false"
-                                                                        href={`${API_URL}/${oneLegalDocumentByKycId?.dfeFile}`}
-                                                                        target="_blank"
-                                                                    >
-                                                                    <p className="gr-text-8 bgColorblue text-white mb-0">
-                                                                        <Icon icon="bx:show-alt" width="50" />
-                                                                        Veuillez cliquer ici pour voir le fichier
-                                                                    </p>
-                                                                    </a>
-                                                                    </div>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    {oneLegalDocumentByKycId?.dfeFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.dfeFile}`} width={'400'} height={'400'} alt="Verso"/> : "Pas de verso de justificatif d'identité"}
-                                                                </>
-                                                            )}
-                                                        </>
-                                                    )
-                                                }
-                                            </div>
-                                        </div>
-                                        {/*Fin Extrait de registre de commerce && DFE */}
-
-
-                                        {/*Copie des statuts && Délégation de pouvoirs*/}
-                                        <div className='mt-5 mb-3'>
-                                            <h5 className='text-center'>
-                                                <b>
-                                                    Copie des statuts && Délégation de pouvoirs
-                                                </b>
-                                            </h5>
-                                        </div>
-
-                                         {/* Copie des statuts */}
-                                         <div className=" row col-lg-12 col-md-12 mx-5 justify-content-between">
-                                            <div className='col-lg-6 col-md-6 text-center'>
-                                                <p className='text-center'>Copie des statuts</p>
-                                                {/* Si le document est prise en photo */}
-                                                {oneLegalDocumentByKycId?.copyStatutesPhoto? 
-                                                    <img src={oneLegalDocumentByKycId?.copyStatutesPhoto} className="" width={'400'} height={'400'} /> :(
-                                                        // Sinon
-                                                        <>
-                                                            {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
-                                                            {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.copyStatutesFile}`) ? (
-                                                                <>
-                                                                    <div className="hero-btn  text-center ">
-                                                                    <a
-                                                                        className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                                        role="button"
-                                                                        oneLegalDocumentByKycId-toggle="dropdown"
-                                                                        aria-haspopup="true"
-                                                                        aria-expanded="false"
-                                                                        href={`${API_URL}/${oneLegalDocumentByKycId?.copyStatutesFile}`} 
-                                                                        // download
-                                                                        // onClick={handleShow}
-                                                                        target="_blank"
-                                                                    >
-                                                                    <p className="gr-text-8 bgColorblue text-white mb-0">
-                                                                        <Icon icon="bx:show-alt" width="50" />
-                                                                        Veuillez cliquer ici pour voir le fichier
-                                                                    </p>
-                                                                    </a>
-                                                                    </div>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    {oneLegalDocumentByKycId?.copyStatutesFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.copyStatutesFile}`} className="" width={'400'} height={'400'} alt="Recto"/> : "Pas de fichier"}
-                                                                </>
-                                                            )}
-                                                        </>
-                                                    )
-                                                } 
-                                            </div>
-
-                                            {/* Délégation de pouvoirs */}
-                                            <div className='col-lg-6 col-md-6 text-center'>
-                                                <p className='text-center'>Délégation de pouvoirs</p>
-                                                {/* Si le document est prise en photo */}
-                                                {oneLegalDocumentByKycId?.delegationPowersPhoto? 
-                                                    <img src={oneLegalDocumentByKycId?.delegationPowersPhoto} className="" width={'400'} height={'400'}/> :(
-                                                        // Sinon
-                                                        <>
-                                                            {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
-                                                            {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.delegationPowersFile}`) ? (
-                                                                <>
-                                                                    <div className="hero-btn  text-center ">
-                                                                    <a
-                                                                        className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                                        role="button"
-                                                                        oneLegalDocumentByKycId-toggle="dropdown"
-                                                                        aria-haspopup="true"
-                                                                        aria-expanded="false"
-                                                                        href={`${API_URL}/${oneLegalDocumentByKycId?.delegationPowersFile}`}
-                                                                        target="_blank"
-                                                                    >
-                                                                    <p className="gr-text-8 bgColorblue text-white mb-0">
-                                                                        <Icon icon="bx:show-alt" width="50" />
-                                                                        Veuillez cliquer ici pour voir le fichier
-                                                                    </p>
-                                                                    </a>
-                                                                    </div>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    {oneLegalDocumentByKycId?.delegationPowersFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.delegationPowersFile}`} width={'400'} height={'400'} alt="Verso"/> : "Pas de fichier"}
-                                                                </>
-                                                            )}
-                                                        </>
-                                                    )
-                                                }
-                                            </div>
-                                        </div>
-                                        {/*Fin Copie des statuts && Délégation de pouvoirs */}
-                                        
-
-                                        {/*PV de nomination des dirigeants publication journal officiel && Plan de localisation géographique*/}
-                                        <div className='mt-5 mb-3'>
-                                            <h5 className='text-center'>
-                                                <b>
-                                                    PV de nomination des dirigeants publication journal officiel && Plan de localisation géographique
-                                                </b>
-                                            </h5>
-                                        </div>
-
-                                         {/* PV de nomination des dirigeants publication journal officiel */}
-                                         <div className=" row col-lg-12 col-md-12 mx-5 justify-content-between">
-                                            <div className='col-lg-6 col-md-6 text-center'>
-                                                <p className='text-center'>PV de nomination des dirigeants publication journal officiel</p>
-                                                {/* Si le document est prise en photo */}
-                                                {oneLegalDocumentByKycId?.pvAppointmentPhoto? 
-                                                    <img src={oneLegalDocumentByKycId?.pvAppointmentPhoto} className="" width={'400'} height={'400'} /> :(
-                                                        // Sinon
-                                                        <>
-                                                            {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
-                                                            {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.pvAppointmentFile}`) ? (
-                                                                <>
-                                                                    <div className="hero-btn  text-center ">
-                                                                    <a
-                                                                        className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                                        role="button"
-                                                                        oneLegalDocumentByKycId-toggle="dropdown"
-                                                                        aria-haspopup="true"
-                                                                        aria-expanded="false"
-                                                                        href={`${API_URL}/${oneLegalDocumentByKycId?.pvAppointmentFile}`} 
-                                                                        // download
-                                                                        // onClick={handleShow}
-                                                                        target="_blank"
-                                                                    >
-                                                                    <p className="gr-text-8 bgColorblue text-white mb-0">
-                                                                        <Icon icon="bx:show-alt" width="50" />
-                                                                        Veuillez cliquer ici pour voir le fichier
-                                                                    </p>
-                                                                    </a>
-                                                                    </div>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    {oneLegalDocumentByKycId?.pvAppointmentFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.pvAppointmentFile}`} className="" width={'400'} height={'400'} alt="Recto"/> : "Pas de fichier"}
-                                                                </>
-                                                            )}
-                                                        </>
-                                                    )
-                                                } 
-                                            </div>
-
-                                            {/* Plan de localisation géographique */}
-                                            <div className='col-lg-6 col-md-6 text-center'>
-                                                <p className='text-center'>Plan de localisation géographique</p>
-                                                {/* Si le document est prise en photo */}
-                                                {oneLegalDocumentByKycId?.mapLocationPhoto? 
-                                                    <img src={oneLegalDocumentByKycId?.mapLocationPhoto} className="" width={'400'} height={'400'}/> :(
-                                                        // Sinon
-                                                        <>
-                                                            {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
-                                                            {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.mapLocationFile}`) ? (
-                                                                <>
-                                                                    <div className="hero-btn  text-center ">
-                                                                    <a
-                                                                        className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                                        role="button"
-                                                                        oneLegalDocumentByKycId-toggle="dropdown"
-                                                                        aria-haspopup="true"
-                                                                        aria-expanded="false"
-                                                                        href={`${API_URL}/${oneLegalDocumentByKycId?.mapLocationFile}`}
-                                                                        target="_blank"
-                                                                    >
-                                                                    <p className="gr-text-8 bgColorblue text-white mb-0">
-                                                                        <Icon icon="bx:show-alt" width="50" />
-                                                                        Veuillez cliquer ici pour voir le fichier
-                                                                    </p>
-                                                                    </a>
-                                                                    </div>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    {oneLegalDocumentByKycId?.mapLocationFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.mapLocationFile}`} width={'400'} height={'400'} alt="Verso"/> : "Pas de fichier"}
-                                                                </>
-                                                            )}
-                                                        </>
-                                                    )
-                                                }
-                                            </div>
-                                        </div>
-                                        {/*Fin PV de nomination des dirigeants publication journal officiel && Plan de localisation géographique*/}
-
-                                        
-                                        {/*Facture eau / électricité ou contrat de bail && La copie du justificatif de pouvoir conféré au signataire*/}
-                                        <div className='mt-5 mb-3'>
-                                            <h5 className='text-center'>
-                                                <b>
-                                                    Facture eau / électricité ou contrat de bail && La copie du justificatif de pouvoir conféré au signataire
-                                                </b>
-                                            </h5>
-                                        </div>
-
-                                         {/* Facture eau / électricité ou contrat de bail */}
-                                         <div className=" row col-lg-12 col-md-12 mx-5 justify-content-between">
-                                            <div className='col-lg-6 col-md-6 text-center'>
-                                                <p className='text-center'>Facture eau / électricité ou contrat de bail</p>
-                                                {/* Si le document est prise en photo */}
-                                                {oneLegalDocumentByKycId?.facturePhoto? 
-                                                    <img src={oneLegalDocumentByKycId?.facturePhoto} className="" width={'400'} height={'400'} /> :(
-                                                        // Sinon
-                                                        <>
-                                                            {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
-                                                            {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.factureFile}`) ? (
-                                                                <>
-                                                                    <div className="hero-btn  text-center ">
-                                                                    <a
-                                                                        className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                                        role="button"
-                                                                        oneLegalDocumentByKycId-toggle="dropdown"
-                                                                        aria-haspopup="true"
-                                                                        aria-expanded="false"
-                                                                        href={`${API_URL}/${oneLegalDocumentByKycId?.factureFile}`} 
-                                                                        // download
-                                                                        // onClick={handleShow}
-                                                                        target="_blank"
-                                                                    >
-                                                                    <p className="gr-text-8 bgColorblue text-white mb-0">
-                                                                        <Icon icon="bx:show-alt" width="50" />
-                                                                        Veuillez cliquer ici pour voir le fichier
-                                                                    </p>
-                                                                    </a>
-                                                                    </div>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    {oneLegalDocumentByKycId?.factureFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.factureFile}`} className="" width={'400'} height={'400'} alt="Recto"/> : "Pas de fichier"}
-                                                                </>
-                                                            )}
-                                                        </>
-                                                    )
-                                                } 
-                                            </div>
-
-                                            {/* La copie du justificatif de pouvoir conféré au signataire */}
-                                            <div className='col-lg-6 col-md-6 text-center'>
-                                                <p className='text-center'>La copie du justificatif de pouvoir conféré au signataire</p>
-                                                {/* Si le document est prise en photo */}
-                                                {oneLegalDocumentByKycId?.proofPowerPhoto? 
-                                                    <img src={oneLegalDocumentByKycId?.proofPowerPhoto} className="" width={'400'} height={'400'}/> :(
-                                                        // Sinon
-                                                        <>
-                                                            {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
-                                                            {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.proofPowerFile}`) ? (
-                                                                <>
-                                                                    <div className="hero-btn  text-center ">
-                                                                    <a
-                                                                        className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                                        role="button"
-                                                                        oneLegalDocumentByKycId-toggle="dropdown"
-                                                                        aria-haspopup="true"
-                                                                        aria-expanded="false"
-                                                                        href={`${API_URL}/${oneLegalDocumentByKycId?.proofPowerFile}`}
-                                                                        target="_blank"
-                                                                    >
-                                                                    <p className="gr-text-8 bgColorblue text-white mb-0">
-                                                                        <Icon icon="bx:show-alt" width="50" />
-                                                                        Veuillez cliquer ici pour voir le fichier
-                                                                    </p>
-                                                                    </a>
-                                                                    </div>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    {oneLegalDocumentByKycId?.proofPowerFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.proofPowerFile}`} width={'400'} height={'400'} alt="Verso"/> : "Pas de fichier"}
-                                                                </>
-                                                            )}
-                                                        </>
-                                                    )
-                                                }
-                                            </div>
-                                        </div>
-                                        {/*Fin Facture eau / électricité ou contrat de bail && La copie du justificatif de pouvoir conféré au signataire*/}
-
-                                        {/*Justificatif d'identité du signataire du bulletin de souscription */}
-                                        <div className='mt-5 mb-3'>
-                                            <h5 className='text-center'>
-                                                <b>
-                                                    Justificatif d'identité du signataire du bulletin de souscription
-                                                </b>
-                                            </h5>
-                                        </div>
-                                        <div className='mt-3 text-center'>
-                                            <b>
-                                                Date d'expiration du document d’identité
-                                            </b><br/>
-                                            {oneLegalDocumentByKycId?.expirationDate? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(oneLegalDocumentByKycId.expirationDate)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                        </div>
-                                         {/* Documents de justificatif d'identité */}
-                                         <div className=" row col-lg-12 col-md-12 mx-5 justify-content-between">
-                                            <div className='col-lg-6 col-md-6 text-center'>
-                                                <p className='text-center'>Recto du justificatif d'identité du signataire du bulletin de souscription </p>
-                                                {/* Si le document est prise en photo */}
-                                                {oneLegalDocumentByKycId?.frontIdentityPhoto? 
-                                                    <img src={oneLegalDocumentByKycId?.frontIdentityPhoto} className="" width={'400'} height={'400'} alt="Recto"/> :(
-                                                        // Sinon
-                                                        <>
-                                                            {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
-                                                            {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.frontIdentityFile}`) ? (
-                                                                <>
-                                                                    <div className="hero-btn  text-center ">
-                                                                    <a
-                                                                        className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                                        role="button"
-                                                                        oneLegalDocumentByKycId-toggle="dropdown"
-                                                                        aria-haspopup="true"
-                                                                        aria-expanded="false"
-                                                                        href={`${API_URL}/${oneLegalDocumentByKycId?.frontIdentityFile}`} 
-                                                                        // download
-                                                                        // onClick={handleShow}
-                                                                        target="_blank"
-                                                                    >
-                                                                    <p className="gr-text-8 bgColorblue text-white mb-0">
-                                                                        <Icon icon="bx:show-alt" width="50" />
-                                                                        Veuillez cliquer ici pour voir le fichier
-                                                                    </p>
-                                                                    </a>
-                                                                    </div>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    {oneLegalDocumentByKycId?.frontIdentityFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.frontIdentityFile}`} className="" width={'400'} height={'400'} alt="Recto"/> : "Pas de recto de justificatif d'identité"}
-                                                                </>
-                                                            )}
-                                                        </>
-                                                    )
-                                                } 
-                                            </div>
-
-                                            <div className='col-lg-6 col-md-6 text-center'>
-                                                <p className='text-center'>Verso du justificatif d'identité du signataire du bulletin de souscription</p>
-                                                {/* Si le document est prise en photo */}
-                                                {oneLegalDocumentByKycId?.backIdentityPhoto? 
-                                                    <img src={oneLegalDocumentByKycId?.backIdentityPhoto} className="" width={'400'} height={'400'} alt="Recto"/> :(
-                                                        // Sinon
-                                                        <>
-                                                            {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
-                                                            {isPdfLink(`${API_URL}/${oneLegalDocumentByKycId?.backIdentityFile}`) ? (
-                                                                <>
-                                                                    <div className="hero-btn  text-center ">
-                                                                    <a
-                                                                        className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                                        role="button"
-                                                                        oneLegalDocumentByKycId-toggle="dropdown"
-                                                                        aria-haspopup="true"
-                                                                        aria-expanded="false"
-                                                                        href={`${API_URL}/${oneLegalDocumentByKycId?.backIdentityFile}`}
-                                                                        target="_blank"
-                                                                    >
-                                                                    <p className="gr-text-8 bgColorblue text-white mb-0">
-                                                                        <Icon icon="bx:show-alt" width="50" />
-                                                                        Veuillez cliquer ici pour voir le fichier
-                                                                    </p>
-                                                                    </a>
-                                                                    </div>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    {oneLegalDocumentByKycId?.backIdentityFile? <img src={`${API_URL}/${oneLegalDocumentByKycId?.backIdentityFile}`} width={'400'} height={'400'} alt="Verso"/> : "Pas de verso de justificatif d'identité"}
-                                                                </>
-                                                            )}
-                                                        </>
-                                                    )
-                                                }
-                                            </div>
-                                        </div>
-                                        {/*Fin Documents de justificatif d'identité */}
-
-
-
+                                            <Button className='mt-3'  type='button'  color="success" onClick={validKycBusiness}  disabled={isLoggingIn}>
+                                                Envoyer
+                                            </Button>
+                                        </Form>
                                     </>
                                 ):("")}
                             </div>
@@ -3751,363 +5388,6 @@ const ValidEntreprise = () => {
                 </div>
             </div>
         </div>
-
-
-
-
-         {/* ********************************************************************************** */}
-            {/* MODAL DE LA VALIDATION DES DIFFERENTES PARTIES DE KYC'*/}
-        {/* ********************************************************************************** */}
-        <Modal show={showEvaluer} className="mt-15" onHide={handleCloseEvaluer}>
-            <Modal.Header closeButton className='bgColorGreen'>
-                <Modal.Title className="text-white" >Validation de KYC</Modal.Title>                
-            </Modal.Header>
-                <Form role="form">
-                    <Modal.Body>
-                        <div className='row justify-content-between'>
-                            {/* Les questionnaires */}
-                            <div className='form-group my-3 col-lg-6 col-md-6'>
-                                <label className="mx-2  mb-2" htmlFor='validQuiz'>
-                                    Les questionnaires 
-                                </label>
-                                {!oneKycForEntreprise?.validQuiz==1 ? (
-                                    <select 
-                                        className="form-control"
-                                        id="validQuiz"
-                                        required
-                                        defaultValue={validQuiz} 
-                                        onChange={(event)=>setValidQuiz(event.target.value)}
-                                    >
-                                        <option defaultValue="">Choisissez une option</option>
-                                        <optgroup className='single-cryptocurrency-box'>
-                                            <option  value="true">Valider</option>
-                                            <option  value="false">Non valider</option>
-                                        </optgroup>
-                                    </select>
-                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
-                            </div>
-
-                            {/* Les documents légaux */}
-                            <div className='form-group my-3 col-lg-6 col-md-6'>
-                                <label className="mx-2  mb-2" htmlFor='validLegalDocuments'>
-                                    Les documents légaux
-                                </label>
-                                {!oneKycForEntreprise?.validLegalDocuments==1 ? (
-                                    <select 
-                                        className="form-control"
-                                        id="validLegalDocuments"
-                                        required
-                                        defaultValue={validLegalDocuments} 
-                                        onChange={(event)=>setValidLegalDocuments(event.target.value)}
-                                    >
-                                        <option defaultValue="">Choisissez une option</option>
-                                        <optgroup className='single-cryptocurrency-box'>
-                                            <option  value="true">Valider</option>
-                                            <option  value="false">Non valider</option>
-                                        </optgroup>
-                                    </select>
-                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
-                            </div>
-
-                            {/* Justificatif d'identité */}
-                            <div className='form-group my-3 col-lg-6 col-md-6'>
-                                <label className="mx-2  mb-2" htmlFor='validIdentity'>
-                                    Justificatif d'identité
-                                </label>
-                                {!oneKycForEntreprise?.validIdentity==1 ? (
-                                    <select 
-                                        className="form-control"
-                                        id="validIdentity"
-                                        required
-                                        defaultValue={validIdentity} 
-                                        onChange={(event)=>setValidIdentity(event.target.value)}
-                                    >
-                                        <option defaultValue="">Choisissez une option</option>
-                                        <optgroup className='single-cryptocurrency-box'>
-                                            <option  value="true">Valider</option>
-                                            <option  value="false">Non valider</option>
-                                        </optgroup>
-                                    </select>
-                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
-
-                            </div>
-
-                            {/* Justificatif de domicile */}
-                            <div className='form-group my-3 col-lg-6 col-md-6'>
-                                <label className="mx-2  mb-2" htmlFor='validResidence'>
-                                    Justificatif de domicile
-                                </label>
-                                {!oneKycForEntreprise?.validResidence==1 ? (
-                                    <select 
-                                        className="form-control"
-                                        id="validResidence"
-                                        required
-                                        defaultValue={validResidence} 
-                                        onChange={(event)=>setValidResidence(event.target.value)}
-                                    >
-                                        <option defaultValue="">Choisissez une option</option>
-                                        <optgroup className='single-cryptocurrency-box'>
-                                            <option  value="true">Valider</option>
-                                            <option  value="false">Non valider</option>
-                                        </optgroup>
-                                    </select>
-                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
-
-                            </div>
-
-                            {/* Photo de l'utilisateur */}
-                            <div className='form-group my-3 col-lg-6 col-md-6'>
-                                <label className="mx-2  mb-2" htmlFor='validPhoto'>
-                                    Photo de l'utilisateur
-                                </label>
-                                {!oneKycForEntreprise?.validPhoto==1 ? ( 
-                                    <select 
-                                        className="form-control"
-                                        id="validPhoto"
-                                        required
-                                        defaultValue={validPhoto} 
-                                        onChange={(event)=>setValidPhoto(event.target.value)}
-                                    >
-                                        <option defaultValue="">Choisissez une option</option>
-                                        <optgroup className='single-cryptocurrency-box'>
-                                            <option  value="true">Valider</option>
-                                            <option  value="false">Non valider</option>
-                                        </optgroup>
-                                    </select>
-                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
-
-                            </div>
-
-                            {/* Signature de l'utilisateur */}
-                            <div className='form-group my-3 col-lg-6 col-md-6'>
-                                <label className="mx-2  mb-2" htmlFor='validSignature'>
-                                    Signature de l'utilisateur
-                                </label>
-                                {!oneKycForEntreprise?.validSignature==1 ? (
-                                    <select 
-                                        className="form-control"
-                                        id="validSignature"
-                                        required
-                                        defaultValue={validSignature} 
-                                        onChange={(event)=>setValidSignature(event.target.value)}
-                                    >
-                                        <option defaultValue="">Choisissez une option</option>
-                                        <optgroup className='single-cryptocurrency-box'>
-                                            <option  value="true">Valider</option>
-                                            <option  value="false">Non valider</option>
-                                        </optgroup>
-                                    </select>
-                                ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)}
-
-                            </div>
-                        </div>
-                       
-                        <div className="form-group mb-6">
-                            <textarea
-                                className="form-control gr-text-11 border mt-3 bg-white"
-                                type="text"
-                                id="contenu"
-                                placeholder="Décrivez le résultat ici"
-                                defaultValue={pattern} 
-                                onChange={(event)=>setPattern(event.target.value)}
-                            />
-                        </div>
-
-
-                        
-
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button className="text-white" color="danger" onClick={handleCloseEvaluer}>
-                            Fermer
-                        </Button>
-                        <Button  type='button'  color="success" onClick={validKycParticular}  disabled={isLoggingIn}>
-                            Envoyer
-                        </Button>
-                    </Modal.Footer>
-                </Form>
-        </Modal>
-        {/* *****************************************FIN****************************************** */}
-            
-
-
-
-
-        {/* ********************************************************************************** */}
-            {/* MODAL POUR VOIR DES DIFFERENTES PARTIES DE KYC'*/}
-        {/* ********************************************************************************** */}
-        <Modal show={showInfosKyc} className="mt-15" onHide={handleCloseInfosKyc}>
-            <Modal.Header closeButton className='bgColorblue'>
-                <Modal.Title className="text-white" >Voir infos de KYC</Modal.Title>                
-            </Modal.Header>
-            {etape===1 ? (
-                <>
-                    <Modal.Body>
-                        <div className="input-group flex-nowrap">
-                            <div className='col-lg-12 col-md-12 row justify-content-between'>
-                                <div className='input-group-alternative my-3 '>
-                                1) Voulez-vous confirmer le paiement 
-                                </div>
-                            </div>
-                        </div>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button className="text-white" color="danger" onClick={handleCloseInfosKyc}>
-                            Fermer
-                        </Button>
-                    </Modal.Footer>
-                </>
-            ): ("")}
-
-            {etape===2 ? (
-                <Form role="form">
-                    <Modal.Body>
-                            <div className="input-group flex-nowrap">
-                                <div className='col-lg-12 col-md-12 row justify-content-between'>
-                                    <div className='input-group-alternative my-3 '>
-                                    1) Voulez-vous confirmer le paiement 
-                                    </div>
-                                    <div className='input-group-alternative my-3 '>
-                                        1) Voulez-vous confirmer le paiement 
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="form-group mb-6">
-                            <textarea
-                                className="form-control gr-text-11 border mt-3 bg-white"
-                                type="text"
-                                id="contenu"
-                                placeholder="Raison sociale"
-                                // defaultValue={socialRaison} 
-                                // onChange={(event)=>setSocialRaison(event.target.value)}
-                            />
-                            </div>
-
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button className="text-white" color="danger" onClick={handleCloseInfosKyc}>
-                            Fermer
-                        </Button>
-                        <Button  type='button'  color="success"  disabled={isLoggingIn}>
-                            Valider
-                        </Button>
-                    </Modal.Footer>
-                </Form>
-            ): ("")}
-
-            {etape===3 ? (
-                <Form role="form">
-                    <Modal.Body>
-                            <div className="input-group flex-nowrap">
-                                <div className='col-lg-12 col-md-12 row justify-content-between'>
-                                    <div className='input-group-alternative my-3 '>
-                                    1) Voulez-vous confirmer le paiement 
-                                    </div>
-                                    <div className='input-group-alternative my-3 '>
-                                        1) Voulez-vous confirmer le paiement 
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="form-group mb-6">
-                            <textarea
-                                className="form-control gr-text-11 border mt-3 bg-white"
-                                type="text"
-                                id="contenu"
-                                placeholder="Raison sociale"
-                                // defaultValue={socialRaison} 
-                                // onChange={(event)=>setSocialRaison(event.target.value)}
-                            />
-                            </div>
-
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button className="text-white" color="danger" onClick={handleCloseInfosKyc}>
-                            Fermer
-                        </Button>
-                        <Button  type='button'  color="success"  disabled={isLoggingIn}>
-                            Valider
-                        </Button>
-                    </Modal.Footer>
-                </Form>
-            ): ("")}
-
-            {etape===4 ? (
-                <Form role="form">
-                    <Modal.Body>
-                            <div className="input-group flex-nowrap">
-                                <div className='col-lg-12 col-md-12 row justify-content-between'>
-                                    <div className='input-group-alternative my-3 '>
-                                    1) Voulez-vous confirmer le paiement 
-                                    </div>
-                                    <div className='input-group-alternative my-3 '>
-                                        1) Voulez-vous confirmer le paiement 
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="form-group mb-6">
-                            <textarea
-                                className="form-control gr-text-11 border mt-3 bg-white"
-                                type="text"
-                                id="contenu"
-                                placeholder="Raison sociale"
-                                // defaultValue={socialRaison} 
-                                // onChange={(event)=>setSocialRaison(event.target.value)}
-                            />
-                            </div>
-
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button className="text-white" color="danger" onClick={handleCloseInfosKyc}>
-                            Fermer
-                        </Button>
-                        <Button  type='button'  color="success"  disabled={isLoggingIn}>
-                            Valider
-                        </Button>
-                    </Modal.Footer>
-                </Form>
-            ): ("")}
-
-            {etape===5 ? (
-                <Form role="form">
-                    <Modal.Body>
-                            <div className="input-group flex-nowrap">
-                                <div className='col-lg-12 col-md-12 row justify-content-between'>
-                                    <div className='input-group-alternative my-3 '>
-                                    1) Voulez-vous confirmer le paiement 
-                                    </div>
-                                    <div className='input-group-alternative my-3 '>
-                                        1) Voulez-vous confirmer le paiement 
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="form-group mb-6">
-                            <textarea
-                                className="form-control gr-text-11 border mt-3 bg-white"
-                                type="text"
-                                id="contenu"
-                                placeholder="Raison sociale"
-                                // defaultValue={socialRaison} 
-                                // onChange={(event)=>setSocialRaison(event.target.value)}
-                            />
-                            </div>
-
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button className="text-white" color="danger" onClick={handleCloseInfosKyc}>
-                            Fermer
-                        </Button>
-                        <Button  type='button'  color="success"  disabled={isLoggingIn}>
-                            Valider
-                        </Button>
-                    </Modal.Footer>
-                </Form>
-            ): ("")}
-        </Modal>
-        {/* *****************************************FIN****************************************** */}
-            
-
-
-
 
     </>
   );
