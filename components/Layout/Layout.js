@@ -44,6 +44,8 @@ const Layout = ({ children }) => {
       pathname === "/callback"|| 
       pathname === "/account/firstEdition"|| 
       pathname === "/auth/send-link-password"|| 
+      pathname === "/auth/reset-password"|| 
+
       
       pathname === "/profil/dashboard" ||
       pathname === "/profil/kyc/particulier/questionnaires-revenus-one"||
@@ -164,6 +166,7 @@ const Layout = ({ children }) => {
       pathname === "/callback"|| 
       pathname === "/profil/dashboard" || 
       pathname === "/auth/send-link-password"|| 
+      pathname === "/auth/reset-password"|| 
 
       // KYC particulier
       pathname === "/profil/kyc/particulier/questionnaires-revenus-one" ||

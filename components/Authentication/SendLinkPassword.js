@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 
 
 
-const SendLinkPassword = () => {
+const CSendLinkPassword = () => {
   const [email, setEmail] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
@@ -110,4 +110,4 @@ const SendLinkPassword = () => {
   );
 };
 
-export default SendLinkPassword;
+export default CSendLinkPassword;

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import SendLinkPassword from '../../components/Authentication/sendLinkPassword';
+import CSendLinkPassword from '../../components/Authentication/sendLinkPassword';
 
 const index = () => {
   return (
@@ -16,7 +16,7 @@ const index = () => {
           <div className='d-table-cell '>
             <div className='container '>
               <div className='row bg-green'>
-                <SendLinkPassword/>
+                <CSendLinkPassword/>
               </div>
             </div>
           </div>
