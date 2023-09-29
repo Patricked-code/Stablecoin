@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import CSendLinkPassword from '../../components/Authentication/sendLinkPassword';
+import CLinkResetPassword from '../../components/Authentication/LinkResetPassword';
 
 const index = () => {
   return (
@@ -16,7 +16,7 @@ const index = () => {
           <div className='d-table-cell '>
             <div className='container '>
               <div className='row bg-green'>
-                <CSendLinkPassword/>
+                <CLinkResetPassword/>
               </div>
             </div>
           </div>
