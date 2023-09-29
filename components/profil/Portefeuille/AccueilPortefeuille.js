@@ -158,7 +158,7 @@ const CAccueilPortefeuille = () => {
                         {/* *********************************************************** */}
                         <div className='cryptocurrency-search-box  my-5'>
                             <div className='py-10'>
-                                <h3 >Portefeuille cash <b className='colorGreen'> : 1 000 000 CFA</b></h3>
+                                <h4 >Portefeuille cash <b className='colorGreen'> : 1 000 000 CFA</b></h4>
                             </div>
                             <Table
                                 aria-label="Example table with static content"
