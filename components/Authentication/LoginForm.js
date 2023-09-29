@@ -150,9 +150,14 @@ const LoginForm = () => {
                 />
               </div> */}
               <div className='row align-items-center'>
-                <div className='col-lg-12 col-md-6 col-sm-6 lost-your-password-wrap text-center'>
+                <div className='col-lg-6 col-md-6 col-sm-6 lost-your-password-wrap text-center'>
                   Pas de compte ?  
                   <a href='/auth/enregistrer/'className='lost-your-password mx-2'>Créer un compte
+                  </a>
+                </div>
+                <div className='col-lg-6 col-md-6 col-sm-6 lost-your-password-wrap text-center'>
+                  <a href='/auth/send-link-password/'className='lost-your-password mx-2'>
+                    Mot de passe oublié
                   </a>
                 </div>
               </div>

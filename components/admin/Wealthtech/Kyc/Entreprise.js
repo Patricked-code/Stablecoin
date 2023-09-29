@@ -981,7 +981,7 @@ useEffect(async() => {
 
     // RECUPERER UNE SEULE LIGNE DE KYC DE L'ENTREPRISE
     useEffect(() => {
-        const getUserById = async (_idKycForEntreprise) => {
+        const getKycById = async (_idKycForEntreprise) => {
             const token = localStorage.getItem('tokenEnCours') //Le token récuperé
 
         try {
@@ -1019,8 +1019,6 @@ useEffect(async() => {
             // Mettre à jour verifyValidAml
             setVerifyValidOperationAndFundOrigin(areAllFieldsValidOperationAndFundOrigin);
             
-            console.log("areAllFieldsValidOperationAndFundOrigin=>",areAllFieldsValidOperationAndFundOrigin)
-
 
             setOneKycForEntreprise(data)
             
@@ -1031,7 +1029,7 @@ useEffect(async() => {
         };
     
         if (idKycForEntreprise) {
-        getUserById(idKycForEntreprise);
+        getKycById(idKycForEntreprise);
         }
     }, [idKycForEntreprise]);
    
@@ -1653,7 +1651,7 @@ useEffect(async() => {
                                         {/* Questionnaire Aml 1 */}
                                         <div>
                                             <div className='my-3 btn' onClick={() => toggleAccordion(1)}>
-                                                <h3 className='text-center'>Les questionnaires AML 1</h3>
+                                                <h3 className='text-center'>Les questionnaires AML 1 <p>Cliquez ici pour voir le contenu</p></h3>
                                             </div>
                                             {isOpen1 &&
                                                 <div className="input-group ">
@@ -1708,7 +1706,7 @@ useEffect(async() => {
                                         {/* Questionnaire Aml 2 */}
                                         <div>
                                             <div className='my-3 btn' onClick={() => toggleAccordion(2)}>
-                                                <h3 className='text-center'>Les questionnaires AML 2</h3>
+                                                <h3 className='text-center'>Les questionnaires AML 2 <p>Cliquez ici pour voir le contenu</p></h3>
                                             </div>
                                             {isOpen2 &&
                                                 <div className="input-group ">
@@ -1908,7 +1906,7 @@ useEffect(async() => {
                                          {/* Questionnaire Aml 3 */}
                                          <div>
                                             <div className='my-3 btn' onClick={() => toggleAccordion(3)}>
-                                                <h3 className='text-center'>Les questionnaires AML 3</h3>
+                                                <h3 className='text-center'>Les questionnaires AML 3 <p>Cliquez ici pour voir le contenu</p></h3>
                                             </div>
                                             {isOpen3 &&
                                                 <div className="input-group ">
@@ -1979,7 +1977,7 @@ useEffect(async() => {
                                          {/* Questionnaire Aml 4 */}
                                          <div>
                                             <div className='my-3 btn' onClick={() => toggleAccordion(4)}>
-                                                <h3 className='text-center'>Les questionnaires AML 4</h3>
+                                                <h3 className='text-center'>Les questionnaires AML 4 <p>Cliquez ici pour voir le contenu</p></h3>
                                             </div>
                                             {isOpen4 &&
                                                 <div className="input-group ">

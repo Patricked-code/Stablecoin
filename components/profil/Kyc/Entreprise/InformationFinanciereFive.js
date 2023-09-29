@@ -28,50 +28,11 @@ const CIformationFinanciereFive = () => {
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
-    const [currentKycStatut, setCurrentKycStatut] = useState();
     const [allCountry, setAllCountry] = useState();
     const [kycTransactionAnnualId, setKycTransactionAnnualId] = useState();
-
-    
-
-    // LES BONS AVEC POUR FINANCIERFOUR
-//     nationalBankIssued
-// nationalOthersIssued
-// nationalBankReceived
-// nationalOthersReceived
-// cfaUemoaBankIssued
-// cfaUemoaOthersIssued
-// cfaUemoaBankReceived
-// cfaUemoaOthersReceived
-// cfaOutsideUemoaBankIssued
-// cfaOutsideUemoaOthersIssued
-// cfaOutsideUemoaBankReceived
-// cfaOutsideUemoaOthersReceived
-// euroBankIssued
-// euroOthersIssued
-// euroBankReceived
-// euroOthersReceived
-// dollarBankIssued
-// dollarOthersIssued
-// dollarBankReceived
-// dollarOthersReceived
-// otherCurrencyBankIssued
-// otherCurrencyOthersIssued
-// otherCurrencyBankReceived
-// otherCurrencyOthersReceived
-// currencyOne
-// currencyTwo
-// currencyThree
-// countryOne
-// countryTwo
-// countryThree
+    const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
 
 
-// POUR AUTRE TABLE
-// currencyOne
-// currencyTwo
-// currencyThree
-// country
 
     // ***********LA BONNE PARTIE ***********************
 
@@ -115,6 +76,11 @@ const CIformationFinanciereFive = () => {
     const [countryThree, setCountryThree] = useState('');
 
   
+    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+        const kycStatut = localStorage.getItem('currentKycEntrepriseStatut')  
+        setCurrentKycEntrepriseStatut(kycStatut)
+    }, [currentKycEntrepriseStatut]);
 
 
 
@@ -348,11 +314,7 @@ const CIformationFinanciereFive = () => {
                     timer: 5000
                 }),
                 setTimeout(() => {
-                    if (currentKycStatut==="1") {
-                        Router.push("/profil/kyc/entreprise/resultat-kyc"); 
-                    }else{
-                        Router.push("/profil/kyc/entreprise/documents-legaux"); 
-                    }
+                    Router.push("/profil/kyc/entreprise/documents-legaux"); 
                 }, 5000)
             }
             // Fin condition 
@@ -446,7 +408,7 @@ const CIformationFinanciereFive = () => {
                     timer: 5000
                 }),
                 setTimeout(() => {
-                    if (currentKycStatut==="1") {
+                    if (currentKycEntrepriseStatut==="1") {
                         Router.push("/profil/kyc/entreprise/resultat-kyc"); 
                     }else{
                         Router.push("/profil/kyc/entreprise/documents-legaux"); 
@@ -462,8 +424,8 @@ const CIformationFinanciereFive = () => {
       // FIN
 
 
-      // RECUPERER LES DONNEES DU KYC DE FINANCEMENT TRANSACTION (MENSUELLE) DE L'ENTREPRISE CONNECTEE 
-      useEffect(async() => {
+    // RECUPERER LES DONNEES DU KYC DE FINANCEMENT TRANSACTION (MENSUELLE) DE L'ENTREPRISE CONNECTEE 
+    useEffect(async() => {
         const token = localStorage.getItem('tokenEnCours')
         
             const getKycTransactionAnnual = async () => {

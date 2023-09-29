@@ -56,6 +56,13 @@ const CQuestionnaireAmlTwo = () => {
       const [otherBankCountryDat, setOtherBankCountryDat] = useState('');
 
 
+    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+        const kycStatut = localStorage.getItem('currentKycEntrepriseStatut')  
+        setCurrentKycEntrepriseStatut(kycStatut)
+    }, [currentKycEntrepriseStatut]);
+
+
     // Fonction d'envoie des informations du questionnaire Two
     const updateQuizTwo= async (event) => {
       event.preventDefault();

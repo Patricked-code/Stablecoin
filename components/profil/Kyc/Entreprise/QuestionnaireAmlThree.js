@@ -25,6 +25,14 @@ const CQuestionnaireAmlThree = () => {
     transactionsTerrorismLinks: ''
   });
 
+
+  //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+  useEffect(() => {
+    const kycStatut = localStorage.getItem('currentKycEntrepriseStatut')  
+    setCurrentKycEntrepriseStatut(kycStatut)
+}, [currentKycEntrepriseStatut]);
+
+
   // Fonction d'envoie des informations du questionnaire Three
   const updateQuizThree= async (event) => {
     event.preventDefault();

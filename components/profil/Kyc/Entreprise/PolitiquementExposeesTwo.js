@@ -30,6 +30,8 @@ const CPolitiquementExposeesTwo = () => {
     const [kycPoliticallyExposed, setKycPoliticallyExposed] = useState();
     const [kycForEntreprise, setKycForEntreprise] = useState();
     const [allNationality, setAllNationality] = useState();
+    const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
+
     
     
     
@@ -38,6 +40,13 @@ const CPolitiquementExposeesTwo = () => {
     const [firstName, setFirstName] = useState();
     const [lastName, setLastName] = useState();
     const [nationality, setNationality] = useState();
+
+    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+        const kycStatut = localStorage.getItem('currentKycEntrepriseStatut')  
+        setCurrentKycEntrepriseStatut(kycStatut)
+        console.log("kycStatut=>",kycStatut)
+    }, [currentKycEntrepriseStatut]);
 
     // FONCTION D'AJOUT DES DONNEES DE POLITIQUEMENT EXPOSEE DANS LA BASE DE DONNEE
     const addPoliticallyExposed = async(event) => {
@@ -109,6 +118,67 @@ const CPolitiquementExposeesTwo = () => {
                             }
                         }
                     }, 5000)
+                }
+                // Fin condition 
+            
+            } catch {
+            setIsLoggingIn(false);
+        }
+        
+    }
+    // Fin 
+
+    // FONCTION D'AJOUT (MODIFIER) DES DONNEES DE POLITIQUEMENT EXPOSEE DANS LA BASE DE DONNEE
+    const updatePoliticallyExposed = async(event) => {
+        event.preventDefault();
+        setIsLoggingIn(true);
+
+        try {
+
+            const dataInfosUser = {
+                firstName:firstName,
+                lastName:lastName,
+                functions:functions,
+                nationality:nationality
+                            
+            }
+                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+                const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-politically-exposed/${currentKycEntrepriseStatut}`, {
+                method:"PUT",
+                body: JSON.stringify(dataInfosUser),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`
+                }
+                })
+                const data = await result.json();
+                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                * sinon on affiche le message de succès
+                */
+                if (data.message) {
+                setMessageError(data.message)
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+                }else{
+                   
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        html: `<p> Les modifications sauvegardées avec succès. </p>` ,
+                        showConfirmButton: false,
+                        timer: 5000
+                    })
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 5000)
+                    Router.push("/profil/kyc/entreprise/resultat-kyc");
                 }
                 // Fin condition 
             
@@ -261,9 +331,12 @@ const CPolitiquementExposeesTwo = () => {
                             htmlFor="lastName"
                             className="text-blackish-blue mb-2 colorRed"
                         >
-                            Veuillez renseigner les informations du membre n° {kycPoliticallyExposed?.length + 1}
+                            {!currentKycEntrepriseStatut || currentKycEntrepriseStatut == "undefined"? (
+                                `Veuillez renseigner les informations de la personne n° ${kycPoliticallyExposed?.length + 1}`
+                            ):("Veuillez rajouter les informations de la personne concernée")}
+                            
                         </h5>
-                        <form className='' onSubmit={addPoliticallyExposed}>
+                        <form className='' onSubmit={!currentKycEntrepriseStatut|| currentKycEntrepriseStatut == "undefined"? addPoliticallyExposed : updatePoliticallyExposed}>
                             
                             <div className="form-group mb-6 mt-3">
                                 <label
@@ -347,39 +420,47 @@ const CPolitiquementExposeesTwo = () => {
                                 </select>
                                 {/* Fin */}
                             </div>
-                            <label
-                                htmlFor="backDomicile mb-3 "
-                                className='colorRed'
-                            >
-                                NB: Vous avez ajouté {kycPoliticallyExposed?.length}/{kycForEntreprise?.numberPoliticallyExposed} personne(s)
-                            </label>
-                            <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
-                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                    <Link href='/profil/kyc/entreprise/politiquement-exposees-one/' className="align-right">
-                                        <a
-                                        className=""
-                                        >
-                                            <button className="btn btn-primary " type='button'  > Précédente </button>
-                                        </a>   
-                                    </Link>                          
-                                </div>
 
-                                {kycPoliticallyExposed?.length == kycForEntreprise?.numberPoliticallyExposed ? (
-                                    <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        <Link href='/profil/kyc/entreprise/operations-financieres-one/' className="align-right">
-                                            <a
-                                            className=""
-                                            >
-                                                <button className="btn btn-primary " type='button'  > Suivant </button>
-                                            </a>   
-                                        </Link>
+                            {/* Vérifie s'il s'agit d'une modification à apporter */}
+                            {!currentKycEntrepriseStatut || currentKycEntrepriseStatut == "undefined"?(
+                                <>
+                                    <label
+                                        htmlFor="backDomicile mb-3 "
+                                        className='colorRed'
+                                    >
+                                        NB: Vous avez ajouté {kycPoliticallyExposed?.length}/{kycForEntreprise?.numberPoliticallyExposed} personne(s)
+                                    </label>
+                                    <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                            <Link href='/profil/kyc/entreprise/politiquement-exposees-one/' className="align-right">
+                                                <a
+                                                className=""
+                                                >
+                                                    <button className="btn btn-primary " type='button'  > Précédente </button>
+                                                </a>   
+                                            </Link>                          
+                                        </div>
+
+                                        {kycPoliticallyExposed?.length == kycForEntreprise?.numberPoliticallyExposed ? (
+                                            <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                                <Link href='/profil/kyc/entreprise/operations-financieres-one/' className="align-right">
+                                                    <a
+                                                    className=""
+                                                    >
+                                                        <button className="btn btn-primary " type='button'  > Suivant </button>
+                                                    </a>   
+                                                </Link>
+                                            </div>
+                                        ) : (
+                                            <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                                <button className="btn btn-primary " type='submit'  disabled={isLoggingIn}  > Suivant </button>                        
+                                            </div>
+                                        )}
                                     </div>
-                                ) : (
-                                    <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        <button className="btn btn-primary " type='submit'  disabled={isLoggingIn}  > Suivant </button>                        
-                                    </div>
-                                )}
-                            </div>
+                                </>
+                            ):(
+                                <button className="btn btn-primary " type='submit'  disabled={isLoggingIn}>Modifier</button>
+                            )}
                         </form>       
                     </div>
                 <div className='col-lg-3 col-md-12'></div>

@@ -108,7 +108,7 @@ const [mapLocationFile, setMapLocationFile] = useState(null)
                 timer: 5000
             }),
             setTimeout(() => {
-                if (currentKycEntrepriseStatut==="1") {
+                if (currentKycEntrepriseStatut==="5") {
                     Router.push("/profil/kyc/entreprise/resultat-kyc"); 
 
                 }else{
@@ -227,7 +227,7 @@ const [mapLocationFile, setMapLocationFile] = useState(null)
                 timer: 5000
             }),
             setTimeout(() => {
-                if (currentKycEntrepriseStatut==="1") {
+                if (currentKycEntrepriseStatut==="6") {
                     Router.push("/profil/kyc/entreprise/resultat-kyc"); 
 
                 }else{
@@ -484,12 +484,31 @@ const [mapLocationFile, setMapLocationFile] = useState(null)
             </> 
         ):(
             <>
-                <div className='card my-3'>
-                    <p className=' bgColorGreen text-center text-white'>PV de nomination des dirigeants publication journal officiel est sauvegardé succès</p>
-                    <div className="form-group mb-6 mt-3  text-center">
-                        <button className="btn btn-primary " onClick={updateFieldPvAppointment}  >Modifier</button>
-                    </div> 
-                </div>
+                {/* on verifie si l'utilisateur veut reprendre soit la partie PV de nomination ou Plan de localisation géographique */}
+                {currentKycEntrepriseStatut==5 || currentKycEntrepriseStatut==6 ? (
+                    <>
+                        {/* si c'est PV de nomination on lui affiche ce bouton */}
+                        {currentKycEntrepriseStatut==5 ? (
+
+                        <div className='card my-3'>
+                            <p className=' bgColorGreen text-center text-white'>PV de nomination des dirigeants publication journal officiel est sauvegardé succès</p>
+                            <div className="form-group mb-6 mt-3  text-center">
+                                <button className="btn btn-primary " onClick={updateFieldPvAppointment}  >Modifier</button>
+                            </div> 
+                        </div>
+                        // Sinon le bouton disparaît
+                        ):("")}
+                    </>
+
+                // Sinon le bouton reste s'affiche normalement comme pour les autres partie des documents
+                ):(
+                    <div className='card my-3'>
+                        <p className=' bgColorGreen text-center text-white'>PV de nomination des dirigeants publication journal officiel est sauvegardé succès</p>
+                        <div className="form-group mb-6 mt-3  text-center">
+                            <button className="btn btn-primary " onClick={updateFieldPvAppointment}  >Modifier</button>
+                        </div> 
+                    </div>
+                )}
             </>
         )}
         {/* ************FIN FORMULAIRE DU PV************ */}
@@ -680,12 +699,31 @@ const [mapLocationFile, setMapLocationFile] = useState(null)
             </>
         ):(
             <>
-                <div className='card my-3'>
-                    <p className=' bgColorGreen text-center text-white'> Plan de localisation géographique est sauvegardé succès</p>
-                    <div className="form-group mb-6 mt-3  text-center">
-                        <button className="btn btn-primary " onClick={updateFieldMapLocation}  >Modifier</button>
-                    </div> 
-                </div>
+                {/* on verifie si l'utilisateur veut reprendre soit la partie PV de nomination ou Plan de localisation géographique */}
+                {currentKycEntrepriseStatut==5 || currentKycEntrepriseStatut==6 ? (
+                    <>
+                        {/* si c'est Plan de localisation géographique on lui affiche ce bouton */}
+                        {currentKycEntrepriseStatut==6 ? (
+
+                            <div className='card my-3'>
+                                <p className=' bgColorGreen text-center text-white'> Plan de localisation géographique est sauvegardé succès</p>
+                                <div className="form-group mb-6 mt-3  text-center">
+                                    <button className="btn btn-primary " onClick={updateFieldMapLocation}  >Modifier</button>
+                                </div> 
+                            </div>
+                        // Sinon le bouton disparaît
+                        ):("")}
+                    </>
+
+                // Sinon le bouton reste s'affiche normalement comme pour les autres partie des documents
+                ):(
+                    <div className='card my-3'>
+                        <p className=' bgColorGreen text-center text-white'> Plan de localisation géographique est sauvegardé succès</p>
+                        <div className="form-group mb-6 mt-3  text-center">
+                            <button className="btn btn-primary " onClick={updateFieldMapLocation}  >Modifier</button>
+                        </div> 
+                    </div>
+                )}
             </>
         )}
         {/* ************FIN FORMULAIRE DU PLAN LOCALISATION GEOGRAPHIQUE************ */}

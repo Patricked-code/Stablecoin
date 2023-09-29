@@ -108,7 +108,7 @@ const [delegationPowersFile, setDelegationPowersFile] = useState(null)
                 timer: 5000
             }),
             setTimeout(() => {
-                if (currentKycEntrepriseStatut==="1") {
+                if (currentKycEntrepriseStatut==="3") {
                     Router.push("/profil/kyc/entreprise/resultat-kyc"); 
 
                 }else{
@@ -228,7 +228,7 @@ const [delegationPowersFile, setDelegationPowersFile] = useState(null)
                 timer: 5000
             }),
             setTimeout(() => {
-                if (currentKycEntrepriseStatut==="1") {
+                if (currentKycEntrepriseStatut==="4") {
                     Router.push("/profil/kyc/entreprise/resultat-kyc"); 
 
                 }else{
@@ -488,12 +488,31 @@ const [delegationPowersFile, setDelegationPowersFile] = useState(null)
             </> 
         ):(
             <>
-                <div className='card'>
-                    <p className=' bgColorGreen text-center text-white'>Copie des statuts à jour est sauvegardée succès</p>
-                    <div className="form-group mb-6 mt-3  text-center">
-                        <button className="btn btn-primary " onClick={updateFieldCopyStatutes} >Modifier</button>
-                    </div> 
-                </div>
+                {/* on verifie si l'utilisateur veut reprendre soit la partie Copie des statuts ou Délégation de pouvoirs */}
+                {currentKycEntrepriseStatut==3 || currentKycEntrepriseStatut==4 ? (
+                    <>
+                        {/* si c'est Copie des statuts on lui affiche ce bouton */}
+                        {currentKycEntrepriseStatut==3 ? (
+
+                        <div className='card'>
+                            <p className=' bgColorGreen text-center text-white'>Copie des statuts à jour est sauvegardée succès</p>
+                            <div className="form-group mb-6 mt-3  text-center">
+                                <button className="btn btn-primary " onClick={updateFieldCopyStatutes} >Modifier</button>
+                            </div> 
+                        </div>
+                        // Sinon le bouton disparaît
+                        ):("")}
+                    </>
+
+                // Sinon le bouton reste s'affiche normalement comme pour les autres partie des documents
+                ):(
+                    <div className='card'>
+                        <p className=' bgColorGreen text-center text-white'>Copie des statuts à jour est sauvegardée succès</p>
+                        <div className="form-group mb-6 mt-3  text-center">
+                            <button className="btn btn-primary " onClick={updateFieldCopyStatutes} >Modifier</button>
+                        </div> 
+                    </div>
+                )}
             </>
         )}  
         {/* ************FIN COPIE DE STATUTS************ */}
@@ -684,12 +703,31 @@ const [delegationPowersFile, setDelegationPowersFile] = useState(null)
             </> 
         ):(
             <>
-                <div className='card my-3'>
-                    <p className=' bgColorGreen text-center text-white'>Délégation de pouvoirs est sauvegardée succès</p>
-                    <div className="form-group mb-6 mt-3  text-center">
-                        <button className="btn btn-primary " onClick={updateFieldDelegationPowers}  >Modifier</button>
-                    </div> 
-                </div>
+                {/* on verifie si l'utilisateur veut reprendre soit la partie Copie des statuts ou Délégation de pouvoirs */}
+                {currentKycEntrepriseStatut==3 || currentKycEntrepriseStatut==4 ? (
+                    <>
+                        {/* si c'est Délégation de pouvoirs on lui affiche ce bouton */}
+                        {currentKycEntrepriseStatut==4 ? (
+
+                        <div className='card my-3'>
+                            <p className=' bgColorGreen text-center text-white'>Délégation de pouvoirs est sauvegardée succès</p>
+                            <div className="form-group mb-6 mt-3  text-center">
+                                <button className="btn btn-primary " onClick={updateFieldDelegationPowers}  >Modifier</button>
+                            </div> 
+                        </div>
+                        // Sinon le bouton disparaît
+                        ):("")}
+                    </>
+
+                // Sinon le bouton reste s'affiche normalement comme pour les autres partie des documents
+                ):(
+                    <div className='card my-3'>
+                        <p className=' bgColorGreen text-center text-white'>Délégation de pouvoirs est sauvegardée succès</p>
+                        <div className="form-group mb-6 mt-3  text-center">
+                            <button className="btn btn-primary " onClick={updateFieldDelegationPowers}  >Modifier</button>
+                        </div> 
+                    </div>
+                )}
             </>
         )}   
         {/* ************FIN DE DELEGATION DE POUVOIRS************ */}

@@ -33,7 +33,7 @@ const CStructureControlTwo = () => {
     const [allNationality, setAllNationality] = useState();
     const [kycForEntreprise, setKycForEntreprise] = useState();
     const [kycStructure, setKycStructure] = useState();
-    const [currentKycStatut, setCurrentKycStatut] = useState();
+    const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
 
 
     // States du formulaire
@@ -72,6 +72,13 @@ const CStructureControlTwo = () => {
     const [imageRecto, setImageRecto] = useState(null)
     const [imageVerso, setImageVerso] = useState(null)
     // FIN
+
+    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+        const kycStatut = localStorage.getItem('currentKycEntrepriseStatut')  
+        setCurrentKycEntrepriseStatut(kycStatut)
+        console.log("kycStatut=>",kycStatut)
+    }, [currentKycEntrepriseStatut]);
 
     // LES FONCTIONS POUR PRENDRE PHOTO (IDENTITE)
     // Fonction pour prendre photo du Recto
@@ -163,9 +170,6 @@ const CStructureControlTwo = () => {
                 */
             if (result?.status===200) {
                 setTimeout(() => {
-                    if (currentKycStatut==="1") {
-                        Router.push("/profil/kyc/particulier/resultat-kyc"); 
-                    }else{
                         if (kycStructure?.length+1 == kycForEntreprise?.numberAssociates) {
                             Swal.fire({
                                 position: 'center',
@@ -189,7 +193,6 @@ const CStructureControlTwo = () => {
                                 window.location.reload()
                             }, 1000)
                         }
-                    }
                 }, 5000)
                 
                 }else{
@@ -232,9 +235,6 @@ const CStructureControlTwo = () => {
                     */
                 if (result?.status===200) {
                     setTimeout(() => {
-                        if (currentKycStatut==="1") {
-                            Router.push("/profil/kyc/particulier/resultat-kyc"); 
-                        }else{
                             if (kycStructure?.length+1 == kycForEntreprise?.numberAssociates) {
                                 Swal.fire({
                                     position: 'center',
@@ -258,10 +258,151 @@ const CStructureControlTwo = () => {
                                     window.location.reload()
                                 }, 1000)
                             }
-                        }
                     }, 5000)
                     
                     }else{
+                        // setMessageError(data.message)
+
+                        setIsLoggingIn(false);
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            html: `<p> Désolé une erreur s'est produite,Veuillez réessayer svp. </p>` ,
+                            showConfirmButton: false,
+                            timer: 10000
+                        })
+                        
+                    }
+                
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> Désolé la date de création doit être inférieure à la date du jour. </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+            }
+        }
+        // FIN
+    }
+
+
+    // FONCTION D'ENVOIE (MODIFIER) DES DONNEES DU BENEFICIARE EFFECTIF
+    const updateStructure = async (event) => {
+        event.preventDefault();
+        setIsLoggingIn(true);
+
+        const token = localStorage.getItem('tokenEnCours')
+        const body = new FormData();
+        body.append("socialReason", socialReason);
+        body.append("lastName", lastName);
+        body.append("firstName", firstName);
+        body.append("issuingCountry", issuingCountry);
+        body.append("residenceCountry", residenceCountry);
+        body.append("countryRegistration", countryRegistration);
+        body.append("dateBirth", dateBirth);
+        body.append("nationality", nationality);
+        body.append("email", email);
+        body.append("mobile", mobile);
+        body.append("phoneFixe", phoneFixe);
+        body.append("startDate", startDate);
+        body.append("expirationDate", expirationDate);
+        body.append("numberRccm", numberRccm);
+        body.append("percentControl", percentControl);
+        body.append("typePartner", typePartner);
+        body.append("typeDocIdentity", typeDocIdentity);
+        body.append("identityDocNumber", identityDocNumber);
+        body.append("frontIdentityFile", statutDocIdentite==="0"?frontIdentity:"");
+        body.append("backIdentityFile", statutDocIdentite==="0"?backIdentity:"");
+        body.append("frontIdentityPhoto", statutDocIdentite==="1"?imageRecto:"");
+        body.append("backIdentityPhoto", statutDocIdentite==="1"?imageVerso:"");
+    
+
+        if (typePartner==="Personne physique") {
+            if (dateBirth < formatDate(currentDate) && expirationDate > formatDate(currentDate)) {
+        
+            const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-structure/${currentKycEntrepriseStatut}`, {
+                method:"PUT",
+                body,
+                headers: {
+                    // 'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`,
+                    },
+            })    
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                * sinon on affiche le message de succès
+                */
+            if (result?.status===200) {
+                    
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Les modifications sauvegardées avec succès. </p>` ,
+                    showConfirmButton: false,
+                    timer: 5000
+                })
+                setTimeout(() => {
+                    window.location.reload()
+                }, 5000)
+                Router.push("/profil/kyc/entreprise/resultat-kyc");
+
+                
+            }else{
+                    // setMessageError(data.message)
+
+                    setIsLoggingIn(false);
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        html: `<p> Désolé une erreur s'est produite,Veuillez réessayer svp. </p>` ,
+                        showConfirmButton: false,
+                        timer: 10000
+                    })
+                    
+                }
+            
+        }else{
+            setIsLoggingIn(false);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p> Désolé la date de naissance doit être inférieure à la date du jour <br/> Et la date d'expiration doit être supérieure à la date du jour. </p>` ,
+                showConfirmButton: false,
+                timer: 10000
+            })
+        }
+        }
+        else if (typePartner==="Personne morale"){
+            if (startDate < formatDate(currentDate)) {
+                const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-structure/${currentKycEntrepriseStatut}`, {
+                    method:"PUT",
+                    body,
+                    headers: {
+                        // 'Content-Type': 'application/json',
+                        Authorization:  `Bearer ${token}`,
+                        },
+                })    
+                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                    * sinon on affiche le message de succès
+                    */
+                if (result?.status===200) {
+                    
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        html: `<p> Les modifications sauvegardées avec succès. </p>` ,
+                        showConfirmButton: false,
+                        timer: 5000
+                    })
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 5000)
+                    Router.push("/profil/kyc/entreprise/resultat-kyc");
+
+                    
+                }else{
                         // setMessageError(data.message)
 
                         setIsLoggingIn(false);
@@ -421,9 +562,12 @@ const CStructureControlTwo = () => {
                             htmlFor="lastName"
                             className="text-blackish-blue mb-2 colorRed"
                         >
-                            Veuillez renseigner les informations de l'associé n° {kycStructure?.length + 1}
+                            {!currentKycEntrepriseStatut || currentKycEntrepriseStatut == "undefined"? (
+                                `Veuillez renseigner les informations de l'associé n° ${kycStructure?.length + 1}`
+                            ):("Veuillez rajouter les informations de l'associé concerné")}
+                            
                         </h5>
-                        <form className='' onSubmit={addStructure}>
+                        <form className='' onSubmit={!currentKycEntrepriseStatut|| currentKycEntrepriseStatut == "undefined"? addStructure : updateStructure}>
                             <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="typePartner"
@@ -1045,46 +1189,53 @@ const CStructureControlTwo = () => {
                             </>
                             ) : ("")}
 
-                            <label
-                                htmlFor="backDomicile mb-3 "
-                                className='colorRed'
-                            >
-                                NB: Vous avez ajouté {kycStructure?.length}/{kycForEntreprise?.numberAssociates} associé(s)
-                            </label>
+                            {/* Vérifie s'il s'agit d'une modification à apporter */}
+                            {!currentKycEntrepriseStatut || currentKycEntrepriseStatut == "undefined"?(
+                                <>
+                                    <label
+                                        htmlFor="backDomicile mb-3 "
+                                        className='colorRed'
+                                    >
+                                        NB: Vous avez ajouté {kycStructure?.length}/{kycForEntreprise?.numberAssociates} associé(s)
+                                    </label>
 
-                            <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
-                                {typePartner|| !typePartner ?(
-                                    
-                                    <div className={`form-group mb-6 mt-3  ${!typePartner?"col-lg-12 col-md-12":" col-lg-6 col-md-6"}`}>
-                                        <Link href='/profil/kyc/entreprise/structure-control-one/' className="align-right">
-                                            <a
-                                            className=""
-                                            >
-                                                <button className="btn btn-primary " type='button'  > Précédente </button>
-                                            </a>   
-                                        </Link>                          
-                                    </div>
-                                ):("")}
-                                {typePartner ? (
-                                    <>
-                                        {kycStructure?.length == kycForEntreprise?.numberAssociates ? (
-                                            <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                                <Link href='/profil/kyc/entreprise/politiquement-exposees-one' className="align-right">
+                                    <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                        {typePartner|| !typePartner ?(
+                                            
+                                            <div className={`form-group mb-6 mt-3  ${!typePartner?"col-lg-12 col-md-12":" col-lg-6 col-md-6"}`}>
+                                                <Link href='/profil/kyc/entreprise/structure-control-one/' className="align-right">
                                                     <a
                                                     className=""
                                                     >
-                                                        <button className="btn btn-primary " type='button'> Suivant </button>
+                                                        <button className="btn btn-primary " type='button'  > Précédente </button>
                                                     </a>   
-                                                </Link>
+                                                </Link>                          
                                             </div>
-                                        ) : (
-                                            <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                                <button className="btn btn-primary " type='submit'  disabled={isLoggingIn}  > Suivant </button>                        
-                                            </div>
-                                        )}
-                                    </>
-                                ):("")}
-                            </div>
+                                        ):("")}
+                                        {typePartner ? (
+                                            <>
+                                                {kycStructure?.length == kycForEntreprise?.numberAssociates ? (
+                                                    <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                                        <Link href='/profil/kyc/entreprise/politiquement-exposees-one' className="align-right">
+                                                            <a
+                                                            className=""
+                                                            >
+                                                                <button className="btn btn-primary " type='button'> Suivant </button>
+                                                            </a>   
+                                                        </Link>
+                                                    </div>
+                                                ) : (
+                                                    <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                                        <button className="btn btn-primary " type='submit'  disabled={isLoggingIn}  > Suivant </button>                        
+                                                    </div>
+                                                )}
+                                            </>
+                                        ):("")}
+                                    </div>
+                                </>
+                            ):(
+                                <button className="btn btn-primary " type='submit'  disabled={isLoggingIn}>Modifier</button>
+                            )}
                         </form>       
                     </div>
                 <div className='col-lg-3 col-md-12'></div>

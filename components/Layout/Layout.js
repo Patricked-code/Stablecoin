@@ -42,6 +42,8 @@ const Layout = ({ children }) => {
       {pathname === "/profil" || 
       pathname === "/callback_register"|| 
       pathname === "/callback"|| 
+      pathname === "/account/firstEdition"|| 
+      pathname === "/auth/send-link-password"|| 
       
       pathname === "/profil/dashboard" ||
       pathname === "/profil/kyc/particulier/questionnaires-revenus-one"||
@@ -63,8 +65,13 @@ const Layout = ({ children }) => {
       pathname === "/profil/informations/utilisateur"||
 
       // Kyc entreprise
+      pathname === "/profil/kyc/entreprise/questionnaire"||
+      pathname === "/profil/kyc/entreprise/questionnaire-aml-two"||
+      pathname === "/profil/kyc/entreprise/questionnaire-aml-three"||
+      pathname === "/profil/kyc/entreprise/questionnaire-aml-four"||
+      pathname === "/profil/kyc/entreprise/questionnaire-aml-five"||
       pathname === "/profil/kyc/entreprise/identite-one"||
-      pathname === "/profil/kyc/entreprise/justificatif-identite"||
+      // pathname === "/profil/kyc/entreprise/justificatif-identite"||
       pathname === "/profil/kyc/entreprise/identite-representant-one"||
       pathname === "/profil/kyc/entreprise/identite-representant-two"||
       pathname === "/profil/kyc/entreprise/beneficiaire-effectif-one"||
@@ -81,11 +88,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/information-financiere-four"||
       pathname === "/profil/kyc/entreprise/information-financiere-five"||
       pathname === "/profil/kyc/entreprise/documents-legaux"||
-      pathname === "/profil/kyc/entreprise/questionnaire"||
-      pathname === "/profil/kyc/entreprise/questionnaire-aml-two"||
-      pathname === "/profil/kyc/entreprise/questionnaire-aml-three"||
-      pathname === "/profil/kyc/entreprise/questionnaire-aml-four"||
-      pathname === "/profil/kyc/entreprise/questionnaire-aml-five"||
+      
 
       pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/kyc/entreprise/resultat-kyc"||
@@ -160,6 +163,8 @@ const Layout = ({ children }) => {
       pathname === "/callback_register"|| 
       pathname === "/callback"|| 
       pathname === "/profil/dashboard" || 
+      pathname === "/auth/send-link-password"|| 
+
       // KYC particulier
       pathname === "/profil/kyc/particulier/questionnaires-revenus-one" ||
       pathname === "/profil/kyc/particulier/questionnaires-revenus-two" ||

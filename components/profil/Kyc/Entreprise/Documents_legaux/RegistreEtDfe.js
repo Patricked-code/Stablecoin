@@ -114,15 +114,10 @@ const [dfeFile, setDfeFile] = useState(null)
                 timer: 5000
             }),
             setTimeout(() => {
-                if (currentKycEntrepriseStatut==="1") {
-                    Router.push("/profil/kyc/entreprise/resultat-kyc"); 
-
-                }else{
-                    // Router.push("/profil/kyc/entreprise/justificatif-domicile"); 
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 1000)
-                }
+                // Router.push("/profil/kyc/entreprise/justificatif-domicile"); 
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1000)
             }, 5000)
 
             
@@ -296,7 +291,7 @@ const [dfeFile, setDfeFile] = useState(null)
                 timer: 5000
             }),
             setTimeout(() => {
-                if (currentKycEntrepriseStatut==="1") {
+                if (currentKycEntrepriseStatut==="2") {
                     Router.push("/profil/kyc/entreprise/resultat-kyc"); 
 
                 }else{
@@ -564,12 +559,31 @@ const [dfeFile, setDfeFile] = useState(null)
 
                         ):(
                             <>
-                                <div className='card'>
-                                    <p className=' bgColorGreen text-center text-white'>Extrait de registre de commerce est sauvegardé succès</p>
-                                    <div className="form-group mb-6 mt-3  text-center">
-                                        <button className="btn btn-primary " onClick={updateFieldRegister}  >Modifier</button>
-                                    </div> 
-                                </div>
+                                {/* on verifie si l'utilisateur veut reprendre soit la partie registre de commerce ou DFE */}
+                                {currentKycEntrepriseStatut==1 || currentKycEntrepriseStatut==2 ? (
+                                    <>
+                                        {/* si c'est registre de commerce on lui affiche ce bouton */}
+                                        {currentKycEntrepriseStatut==1 ? (
+
+                                            <div className='card'>
+                                                <p className=' bgColorGreen text-center text-white'>Extrait de registre de commerce est sauvegardé succès</p>
+                                                <div className="form-group mb-6 mt-3  text-center">
+                                                    <button className="btn btn-primary " onClick={updateFieldRegister}  >Modifier</button>
+                                                </div> 
+                                            </div>
+                                        // Sinon le bouton disparaît
+                                        ):("")}
+                                    </>
+
+                                // Sinon le bouton reste s'affiche normalement comme pour les autres partie des documents
+                                ):(
+                                    <div className='card'>
+                                        <p className=' bgColorGreen text-center text-white'>Extrait de registre de commerce est sauvegardé succès</p>
+                                        <div className="form-group mb-6 mt-3  text-center">
+                                            <button className="btn btn-primary " onClick={updateFieldRegister}  >Modifier</button>
+                                        </div> 
+                                    </div>
+                                )}
                             </>
                         )}
                         {/* ************FIN REGISTRE DE COMMERCE************ */}
@@ -765,12 +779,31 @@ const [dfeFile, setDfeFile] = useState(null)
                             </> 
                          ):(
                             <>
-                                <div className='card my-3'>
-                                    <p className=' bgColorGreen text-center text-white'>Le DFE est sauvegardé avec succès</p>
-                                    <div className="form-group mb-6 mt-3  text-center">
-                                        <button className="btn btn-primary " onClick={updateFieldDfe}>Modifier</button>
-                                    </div> 
-                                </div>
+                                {/* on verifie si l'utilisateur veut reprendre soit la partie registre de commerce ou DFE */}
+                                {currentKycEntrepriseStatut==1 || currentKycEntrepriseStatut==2 ? (
+                                    <>
+                                        {/* si c'est DFE on lui affiche ce bouton */}
+                                        {currentKycEntrepriseStatut==2 ? (
+
+                                            <div className='card my-3'>
+                                                <p className=' bgColorGreen text-center text-white'>Le DFE est sauvegardé avec succès</p>
+                                                <div className="form-group mb-6 mt-3  text-center">
+                                                    <button className="btn btn-primary " onClick={updateFieldDfe}>Modifier</button>
+                                                </div> 
+                                            </div>
+                                        // Sinon le bouton disparaît
+                                        ):("")}
+                                    </>
+
+                                // Sinon le bouton reste s'affiche normalement comme pour les autres partie des documents
+                                ):(
+                                    <div className='card my-3'>
+                                        <p className=' bgColorGreen text-center text-white'>Le DFE est sauvegardé avec succès</p>
+                                        <div className="form-group mb-6 mt-3  text-center">
+                                            <button className="btn btn-primary " onClick={updateFieldDfe}>Modifier</button>
+                                        </div> 
+                                    </div>
+                                )}
                             </>
                         )}
                         {/* ************FIN DFE************ */}

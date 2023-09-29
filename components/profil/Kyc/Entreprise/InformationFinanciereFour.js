@@ -27,8 +27,8 @@ const CIformationFinanciereFour = () => {
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
-    const [currentKycStatut, setCurrentKycStatut] = useState();
     const [kycTransactionMontlyId, setKycTransactionMontlyId] = useState();
+    const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
     
     
     
@@ -66,6 +66,11 @@ const [otherCurrencyBankReceived, setOtherCurrencyBankReceived] = useState('');
 const [otherCurrencyOthersReceived, setOtherCurrencyOthersReceived] = useState('');
 // *******FIN***********
 
+//localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+useEffect(() => {
+  const kycStatut = localStorage.getItem('currentKycEntrepriseStatut')  
+  setCurrentKycEntrepriseStatut(kycStatut)
+}, [currentKycEntrepriseStatut]);
 
   
     
@@ -245,11 +250,7 @@ const [otherCurrencyOthersReceived, setOtherCurrencyOthersReceived] = useState('
                     timer: 5000
                 }),
                 setTimeout(() => {
-                    if (currentKycStatut==="1") {
-                        Router.push("/profil/kyc/entreprise/resultat-kyc"); 
-                    }else{
-                        Router.push("/profil/kyc/entreprise/information-financiere-five"); 
-                    }
+                  Router.push("/profil/kyc/entreprise/information-financiere-five"); 
                 }, 5000)
             }
             // Fin condition 
@@ -337,7 +338,7 @@ const [otherCurrencyOthersReceived, setOtherCurrencyOthersReceived] = useState('
                     timer: 5000
                 }),
                 setTimeout(() => {
-                    if (currentKycStatut==="1") {
+                    if (currentKycEntrepriseStatut==="1") {
                         Router.push("/profil/kyc/entreprise/resultat-kyc"); 
                     }else{
                         Router.push("/profil/kyc/entreprise/information-financiere-five"); 

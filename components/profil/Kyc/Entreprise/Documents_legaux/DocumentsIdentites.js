@@ -136,7 +136,7 @@ const CDocumentsIdentites = ({kycDocumentId, kycRegister, kycDfe, kycCopyStatute
                     timer: 5000
                 }),
                 setTimeout(() => {
-                    if (currentKycEntrepriseStatut==="1") {
+                    if (currentKycEntrepriseStatut==="9") {
                         Router.push("/profil/kyc/entreprise/resultat-kyc"); 
 
                     }else{
@@ -576,6 +576,7 @@ const CDocumentsIdentites = ({kycDocumentId, kycRegister, kycDfe, kycCopyStatute
                 ):("")} 
             </>
         ):(
+            
             <>
                 <div className='card my-3'>
                     <p className=' bgColorGreen text-center text-white'>Copie recto verso de la pièce d’identité du signataire du bulletin de souscription est sauvegardé succès</p>
@@ -586,12 +587,15 @@ const CDocumentsIdentites = ({kycDocumentId, kycRegister, kycDfe, kycCopyStatute
             </>
         )} 
         {/* ************FIN FORMULAIRE DE FACTURE************ */}  
-
-        {kycRegister==1 && kycDfe==1 && kycCopyStatutes==1 && kycDelegationPowers==1 && kycPvAppointment==1 && kycMapLocation==1 && kycFacture==1 && kycProofPower==1 && kycIdentity==1? (
-            <form className='mt-5'>
-                <button className="btn btn-primary " type='button'  onClick={completeKyc}>Terminer le Kyc</button>
-            </form>
-        ):("")}
+        {currentKycEntrepriseStatut==9 ? (""):(
+            <>
+                {kycRegister==1 && kycDfe==1 && kycCopyStatutes==1 && kycDelegationPowers==1 && kycPvAppointment==1 && kycMapLocation==1 && kycFacture==1 && kycProofPower==1 && kycIdentity==1? (
+                    <form className='mt-5'>
+                        <button className="btn btn-primary " type='button'  onClick={completeKyc}>Terminer le Kyc</button>
+                    </form>
+                ):("")}
+            </>
+        )}
 
     </>
   );

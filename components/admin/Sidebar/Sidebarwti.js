@@ -76,24 +76,60 @@ const [provider, setProvider] = useState(null);
     }, [provider, magic]);
     //  Fin
 
-// FONCTION DE LA DECONNEXION
-const logaout = useCallback(() => {
-  try {
+
+
+
+/**
+   * FONCTION DE DECONNEXION SUR MAGIC ET SUR LE SITE.
+   */
+ const logout = useCallback(() => {
   magic.user.logout().then(() => {
     // supprimer le token
     localStorage.removeItem('tokenEnCours');
-    // Actualisation et redirection
+    Swal.fire({
+      position: 'center',
+      icon: 'error',
+      html: `<p>Vous êtes déconnecté </p>` ,
+      showConfirmButton: false,
+      timer: 5000
+  })
     setTimeout(() => {
       window.location.reload()
-     }, 1000)
+     }, 5000)
     Router.push("/");
-
   });
-} catch (error) {
-  console.log("une erreur s'est produit =>", error)
-}
 }, [Router]);
-// FIN
+
+ // Obtenir l'utilisateur qui est connecté
+ useEffect(() => {
+  (async () => {
+      const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+      const getUser = async () => {
+      const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
+          headers: {
+          'Content-Type': 'application/json',
+          Authorization:  `Bearer ${token}`
+
+          },
+      })
+      .then((result) => result.json())
+      .then((user) => {
+      
+      console.log('Auth', user)
+      // On verifie si l'utilisateur est deconnecté du site
+        if (user?.message==="Accès non autorisé") {
+          logout() //Appel de la fonction de déconnexion à magic
+        }
+      }) 
+      };
+      await getUser();
+      // Fin
+
+  })();
+}, []);
+// Fin
+
   return (
     <>
         <nav className='nav'>
@@ -137,7 +173,7 @@ const logaout = useCallback(() => {
             
 
               {/* Bouton de deconnexion */}
-                <Link  onClick={logaout} className='nav-link-sidebar'>
+                <Link  onClick={logout} className='nav-link-sidebar'>
                     <Icon className=' nav-link-icon'width={20} icon="bx:log-out" />
                 {/* <i className='fas fa-log-out nav-link-icon'></i> */}
 

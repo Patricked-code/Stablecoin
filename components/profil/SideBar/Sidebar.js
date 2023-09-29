@@ -33,8 +33,24 @@ const [currentUser, setCurrentUser] = useState();
 const [provider, setProvider] = useState(null);
 
 
-const [kycForEntreprise, setKycForEntreprise] = useState();
-const [kycForParticular, setKycForParticular] = useState();
+const [kycForEntreprise, setKycForEntreprise] = useState(); // States du Kyc entreprise
+const [kycForParticular, setKycForParticular] = useState(); // States du Kyc  particulier
+
+// States des documents legaux de l'entreprise
+const [kycBusinessLegalDocument, setKycBusinessLegalDocument] = useState();
+const [kycBusinessIdentity, setKycBusinessIdentity] = useState();
+const [kycBusinessRepresentative, setKycBusinessRepresentative] = useState();
+const [kycBusinessBeneficiary, setKycBusinessBeneficiary] = useState();
+const [kycBusinessStructure, setKycBusinessStructure] = useState();
+const [kycBusinessPoliticallyExposed, setKycBusinessPoliticallyExposed] = useState();
+const [kycBusinessFinancialOperationIds, setKycBusinessFinancialOperationIds] = useState();
+const [kycBusinessFundOriginIds, setKycBusinessFundOriginIds] = useState();
+
+const [kycBusinessFinancialMontly, setKycBusinessFinancialMontly] = useState();
+const [kycBusinessFinancialQuarterly, setKycBusinessFinancialQuarterly] = useState();
+const [kycBusinessFinancialAnnual, setKycBusinessFinancialAnnual] = useState();
+const [kycBusinessTransactionMontly, setKycBusinessTransactionMontly] = useState();
+const [kycBusinessTransactionAnnual, setKycBusinessTransactionAnnual] = useState();
 
 
     useEffect(() => {
@@ -119,8 +135,6 @@ const [kycForParticular, setKycForParticular] = useState();
           })
           .then((result) => result.json())
           .then((user) => {
-          
-          console.log('Auth', user)
           // On verifie si l'utilisateur est deconnecté du site
             if (user?.message==="Accès non autorisé") {
               logout() //Appel de la fonction de déconnexion à magic
@@ -150,7 +164,6 @@ const [kycForParticular, setKycForParticular] = useState();
             setKycForParticular(data)
             }) 
         };
-        // console.log("Banques =>",allBank)
         await getKycForParticular();
   }, []);
   // FIN
@@ -164,7 +177,7 @@ const [kycForParticular, setKycForParticular] = useState();
         const token = localStorage.getItem('tokenEnCours')
         
             const getKycForEntreprise = async () => {
-            const resKyc = await fetch(`${API_URL}/api/kyc/entreprise/find-kyc-entreprise-for-user`, {
+            const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-of-user`, {
                 headers: {
                 'Content-Type': 'application/json',
                 Authorization:  `Bearer ${token}`,
@@ -173,9 +186,9 @@ const [kycForParticular, setKycForParticular] = useState();
                 .then((resKyc) => resKyc.json())
                 .then((data) => {
                 setKycForEntreprise(data)
+
                 }) 
             };
-            // console.log("Banques =>",allBank)
             await getKycForEntreprise();
     }, []);
     // FIN
@@ -198,6 +211,338 @@ const logaout = useCallback(() => {
 }
 }, [Router]);
 // FIN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// RECUPERER LES DONNEES DU KYC SUR L'IDENTITE DE L'ENTREPRISE CONNECTEE
+useEffect(async() => {
+  const token = localStorage.getItem('tokenEnCours')
+  
+      const getKycBusinessIdentity = async () => {
+      const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-identity-of-user-signIn`, {
+          headers: {
+          'Content-Type': 'application/json',
+          Authorization:  `Bearer ${token}`,
+          },
+      })
+          .then((resKyc) => resKyc.json())
+          .then((data) => {
+          setKycBusinessIdentity(data)
+
+          }) 
+      };
+      await getKycBusinessIdentity();
+}, []);
+// FIN
+
+
+// RECUPERER LES DONNEES DU KYC DES REPRESENTANTS DE L'ENTREPRISE CONNECTEE
+useEffect(async() => {
+  const token = localStorage.getItem('tokenEnCours')
+  
+      const getKycBusinessRepresentative = async () => {
+      const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-representative-of-user-signIn`, {
+          headers: {
+          'Content-Type': 'application/json',
+          Authorization:  `Bearer ${token}`,
+          },
+      })
+          .then((resKyc) => resKyc.json())
+          .then((data) => {
+          setKycBusinessRepresentative(data)
+          
+
+          }) 
+      };
+      await getKycBusinessRepresentative();
+}, []);
+// FIN
+
+
+// RECUPERER LES DONNEES DU KYC DU BENEFIAIRE EFFECTIF DE L'ENTREPRISE CONNECTEE
+useEffect(async() => {
+  const token = localStorage.getItem('tokenEnCours')
+  
+      const getKycBusinessBeneficiary = async () => {
+      const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-beneficiary-of-user-signIn`, {
+          headers: {
+          'Content-Type': 'application/json',
+          Authorization:  `Bearer ${token}`,
+          },
+      })
+          .then((resKyc) => resKyc.json())
+          .then((data) => {
+          setKycBusinessBeneficiary(data)
+          }) 
+      };
+      await getKycBusinessBeneficiary();
+}, []);
+// FIN
+
+
+// RECUPERER LES DONNEES DU KYC DE STRUCTURE DE CONTROL DE L'ENTREPRISE CONNECTEE
+useEffect(async() => {
+  const token = localStorage.getItem('tokenEnCours')
+  
+      const getKycBusinessStructure = async () => {
+      const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-structure-of-user-signIn`, {
+          headers: {
+          'Content-Type': 'application/json',
+          Authorization:  `Bearer ${token}`,
+          },
+      })
+          .then((resKyc) => resKyc.json())
+          .then((data) => {
+          setKycBusinessStructure(data)
+          }) 
+      };
+      await getKycBusinessStructure();
+}, []);
+// FIN
+
+
+// RECUPERER LES DONNEES DU KYC DE POLITIQUEMENT EXPOSEE DE L'ENTREPRISE CONNECTEE
+useEffect(async() => {
+  const token = localStorage.getItem('tokenEnCours')
+  
+      const getKycBusinessPoliticallyExposed = async () => {
+      const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-politically-exposed-of-user-signIn`, {
+          headers: {
+          'Content-Type': 'application/json',
+          Authorization:  `Bearer ${token}`,
+          },
+      })
+          .then((resKyc) => resKyc.json())
+          .then((data) => {
+          setKycBusinessPoliticallyExposed(data)
+
+          }) 
+      };
+      await getKycBusinessPoliticallyExposed();
+}, []);
+// FIN
+
+
+// FONCTION POUR RECUPERER LES DONNEES DES OPERATIONS FINANCIERES ET DEFINIR LES IDENTIFIANTS
+const getKycBusinessFinancialOperation = async () => {
+  const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+  try {
+      const response = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-operation-of-user-signIn`,{
+          headers: {
+              'Content-Type': 'application/json',
+              Authorization:  `Bearer ${token}`
+          },
+      });
+      const data = await response.json();
+
+      // Extract IDs and set to state
+      const ids = data.map(item => item.id);
+      setKycBusinessFinancialOperationIds(ids);
+  } catch (error) {
+      console.error(error);
+  }
+};
+
+// Appelez getFinancialOperationData lors du montage du composant
+useEffect(() => {
+  getKycBusinessFinancialOperation();
+}, []);
+// FIN
+
+
+// FONCTION POUR RECUPERER LES DONNEES DES OPERATIONS FINANCIERES ET DEFINIR LES IDENTIFIANTS
+const getKycBusinessFundOriginIds = async () => {
+  const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+  try {
+      const response = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-fund-origin-of-user-signIn`,{
+          headers: {
+              'Content-Type': 'application/json',
+              Authorization:  `Bearer ${token}`
+          },
+      });
+      const data = await response.json();
+
+      // Extract IDs and set to state
+      const ids = data.map(item => item.id);
+      setKycBusinessFundOriginIds(ids);
+
+  } catch (error) {
+      console.error(error);
+  }
+};
+
+// Appelez getFundOriginIdsData lors du montage du composant
+useEffect(() => {
+  getKycBusinessFundOriginIds();
+}, []);
+// FIN
+
+
+// RECUPERER LES DONNEES DU KYC DE FINANCEMENT INFORMATIQUE (MENSUELLE) DE L'ENTREPRISE CONNECTEE 
+useEffect(async() => {
+  const token = localStorage.getItem('tokenEnCours')
+  
+      const getKycBusinessFinancialMontly = async () => {
+      const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-monthly-of-user-signIn`, {
+          headers: {
+          'Content-Type': 'application/json',
+          Authorization:  `Bearer ${token}`,
+          },
+      })
+          .then((resKyc) => resKyc.json())
+          .then((data) => {
+          setKycBusinessFinancialMontly(data)
+
+          }) 
+      };
+      await getKycBusinessFinancialMontly();
+}, []);
+// FIN
+
+
+// RECUPERER LES DONNEES DU KYC DE FINANCEMENT INFORMATIQUE (TRIMESTRIELLE) DE L'ENTREPRISE CONNECTEE 
+useEffect(async() => {
+  const token = localStorage.getItem('tokenEnCours')
+  
+      const getKycBusinessFinancialQuarterly = async () => {
+      const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-quarterly-of-user-signIn`, {
+          headers: {
+          'Content-Type': 'application/json',
+          Authorization:  `Bearer ${token}`,
+          },
+      })
+          .then((resKyc) => resKyc.json())
+          .then((data) => {
+          setKycBusinessFinancialQuarterly(data)
+          }) 
+      };
+      await getKycBusinessFinancialQuarterly();
+}, []);
+// FIN
+
+// RECUPERER LES DONNEES DU KYC DE FINANCEMENT INFORMATIQUE (ANNUELLE) DE L'ENTREPRISE CONNECTEE 
+useEffect(async() => {
+  const token = localStorage.getItem('tokenEnCours')
+  
+      const getKycBusinessFinancialAnnual = async () => {
+      const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-annual-of-user-signIn`, {
+          headers: {
+          'Content-Type': 'application/json',
+          Authorization:  `Bearer ${token}`,
+          },
+      })
+          .then((resKyc) => resKyc.json())
+          .then((data) => {
+          setKycBusinessFinancialAnnual(data)
+
+          }) 
+      };
+      await getKycBusinessFinancialAnnual();
+}, []);
+// FIN
+
+// RECUPERER LES DONNEES DU KYC DE FINANCEMENT TRANSACTION (MENSUELLE) DE L'ENTREPRISE CONNECTEE 
+useEffect(async() => {
+  const token = localStorage.getItem('tokenEnCours')
+  
+      const getKycBusinessTransactionMontly = async () => {
+      const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-transaction-monthly-of-user-signIn`, {
+          headers: {
+          'Content-Type': 'application/json',
+          Authorization:  `Bearer ${token}`,
+          },
+      })
+          .then((resKyc) => resKyc.json())
+          .then((data) => {
+          setKycBusinessTransactionMontly(data)
+          }) 
+      };
+      await getKycBusinessTransactionMontly();
+}, []);
+// FIN
+
+// RECUPERER LES DONNEES DU KYC DE FINANCEMENT TRANSACTION (MENSUELLE) DE L'ENTREPRISE CONNECTEE 
+useEffect(async() => {
+  const token = localStorage.getItem('tokenEnCours')
+  
+      const getKycBusinessTransactionAnnual = async () => {
+      const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-transaction-annual-of-user-signIn`, {
+          headers: {
+          'Content-Type': 'application/json',
+          Authorization:  `Bearer ${token}`,
+          },
+      })
+          .then((resKyc) => resKyc.json())
+          .then((data) => {
+          setKycBusinessTransactionAnnual(data)
+          }) 
+      };
+      await getKycBusinessTransactionAnnual();
+}, []);
+// FIN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// RECUPERER LES DONNEES DU KYC DES DOCUMENTS LEGAUX DE L'ENTREPRISE CONNECTEE
+useEffect(async() => {
+  const token = localStorage.getItem('tokenEnCours')
+  
+      const getKycBusinessDocument = async () => {
+      const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-legal-documents-of-user-signIn`, {
+          headers: {
+          'Content-Type': 'application/json',
+          Authorization:  `Bearer ${token}`,
+          },
+      })
+          .then((resKyc) => resKyc.json())
+          .then((data) => {
+          setKycBusinessLegalDocument(data)
+
+          }) 
+      };
+      await getKycBusinessDocument();
+}, []);
+// FIN
+
+
+
+
+
+
+
+
+
+
+
+
   return (
     <>
         <nav className='nav'>
@@ -233,6 +578,7 @@ const logaout = useCallback(() => {
                 <span className='nav-link-name'>Mes cartes</span>
             </Link>
 
+            {/* Pour le palcement des liens des différentes pages du kyc particulaire en fonction de là ou le remplisage s'est arrêté */}
             {currentUser?.activated && currentUser?.codeTypeProfil==="part"? (
               <>
               {kycForParticular?.status==1 ? (
@@ -296,59 +642,533 @@ const logaout = useCallback(() => {
               </>
 
             ) :('')}
+            {/* Fin */}
 
+
+
+
+            {/* Pour le palcement des liens des différentes pages du kyc entreprise en fonction de là ou le remplisage s'est arrêté */}
             {currentUser?.activated && currentUser?.codeTypeProfil==="entCom"? (
               <>
-                {kycForEntreprise?.status==1 ? (
+                {kycBusinessLegalDocument?.status==1 ? (
                   <Link to='/profil/kyc/entreprise/resultat-kyc/' className={pathname == "/profil/kyc/entreprise/resultat-kyc/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
-                  <i className='fas fa-tasks nav-link-icon'></i>
-                  <span className='nav-link-name'>KYC en attente</span>
-                </Link>
+                    <i className='fas fa-tasks nav-link-icon'></i>
+                    <span className='nav-link-name'>KYC en attente</span>
+                  </Link>
                 ) : (
                   <>
                   
-                {kycForEntreprise?.quiz==1 && !kycForEntreprise?.legalDocuments==1 && !kycForEntreprise?.identity==1 && !kycForEntreprise?.residence==1 && !kycForEntreprise?.photo==1 && !kycForEntreprise?.signature==1 ? (
-                  <Link to='/profil/kyc/entreprise/documents-legaux/' className={pathname == "/profil/kyc/entreprise/documents-legaux/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
-                    <i className='fas fa-tasks nav-link-icon'></i>
-                    <span className='nav-link-name'>KYC</span>
-                  </Link>
-                ):kycForEntreprise?.quiz==1 && !kycForEntreprise?.identity==1 && !kycForEntreprise?.residence==1 && kycForEntreprise?.legalDocuments==1 && !kycForEntreprise?.photo==1 && !kycForEntreprise?.signature==1 ? (
-                    <Link to='/profil/kyc/entreprise/justificatif-domicile/' className={pathname == "/profil/kyc/entreprise/justificatif-domicile/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
-                      <i className='fas fa-tasks nav-link-icon'></i>
-                      <span className='nav-link-name'>KYC</span>
-                    </Link>
-                ):kycForEntreprise?.quiz==1 && kycForEntreprise?.legalDocuments==1 && kycForEntreprise?.residence==1 && !kycForEntreprise?.identity==1  && !kycForEntreprise?.photo==1 && !kycForEntreprise?.signature==1 ? (
-                  <Link to='/profil/kyc/entreprise/justificatif-identite/' className={pathname == "/profil/kyc/entreprise/justificatif-identite/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
-                    <i className='fas fa-tasks nav-link-icon'></i>
-                    <span className='nav-link-name'>KYC</span>
-                  </Link>
-                
-                ):kycForEntreprise?.quiz==1 && kycForEntreprise?.legalDocuments==1 && kycForEntreprise?.identity==1 && kycForEntreprise?.residence==1 && !kycForEntreprise?.photo==1 && !kycForEntreprise?.signature==1 ? (
-                  <Link to='/profil/kyc/commun/selfie/' className={pathname == "/profil/kyc/commun/selfie/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
-                    <i className='fas fa-tasks nav-link-icon'></i>
-                    <span className='nav-link-name'>KYC</span>
-                  </Link>
-                ):kycForEntreprise?.quiz==1 && kycForEntreprise?.legalDocuments==1 && kycForEntreprise?.identity==1 && kycForEntreprise?.residence==1 && kycForEntreprise?.photo==1 && !kycForEntreprise?.signature==1 ? (
-                  <Link to='/profil/kyc/commun/signature/' className={pathname == "/profil/kyc/commun/signature/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
-                    <i className='fas fa-tasks nav-link-icon'></i>
-                    <span className='nav-link-name'>KYC</span>
-                  </Link>
-                ) : (
-                  <Link to='/profil/kyc/entreprise/questionnaire' className={pathname == "/profil/kyc/entreprise/questionnaire" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
-                    <i className='fas fa-tasks nav-link-icon'></i>
-                    <span className='nav-link-name'>KYC</span>
-                  </Link>
-                )}
-                </>
+                    {kycForEntreprise?.quiz==1 && 
+                      !kycForEntreprise?.quizTwo==1 && 
+                      !kycForEntreprise?.quizThree==1 && 
+                      !kycForEntreprise?.quizFour==1 && 
+                      !kycBusinessIdentity?.identity==1 ?
+                      // !kycForEntreprise?.numberRepresentatives &&
+                      // !kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      // !kycForEntreprise?.numberBeneficial &&
+                      // !kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length &&
+                      // !kycForEntreprise?.numberAssociates &&
+                      // !kycForEntreprise?.numberAssociates==kycBusinessStructure?.length &&
+                      // !kycForEntreprise?.numberPoliticallyExposed &&
+                      // !kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length &&
+                      // kycBusinessFinancialOperationIds?.length===0  &&
+                      // kycBusinessFundOriginIds?.length===0  &&
+                      // !kycBusinessFinancialMontly?.financialInformation==1 && 
+                      // !kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      // !kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      // !kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      // !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/questionnaire-aml-two' className={pathname == "/profil/kyc/entreprise/questionnaire-aml-two" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      !kycForEntreprise?.quizThree==1 && 
+                      !kycForEntreprise?.quizFour==1 && 
+                      !kycBusinessIdentity?.identity==1 ?
+                      // !kycForEntreprise?.numberRepresentatives &&
+                      // !kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      // !kycForEntreprise?.numberBeneficial &&
+                      // !kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length &&
+                      // !kycForEntreprise?.numberAssociates &&
+                      // !kycForEntreprise?.numberAssociates==kycBusinessStructure?.length &&
+                      // !kycForEntreprise?.numberPoliticallyExposed &&
+                      // !kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length &&
+                      // kycBusinessFinancialOperationIds?.length===0  &&
+                      // kycBusinessFundOriginIds?.length===0  &&
+                      // !kycBusinessFinancialMontly?.financialInformation==1 && 
+                      // !kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      // !kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      // !kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      // !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/questionnaire-aml-three' className={pathname == "/profil/kyc/entreprise/questionnaire-aml-three" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      kycForEntreprise?.quizThree==1 && 
+                      !kycForEntreprise?.quizFour==1 && 
+                      !kycBusinessIdentity?.identity==1 ?
+                      // !kycForEntreprise?.numberRepresentatives &&
+                      // !kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      // !kycForEntreprise?.numberBeneficial &&
+                      // !kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length &&
+                      // !kycForEntreprise?.numberAssociates &&
+                      // !kycForEntreprise?.numberAssociates==kycBusinessStructure?.length &&
+                      // !kycForEntreprise?.numberPoliticallyExposed &&
+                      // !kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length &&
+                      // kycBusinessFinancialOperationIds?.length===0  &&
+                      // kycBusinessFundOriginIds?.length===0  &&
+                      // !kycBusinessFinancialMontly?.financialInformation==1 && 
+                      // !kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      // !kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      // !kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      // !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/questionnaire-aml-four' className={pathname == "/profil/kyc/entreprise/questionnaire-aml-four" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      kycForEntreprise?.quizThree==1 && 
+                      kycForEntreprise?.quizFour==1 && 
+                      !kycBusinessIdentity?.identity==1 ?
+                      // !kycForEntreprise?.numberRepresentatives &&
+                      // !kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      // !kycForEntreprise?.numberBeneficial &&
+                      // !kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length &&
+                      // !kycForEntreprise?.numberAssociates &&
+                      // !kycForEntreprise?.numberAssociates==kycBusinessStructure?.length &&
+                      // !kycForEntreprise?.numberPoliticallyExposed &&
+                      // !kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length &&
+                      // kycBusinessFinancialOperationIds?.length===0  &&
+                      // kycBusinessFundOriginIds?.length===0  &&
+                      // !kycBusinessFinancialMontly?.financialInformation==1 && 
+                      // !kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      // !kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      // !kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      // !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/identite-one' className={pathname == "/profil/kyc/entreprise/identite-one" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      kycForEntreprise?.quizThree==1 && 
+                      kycForEntreprise?.quizFour==1 && 
+                      kycBusinessIdentity?.identity==1 &&
+                      !kycForEntreprise?.numberRepresentatives ?
+                      // !kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      // !kycForEntreprise?.numberBeneficial &&
+                      // !kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length &&
+                      // !kycForEntreprise?.numberAssociates &&
+                      // !kycForEntreprise?.numberAssociates==kycBusinessStructure?.length &&
+                      // !kycForEntreprise?.numberPoliticallyExposed &&
+                      // !kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length &&
+                      // kycBusinessFinancialOperationIds?.length===0  &&
+                      // kycBusinessFundOriginIds?.length===0  &&
+                      // !kycBusinessFinancialMontly?.financialInformation==1 && 
+                      // !kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      // !kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      // !kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      // !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/identite-representant-one' className={pathname == "/profil/kyc/entreprise/identite-representant-one" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      kycForEntreprise?.quizThree==1 && 
+                      kycForEntreprise?.quizFour==1 && 
+                      kycBusinessIdentity?.identity==1 &&
+                      kycForEntreprise?.numberRepresentatives &&
+                      !kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length ?
+                      // !kycForEntreprise?.numberBeneficial &&
+                      // !kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length &&
+                      // !kycForEntreprise?.numberAssociates &&
+                      // !kycForEntreprise?.numberAssociates==kycBusinessStructure?.length &&
+                      // !kycForEntreprise?.numberPoliticallyExposed &&
+                      // !kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length &&
+                      // kycBusinessFinancialOperationIds?.length===0  &&
+                      // kycBusinessFundOriginIds?.length===0 &&
+                      // !kycBusinessFinancialMontly?.financialInformation==1 && 
+                      // !kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      // !kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      // !kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      // !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/identite-representant-two' className={pathname == "/profil/kyc/entreprise/identite-representant-two" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      kycForEntreprise?.quizThree==1 && 
+                      kycForEntreprise?.quizFour==1 && 
+                      kycBusinessIdentity?.identity==1 &&
+                      kycForEntreprise?.numberRepresentatives &&
+                      kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      !kycForEntreprise?.numberBeneficial?
+                      // kycForEntreprise?.numberBeneficial!==kycBusinessBeneficiary?.length &&
+                      // !kycForEntreprise?.numberAssociates &&
+                      // kycForEntreprise?.numberAssociates!==kycBusinessStructure?.length &&
+                      // !kycForEntreprise?.numberPoliticallyExposed &&
+                      // kycForEntreprise?.numberPoliticallyExposed!==kycBusinessPoliticallyExposed?.length &&
+                      // kycBusinessFinancialOperationIds?.length===0  &&
+                      // kycBusinessFundOriginIds?.length===0  &&
+                      // !kycBusinessFinancialMontly?.financialInformation==1 && 
+                      // !kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      // !kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      // !kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      // !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/beneficiaire-effectif-one' className={pathname == "/profil/kyc/entreprise/beneficiaire-effectif-one" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      kycForEntreprise?.quizThree==1 && 
+                      kycForEntreprise?.quizFour==1 && 
+                      kycBusinessIdentity?.identity==1 &&
+                      kycForEntreprise?.numberRepresentatives &&
+                      kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      kycForEntreprise?.numberBeneficial &&
+                      !kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length ?
+                      // !kycForEntreprise?.numberAssociates &&
+                      // !kycForEntreprise?.numberAssociates==kycBusinessStructure?.length &&
+                      // !kycForEntreprise?.numberPoliticallyExposed &&
+                      // !kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length &&
+                      // kycBusinessFinancialOperationIds?.length===0  &&
+                      // kycBusinessFundOriginIds?.length===0  &&
+                      // !kycBusinessFinancialMontly?.financialInformation==1 && 
+                      // !kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      // !kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      // !kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      // !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/beneficiaire-effectif-two' className={pathname == "/profil/kyc/entreprise/beneficiaire-effectif-two" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      kycForEntreprise?.quizThree==1 && 
+                      kycForEntreprise?.quizFour==1 && 
+                      kycBusinessIdentity?.identity==1 &&
+                      kycForEntreprise?.numberRepresentatives &&
+                      kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      kycForEntreprise?.numberBeneficial &&
+                      kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length &&
+                      !kycForEntreprise?.numberAssociates ?
+                      // !kycForEntreprise?.numberAssociates==kycBusinessStructure?.length &&
+                      // !kycForEntreprise?.numberPoliticallyExposed &&
+                      // !kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length &&
+                      // kycBusinessFinancialOperationIds?.length===0  &&
+                      // kycBusinessFundOriginIds?.length===0  &&
+                      // !kycBusinessFinancialMontly?.financialInformation==1 && 
+                      // !kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      // !kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      // !kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      // !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/structure-control-one' className={pathname == "/profil/kyc/entreprise/structure-control-one" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      kycForEntreprise?.quizThree==1 && 
+                      kycForEntreprise?.quizFour==1 && 
+                      kycBusinessIdentity?.identity==1 &&
+                      kycForEntreprise?.numberRepresentatives &&
+                      kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      kycForEntreprise?.numberBeneficial &&
+                      kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length &&
+                      kycForEntreprise?.numberAssociates &&
+                      !kycForEntreprise?.numberAssociates==kycBusinessStructure?.length ?
+                      // !kycForEntreprise?.numberPoliticallyExposed &&
+                      // !kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length &&
+                      // kycBusinessFinancialOperationIds?.length===0  &&
+                      // kycBusinessFundOriginIds?.length===0  &&
+                      // !kycBusinessFinancialMontly?.financialInformation==1 && 
+                      // !kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      // !kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      // !kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      // !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/structure-control-Two' className={pathname == "/profil/kyc/entreprise/structure-control-two" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      kycForEntreprise?.quizThree==1 && 
+                      kycForEntreprise?.quizFour==1 && 
+                      kycBusinessIdentity?.identity==1 &&
+                      kycForEntreprise?.numberRepresentatives &&
+                      kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      kycForEntreprise?.numberBeneficial &&
+                      kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length &&
+                      kycForEntreprise?.numberAssociates &&
+                      kycForEntreprise?.numberAssociates==kycBusinessStructure?.length &&
+                      !kycForEntreprise?.numberPoliticallyExposed ?
+                      // !kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length &&
+                      // kycBusinessFinancialOperationIds?.length===0  &&
+                      // kycBusinessFundOriginIds?.length===0  &&
+                      // !kycBusinessFinancialMontly?.financialInformation==1 && 
+                      // !kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      // !kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      // !kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      // !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/politiquement-exposees-one' className={pathname == "/profil/kyc/entreprise/politiquement-exposees-one" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      kycForEntreprise?.quizThree==1 && 
+                      kycForEntreprise?.quizFour==1 && 
+                      kycBusinessIdentity?.identity==1 &&
+                      kycForEntreprise?.numberRepresentatives &&
+                      kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      kycForEntreprise?.numberBeneficial &&
+                      kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length &&
+                      kycForEntreprise?.numberAssociates &&
+                      kycForEntreprise?.numberAssociates==kycBusinessStructure?.length &&
+                      kycForEntreprise?.numberPoliticallyExposed &&
+                      !kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length ?
+                      // kycBusinessFinancialOperationIds?.length===0  &&
+                      // kycBusinessFundOriginIds?.length===0  &&
+                      // !kycBusinessFinancialMontly?.financialInformation==1 && 
+                      // !kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      // !kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      // !kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      // !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/politiquement-exposees-two' className={pathname == "/profil/kyc/entreprise/politiquement-exposees-two" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      kycForEntreprise?.quizThree==1 && 
+                      kycForEntreprise?.quizFour==1 && 
+                      kycBusinessIdentity?.identity==1 &&
+                      kycForEntreprise?.numberRepresentatives &&
+                      kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      kycForEntreprise?.numberBeneficial &&
+                      kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length &&
+                      kycForEntreprise?.numberAssociates &&
+                      kycForEntreprise?.numberAssociates==kycBusinessStructure?.length &&
+                      kycForEntreprise?.numberPoliticallyExposed &&
+                      kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length &&
+                      kycBusinessFinancialOperationIds?.length===0  ?
+                      // kycBusinessFundOriginIds?.length===0  &&
+                      // !kycBusinessFinancialMontly?.financialInformation==1 && 
+                      // !kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      // !kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      // !kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      // !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/operations-financieres-one' className={pathname == "/profil/kyc/entreprise/operations-financieres-one" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      kycForEntreprise?.quizThree==1 && 
+                      kycForEntreprise?.quizFour==1 && 
+                      kycBusinessIdentity?.identity==1 &&
+                      kycForEntreprise?.numberRepresentatives &&
+                      kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      kycForEntreprise?.numberBeneficial &&
+                      kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length &&
+                      kycForEntreprise?.numberAssociates &&
+                      kycForEntreprise?.numberAssociates==kycBusinessStructure?.length &&
+                      kycForEntreprise?.numberPoliticallyExposed &&
+                      kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length &&
+                      kycBusinessFinancialOperationIds?.length!==0  && //Signifie que ça existe comme les autres
+                      kycBusinessFundOriginIds?.length===0  ?
+                      // !kycBusinessFinancialMontly?.financialInformation==1 && 
+                      // !kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      // !kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      // !kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      // !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/origine-fonds' className={pathname == "/profil/kyc/entreprise/origine-fonds" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      kycForEntreprise?.quizThree==1 && 
+                      kycForEntreprise?.quizFour==1 && 
+                      kycBusinessIdentity?.identity==1 &&
+                      kycForEntreprise?.numberRepresentatives &&
+                      kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      kycForEntreprise?.numberBeneficial &&
+                      kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length &&
+                      kycForEntreprise?.numberAssociates &&
+                      kycForEntreprise?.numberAssociates==kycBusinessStructure?.length &&
+                      kycForEntreprise?.numberPoliticallyExposed &&
+                      kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length &&
+                      kycBusinessFinancialOperationIds?.length!==0  &&
+                      kycBusinessFundOriginIds?.length!==0  && //Signifie que ça existe comme les autres
+                      !kycBusinessFinancialMontly?.financialInformation==1 ?
+                      // !kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      // !kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      // !kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      // !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/information-financiere-one' className={pathname == "/profil/kyc/entreprise/information-financiere-one" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      kycForEntreprise?.quizThree==1 && 
+                      kycForEntreprise?.quizFour==1 && 
+                      kycBusinessIdentity?.identity==1 &&
+                      kycForEntreprise?.numberRepresentatives &&
+                      kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      kycForEntreprise?.numberBeneficial &&
+                      kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length &&
+                      kycForEntreprise?.numberAssociates &&
+                      kycForEntreprise?.numberAssociates==kycBusinessStructure?.length &&
+                      kycForEntreprise?.numberPoliticallyExposed &&
+                      kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length &&
+                      kycBusinessFinancialOperationIds?.length!==0  &&
+                      kycBusinessFundOriginIds?.length!==0  && //Signifie que ça existe comme les autres
+                      kycBusinessFinancialMontly?.financialInformation==1 && 
+                      !kycBusinessFinancialQuarterly?.financialInformation==1 ? 
+                      // !kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      // !kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      // !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/information-financiere-two' className={pathname == "/profil/kyc/entreprise/information-financiere-two" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      kycForEntreprise?.quizThree==1 && 
+                      kycForEntreprise?.quizFour==1 && 
+                      kycBusinessIdentity?.identity==1 &&
+                      kycForEntreprise?.numberRepresentatives &&
+                      kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      kycForEntreprise?.numberBeneficial &&
+                      kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length &&
+                      kycForEntreprise?.numberAssociates &&
+                      kycForEntreprise?.numberAssociates==kycBusinessStructure?.length &&
+                      kycForEntreprise?.numberPoliticallyExposed &&
+                      kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length &&
+                      kycBusinessFinancialOperationIds?.length!==0  &&
+                      kycBusinessFundOriginIds?.length!==0  && //Signifie que ça existe comme les autres
+                      kycBusinessFinancialMontly?.financialInformation==1 && 
+                      kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      !kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      !kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/information-financiere-three' className={pathname == "/profil/kyc/entreprise/information-financiere-three" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      kycForEntreprise?.quizThree==1 && 
+                      kycForEntreprise?.quizFour==1 && 
+                      kycBusinessIdentity?.identity==1 &&
+                      kycForEntreprise?.numberRepresentatives &&
+                      kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      kycForEntreprise?.numberBeneficial &&
+                      kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length &&
+                      kycForEntreprise?.numberAssociates &&
+                      kycForEntreprise?.numberAssociates==kycBusinessStructure?.length &&
+                      kycForEntreprise?.numberPoliticallyExposed &&
+                      kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length &&
+                      kycBusinessFinancialOperationIds?.length!==0  &&
+                      kycBusinessFundOriginIds?.length!==0  && //Signifie que ça existe comme les autres
+                      kycBusinessFinancialMontly?.financialInformation==1 && 
+                      kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      !kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/information-financiere-four' className={pathname == "/profil/kyc/entreprise/information-financiere-four" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      kycForEntreprise?.quizThree==1 && 
+                      kycForEntreprise?.quizFour==1 && 
+                      kycBusinessIdentity?.identity==1 &&
+                      kycForEntreprise?.numberRepresentatives &&
+                      kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      kycForEntreprise?.numberBeneficial &&
+                      kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length &&
+                      kycForEntreprise?.numberAssociates &&
+                      kycForEntreprise?.numberAssociates==kycBusinessStructure?.length &&
+                      kycForEntreprise?.numberPoliticallyExposed &&
+                      kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length &&
+                      kycBusinessFinancialOperationIds?.length!==0  &&
+                      kycBusinessFundOriginIds?.length!==0  && //Signifie que ça existe comme les autres
+                      kycBusinessFinancialMontly?.financialInformation==1 && 
+                      kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      !kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/information-financiere-five' className={pathname == "/profil/kyc/entreprise/information-financiere-five" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ):kycForEntreprise?.quiz==1 && 
+                      kycForEntreprise?.quizTwo==1 && 
+                      kycForEntreprise?.quizThree==1 && 
+                      kycForEntreprise?.quizFour==1 && 
+                      kycBusinessIdentity?.identity==1 &&
+                      kycForEntreprise?.numberRepresentatives &&
+                      kycForEntreprise?.numberRepresentatives==kycBusinessRepresentative?.length &&
+                      kycForEntreprise?.numberBeneficial &&
+                      kycForEntreprise?.numberBeneficial==kycBusinessBeneficiary?.length &&
+                      kycForEntreprise?.numberAssociates &&
+                      kycForEntreprise?.numberAssociates==kycBusinessStructure?.length &&
+                      kycForEntreprise?.numberPoliticallyExposed &&
+                      kycForEntreprise?.numberPoliticallyExposed==kycBusinessPoliticallyExposed?.length &&
+                      kycBusinessFinancialOperationIds?.length!==0  &&
+                      kycBusinessFundOriginIds?.length!==0  && //Signifie que ça existe comme les autres
+                      kycBusinessFinancialMontly?.financialInformation==1 && 
+                      kycBusinessFinancialQuarterly?.financialInformation==1 && 
+                      kycBusinessFinancialAnnual?.financialInformation==1 && 
+                      kycBusinessTransactionMontly?.financialTransaction==1 && 
+                      kycBusinessTransactionAnnual?.financialTransaction==1 ?
+                    (
+                      <Link to='/profil/kyc/entreprise/documents-legaux' className={pathname == "/profil/kyc/entreprise/documents-legaux" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC</span>
+                      </Link>
+                    ): (
+                      <Link to='/profil/kyc/entreprise/questionnaire' className={pathname == "/profil/kyc/entreprise/questionnaire" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                        <i className='fas fa-tasks nav-link-icon'></i>
+                        <span className='nav-link-name'>KYC </span>
+                      </Link>
+                    )}
+                  </>
                 )}
               </>
-              // A revoir
-            ) :(
-              <Link to='/profil/kyc/entreprise/questionnaire/' className={pathname == "/profil/kyc/entreprise/questionnaire/" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
-                    <i className='fas fa-tasks nav-link-icon'></i>
-                    <span className='nav-link-name'>KYC</span>
-              </Link>
-            )}
+            ) :("")}
+            {/* Fin */}
 
               {/* <Link to='/profil/portefeuille' className={pathname == "/profil/portefeuille" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
                 <i className='fas fa-wallet nav-link-icon'></i>

@@ -13,8 +13,8 @@ const CIformationFinanciereOne = () => {
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
-    const [currentKycStatut, setCurrentKycStatut] = useState();
     const [kycFinancialMontlyId, setKycFinancialMontlyId] = useState();
+    const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
     
     // ***********LA BONNE PARTIE STATE DU FORMULAIRE***********************
     const [mOneCa, setMOneCa] = useState('');
@@ -36,6 +36,13 @@ const CIformationFinanciereOne = () => {
     const [mFourCharges, setMFourCharges] = useState('');
     const [mFourResultat, setMFourResultat] = useState('');
     const [mFourTransactions, setMFourTransactions] = useState('');
+
+    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+      const kycStatut = localStorage.getItem('currentKycEntrepriseStatut')  
+      setCurrentKycEntrepriseStatut(kycStatut)
+  }, [currentKycEntrepriseStatut]);
+
   
     const handleM1CaChange = (e) => {
       setMOneCa(e.target.value);
@@ -170,11 +177,7 @@ const CIformationFinanciereOne = () => {
                       timer: 5000
                   }),
                   setTimeout(() => {
-                      if (currentKycStatut==="1") {
-                          Router.push("/profil/kyc/entreprise/resultat-kyc"); 
-                      }else{
-                          Router.push("/profil/kyc/entreprise/information-financiere-two"); 
-                      }
+                    Router.push("/profil/kyc/entreprise/information-financiere-two"); 
                   }, 5000)
               }
               // Fin condition 
@@ -252,7 +255,7 @@ const CIformationFinanciereOne = () => {
                     timer: 5000
                 }),
                 setTimeout(() => {
-                    if (currentKycStatut==="1") {
+                    if (currentKycEntrepriseStatut==="1") {
                         Router.push("/profil/kyc/entreprise/resultat-kyc"); 
                     }else{
                         Router.push("/profil/kyc/entreprise/information-financiere-two"); 

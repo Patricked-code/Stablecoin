@@ -24,26 +24,7 @@ const CQuestionnaire = () => {
     const [messageError, setMessageError] = useState();
 
 
-    // states des questionnaires
-// LES NOUVEAUX CHAMPS
-// spentA
-// spentB
-// spentC
-// spentD
-// spentE
-// spentF
-// spentG
-// spentH
-// spentI
-// operationA
-// operationB
-// operationC
-// operationD
-// operationE
-// operationF
-// operationG
-// eShop
-// multiplePayment
+
     // State de la question 2
     const [spentA, setSpentA] = useState([]);
     const [spentB, setSpentB] = useState([]);

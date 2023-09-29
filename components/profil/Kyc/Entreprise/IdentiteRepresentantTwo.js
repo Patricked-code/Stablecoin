@@ -24,6 +24,8 @@ const CIdentiteRepresentantTwo = () => {
     const [allNationality, setAllNationality] = useState();
     const [kycForEntreprise, setKycForEntreprise] = useState();
     const [kycRepresentative, setKycRepresentative] = useState();
+    const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
+
 
     // Les states du formulaire
     const [firstName, setFirstName] = useState();
@@ -71,6 +73,13 @@ const CIdentiteRepresentantTwo = () => {
     const [imageRectoDomicile, setImageRectoDomicile] = useState(null)
     const [imageVersoDomicile, setImageVersoDomicile] = useState(null)
     // FIN
+
+    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+        const kycStatut = localStorage.getItem('currentKycEntrepriseStatut')  
+        setCurrentKycEntrepriseStatut(kycStatut)
+    }, [currentKycEntrepriseStatut]);
+
 
     // LES FONCTIONS POUR PRENDRE PHOTO (IDENTITE)
     // Fonction pour prendre photo du Recto
@@ -206,9 +215,6 @@ const CIdentiteRepresentantTwo = () => {
                 */
             if (result?.status===200) {
                 setTimeout(() => {
-                    if (currentKycStatut==="1") {
-                        Router.push("/profil/kyc/particulier/resultat-kyc"); 
-                    }else{
                         if (kycRepresentative?.length+1 == kycForEntreprise?.numberRepresentatives) {
                             Swal.fire({
                                 position: 'center',
@@ -232,7 +238,6 @@ const CIdentiteRepresentantTwo = () => {
                                 window.location.reload()
                             }, 2000)
                         }
-                    }
                 }, 5000)
                 
                 }else{
@@ -264,6 +269,98 @@ const CIdentiteRepresentantTwo = () => {
         console.error(error);
        
     }
+    }
+    // FIN
+
+    // FONCTION D'ENVOIE DES DONNEES DU REPRESENTANT LEGAL
+    const updateRepresentatives = async (event) => {
+        try {
+            event.preventDefault();
+            setIsLoggingIn(true);
+
+            const token = localStorage.getItem('tokenEnCours')
+            if (dateBirth < formatDate(currentDate) && expirationDate > formatDate(currentDate)) {
+
+                const body = new FormData();
+                body.append("lastName", lastName);
+                body.append("firstName", firstName);
+                body.append("issuingCountry", issuingCountry);
+                body.append("residenceCountry", residenceCountry);
+                body.append("dateBirth", dateBirth);
+                body.append("expirationDate", expirationDate);
+                body.append("nationality", nationality);
+                body.append("email", email);
+                body.append("functions", functions);
+                body.append("typeDocIdentity", typeDocIdentity);
+                body.append("identityDocNumber", identityDocNumber);
+                body.append("mobile", mobile);
+                body.append("frontIdentityFile", statutDocIdentite==="0"?frontIdentity:"");
+                body.append("backIdentityFile", statutDocIdentite==="0"?backIdentity:"");
+                body.append("frontIdentityPhoto", statutDocIdentite==="1"?imageRecto:"");
+                body.append("backIdentityPhoto", statutDocIdentite==="1"?imageVerso:"");
+                body.append("typeDocumentResidence", typeDocumentResidence);
+                body.append("frontDomicileFile", statutDocDomicile==="0"?frontDomicile:"");
+                body.append("backDomicileFile", statutDocDomicile==="0"?backDomicile:"");
+                body.append("frontDomicilePhoto", statutDocDomicile==="1"?imageRectoDomicile:"");
+                body.append("backDomicilePhoto", statutDocDomicile==="1"?imageVersoDomicile:"");
+                body.append("signature", signatureData);
+            
+            
+                const result = await fetch(`${API_URL}/api/kyc/business/update-kyc-representatives/${currentKycEntrepriseStatut}`, {
+                    method:"PUT",
+                    body,
+                    headers: {
+                        // 'Content-Type': 'application/json',
+                        Authorization:  `Bearer ${token}`,
+                        },
+                })    
+                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+                    * sinon on affiche le message de succès
+                    */
+                if (result?.status===200) {
+                    
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        html: `<p> Les modifications sauvegardées avec succès. </p>` ,
+                        showConfirmButton: false,
+                        timer: 5000
+                    })
+                setTimeout(() => {
+                    window.location.reload()
+                }, 5000)
+                Router.push("/profil/kyc/entreprise/resultat-kyc");
+
+                    
+            }else{
+                        // setMessageError(data.message)
+
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> Désolé une erreur s'est produite,Veuillez réessayer svp. </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+                        
+            }
+            }else{
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> Désolé la date de naissance doit être inférieure à la date du jour <br/> Et la date d'expiration doit être supérieure à la date du jour. </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+            }
+
+        } catch (error) {
+            setIsLoggingIn(false);
+            console.error(error);
+        
+        }
     }
     // FIN
 
@@ -360,21 +457,7 @@ const CIdentiteRepresentantTwo = () => {
                             
                             
                             
-                            
-    
-
-
-
-
-
-    const [currentKycStatut, setCurrentKycStatut] = useState();
-
-    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
-    useEffect(() => {
-        const kycStatut = localStorage.getItem('currentUpdateKycStatut')  
-        setCurrentKycStatut(kycStatut)
-    }, [currentKycStatut]);
-    // Fin
+                        
 
 
    
@@ -461,18 +544,20 @@ const CIdentiteRepresentantTwo = () => {
 
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
                         <h5
-                            htmlFor="lastName"
                             className="text-blackish-blue mb-2 colorRed"
                         >
-                            Veuillez renseigner les informations du représentant n° {kycRepresentative?.length + 1}
+                            {!currentKycEntrepriseStatut || currentKycEntrepriseStatut == "undefined"? (
+
+                                `Veuillez renseigner les informations du représentant n° ${kycRepresentative?.length + 1}`
+                            ):("Veuillez rajouter les informations du représentant concerné")}
                         </h5>
-                        <form className='' onSubmit={addRepresentatives}>
+                        <form className='' onSubmit={!currentKycEntrepriseStatut|| currentKycEntrepriseStatut == "undefined"?addRepresentatives:updateRepresentatives}>
                         <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="lastName"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Nom du représentation légal {kycRepresentative?.length}
+                                    Nom du représentation légal 
                                 </label>
                                 <div className='form-group'>
                                     <input
@@ -1202,42 +1287,51 @@ const CIdentiteRepresentantTwo = () => {
 
                             </div>
                             {/* Fin */}
-
-                            <label
-                                htmlFor="backDomicile mb-3 "
-                                className='colorRed'
-                            >
-                                NB: Vous avez ajouté {kycRepresentative?.length}/{kycForEntreprise?.numberRepresentatives} représentant(s)
-                            </label>
-
-                            <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
-                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                    <Link href='/profil/kyc/entreprise/identite-representant-one/' className="align-right">
-                                        <a
-                                        className=""
+                            
+                            {/* Vérifie s'il s'agit d'une modification à apporter */}
+                            {!currentKycEntrepriseStatut || currentKycEntrepriseStatut == "undefined"?(
+                                <>
+                                    <label
+                                            htmlFor="backDomicile mb-3 "
+                                            className='colorRed'
                                         >
-                                            <button className="btn btn-primary " type='button'  > Précédente </button>
-                                        </a>   
-                                    </Link>  
-                                                            
-                                </div>
-                                <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-
-                                    {kycRepresentative?.length == kycForEntreprise?.numberRepresentatives ? (
-                                        <Link href='/profil/kyc/entreprise/beneficiaire-effectif-one' className="align-right">
-                                            <a
-                                            className=""
-                                            >
-                                                <button className="btn btn-primary " type='button'  > Suivant </button>
-                                            </a>   
-                                        </Link>
-                                    ) : (
-                                        <button className="btn btn-primary " type='submit'  disabled={isLoggingIn}>Suivant</button>
+                                            NB: Vous avez ajouté {kycRepresentative?.length}/{kycForEntreprise?.numberRepresentatives} représentant(s)
+                                        </label>
+                                    
+                                    <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                            <Link href='/profil/kyc/entreprise/identite-representant-one/' className="align-right">
+                                                <a
+                                                className=""
+                                                >
+                                                    <button className="btn btn-primary " type='button'  > Précédente </button>
+                                                </a>   
+                                            </Link>  
+                                                                    
+                                        </div>
 
                                         
-                                    )}
-                                </div>
-                            </div>
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+
+                                            {kycRepresentative?.length == kycForEntreprise?.numberRepresentatives ? (
+                                                <Link href='/profil/kyc/entreprise/beneficiaire-effectif-one' className="align-right">
+                                                    <a
+                                                    className=""
+                                                    >
+                                                        <button className="btn btn-primary " type='button'  > Suivant </button>
+                                                    </a>   
+                                                </Link>
+                                            ) : (
+                                                <button className="btn btn-primary " type='submit'  disabled={isLoggingIn}>Suivant</button>
+
+                                                
+                                            )}
+                                        </div>
+                                    </div>
+                                </>
+                            ):(
+                                <button className="btn btn-primary " type='submit'  disabled={isLoggingIn}>Modifier</button>
+                            )}
                         </form>       
                     </div>
                 <div className='col-lg-3 col-md-12'></div>

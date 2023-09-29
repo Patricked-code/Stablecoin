@@ -14,6 +14,7 @@ const COperationsFinancieresOne = () => {
     const [messageError, setMessageError] = useState();
     const [currentKycStatut, setCurrentKycStatut] = useState();
     const [financialOperationIdsToUpdate, setFinancialOperationIdsToUpdate] = useState([]);
+    const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
 
 
     // ***********LA BONNE PARTIE ***********************
@@ -70,6 +71,12 @@ const COperationsFinancieresOne = () => {
         { title: 'Opérations diverses', question: 'Paiement de frais de location ou de leasing d\'équipements.', answer: '' }
     
       ]);
+
+        //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+        useEffect(() => {
+            const kycStatut = localStorage.getItem('currentKycEntrepriseStatut')  
+            setCurrentKycEntrepriseStatut(kycStatut)
+        }, [currentKycEntrepriseStatut]);
 
 
     //   ***********PARTIE SOLUTION A*********************
@@ -138,11 +145,7 @@ const COperationsFinancieresOne = () => {
                     timer: 5000
                 }),
                 setTimeout(() => {
-                    if (currentKycStatut==="1") {
-                        Router.push("/profil/kyc/entreprise/resultat-kyc"); 
-                    }else{
-                        Router.push("/profil/kyc/entreprise/origine-fonds"); 
-                    }
+                    Router.push("/profil/kyc/entreprise/origine-fonds");
                 }, 5000)
             }
             // Fin condition 
@@ -209,7 +212,7 @@ const COperationsFinancieresOne = () => {
                         timer: 5000
                     }),
                     setTimeout(() => {
-                        if (currentKycStatut==="1") {
+                        if (currentKycEntrepriseStatut==="1") {
                             Router.push("/profil/kyc/entreprise/resultat-kyc"); 
                         }else{
                             Router.push("/profil/kyc/entreprise/origine-fonds"); 

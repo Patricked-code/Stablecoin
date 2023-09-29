@@ -108,7 +108,7 @@ const [proofPowerFile, setProofPowerFile] = useState(null)
                 timer: 5000
             }),
             setTimeout(() => {
-                if (currentKycEntrepriseStatut==="1") {
+                if (currentKycEntrepriseStatut==="7") {
                     Router.push("/profil/kyc/entreprise/resultat-kyc"); 
 
                 }else{
@@ -228,7 +228,7 @@ const [proofPowerFile, setProofPowerFile] = useState(null)
                 timer: 5000
             }),
             setTimeout(() => {
-                if (currentKycEntrepriseStatut==="1") {
+                if (currentKycEntrepriseStatut==="8") {
                     Router.push("/profil/kyc/entreprise/resultat-kyc"); 
 
                 }else{
@@ -485,12 +485,31 @@ const [proofPowerFile, setProofPowerFile] = useState(null)
             </>
         ):(
             <>
-                <div className='card my-3'>
-                    <p className=' bgColorGreen text-center text-white'> Facture eau / électricité ou contrat de bail est sauvegardée succès</p>
-                    <div className="form-group mb-6 mt-3  text-center">
-                        <button className="btn btn-primary " onClick={updateFieldFacture}  >Modifier</button>
-                    </div> 
-                </div>
+                {/* on verifie si l'utilisateur veut reprendre soit la partie Facture ou La copie du justificatif de pouvoir */}
+                {currentKycEntrepriseStatut==7 || currentKycEntrepriseStatut==8 ? (
+                    <>
+                        {/* si c'est Facture on lui affiche ce bouton */}
+                        {currentKycEntrepriseStatut==7 ? (
+
+                            <div className='card my-3'>
+                                <p className=' bgColorGreen text-center text-white'> Facture eau / électricité ou contrat de bail est sauvegardée succès</p>
+                                <div className="form-group mb-6 mt-3  text-center">
+                                    <button className="btn btn-primary " onClick={updateFieldFacture}  >Modifier</button>
+                                </div> 
+                            </div>
+                        // Sinon le bouton disparaît
+                        ):("")}
+                    </>
+
+                // Sinon le bouton reste s'affiche normalement comme pour les autres partie des documents
+                ):(
+                    <div className='card my-3'>
+                        <p className=' bgColorGreen text-center text-white'> Facture eau / électricité ou contrat de bail est sauvegardée succès</p>
+                        <div className="form-group mb-6 mt-3  text-center">
+                            <button className="btn btn-primary " onClick={updateFieldFacture}  >Modifier</button>
+                        </div> 
+                    </div>
+                )}
             </>
         )} 
         {/* ************FIN FORMULAIRE DE FACTURE************ */}
@@ -681,12 +700,31 @@ const [proofPowerFile, setProofPowerFile] = useState(null)
             </>
         ):(
             <>
-                <div className='card my-3'>
-                    <p className=' bgColorGreen text-center text-white'> La copie du justificatif de pouvoir conféré au signataire sur le compte par le représentant légal est sauvegardée succès</p>
-                    <div className="form-group mb-6 mt-3  text-center">
-                        <button className="btn btn-primary " onClick={updateFieldProofPower}  >Modifier</button>
-                    </div> 
-                </div>
+                {/* on verifie si l'utilisateur veut reprendre soit la partie Facture ou La copie du justificatif de pouvoir */}
+                {currentKycEntrepriseStatut==7 || currentKycEntrepriseStatut==8 ? (
+                    <>
+                        {/* si c'est La copie du justificatif de pouvoir on lui affiche ce bouton */}
+                        {currentKycEntrepriseStatut==8 ? (
+
+                            <div className='card my-3'>
+                                <p className=' bgColorGreen text-center text-white'> La copie du justificatif de pouvoir conféré au signataire sur le compte par le représentant légal est sauvegardée succès</p>
+                                <div className="form-group mb-6 mt-3  text-center">
+                                    <button className="btn btn-primary " onClick={updateFieldProofPower}  >Modifier</button>
+                                </div> 
+                            </div>
+                        // Sinon le bouton disparaît
+                        ):("")}
+                    </>
+
+                // Sinon le bouton reste s'affiche normalement comme pour les autres partie des documents
+                ):(
+                    <div className='card my-3'>
+                        <p className=' bgColorGreen text-center text-white'> La copie du justificatif de pouvoir conféré au signataire sur le compte par le représentant légal est sauvegardée succès</p>
+                        <div className="form-group mb-6 mt-3  text-center">
+                            <button className="btn btn-primary " onClick={updateFieldProofPower}  >Modifier</button>
+                        </div> 
+                    </div>
+                )}
             </>
         )}
         {/* ************FIN FORMULAIRE DU JUSTIFICATIF DE POUVOIRS************ */}

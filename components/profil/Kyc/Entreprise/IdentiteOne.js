@@ -41,6 +41,13 @@ const CIdentiteOne = () => {
     const [phoneFixe, setPhoneFixe] = useState();
     const [mobile, setMobile] = useState();
     const [city, setCity] = useState();
+
+
+    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+        const kycStatut = localStorage.getItem('currentKycEntrepriseStatut')  
+        setCurrentKycEntrepriseStatut(kycStatut)
+    }, [currentKycEntrepriseStatut]);
     
     // Obtenir l'utilisateur qui est connecté
     useEffect(() => {
@@ -301,9 +308,8 @@ const CIdentiteOne = () => {
                         timer: 5000
                     }),
                     setTimeout(() => {
-                        if (currentKycStatut==="1") {
-                            Router.push("/profil/kyc/particulier/resultat-kyc"); 
-        
+                        if (currentKycEntrepriseStatut==="1") {
+                            Router.push("/profil/kyc/entreprise/resultat-kyc"); 
                         }else{
                             Router.push("/profil/kyc/entreprise/identite-representant-one"); 
                         }
@@ -352,20 +358,6 @@ const CIdentiteOne = () => {
             setLocal("");
         }
     };
-
-          
-    
-
-
-
-
-    const [currentKycStatut, setCurrentKycStatut] = useState();
-    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
-    useEffect(() => {
-        const kycStatut = localStorage.getItem('currentUpdateKycStatut')  
-        setCurrentKycStatut(kycStatut)
-    }, [currentKycStatut]);
-    // Fin
 
 
     // La barre de progression de KYC du profil entreprise

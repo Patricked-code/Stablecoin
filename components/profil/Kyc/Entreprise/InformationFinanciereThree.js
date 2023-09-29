@@ -13,8 +13,8 @@ const CIformationFinanciereThree = () => {
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
-    const [currentKycStatut, setCurrentKycStatut] = useState();
     const [kycFinancialAnnualId, setKycFinancialAnnualId] = useState();
+    const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
 
 
 
@@ -39,6 +39,12 @@ const CIformationFinanciereThree = () => {
     const [mFourResultat, setMFourResultat] = useState('');
     const [mFourTransactions, setMFourTransactions] = useState('');
   
+    //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+      const kycStatut = localStorage.getItem('currentKycEntrepriseStatut')  
+      setCurrentKycEntrepriseStatut(kycStatut)
+  }, [currentKycEntrepriseStatut]);
+
 
     const handleM1CaChange = (e) => {
       setMOneCa(e.target.value);
@@ -173,11 +179,7 @@ const CIformationFinanciereThree = () => {
                   timer: 5000
               }),
               setTimeout(() => {
-                  if (currentKycStatut==="1") {
-                      Router.push("/profil/kyc/entreprise/resultat-kyc"); 
-                  }else{
-                      Router.push("/profil/kyc/entreprise/information-financiere-four"); 
-                  }
+                Router.push("/profil/kyc/entreprise/information-financiere-four"); 
               }, 5000)
           }
           // Fin condition 
@@ -255,7 +257,7 @@ const CIformationFinanciereThree = () => {
                 timer: 5000
             }),
             setTimeout(() => {
-                if (currentKycStatut==="1") {
+                if (currentKycEntrepriseStatut==="1") {
                     Router.push("/profil/kyc/entreprise/resultat-kyc"); 
                 }else{
                     Router.push("/profil/kyc/entreprise/information-financiere-four"); 
@@ -275,7 +277,7 @@ const CIformationFinanciereThree = () => {
   useEffect(async() => {
     const token = localStorage.getItem('tokenEnCours')
     
-        const getKycFinancialMontly = async () => {
+        const getKycFinancialAnnual = async () => {
         const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-annual-of-user-signIn`, {
             headers: {
             'Content-Type': 'application/json',
@@ -288,7 +290,7 @@ const CIformationFinanciereThree = () => {
 
             }) 
         };
-        await getKycFinancialMontly();
+        await getKycFinancialAnnual();
   }, []);
   // FIN
 

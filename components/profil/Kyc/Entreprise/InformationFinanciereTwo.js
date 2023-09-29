@@ -12,8 +12,8 @@ const CIformationFinanciereTwo = () => {
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
-    const [currentKycStatut, setCurrentKycStatut] = useState();
-    const [kycFinancialQuarterlyIdId, setKycFinancialQuarterlyIdId] = useState();
+    const [kycFinancialQuarterlyId, setKycFinancialQuarterlyId] = useState();
+    const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
 
 
     // ***********LA BONNE PARTIE STATE DU FORMULAIRE***********************
@@ -37,7 +37,12 @@ const CIformationFinanciereTwo = () => {
     const [mFourResultat, setMFourResultat] = useState('');
     const [mFourTransactions, setMFourTransactions] = useState('');
 
-  
+  //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+  useEffect(() => {
+    const kycStatut = localStorage.getItem('currentKycEntrepriseStatut')  
+    setCurrentKycEntrepriseStatut(kycStatut)
+}, [currentKycEntrepriseStatut]);
+
 
     const handleM1CaChange = (e) => {
       setMOneCa(e.target.value);
@@ -172,11 +177,7 @@ const CIformationFinanciereTwo = () => {
                 timer: 5000
             }),
             setTimeout(() => {
-                if (currentKycStatut==="1") {
-                    Router.push("/profil/kyc/entreprise/resultat-kyc"); 
-                }else{
-                    Router.push("/profil/kyc/entreprise/information-financiere-three"); 
-                }
+              Router.push("/profil/kyc/entreprise/information-financiere-three"); 
             }, 5000)
         }
         // Fin condition 
@@ -220,7 +221,7 @@ const CIformationFinanciereTwo = () => {
         const token = localStorage.getItem('tokenEnCours') //Le token récuperé
 
         // Envoyer une requête POST en utilisant fetch
-        const response = await fetch(`${API_URL}/api/kyc/business/update-kyc-financial-information/${kycFinancialQuarterlyIdId}`, {
+        const response = await fetch(`${API_URL}/api/kyc/business/update-kyc-financial-information/${kycFinancialQuarterlyId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -254,7 +255,7 @@ const CIformationFinanciereTwo = () => {
                 timer: 5000
             }),
             setTimeout(() => {
-                if (currentKycStatut==="1") {
+                if (currentKycEntrepriseStatut==="1") {
                     Router.push("/profil/kyc/entreprise/resultat-kyc"); 
                 }else{
                     Router.push("/profil/kyc/entreprise/information-financiere-three"); 
@@ -274,7 +275,7 @@ const CIformationFinanciereTwo = () => {
   useEffect(async() => {
     const token = localStorage.getItem('tokenEnCours')
     
-        const getKycFinancialMontly = async () => {
+        const getKycFinancialQuarterly = async () => {
         const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-quarterly-of-user-signIn`, {
             headers: {
             'Content-Type': 'application/json',
@@ -283,11 +284,11 @@ const CIformationFinanciereTwo = () => {
         })
             .then((resKyc) => resKyc.json())
             .then((data) => {
-            setKycFinancialQuarterlyIdId(data?.id)
+            setKycFinancialQuarterlyId(data?.id)
 
             }) 
         };
-        await getKycFinancialMontly();
+        await getKycFinancialQuarterly();
   }, []);
   // FIN
 
@@ -359,7 +360,7 @@ const CIformationFinanciereTwo = () => {
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-12 col-md-12'>
                         <h4>Information financière sur les 4 derniers trimestres</h4>
                         {/* FORM A */}
-                        <form onSubmit={kycFinancialQuarterlyIdId?updateFinancialInformationQuarterly:addFinancialInformationQuarterly}>
+                        <form onSubmit={kycFinancialQuarterlyId?updateFinancialInformationQuarterly:addFinancialInformationQuarterly}>
                           <Table
                               aria-label="Example table with static content"
                               css={{

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-import CDocumentLegaux from '../../../../components/profil/Kyc/Entreprise/DocumentsLegaux';
 import CDocumentsIdentites from '../../../../components/profil/Kyc/Entreprise/Documents_legaux/DocumentsIdentites';
 import CFactureEtJustPouvoirs from '../../../../components/profil/Kyc/Entreprise/Documents_legaux/FactureEtJustPouvoir';
 import CPvEtLocalisation from '../../../../components/profil/Kyc/Entreprise/Documents_legaux/PvEtLocalisation';
@@ -8,7 +7,6 @@ import CRegistreEtDfe from '../../../../components/profil/Kyc/Entreprise/Documen
 import CStatusEtDelegation from '../../../../components/profil/Kyc/Entreprise/Documents_legaux/StatutsEtDelegation';
 import ProgressBar from '../../../../components/profil/Kyc/ProgressBar';
 import SidebarProfil from '../../../../components/profil/SideBar/Sidebar';
-// import ProgressBar from '../../../../ProgressBar';
 
 
 
@@ -17,8 +15,17 @@ const documentLegaux = () => {
   const API_URL =process.env.NEXT_PUBLIC_URL_API
   const [showSidebar, setShowSidebar] = useState(false);
   const [kycDocument, setKycDocument] = useState(false);
+  const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
 
-  // RECUPERER LES DONNEES DU KYC DE STRUCTURE DE CONTROL DE L'ENTREPRISE CONNECTEE
+  //localStorage pour récupérer une valeur en cliquant sur un bouton Recompleter qui indique qu'on veut modifier une partie Kyc 
+  useEffect(() => {
+    const kycStatut = localStorage.getItem('currentKycEntrepriseStatut')  
+    setCurrentKycEntrepriseStatut(kycStatut)
+    console.log("kycStatut 00000000=>",kycStatut)
+  }, [currentKycEntrepriseStatut]);
+
+
+  // RECUPERER LES DONNEES DU KYC DES DOCUMENTS LEGAUX DE L'ENTREPRISE CONNECTEE
   useEffect(async() => {
     const token = localStorage.getItem('tokenEnCours')
     
@@ -32,7 +39,6 @@ const documentLegaux = () => {
             .then((resKyc) => resKyc.json())
             .then((data) => {
             setKycDocument(data)
-            // console.log("setKycDocument=>",data)
 
             }) 
         };
@@ -121,21 +127,46 @@ const documentLegaux = () => {
 
             {/* Les cards */}
             <div className='row'>
-                <div className='col-lg-3 col-md-12'></div>
+              <div className='col-lg-3 col-md-12'></div>
+              <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
+                {/* On vérifie si l'utilisateur n'est pas cliqué sur un bouton reprendre dans la page de Kyc en attente  */}
+                {!currentKycEntrepriseStatut || currentKycEntrepriseStatut == "undefined"?(
+                  <>
+                    <CRegistreEtDfe kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe}/>
+                    <CStatusEtDelegation kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe} kycCopyStatutes={kycDocument?.copyStatutes} kycDelegationPowers={kycDocument?.delegationPowers}/>
+                    <CPvEtLocalisation kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe} kycCopyStatutes={kycDocument?.copyStatutes} kycDelegationPowers={kycDocument?.delegationPowers} kycPvAppointment={kycDocument?.pvAppointment} kycMapLocation={kycDocument?.mapLocation}/>
+                    <CFactureEtJustPouvoirs kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe} kycCopyStatutes={kycDocument?.copyStatutes} kycDelegationPowers={kycDocument?.delegationPowers} kycPvAppointment={kycDocument?.pvAppointment} kycMapLocation={kycDocument?.mapLocation} kycFacture={kycDocument?.facture} kycProofPower={kycDocument?.proofPower} />
+                    <CDocumentsIdentites kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe} kycCopyStatutes={kycDocument?.copyStatutes} kycDelegationPowers={kycDocument?.delegationPowers} kycPvAppointment={kycDocument?.pvAppointment} kycMapLocation={kycDocument?.mapLocation} kycFacture={kycDocument?.facture} kycProofPower={kycDocument?.proofPower} kycIdentity={kycDocument?.identity}/>
+                  </>
+                  // S'il a cliqué on affiche les composants (formulaires) des documents en fonction du nombre dans contenu dans la variable
+                ):(
+                  <>
+                    {currentKycEntrepriseStatut==1 || currentKycEntrepriseStatut==2 ? (
+                      <CRegistreEtDfe kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe}/>
+                    ):("")}
+                    
+                    {currentKycEntrepriseStatut==3 || currentKycEntrepriseStatut==4 ? (
+                      <CStatusEtDelegation kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe} kycCopyStatutes={kycDocument?.copyStatutes} kycDelegationPowers={kycDocument?.delegationPowers}/>
+                    ):("")}
+                    
+                    {currentKycEntrepriseStatut==5 || currentKycEntrepriseStatut==6 ? (
+                      <CPvEtLocalisation kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe} kycCopyStatutes={kycDocument?.copyStatutes} kycDelegationPowers={kycDocument?.delegationPowers} kycPvAppointment={kycDocument?.pvAppointment} kycMapLocation={kycDocument?.mapLocation}/>
+                    ):("")}
 
-                    <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
-                  
-          <CRegistreEtDfe kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe}/>
-          <CStatusEtDelegation kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe} kycCopyStatutes={kycDocument?.copyStatutes} kycDelegationPowers={kycDocument?.delegationPowers}/>
-          <CPvEtLocalisation kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe} kycCopyStatutes={kycDocument?.copyStatutes} kycDelegationPowers={kycDocument?.delegationPowers} kycPvAppointment={kycDocument?.pvAppointment} kycMapLocation={kycDocument?.mapLocation}/>
-          <CFactureEtJustPouvoirs kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe} kycCopyStatutes={kycDocument?.copyStatutes} kycDelegationPowers={kycDocument?.delegationPowers} kycPvAppointment={kycDocument?.pvAppointment} kycMapLocation={kycDocument?.mapLocation} kycFacture={kycDocument?.facture} kycProofPower={kycDocument?.proofPower} />
-          <CDocumentsIdentites kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe} kycCopyStatutes={kycDocument?.copyStatutes} kycDelegationPowers={kycDocument?.delegationPowers} kycPvAppointment={kycDocument?.pvAppointment} kycMapLocation={kycDocument?.mapLocation} kycFacture={kycDocument?.facture} kycProofPower={kycDocument?.proofPower} kycIdentity={kycDocument?.identity}/>
-          {/* <CDocumentLegaux /> */}
+                    {currentKycEntrepriseStatut==7 || currentKycEntrepriseStatut==8 ? (
+                      <CFactureEtJustPouvoirs kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe} kycCopyStatutes={kycDocument?.copyStatutes} kycDelegationPowers={kycDocument?.delegationPowers} kycPvAppointment={kycDocument?.pvAppointment} kycMapLocation={kycDocument?.mapLocation} kycFacture={kycDocument?.facture} kycProofPower={kycDocument?.proofPower} />
+                    ):("")}
 
-          </div>
-                <div className='col-lg-3 col-md-12'></div>
+                    {currentKycEntrepriseStatut==9 ? (
+                      <CDocumentsIdentites kycDocumentId={kycDocument?.id} kycRegister={kycDocument?.register} kycDfe={kycDocument?.dfe} kycCopyStatutes={kycDocument?.copyStatutes} kycDelegationPowers={kycDocument?.delegationPowers} kycPvAppointment={kycDocument?.pvAppointment} kycMapLocation={kycDocument?.mapLocation} kycFacture={kycDocument?.facture} kycProofPower={kycDocument?.proofPower} kycIdentity={kycDocument?.identity}/>
+                    ):("")}
+
+                  </>
+                )}
+              </div>
+              <div className='col-lg-3 col-md-12'></div>
             </div>
-        </div>
+          </div>
 
           {/* FIN */}
 
