@@ -474,7 +474,7 @@ const CQuestionnaireAmlTwo = () => {
                                         htmlFor="bankNameSavings"
                                         className="text-blackish-blue mb-2"
                                     >
-                                    Nom de la banque de votre compte d'épargne
+                                        Nom de la banque de votre compte d'épargne
                                     </label>
                                     <div className='form-group '>
                                         <input
@@ -866,7 +866,7 @@ const CQuestionnaireAmlTwo = () => {
                             </div>
                             <div className='mt-3'>
                                 <label>
-                                Effectuez-vous des transactions avec des banques ou des institutions financières situées dans des pays considérés comme des paradis fiscaux ou à haut risque de blanchiment d'argent, en particulier dans des zones offshore telles que les Îles Caïmans, les Îles Vierges Britanniques ou les Seychelles ?
+                                    Effectuez-vous des transactions avec des banques ou des institutions financières situées dans des pays considérés comme des paradis fiscaux ou à haut risque de blanchiment d'argent, en particulier dans des zones offshore telles que les Îles Caïmans, les Îles Vierges Britanniques ou les Seychelles ?
                                 </label>
                                 <select className='form-control mt-2' name="transactionsInTaxHavens" onChange={handleChange}>
                                 <option value="">Choisissez une option</option>
@@ -877,7 +877,7 @@ const CQuestionnaireAmlTwo = () => {
 
                             <div className='mt-3'>
                                 <label>
-                                Acceptez-vous des paiements ou effectuez-vous des transactions en crypto-monnaies telles que le Bitcoin ou l'Ethereum, notamment dans des activités de jeux en ligne, de paris sportifs ou de commerce en ligne ?
+                                    Acceptez-vous des paiements ou effectuez-vous des transactions en crypto-monnaies telles que le Bitcoin ou l'Ethereum, notamment dans des activités de jeux en ligne, de paris sportifs ou de commerce en ligne ?
                                 </label>
                                 <select className='form-control mt-2' name="cryptocurrencyPayments" onChange={handleChange}>
                                 <option value="">Choisissez une option</option>

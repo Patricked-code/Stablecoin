@@ -100,7 +100,7 @@ const CHistoriqueStablecoin = () => {
 
     return (
         <>
-            {currentUser?.profileId==2 || currentUser?.profileId==3?(
+            {/* {currentUser?.profileId==2 || currentUser?.profileId==3?( */}
 
                 <>
                     <div className='' >
@@ -136,46 +136,46 @@ const CHistoriqueStablecoin = () => {
                             >
                                 <Table.Header>
                                     {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom & prenom </p></Table.Column> */}
-                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">type<br/>Devise</p></Table.Column>
-                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Expéditeur<br/>Date</p></Table.Column>
-                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Adresse blockchain<br/>Hash</p></Table.Column>
-                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Récepteur<br/>Montant</p></Table.Column>
+                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">type<br/>Actif</p></Table.Column>
+                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Expéditeur<br/>Récepteur<br/></p></Table.Column>
+                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Adresse expéditeur<br/>Adresse recepteur<br/>Hash de transaction</p></Table.Column>
+                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant<br/>Date</p></Table.Column>
                                 </Table.Header>
                                 <Table.Body>
                                     {/* {allKycForParticular?.map((data) => ( */}
                                         <Table.Row >                       
                                             <Table.Cell ><small className=" py-0 ">Transfert<br/>KOREE</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>22/09/2023</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Konaté Ali<br/>1 000 000</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>Konaté Ali</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 "><br/>1 000 000<br/>22/09/2023</small></Table.Cell>
                                         </Table.Row >
 
                                         <Table.Row >                       
                                             <Table.Cell ><small className=" py-0 ">Mint<br/>KOREE</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>22/09/2023</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Konaté Ali<br/>1 000 000</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>Konaté Ali</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">1 000 000<br/>22/09/2023</small></Table.Cell>
                                         </Table.Row >
 
                                         <Table.Row >                       
                                             <Table.Cell ><small className=" py-0 ">Burn<br/>KOREE</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>22/09/2023</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Konaté Ali<br/>1 000 000</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>Konaté Ali</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">1 000 000<br/>22/09/2023</small></Table.Cell>
                                         </Table.Row >
 
                                         <Table.Row >                       
                                             <Table.Cell ><small className=" py-0 ">GrantRol<br/>KOREE</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>22/09/2023</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Konaté Ali<br/>Aucun</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>Konaté Ali</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">Aucun <br/>22/09/2023</small></Table.Cell>
                                         </Table.Row >
 
                                         <Table.Row >                       
                                             <Table.Cell ><small className=" py-0 ">RevokeRol<br/>KOREE</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>22/09/2023</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Konaté Ali<br/>Aucun</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>Konaté Ali</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">Aucun<br/>22/09/2023</small></Table.Cell>
                                         </Table.Row >
 
                                         
@@ -192,11 +192,11 @@ const CHistoriqueStablecoin = () => {
                         </div>
                     </div>
                 </>
-            ):(
+            {/* ):(
                 <span className="text-center bg-default-2 btn-bottom-text  d-block gr-text-5 text-blackish-blue gr-opacity-10 my-35">
                     <Loading/>
                 </span>
-            )}
+            )} */}
         </>
     );
 };

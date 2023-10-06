@@ -549,45 +549,6 @@ const CQuestionnaireFatca = () => {
                                 </p>
                                 </label>
                             </div> 
-
-                            {/* <div className="form-group  mt-3 ">
-                                <label
-                                    htmlFor="transfert-check"
-                                    className="gr-check-input mb-7 d-flex"
-                                >
-                                    <input 
-                                    type="checkbox" 
-                                    name="transfert"
-                                    id='transfert-check' 
-                                    value="Pour transférer de l'argent"
-                                    checked={motivationD.includes("Pour transférer de l'argent")}
-                                    onChange={handleOptionMotivationD}
-                                    />
-                                <p className=" mx-2 mb-0 text-center">
-                                    Pour transférer de l'argent
-                                </p>
-                                </label>
-                            </div>  */}
-
-                            {/* <div className="form-group  mt-3 ">
-                                <label
-                                    htmlFor="encaisser-check"
-                                    className="gr-check-input mb-7 d-flex"
-                                >
-                                    <input 
-                                    type="checkbox" 
-                                    name="encaisser"
-                                    id='encaisser-check' 
-                                    value='Pour encaisser des paiements'
-                                    checked={motivationE.includes('Pour encaisser des paiements')}
-                                    onChange={handleOptionMotivationE}
-                                    />
-                                <p className=" mx-2 mb-0 text-center">
-                                    Pour encaisser des paiements
-                                </p>
-                                </label>
-                            </div>  */}
-
                             <div className="form-group  mt-3 ">
                                 <label
                                     htmlFor="autre-check"

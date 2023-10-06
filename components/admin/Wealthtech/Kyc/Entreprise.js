@@ -1650,11 +1650,17 @@ useEffect(async() => {
                                     <>
                                         {/* Questionnaire Aml 1 */}
                                         <div>
-                                            <div className='my-3 btn' onClick={() => toggleAccordion(1)}>
-                                                <h3 className='text-center'>Les questionnaires AML 1 <p>Cliquez ici pour voir le contenu</p></h3>
+                                            <div className='my-3  row' >
+                                                <h4 className=' btn col-lg-3 col-md-3' onClick={() => toggleAccordion(1)}>Les questionnaires AML 1 <p>Cliquez ici pour voir le contenu</p></h4>
+                                                <h4 className=' btn col-lg-3 col-md-3' onClick={() => toggleAccordion(2)}>Les questionnaires AML 2 <p>Cliquez ici pour voir le contenu</p></h4>
+                                                <h4 className=' btn col-lg-3 col-md-3' onClick={() => toggleAccordion(3)}>Les questionnaires AML 3 <p>Cliquez ici pour voir le contenu</p></h4>
+                                                <h4 className=' btn col-lg-3 col-md-3' onClick={() => toggleAccordion(4)}>Les questionnaires AML 4 <p>Cliquez ici pour voir le contenu</p></h4>
                                             </div>
                                             {isOpen1 &&
-                                                <div className="input-group ">
+                                                <div className=" ">
+                                                    <div className='my-3 mx-5 text-center' >
+                                                        <h4 className='colorRed '>Les questionnaires AML 1</h4>
+                                                    </div>
                                                     <div className='mx-5 '>
                                                         <div className=''>
                                                             <b>Les charges récurrentes mensuelles ou annuelles dans le cadre des activités de votre entreprises :</b><br/>
@@ -1705,12 +1711,12 @@ useEffect(async() => {
 
                                         {/* Questionnaire Aml 2 */}
                                         <div>
-                                            <div className='my-3 btn' onClick={() => toggleAccordion(2)}>
-                                                <h3 className='text-center'>Les questionnaires AML 2 <p>Cliquez ici pour voir le contenu</p></h3>
-                                            </div>
+
                                             {isOpen2 &&
-                                                <div className="input-group ">
-                                                
+                                                <div className="">
+                                                    <div className='my-3 mx-5 text-center' >
+                                                        <h4 className='colorRed '>Les questionnaires AML 2</h4>
+                                                    </div>
                                                     <div className='mx-5 '>
                                                         {/* Partie banque */}
                                                         <div className=''>
@@ -1905,11 +1911,11 @@ useEffect(async() => {
 
                                          {/* Questionnaire Aml 3 */}
                                          <div>
-                                            <div className='my-3 btn' onClick={() => toggleAccordion(3)}>
-                                                <h3 className='text-center'>Les questionnaires AML 3 <p>Cliquez ici pour voir le contenu</p></h3>
-                                            </div>
                                             {isOpen3 &&
-                                                <div className="input-group ">
+                                                <div className="">
+                                                    <div className='my-3 mx-5 text-center' >
+                                                        <h4 className='colorRed '>Les questionnaires AML 3</h4>
+                                                    </div>
                                                 
                                                     <div className='mx-5 '>
                                                         {/* Partie des autres questions */}
@@ -1976,12 +1982,12 @@ useEffect(async() => {
 
                                          {/* Questionnaire Aml 4 */}
                                          <div>
-                                            <div className='my-3 btn' onClick={() => toggleAccordion(4)}>
-                                                <h3 className='text-center'>Les questionnaires AML 4 <p>Cliquez ici pour voir le contenu</p></h3>
-                                            </div>
+                                            
                                             {isOpen4 &&
-                                                <div className="input-group ">
-                                                
+                                                <div className="">
+                                                    <div className='my-3 mx-5 text-center' >
+                                                        <h4 className='colorRed '>Les questionnaires AML 4</h4>
+                                                    </div>
                                                     <div className='mx-5 '>
                                                         {/* Partie des autres questions */}
                                                         <div className='mt-3'>
@@ -2061,6 +2067,9 @@ useEffect(async() => {
 
 
                                         {/* PARTIE EVALUATION DES QUESTIONNAIRE */}
+                                        <div className='my-5 mx-5 text-center' >
+                                            <h4 className='colorRed '>Evaluation des 4 questionnaires</h4>
+                                        </div>
                                         <Form role="form" onSubmit={validKycAml}>
                                             <div className='row justify-content-between'>
                                                 {/* Les questionnaires AML 1 */}
@@ -2175,8 +2184,8 @@ useEffect(async() => {
                                         <div className='my-5'>
                                             <h3 className='text-center'>Identité</h3>
                                         </div>
-                                        <div className='mx-5 '>
-                                            <div className=''>
+                                        <div className='mx-5  row'>
+                                            <div className='mt-3 col-lg-4 col-md-4'>
                                                 <b>Domaine d’activité :</b><br/>
                                                 {identityByKycId?.international? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{identityByKycId.international }</p>): ("")}
                                                 {identityByKycId?.national? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{identityByKycId.national }</p>): ("")}
@@ -2185,98 +2194,98 @@ useEffect(async() => {
                                                 {!identityByKycId?.international && !identityByKycId?.national && !identityByKycId?.local ? (<p className='my-1'><Icon icon="bx:x" className='colorRed' />Aucune domaine d’activité</p>): ("")}
                                             </div>
 
-                                            <div className='mt-3'>
+                                            <div className='mt-3 col-lg-4 col-md-4'>
                                                 <b>
                                                     Nature de la Personne morale
                                                 </b><br/>
                                                 {identityByKycId?.naturePerson? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{identityByKycId.naturePerson}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
 
-                                            <div className='mt-3'>
+                                            <div className='mt-3 col-lg-4 col-md-4'>
                                                 <b>
                                                     Ancienneté professionnelle
                                                 </b><br/>
                                                 {identityByKycId?.seniority? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{identityByKycId.seniority}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
 
-                                            <div className='mt-3'>
+                                            <div className='mt-3 col-lg-4 col-md-4'>
                                                 <b>
                                                     Dénomination sociale 
                                                 </b><br/>
                                                 {userById?.entreprise? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{userById.entreprise}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
 
-                                            <div className='mt-3'>
+                                            <div className='mt-3 col-lg-4 col-md-4'>
                                                 <b>
                                                     Numéro RCCM
                                                 </b><br/>
                                                 {identityByKycId?.rccmNumber? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{identityByKycId.rccmNumber}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
 
-                                            <div className='mt-3'>
+                                            <div className='mt-3 col-lg-4 col-md-4'>
                                                 <b>
                                                     Objet social
                                                 </b><br/>
                                                 {identityByKycId?.socialObject? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{identityByKycId.socialObject}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
 
-                                            <div className='mt-3'>
+                                            <div className='mt-3 col-lg-4 col-md-4'>
                                                 <b>
                                                     Numéro d’identification
                                                 </b><br/>
                                                 {identityByKycId?.numberIdentification? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{identityByKycId.numberIdentification}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
 
-                                            <div className='mt-3'>
+                                            <div className='mt-3 col-lg-4 col-md-4'>
                                                 <b>
                                                     Ville
                                                 </b><br/>
                                                 {userById?.city? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{userById.city}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
 
-                                            <div className='mt-3'>
+                                            <div className='mt-3 col-lg-4 col-md-4'>
                                                 <b>
                                                     Adresse postale
                                                 </b><br/>
                                                 {userById?.mailbox? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{userById.mailbox}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
 
-                                            <div className='mt-3'>
+                                            <div className='mt-3 col-lg-4 col-md-4'>
                                                 <b>
                                                     Adresse siège social
                                                 </b><br/>
                                                 {identityByKycId?.registeredAddress? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{identityByKycId.registeredAddress}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
 
-                                            <div className='mt-3'>
+                                            <div className='mt-3 col-lg-4 col-md-4'>
                                                 <b>
                                                     Téléphone Fixe
                                                 </b><br/>
                                                 {userById?.phoneFixe? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{userById.phoneFixe}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
 
-                                            <div className='mt-3'>
+                                            <div className='mt-3 col-lg-4 col-md-4'>
                                                 <b>
                                                     Téléphone mobile
                                                 </b><br/>
                                                 {userById?.mobile? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{userById.mobile}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
 
-                                            <div className='mt-3'>
+                                            <div className='mt-3 col-lg-4 col-md-4'>
                                                 <b>
                                                     Fax
                                                 </b><br/>
                                                 {identityByKycId?.fax? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{identityByKycId.fax}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
 
-                                            <div className='mt-3'>
+                                            <div className='mt-3 col-lg-4 col-md-4'>
                                                 <b>
                                                     Date de constitution
                                                 </b><br/>
                                                 {identityByKycId?.dateConstitution? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(identityByKycId.dateConstitution)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
 
-                                            <div className='mt-3'>
+                                            <div className='mt-3 col-lg-4 col-md-4'>
                                                 <b>
                                                     Date d'enregistrement
                                                 </b><br/>
@@ -2286,8 +2295,11 @@ useEffect(async() => {
 
 
                                         {/* PARTIE EVALUATION DES IDENTITES */}
+                                        <div className='text-center my-5'>
+                                            <h4>Evaluation</h4>
+                                        </div>
                                         <Form role="form" onSubmit={validKycIdentity}>
-                                            <div className='row justify-content-between'>
+                                            <div className='row justify-content-between mx-5'>
                                                 
                                                 <div className='form-group my-3 col-lg-6 col-md-6'>
                                                     <label className="mx-2  mb-2" htmlFor='validQuizFour'>
@@ -2331,7 +2343,7 @@ useEffect(async() => {
                                         </div>
                                         <div className='my-5 mx-5'>
                                         
-                                        <div className='mt-3'>
+                                        <div className='mt-3 text-center'>
                                             <b>
                                                 Nombre de représentant légal
                                             </b><br/>
@@ -2343,10 +2355,11 @@ useEffect(async() => {
                                             <>
                                                 {allRepresentativeByKycId?.map((data, index) => (
                                                     <div className='' key={index}>
-                                                        <h5 className='colorRed mt-5'>Les informations du représentant légal {index + 1}</h5>
-                                                        <div className='form-group my-3 col-lg-6 col-md-6'>
-                                                            <form onSubmit={validKycRepresentative}>
-                                                                <label className="mx-2  mb-2" htmlFor='validSignature'>
+                                                        <h5 className='colorRed mt-5 text-center'>Les informations du représentant légal {index + 1}</h5>
+                                                        <div className='form-group my-3 row text-center'>
+                                                            <div className='col-lg-3 col-md-3'></div>
+                                                            <form onSubmit={validKycRepresentative} className="col-lg-6 col-md-6">
+                                                                <label className="  mb-2">
                                                                     Les informations de ce représentant légal sont-elles correctes?
                                                                 </label><br/>
                                                                 <label>{data?.validRepresentative==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
@@ -2370,121 +2383,126 @@ useEffect(async() => {
                                                                 </div>
                                                                 
                                                             </form>
-                                                        </div>
-                                                        <div className='mt-3'>
-                                                            <b>
-                                                                Nom du représentation légal
-                                                            </b><br/>
-                                                            {data?.lastName? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.lastName}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            <div className='col-lg-3 col-md-3'></div>
+
                                                         </div>
 
-                                                        <div className='mt-3'>
-                                                            <b>
-                                                                Prénom du représentation légal
-                                                            </b><br/>
-                                                            {data?.firstName? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.firstName}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </div>
-                                                        <div className='mt-3'>
-                                                            <b>
-                                                                Nationalité du représentant
-                                                            </b><br/>
-                                                            {data?.nationality? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.nationality}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </div>
+                                                        <div className='row'>
+                                                            <div className='mt-3 col-lg-4 col-md-4'>
+                                                                <b>
+                                                                    Nom du représentation légal
+                                                                </b><br/>
+                                                                {data?.lastName? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.lastName}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            </div>
 
-                                                        <div className='mt-3'>
-                                                            <b>
-                                                                Email
-                                                            </b><br/>
-                                                            {data?.email? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.email}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </div>
+                                                            <div className='mt-3 col-lg-4 col-md-4'>
+                                                                <b>
+                                                                    Prénom du représentation légal
+                                                                </b><br/>
+                                                                {data?.firstName? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.firstName}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            </div>
+                                                            <div className='mt-3 col-lg-4 col-md-4'>
+                                                                <b>
+                                                                    Nationalité du représentant
+                                                                </b><br/>
+                                                                {data?.nationality? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.nationality}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            </div>
 
-                                                        <div className='mt-3'>
-                                                            <b>
-                                                                Date de naissance
-                                                            </b><br/>
-                                                            {data?.dateBirth? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.dateBirth)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </div>
+                                                            <div className='mt-3 col-lg-4 col-md-4'>
+                                                                <b>
+                                                                    Email
+                                                                </b><br/>
+                                                                {data?.email? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.email}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            </div>
 
-                                                        <div className='mt-3'>
-                                                            <b>
-                                                                Fonction
-                                                            </b><br/>
-                                                            {data?.functions? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.functions}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </div>
+                                                            <div className='mt-3 col-lg-4 col-md-4'>
+                                                                <b>
+                                                                    Date de naissance
+                                                                </b><br/>
+                                                                {data?.dateBirth? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.dateBirth)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            </div>
 
-                                                        <div className='mt-3'>
-                                                            <b>
-                                                                Pays de résidence
-                                                            </b><br/>
-                                                            {data?.residenceCountry? (
-                                                                <>
-                                                                    {allCountry?.map((dataCountry) => (
-                                                                        <p className='my-0' key={dataCountry?.id}>
-                                                                            {data.residenceCountry==dataCountry?.code? (
-                                                                                <>
-                                                                                    <Icon icon="bx:check-double" color="#208454" />
-                                                                                    {dataCountry.libelle}
-                                                                                </>
-                                                                            ):("")}
-                                                                        </p>
-                                                                    ))}
-                                                                </>
-                                                            ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </div>
+                                                            <div className='mt-3 col-lg-4 col-md-4'>
+                                                                <b>
+                                                                    Fonction
+                                                                </b><br/>
+                                                                {data?.functions? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.functions}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            </div>
 
-                                                        <div className='mt-3'>
-                                                            <b>
-                                                                Téléphone mobile
-                                                            </b><br/>
-                                                            {data?.residenceCountry && data?.mobile? (
-                                                                <>
-                                                                    {allCountry?.map((dataCountry) => (
-                                                                        <p className='my-0' key={dataCountry?.id}>
-                                                                            {data.residenceCountry==dataCountry?.code? (
-                                                                                <>
-                                                                                    <Icon icon="bx:check-double" color="#208454" />
-                                                                                    {dataCountry.indicator} {data.mobile}
-                                                                                </>
-                                                                            ):("")}
-                                                                        </p>
-                                                                    ))}
-                                                                </>
-                                                            ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </div>
-                                                        
-                                                        
-                                                        <div className='mt-3'>
-                                                            <b>
-                                                                Type de document d’identité
-                                                            </b><br/>
-                                                            {data?.typeDocIdentity? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.typeDocIdentity}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </div>
+                                                            <div className='mt-3 col-lg-4 col-md-4'>
+                                                                <b>
+                                                                    Pays de résidence
+                                                                </b><br/>
+                                                                {data?.residenceCountry? (
+                                                                    <>
+                                                                        {allCountry?.map((dataCountry) => (
+                                                                            <p className='my-0' key={dataCountry?.id}>
+                                                                                {data.residenceCountry==dataCountry?.code? (
+                                                                                    <>
+                                                                                        <Icon icon="bx:check-double" color="#208454" />
+                                                                                        {dataCountry.libelle}
+                                                                                    </>
+                                                                                ):("")}
+                                                                            </p>
+                                                                        ))}
+                                                                    </>
+                                                                ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            </div>
 
-                                                        <div className='mt-3'>
-                                                            <b>
-                                                                Numéro du document d’identité
-                                                            </b><br/>
-                                                            {data?.identityDocNumber? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.identityDocNumber}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </div>
+                                                            <div className='mt-3 col-lg-4 col-md-4'>
+                                                                <b>
+                                                                    Téléphone mobile
+                                                                </b><br/>
+                                                                {data?.residenceCountry && data?.mobile? (
+                                                                    <>
+                                                                        {allCountry?.map((dataCountry) => (
+                                                                            <p className='my-0' key={dataCountry?.id}>
+                                                                                {data.residenceCountry==dataCountry?.code? (
+                                                                                    <>
+                                                                                        <Icon icon="bx:check-double" color="#208454" />
+                                                                                        {dataCountry.indicator} {data.mobile}
+                                                                                    </>
+                                                                                ):("")}
+                                                                            </p>
+                                                                        ))}
+                                                                    </>
+                                                                ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            </div>
+                                                            
+                                                            
+                                                            <div className='mt-3 col-lg-4 col-md-4'>
+                                                                <b>
+                                                                    Type de document d’identité
+                                                                </b><br/>
+                                                                {data?.typeDocIdentity? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.typeDocIdentity}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            </div>
 
-                                                        <div className='mt-3'>
-                                                            <b>
-                                                                Date d'expiration du document d’identité
-                                                            </b><br/>
-                                                            {data?.expirationDate? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.expirationDate)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </div>
+                                                            <div className='mt-3 col-lg-4 col-md-4'>
+                                                                <b>
+                                                                    Numéro du document d’identité
+                                                                </b><br/>
+                                                                {data?.identityDocNumber? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.identityDocNumber}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            </div>
 
-                                                        <div className='mt-3'>
-                                                            <b>
-                                                                Pays émetteur du document d'identité
-                                                            </b><br/>
-                                                            {data?.issuingCountry? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.issuingCountry}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </div>
-                                                        <div className='mt-3'>
-                                                            <b>
-                                                                Type de document de domicile
-                                                            </b><br/>
-                                                            {data?.typeDocumentResidence? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.typeDocumentResidence}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            <div className='mt-3 col-lg-4 col-md-4'>
+                                                                <b>
+                                                                    Date d'expiration du document d’identité
+                                                                </b><br/>
+                                                                {data?.expirationDate? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.expirationDate)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            </div>
+
+                                                            <div className='mt-3 col-lg-4 col-md-4'>
+                                                                <b>
+                                                                    Pays émetteur du document d'identité
+                                                                </b><br/>
+                                                                {data?.issuingCountry? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.issuingCountry}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            </div>
+                                                            <div className='mt-3 col-lg-4 col-md-4'>
+                                                                <b>
+                                                                    Type de document de domicile
+                                                                </b><br/>
+                                                                {data?.typeDocumentResidence? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.typeDocumentResidence}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                            </div>
                                                         </div>
 
                                                         {/* Les fichiers && photos*/}
@@ -2699,7 +2717,7 @@ useEffect(async() => {
                                         </div>
                                         <div className='my-5 mx-5'>
                                         
-                                        <div className='mt-3'>
+                                        <div className='mt-3 text-center'>
                                             <b>
                                                 Nombre de bénéficiaire effectif
                                             </b><br/>
@@ -2711,9 +2729,10 @@ useEffect(async() => {
                                             <>
                                                 {allBeneficiaryByKycId?.map((data, index) => (
                                                     <div className='' key={index}>
-                                                        <h5 className='colorRed mt-5'>Les informations du bénéficiaire effectif {index + 1}</h5>
-                                                        <div className='form-group my-3 col-lg-6 col-md-6'>
-                                                            <form onSubmit={validKycBeneficiary}>
+                                                        <h5 className='colorRed mt-5 text-center'>Les informations du bénéficiaire effectif {index + 1}</h5>
+                                                        <div className='form-group my-3 row'>
+                                                            <div className='col-lg-3 col-md-3'></div>
+                                                            <form onSubmit={validKycBeneficiary} className='col-lg-6 col-md-6'>
                                                                 <label className="mx-2  mb-2" htmlFor='validSignature'>
                                                                     Les informations de ce bénéficiaire effectif sont-elles correctes?
                                                                 </label><br/>
@@ -2739,9 +2758,10 @@ useEffect(async() => {
                                                                 </div>
                                                                 
                                                             </form>
+                                                            <div className='col-lg-3 col-md-3'></div>
                                                         </div>
 
-                                                        <div className='mt-3'>
+                                                        <div className='mt-3 col-lg-4 col-md-4'>
                                                             <b>
                                                                 Type de bénéficiaire
                                                             </b><br/>
@@ -2751,114 +2771,115 @@ useEffect(async() => {
                                                         {/* Vérifie si le type du bénéficiaire est une Personne physique */}
                                                         {data?.typeBeneficiary==="Personne physique" ? (
                                                             <>
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        Nom du bénéficiaire
-                                                                    </b><br/>
-                                                                    {data?.lastName? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.lastName}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </div>
+                                                                <div className='row'>
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            Nom du bénéficiaire
+                                                                        </b><br/>
+                                                                        {data?.lastName? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.lastName}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
 
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        Prénom du bénéficiaire
-                                                                    </b><br/>
-                                                                    {data?.firstName? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.firstName}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </div>
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        Nationalité du bénéficiaire
-                                                                    </b><br/>
-                                                                    {data?.nationality? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.nationality}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </div>
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            Prénom du bénéficiaire
+                                                                        </b><br/>
+                                                                        {data?.firstName? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.firstName}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            Nationalité du bénéficiaire
+                                                                        </b><br/>
+                                                                        {data?.nationality? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.nationality}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
 
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        Email
-                                                                    </b><br/>
-                                                                    {data?.email? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.email}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </div>
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            Email
+                                                                        </b><br/>
+                                                                        {data?.email? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.email}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
 
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        Date de naissance
-                                                                    </b><br/>
-                                                                    {data?.dateBirth? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.dateBirth)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </div>
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            Date de naissance
+                                                                        </b><br/>
+                                                                        {data?.dateBirth? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.dateBirth)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
 
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        Pays de résidence
-                                                                    </b><br/>
-                                                                    {data?.residenceCountry? (
-                                                                        <>
-                                                                            {allCountry?.map((dataCountry) => (
-                                                                                <p className='my-0' key={dataCountry?.id}>
-                                                                                    {data.residenceCountry==dataCountry?.code? (
-                                                                                        <>
-                                                                                            <Icon icon="bx:check-double" color="#208454" />
-                                                                                            {dataCountry.libelle}
-                                                                                        </>
-                                                                                    ):("")}
-                                                                                </p>
-                                                                            ))}
-                                                                        </>
-                                                                    ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </div>
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            Pays de résidence
+                                                                        </b><br/>
+                                                                        {data?.residenceCountry? (
+                                                                            <>
+                                                                                {allCountry?.map((dataCountry) => (
+                                                                                    <p className='my-0' key={dataCountry?.id}>
+                                                                                        {data.residenceCountry==dataCountry?.code? (
+                                                                                            <>
+                                                                                                <Icon icon="bx:check-double" color="#208454" />
+                                                                                                {dataCountry.libelle}
+                                                                                            </>
+                                                                                        ):("")}
+                                                                                    </p>
+                                                                                ))}
+                                                                            </>
+                                                                        ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
 
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        Téléphone mobile
-                                                                    </b><br/>
-                                                                    {data?.residenceCountry && data?.mobile? (
-                                                                        <>
-                                                                            {allCountry?.map((dataCountry) => (
-                                                                                <p className='my-0' key={dataCountry?.id}>
-                                                                                    {data.residenceCountry==dataCountry?.code? (
-                                                                                        <>
-                                                                                            <Icon icon="bx:check-double" color="#208454" />
-                                                                                            {dataCountry.indicator} {data.mobile}
-                                                                                        </>
-                                                                                    ):("")}
-                                                                                </p>
-                                                                            ))}
-                                                                        </>
-                                                                    ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </div>
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        % Participation/ Contrôle (de 0-100)
-                                                                    </b><br/>
-                                                                    {data?.percentControl? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.percentControl} %</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </div>
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        Type de document d’identité
-                                                                    </b><br/>
-                                                                    {data?.typeDocIdentity? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.typeDocIdentity}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </div>
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            Téléphone mobile
+                                                                        </b><br/>
+                                                                        {data?.residenceCountry && data?.mobile? (
+                                                                            <>
+                                                                                {allCountry?.map((dataCountry) => (
+                                                                                    <p className='my-0' key={dataCountry?.id}>
+                                                                                        {data.residenceCountry==dataCountry?.code? (
+                                                                                            <>
+                                                                                                <Icon icon="bx:check-double" color="#208454" />
+                                                                                                {dataCountry.indicator} {data.mobile}
+                                                                                            </>
+                                                                                        ):("")}
+                                                                                    </p>
+                                                                                ))}
+                                                                            </>
+                                                                        ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            % Participation/ Contrôle (de 0-100)
+                                                                        </b><br/>
+                                                                        {data?.percentControl? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.percentControl} %</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            Type de document d’identité
+                                                                        </b><br/>
+                                                                        {data?.typeDocIdentity? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.typeDocIdentity}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
 
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        Numéro du document d’identité
-                                                                    </b><br/>
-                                                                    {data?.identityDocNumber? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.identityDocNumber}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </div>
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            Numéro du document d’identité
+                                                                        </b><br/>
+                                                                        {data?.identityDocNumber? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.identityDocNumber}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
 
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        Date d'expiration du document d’identité
-                                                                    </b><br/>
-                                                                    {data?.expirationDate? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.expirationDate)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </div>
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            Date d'expiration du document d’identité
+                                                                        </b><br/>
+                                                                        {data?.expirationDate? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.expirationDate)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
 
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        Pays émetteur du document d'identité
-                                                                    </b><br/>
-                                                                    {data?.issuingCountry? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.issuingCountry}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            Pays émetteur du document d'identité
+                                                                        </b><br/>
+                                                                        {data?.issuingCountry? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.issuingCountry}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
                                                                 </div>
-                                                               
-
+                                                                
                                                                 {/* Les fichiers && photos*/}
                                                                 {/* Documents de justificatif d'identité */}
                                                                 <div className=" row col-lg-12 col-md-12 my-5 mx-5 justify-content-between">
@@ -2947,79 +2968,82 @@ useEffect(async() => {
                                                         {/* Vérifie si le type du bénéficiaire est une Personne morale */}
                                                         {data?.typeBeneficiary==="Personne morale" ? (
                                                             <>
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        Raison sociale
-                                                                    </b><br/>
-                                                                    {data?.socialReason? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.socialReason}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </div>
+                                                                <div className='row'>
 
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        Numéro RCCM
-                                                                    </b><br/>
-                                                                    {data?.numberRccm? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.numberRccm}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </div>
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            Raison sociale
+                                                                        </b><br/>
+                                                                        {data?.socialReason? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.socialReason}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
 
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        Email
-                                                                    </b><br/>
-                                                                    {data?.email? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.email}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </div>
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            Numéro RCCM
+                                                                        </b><br/>
+                                                                        {data?.numberRccm? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.numberRccm}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
 
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        Pays d'immatriculation
-                                                                    </b><br/>
-                                                                    {data?.countryRegistration? (
-                                                                        <>
-                                                                            {allCountry?.map((dataCountry) => (
-                                                                                <p className='my-0' key={dataCountry?.id}>
-                                                                                    {data.countryRegistration==dataCountry?.code? (
-                                                                                        <>
-                                                                                            <Icon icon="bx:check-double" color="#208454" />
-                                                                                            {dataCountry.libelle}
-                                                                                        </>
-                                                                                    ):("")}
-                                                                                </p>
-                                                                            ))}
-                                                                        </>
-                                                                    ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </div>
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            Email
+                                                                        </b><br/>
+                                                                        {data?.email? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.email}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
 
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        Téléphone fixe
-                                                                    </b><br/>
-                                                                    {data?.countryRegistration && data?.phoneFixe? (
-                                                                        <>
-                                                                            {allCountry?.map((dataCountry) => (
-                                                                                <p className='my-0' key={dataCountry?.id}>
-                                                                                    {data.countryRegistration==dataCountry?.code? (
-                                                                                        <>
-                                                                                            <Icon icon="bx:check-double" color="#208454" />
-                                                                                            {dataCountry.indicator} {data.phoneFixe}
-                                                                                        </>
-                                                                                    ):("")}
-                                                                                </p>
-                                                                            ))}
-                                                                        </>
-                                                                    ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </div>
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        % Participation/ Contrôle (de 0-100)
-                                                                    </b><br/>
-                                                                    {data?.percentControl? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.percentControl} %</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </div>
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            Pays d'immatriculation
+                                                                        </b><br/>
+                                                                        {data?.countryRegistration? (
+                                                                            <>
+                                                                                {allCountry?.map((dataCountry) => (
+                                                                                    <p className='my-0' key={dataCountry?.id}>
+                                                                                        {data.countryRegistration==dataCountry?.code? (
+                                                                                            <>
+                                                                                                <Icon icon="bx:check-double" color="#208454" />
+                                                                                                {dataCountry.libelle}
+                                                                                            </>
+                                                                                        ):("")}
+                                                                                    </p>
+                                                                                ))}
+                                                                            </>
+                                                                        ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
 
-                                                                <div className='mt-3'>
-                                                                    <b>
-                                                                        Date de création
-                                                                    </b><br/>
-                                                                    {data?.startDate? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.startDate)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                </div>
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            Téléphone fixe
+                                                                        </b><br/>
+                                                                        {data?.countryRegistration && data?.phoneFixe? (
+                                                                            <>
+                                                                                {allCountry?.map((dataCountry) => (
+                                                                                    <p className='my-0' key={dataCountry?.id}>
+                                                                                        {data.countryRegistration==dataCountry?.code? (
+                                                                                            <>
+                                                                                                <Icon icon="bx:check-double" color="#208454" />
+                                                                                                {dataCountry.indicator} {data.phoneFixe}
+                                                                                            </>
+                                                                                        ):("")}
+                                                                                    </p>
+                                                                                ))}
+                                                                            </>
+                                                                        ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            % Participation/ Contrôle (de 0-100)
+                                                                        </b><br/>
+                                                                        {data?.percentControl? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.percentControl} %</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
+
+                                                                    <div className='mt-3 col-lg-4 col-md-4'>
+                                                                        <b>
+                                                                            Date de création
+                                                                        </b><br/>
+                                                                        {data?.startDate? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.startDate)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                    </div>
+                                                            </div>
                                                             </>
                                                         ):("")}
                                                         {/* Fin Vérifie si le type du bénéficiaire est une Personne morale */}
@@ -3063,14 +3087,14 @@ useEffect(async() => {
                                         </div>
                                         <div className='my-5 mx-5'>
                                         
-                                        <div className='mt-3'>
+                                        <div className='mt-3 text-center'>
                                             <b>
                                                 Nombre d'associé
                                             </b><br/>
                                             {oneKycForEntreprise?.numberAssociates? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.numberAssociates}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                         </div>
                                         {oneKycForEntreprise?.numberAssociates==="Plus de 10" ? (
-                                            <div className='mt-3'>
+                                            <div className='mt-3 text-center'>
                                                 <b>
                                                     Nombre d'associés qui ont 5% du capital
                                                 </b><br/>
@@ -3082,9 +3106,10 @@ useEffect(async() => {
                                             <>
                                                 {allAssociatesByKycId?.map((data, index) => (
                                                     <div className='' key={index}>
-                                                        <h5 className='colorRed mt-5'>Les informations de l'associé {index + 1}</h5>
-                                                        <div className='form-group my-3 col-lg-6 col-md-6'>
-                                                            <form onSubmit={validKycStructure}>
+                                                        <h5 className='colorRed mt-5 text-center'>Les informations de l'associé {index + 1}</h5>
+                                                        <div className='form-group my-3 row'>
+                                                            <div className='col-lg-3 col-md-3'></div>
+                                                            <form onSubmit={validKycStructure} className="col-lg-6 col-md-6">
                                                                 <label className="mx-2  mb-2" htmlFor='validSignature'>
                                                                     Les informations de cet associé sont-elles correctes?
                                                                 </label><br/>
@@ -3110,6 +3135,7 @@ useEffect(async() => {
                                                                 </div>
                                                                 
                                                             </form>
+                                                            <div className='col-lg-3 col-md-3'></div>
                                                         </div>
 
                                                         <div className='mt-3'>
@@ -3122,41 +3148,42 @@ useEffect(async() => {
                                                         {/* Vérifie si le type du bénéficiaire est une Personne physique */}
                                                         {data?.typePartner==="Personne physique" ? (
                                                             <>
-                                                                <div className='mt-3'>
+                                                                <div className='row'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         Nom de l'associé
                                                                     </b><br/>
                                                                     {data?.lastName? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.lastName}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
 
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         Prénom de l'associé
                                                                     </b><br/>
                                                                     {data?.firstName? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.firstName}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         Nationalité de l'associé
                                                                     </b><br/>
                                                                     {data?.nationality? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.nationality}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
 
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         Email
                                                                     </b><br/>
                                                                     {data?.email? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.email}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
 
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         Date de naissance
                                                                     </b><br/>
                                                                     {data?.dateBirth? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.dateBirth)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
 
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         Pays de résidence
                                                                     </b><br/>
@@ -3176,7 +3203,7 @@ useEffect(async() => {
                                                                     ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
 
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         Téléphone mobile
                                                                     </b><br/>
@@ -3195,40 +3222,40 @@ useEffect(async() => {
                                                                         </>
                                                                     ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         % Participation/ Contrôle (de 0-100)
                                                                     </b><br/>
                                                                     {data?.percentControl? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.percentControl} %</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         Type de document d’identité
                                                                     </b><br/>
                                                                     {data?.typeDocIdentity? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.typeDocIdentity}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
 
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         Numéro du document d’identité
                                                                     </b><br/>
                                                                     {data?.identityDocNumber? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.identityDocNumber}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
 
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         Date d'expiration du document d’identité
                                                                     </b><br/>
                                                                     {data?.expirationDate? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.expirationDate)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
 
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         Pays émetteur du document d'identité
                                                                     </b><br/>
                                                                     {data?.issuingCountry? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.issuingCountry}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
-                                                               
+                                                               </div>
 
                                                                 {/* Les fichiers && photos*/}
                                                                 {/* Documents de justificatif d'identité */}
@@ -3318,28 +3345,29 @@ useEffect(async() => {
                                                         {/* Vérifie si le type du bénéficiaire est une Personne morale */}
                                                         {data?.typePartner==="Personne morale" ? (
                                                             <>
-                                                                <div className='mt-3'>
+                                                                <div className='row'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         Raison sociale
                                                                     </b><br/>
                                                                     {data?.socialReason? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.socialReason}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
 
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         Numéro RCCM
                                                                     </b><br/>
                                                                     {data?.numberRccm? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.numberRccm}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
 
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         Email
                                                                     </b><br/>
                                                                     {data?.email? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.email}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
 
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         Pays d'immatriculation
                                                                     </b><br/>
@@ -3359,7 +3387,7 @@ useEffect(async() => {
                                                                     ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
 
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         Téléphone fixe
                                                                     </b><br/>
@@ -3378,18 +3406,19 @@ useEffect(async() => {
                                                                         </>
                                                                     ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         % Participation/ Contrôle (de 0-100)
                                                                     </b><br/>
                                                                     {data?.percentControl? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.percentControl} %</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
 
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
                                                                         Date de création
                                                                     </b><br/>
                                                                     {data?.startDate? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.startDate)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
                                                                 </div>
                                                             </>
                                                         ):("")}
@@ -3433,7 +3462,7 @@ useEffect(async() => {
                                         </div>
                                         <div className='my-5 mx-5'>
                                         
-                                        <div className='mt-3'>
+                                        <div className='mt-3 text-center'>
                                             <b>
                                                 Nombre de personnes politiquement exposées
                                             </b><br/>
@@ -3445,9 +3474,10 @@ useEffect(async() => {
                                             <>
                                                 {allPoliticallyExposedByKycId?.map((data, index) => (
                                                     <div className='' key={index}>
-                                                        <h5 className='colorRed mt-5'>Les informations de personne politiquement exposée {index + 1}</h5>
-                                                        <div className='form-group my-3 col-lg-6 col-md-6'>
-                                                            <form onSubmit={validKycPoliticallyExposed}>
+                                                        <h5 className='colorRed mt-5 text-center'>Les informations de personne politiquement exposée {index + 1}</h5>
+                                                        <div className='form-group my-3 row'>
+                                                            <div className='col-lg-3 col-md-3'></div>
+                                                            <form onSubmit={validKycPoliticallyExposed} className="col-lg-6 col-md-6">
                                                                 <label className="mx-2  mb-2" htmlFor='validSignature'>
                                                                     Les informations de cette personne sont-elles correctes?
                                                                 </label><br/>
@@ -3473,29 +3503,31 @@ useEffect(async() => {
                                                                 </div>
                                                                 
                                                             </form>
+                                                            <div className='col-lg-3 col-md-3'></div>
+
                                                         </div>
-                                                            <div>
-                                                            <div className='mt-3'>
+                                                            <div className='row'>
+                                                            <div className='mt-3 col-lg-6 col-md-6'>
                                                                     <b>
                                                                         Nom de la personne politiquement exposée
                                                                     </b><br/>
                                                                     {data?.lastName? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.lastName}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
 
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-6 col-md-6'>
                                                                     <b>
                                                                         Prénom de la personne politiquement exposée
                                                                     </b><br/>
                                                                     {data?.firstName? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.firstName}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-6 col-md-6'>
                                                                     <b>
                                                                         Nationalité de la personne politiquement exposée
                                                                     </b><br/>
                                                                     {data?.nationality? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.nationality}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
 
-                                                                <div className='mt-3'>
+                                                                <div className='mt-3 col-lg-6 col-md-6'>
                                                                     <b>
                                                                         Fonctions de la personne politiquement exposée
                                                                     </b><br/>
@@ -3553,8 +3585,8 @@ useEffect(async() => {
 
                                         {/* PARTIE EVALUATION DES OPERATIONS FINANCIERES */}
                                         <Form role="form" onSubmit={validKycFinancialOperation}>
-                                            <div className='row justify-content-between'>
-                                                
+                                            <div className='row justify-content-center'>
+                                                <div className='col-lg-3 col-md-3'></div>
                                                 <div className='form-group my-3 col-lg-6 col-md-6'>
                                                     <label className="mx-2  mb-2" htmlFor='validQuizFour'>
                                                         <b>Approuve-vous ces réponses ? </b>
@@ -3582,6 +3614,8 @@ useEffect(async() => {
                                                         </span>
                                                     </div>
                                                 </div>
+                                                <div className='col-lg-3 col-md-3'></div>
+
                                             </div>
                                         </Form>
                                         {/* FIN EVALUATION */}
@@ -3608,9 +3642,9 @@ useEffect(async() => {
                                         </div>
 
                                         {/* PARTIE EVALUATION DES ORGINES DES FONDS */}
-                                        <Form role="form" onSubmit={validKycFundOrigin}>
-                                            <div className='row justify-content-between'>
-                                                
+                                        <Form role="form" onSubmit={validKycFundOrigin} >
+                                            <div className='row justify-content-center'>
+                                                <div className='col-lg-3 col-md-3'></div>
                                                 <div className='form-group my-3 col-lg-6 col-md-6'>
                                                     <label className="mx-2  mb-2" htmlFor='validQuizFour'>
                                                         <b>Approuve-vous ces réponses ? </b>
@@ -3638,6 +3672,8 @@ useEffect(async() => {
                                                         </span>
                                                     </div>
                                                 </div>
+                                                <div className='col-lg-3 col-md-3'></div>
+
                                             </div>
                                         </Form>
                                         {/* FIN EVALUATION */}

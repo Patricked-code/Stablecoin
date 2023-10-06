@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import Router from 'next/router';
 import Loading from '../components/loading';
 import { magic } from '../magic';
-import axios from 'axios';
 
 export default function Callback() {
   useEffect(() => {
@@ -10,7 +9,6 @@ export default function Callback() {
     magic.auth.loginWithCredential().then(async (didToken) => {
       // Validate auth token with server
       const res = await fetch('/api/login', {
-        // const res = await axios.get('/api/login', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + didToken,

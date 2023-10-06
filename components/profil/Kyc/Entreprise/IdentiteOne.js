@@ -435,7 +435,6 @@ const CIdentiteOne = () => {
                                 >
                                     Domaine d’activité 
                                 </label>
-                                {/* Compte épargne */}
                                 <div className="form-group ">
                                     <label
                                         htmlFor="international-check"
@@ -498,7 +497,7 @@ const CIdentiteOne = () => {
                                     htmlFor="naturePerson"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Nature de la Personne morale 
+                                    Nature de la personne morale 
                                 </label>
                                 <select 
                                 className="form-control"
@@ -623,25 +622,6 @@ const CIdentiteOne = () => {
                                     />
                                 </div>
                             </div>
-
-                            {/* <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="immatriculation"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                    Pays d’immatriculation
-                                </label>
-                                <div className='form-group'>
-                                    <input
-                                        type='text'
-                                        id='immatriculation'
-                                        className='form-control'
-                                        placeholder='Pays d’immatriculation'
-                                        defaultValue={socialObject} 
-                                        onChange={(event)=>setSocialObject(event.target.value)}
-                                    />
-                                </div>
-                            </div> */}
                             <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="city"
@@ -684,7 +664,7 @@ const CIdentiteOne = () => {
                                     htmlFor="officeAddress"
                                     className="text-blackish-blue mb-2"
                                 >
-                                    Adresse siège social 
+                                    Adresse du siège social 
                                 </label>
                                 <div className='form-group'>
                                     <input
@@ -754,26 +734,6 @@ const CIdentiteOne = () => {
                                     />
                                 </div>
                             </div>
-                            
-                            {/* <div className="form-group mb-6 mt-3">
-                                <label
-                                    htmlFor="email"
-                                    className="text-blackish-blue mb-2"
-                                >
-                                    Email 
-                                </label>
-                                <div className='form-group'>
-                                    <input
-                                        type='text'
-                                        id='email'
-                                        className='form-control'
-                                        placeholder='Email'
-                                        defaultValue={email} 
-                                        onChange={(event)=>setEmail(event.target.value)}
-                                    />
-                                </div>
-                            </div> */}
-                            
                             <div className="form-group mb-6 mt-3">
                                 <label
                                     htmlFor="dateConstitution"

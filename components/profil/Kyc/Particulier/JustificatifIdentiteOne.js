@@ -145,17 +145,6 @@ const CJustificatifIdentiteOne = () => {
                     
                 }
                 // Fin condition 
-            // }else{
-            //     setIsLoggingIn(false);
-            //     Swal.fire({
-            //         position: 'center',
-            //         icon: 'error',
-            //         html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
-            //         showConfirmButton: false,
-            //         timer: 10000
-            //     })
-            // }
-            
             } catch {
             setIsLoggingIn(false);
             }

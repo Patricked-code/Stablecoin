@@ -14,8 +14,6 @@ import Swal from 'sweetalert2';
 import Web3 from "web3";
 import ProgressBar from '../ProgressBar';
 
-// Pour la signature
-import SignatureCanvas from 'react-signature-canvas'
 
 // FIN
 

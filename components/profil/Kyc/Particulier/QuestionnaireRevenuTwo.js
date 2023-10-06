@@ -123,9 +123,6 @@ const [dataBankOfCountry, setDataBankOfCountry] = useState('');
             allowances:allowances
             
         }
-        // Condition pour forcer l'utilisateur à choisir au moins une reponse
-        // if () {
-            
             
             const token = localStorage.getItem('tokenEnCours') //Le token récuperé
 
@@ -170,16 +167,6 @@ const [dataBankOfCountry, setDataBankOfCountry] = useState('');
                 }, 5000)
             }
             // Fin condition 
-        // }else{
-        //     setIsLoggingIn(false);
-        //     Swal.fire({
-        //         position: 'center',
-        //         icon: 'error',
-        //         html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
-        //         showConfirmButton: false,
-        //         timer: 10000
-        //     })
-        // }
         
         } catch {
         setIsLoggingIn(false);
@@ -1058,18 +1045,6 @@ useEffect(async() => {
                             ) :("")}
                             {/* **********FIN CONDITION MOBILE************** */}
                             {/* ****************FIN SECTION MOBILE***************** */}
-                            
-
-
-                            {/* <p className="colorRed mb-7 ">
-                                NB : Aucun retour n'est permis sur cette page donc, répondez correctement aux questions
-                            </p> */}
-
-                            {/* {kycForParticular?.userId ? (
-                                <button className="btn btn-primary " type='button' onClick={updateQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
-                            ) : (
-                                <button className="btn btn-primary " type='button' onClick={addQuestionnaire}  disabled={isLoggingIn}>Suivant</button>
-                            )} */}
 
                             <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
                                 <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">

@@ -631,7 +631,7 @@ const CIdentiteRepresentantTwo = () => {
                             </div >
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="identityDocNumber"
+                                    htmlFor="expirationDate"
                                     className="text-blackish-blue mb-2"
                                 >
                                     Date d'expiration du document d’identité 
@@ -639,7 +639,7 @@ const CIdentiteRepresentantTwo = () => {
                                 <div className='form-group'>
                                     <input
                                         type='date'
-                                        id='identityDocNumber'
+                                        id='expirationDate'
                                         className='form-control'
                                         defaultValue={expirationDate} 
                                         onChange={(event)=>setExpirationDate(event.target.value)}

@@ -339,7 +339,7 @@ const PaymentRequest = () => {
                           <p className="gr-text-8 " id="addon-wrapping">
                             Nom de l'entreprise : {infosOtherUser?.entreprise}
                           </p>
-                        ) : (infosOtherUser?.firstName && infosOtherUser?.lastName ?
+                        ) : (infosOtherUser?.firstName && infosOtherUser?.lastName && infosOtherUser?.codeTypeProfil=="part"?
                          (<div>
                             <p className="gr-text-8 " id="addon-wrapping">
                               Nom : {infosOtherUser?.firstName}

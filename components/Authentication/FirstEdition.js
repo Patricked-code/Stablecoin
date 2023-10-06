@@ -121,7 +121,6 @@ const [serviceD, setServiceD] = useState([]);
               const userAddress = await signer.getAddress();
               setUserMetadata(userMetadatas)
               setCurrentAddress(userAddress);
-              console.log("userAddress=>",userAddress)
               //const userBalance = ethers.utils.formatEther(await provider.getBalance(userAddress))
               // FIN
 

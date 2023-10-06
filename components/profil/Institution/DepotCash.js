@@ -23,6 +23,8 @@ const DepotCash = () => {
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
 
+    
+    
 
     // *********************Calcul de frais************************************************************
     
@@ -119,7 +121,7 @@ const DepotCash = () => {
                     className={toggleState === 1 ? "content  active-content" : "content"}
                     >
                      {/* Formulaire de la partie avec adresse blockchain  */}
-                    <form>
+                    <form >
                       <div className="form-group mb-6">
                         <label
                           htmlFor="addressTo"

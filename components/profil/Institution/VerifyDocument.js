@@ -13,6 +13,15 @@ const VerifyDocuments = () => {
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
 
+    // States recherche de d'un utilisateur
+    const [infosOtherUser, setInfosOtherUser] = useState();
+    const [emailOtherUser, setEmailOtherUser] = useState();
+    const [codeOtherUser, setCodeOtherUser] = useState();
+    
+    const [reasonFiling, setReasonFiling] = useState();
+    const [fundsOrigin, setFundsOrigin] = useState();
+
+    const [showInfoUser, setShowInfoUser] = useState();
 
     
     // Formulaire du Modal Transfert
@@ -41,6 +50,87 @@ const VerifyDocuments = () => {
     // Fin
 
 
+        // Obtenir un utilisateur en fonction de son email 
+        const searchUserWithEmail = () =>{
+          if (emailOtherUser) {
+            const getUser = async (_emailOtherUser) => {
+            
+                const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${_emailOtherUser}`, {
+                    headers: {
+                    'Content-Type': 'application/json',
+                    },
+                })
+                    .then((result) => result.json())
+                    .then((user) => {
+                      setInfosOtherUser(user)
+                      console.log("user=>2",user)
+
+            
+                    }) 
+            
+                };
+                
+                  getUser(emailOtherUser);
+              
+          }
+        }
+        // FIN
+    
+         // Obtenir un utilisateur en fonction de son adresse blockchain
+         const searchUserWithBlockchain = () =>{
+          if (addressTo) {
+            const getUser = async (_addressTo) => {
+            
+                const result = await fetch(`${API_URL}/api/user/find-user-by-addrBlockchain?address=${_addressTo}`, {
+                    headers: {
+                    'Content-Type': 'application/json',
+                    },
+                })
+                    .then((result) => result.json())
+                    .then((user) => {
+                      setInfosOtherUser(user)
+                      console.log("user=>1",user)
+            
+                    }) 
+            
+                };
+                
+                  getUser(addressTo);
+              
+          }
+        }
+        // FIN
+    
+         // Obtenir un utilisateur en fonction de son Identifiant
+         const searchUserWithIdentifiant = () =>{
+          if (codeOtherUser) {
+            const getUser = async (_codeOtherUser) => {
+                const result = await fetch(`${API_URL}/api/user/find-user-by-userCode?code=${_codeOtherUser}`, {
+                    headers: {
+                    'Content-Type': 'application/json',
+                    },
+                })
+                    .then((result) => result.json())
+                    .then((user) => {
+                      setInfosOtherUser(user)
+                      console.log("user=>3",user)
+
+            
+                    }) 
+            
+                };
+                
+                  getUser(codeOtherUser);
+              
+          }
+        }
+        // FIN
+        
+        const handleSubmit = (e) => {
+          e.preventDefault()
+      
+        }
+        // Fin
 
 
    
@@ -104,7 +194,7 @@ const VerifyDocuments = () => {
                     className={toggleState === 1 ? "content  active-content" : "content"}
                     >
                      {/* Formulaire de la partie avec adresse blockchain  */}
-                    <form>
+                    <form onClick={handleSubmit}>
                       <div className="form-group mb-6">
                         <label
                           htmlFor="addressTo"
@@ -135,8 +225,8 @@ const VerifyDocuments = () => {
                             className="form-control mt-3"
                             id="motif"
                             required
-                            // defaultValue={employee} 
-                            // onChange={(event)=>setEmployee(event.target.value)}
+                            defaultValue={reasonFiling} 
+                            onChange={(event)=>setReasonFiling(event.target.value)}
                           >
                             <option defaultValue="">Motif du dépôt</option>
                               <optgroup className='single-cryptocurrency-box'>
@@ -147,8 +237,8 @@ const VerifyDocuments = () => {
                                 <option  value="Loyer/Hypothèque">Loyer/Hypothèque </option>
                                 <option  value="Urgence/Assistance médicale ">Urgence/Assistance médicale </option>
                                 <option  value="Organisme de bienfaisance/Paiement d’aide ">Organisme de bienfaisance/Paiement d’aide </option>
-                                <option  value="Frais relatifs à une loterie ou un prix/Impôts ">Frais relatifs à une loterie ou un prix/Impôts </option>
-                                <option  value="Paie des emplyés/Frais des employés">Paie des emplyés/Frais des employés </option>
+                                <option  value="Frais relatifs à une loterie ou un prix/Impôts ">Frais relatifs à une loterie ou un prix/impôts </option>
+                                <option  value="Paie des employés/Frais des employés">Paie des employés/Frais des employés </option>
                                 <option  value="Autre ">Autre </option>
                               </optgroup>
                           </select>
@@ -165,8 +255,8 @@ const VerifyDocuments = () => {
                             className="form-control mt-3"
                             id="origine"
                             required
-                            // defaultValue={employee} 
-                            // onChange={(event)=>setEmployee(event.target.value)}
+                            defaultValue={fundsOrigin} 
+                            onChange={(event)=>setFundsOrigin(event.target.value)}
                           >
                             <option defaultValue="">Origine des fonds</option>
                               <optgroup className='single-cryptocurrency-box'>
@@ -175,7 +265,7 @@ const VerifyDocuments = () => {
                                 <option  value="Cadeau">Cadeau</option>
                                 <option  value="Pension/Allocations publique/Aide sociale">Pension/Allocations publique/Aide sociale</option>
                                 <option  value="Héritage">Héritage </option>
-                                <option  value="Dons de bienfaisnce ">Dons de bienfaisnce</option>
+                                <option  value="Dons de bienfaisance ">Dons de bienfaisance</option>
                                 <option  value="Autre ">Autre </option>
                               </optgroup>
                           </select>
@@ -190,9 +280,10 @@ const VerifyDocuments = () => {
                             lg="6"
                             xl="6"
                           className="order-lg-1 text-center"
+                          onClick={()=>setShowInfoUser(1)}
                           
                         >
-                        <Button variant="success"  className="text-white" >
+                        <Button variant="success" onClick={searchUserWithBlockchain}  className="text-white" >
                             Vérifier
                         </Button>
                         </Col>
@@ -200,11 +291,14 @@ const VerifyDocuments = () => {
                     </form>
                     </div>
 
+
+
+
                     <div
                     className={toggleState === 2 ? "content  active-content" : "content"}
                     >
-                     {/* Formulaire de la partie avec adresse blockchain  */}
-                    <form>
+                     {/* Formulaire de la partie avec adresse email  */}
+                    <form onSubmit={handleSubmit}>
                       <div className="form-group mb-6">
                         <label
                           htmlFor="pays"
@@ -218,8 +312,8 @@ const VerifyDocuments = () => {
                           id="contact"
                           placeholder="Adresse email du bénéficiaire"
                           required
-                          // defaultValue={networkMobile} 
-                          // onChange={(event)=>setNetworkMobile(event.target.value)}
+                          defaultValue={emailOtherUser} 
+                          onChange={(event)=>setEmailOtherUser(event.target.value)}
                         />
                       </div>
 
@@ -235,8 +329,8 @@ const VerifyDocuments = () => {
                             className="form-control mt-3"
                             id="motif"
                             required
-                            // defaultValue={employee} 
-                            // onChange={(event)=>setEmployee(event.target.value)}
+                            defaultValue={reasonFiling} 
+                            onChange={(event)=>setReasonFiling(event.target.value)}
                           >
                             <option defaultValue="">Motif du dépôt</option>
                               <optgroup className='single-cryptocurrency-box'>
@@ -248,7 +342,7 @@ const VerifyDocuments = () => {
                                 <option  value="Urgence/Assistance médicale ">Urgence/Assistance médicale </option>
                                 <option  value="Organisme de bienfaisance/Paiement d’aide ">Organisme de bienfaisance/Paiement d’aide </option>
                                 <option  value="Frais relatifs à une loterie ou un prix/Impôts ">Frais relatifs à une loterie ou un prix/Impôts </option>
-                                <option  value="Paie des emplyés/Frais des employés">Paie des emplyés/Frais des employés </option>
+                                <option  value="Paie des employés/Frais des employés">Paie des employés/Frais des employés </option>
                                 <option  value="Autre ">Autre </option>
                               </optgroup>
                           </select>
@@ -265,8 +359,8 @@ const VerifyDocuments = () => {
                             className="form-control mt-3"
                             id="origine"
                             required
-                            // defaultValue={employee} 
-                            // onChange={(event)=>setEmployee(event.target.value)}
+                            defaultValue={fundsOrigin} 
+                            onChange={(event)=>setFundsOrigin(event.target.value)}
                           >
                             <option defaultValue="">Origine des fonds</option>
                               <optgroup className='single-cryptocurrency-box'>
@@ -275,7 +369,7 @@ const VerifyDocuments = () => {
                                 <option  value="Cadeau">Cadeau</option>
                                 <option  value="Pension/Allocations publique/Aide sociale">Pension/Allocations publique/Aide sociale</option>
                                 <option  value="Héritage">Héritage </option>
-                                <option  value="Dons de bienfaisnce ">Dons de bienfaisnce</option>
+                                <option  value="Dons de bienfaisance ">Dons de bienfaisance</option>
                                 <option  value="Autre ">Autre </option>
                               </optgroup>
                           </select>
@@ -290,9 +384,10 @@ const VerifyDocuments = () => {
                             lg="6"
                             xl="6"
                           className="order-lg-1 text-center"
+                          onClick={()=>setShowInfoUser(2)}
                           
                         >
-                        <Button variant="success" className="text-white" >
+                        <Button variant="success" onClick={searchUserWithEmail} className="text-white" >
                             Vérifier
                         </Button>
                         </Col>
@@ -300,11 +395,14 @@ const VerifyDocuments = () => {
                     </form>
                     </div>
 
+
+
+
                     <div
                     className={toggleState === 3 ? "content  active-content" : "content"}
                     >
                      {/* Formulaire de la partie avec identifiant  */}
-                    <form>
+                    <form onSubmit={handleSubmit}>
                       <div className="form-group mb-6">
                         <label
                           htmlFor="identifiant"
@@ -318,8 +416,8 @@ const VerifyDocuments = () => {
                           id="identifiant"
                           placeholder="Identifiant du bénéficiaire"
                           required
-                        //   defaultValue={addressTo} 
-                        //   onChange={(event)=>setAddressTo(event.target.value)}
+                          defaultValue={codeOtherUser} 
+                          onChange={(event)=>setCodeOtherUser(event.target.value)}
                         />
                       </div>
 
@@ -335,8 +433,8 @@ const VerifyDocuments = () => {
                             className="form-control mt-3"
                             id="motif"
                             required
-                            // defaultValue={employee} 
-                            // onChange={(event)=>setEmployee(event.target.value)}
+                            defaultValue={reasonFiling} 
+                            onChange={(event)=>setReasonFiling(event.target.value)}
                           >
                             <option defaultValue="">Motif du dépôt</option>
                               <optgroup className='single-cryptocurrency-box'>
@@ -348,7 +446,7 @@ const VerifyDocuments = () => {
                                 <option  value="Urgence/Assistance médicale ">Urgence/Assistance médicale </option>
                                 <option  value="Organisme de bienfaisance/Paiement d’aide ">Organisme de bienfaisance/Paiement d’aide </option>
                                 <option  value="Frais relatifs à une loterie ou un prix/Impôts ">Frais relatifs à une loterie ou un prix/Impôts </option>
-                                <option  value="Paie des emplyés/Frais des employés">Paie des emplyés/Frais des employés </option>
+                                <option  value="Paie des employés/Frais des employés">Paie des employés/Frais des employés </option>
                                 <option  value="Autre ">Autre </option>
                               </optgroup>
                           </select>
@@ -365,8 +463,8 @@ const VerifyDocuments = () => {
                             className="form-control mt-3"
                             id="origine"
                             required
-                            // defaultValue={employee} 
-                            // onChange={(event)=>setEmployee(event.target.value)}
+                            defaultValue={fundsOrigin} 
+                            onChange={(event)=>setFundsOrigin(event.target.value)}
                           >
                             <option defaultValue="">Origine des fonds</option>
                               <optgroup className='single-cryptocurrency-box'>
@@ -375,7 +473,7 @@ const VerifyDocuments = () => {
                                 <option  value="Cadeau">Cadeau</option>
                                 <option  value="Pension/Allocations publique/Aide sociale">Pension/Allocations publique/Aide sociale</option>
                                 <option  value="Héritage">Héritage </option>
-                                <option  value="Dons de bienfaisnce ">Dons de bienfaisnce</option>
+                                <option  value="Dons de bienfaisance ">Dons de bienfaisance</option>
                                 <option  value="Autre ">Autre </option>
                               </optgroup>
                           </select>
@@ -388,8 +486,9 @@ const VerifyDocuments = () => {
                             lg="6"
                             xl="6"
                           className="order-lg-1 text-center"
+                          onClick={()=>setShowInfoUser(3)}
                         >
-                           <Button className="text-white " variant="danger" >
+                           <Button className="text-white " onClick={searchUserWithIdentifiant} variant="danger" >
                                 Vérifier
                             </Button>
                         </Col>
@@ -409,57 +508,70 @@ const VerifyDocuments = () => {
                 <div className='single-cryptocurrency-box'>
 
                   {/* AFFICHAGE DES TEXTES */}
-                  <div className='row justify-content-center'>
-                    <div className='col-lg-4 col-md-4 mb-3'>
-                      <h5>Nom : </h5>
-                      <p>Kouamé</p>
-                    </div>
-                    <div className='col-lg-4 col-md-4 mb-3'>
-                      <h5>Prénom : </h5>
-                      <p>Yannick </p>
-                    </div>
-                  </div>
+                  <div className={toggleState === 3}>
+
+                  {infosOtherUser?.entreprise ? (
+                      <p className="gr-text-8 " id="addon-wrapping">
+                            Nom de l'entreprise : {infosOtherUser?.entreprise}
+                      </p>
+                    ) : (infosOtherUser?.firstName && infosOtherUser?.lastName && infosOtherUser?.codeTypeProfil=="part"?
+                      (
+                      <div className='row'>
+                        <div className='col-lg-4 col-md-4 mb-3'>
+                          <p className="gr-text-8 " id="addon-wrapping">
+                            Nom : {infosOtherUser?.firstName}
+                          </p>
+                          </div>
+                          <div className='col-lg-4 col-md-4 mb-3'>
+                          <p className="gr-text-8 " id="addon-wrapping">
+                            Prenom : {infosOtherUser?.lastName}
+                          </p>
+                          </div>
+                      </div>
+                      ) : <p className="gr-text-8 colorRed" id="addon-wrapping">{infosOtherUser?.message}</p>)}
 
                   {/* AFFICHAGE DES FICHIERS */}
-                  <div className='row justify-content-center mt-5'>
-                    <div className='col-lg-4 col-md-4 mb-3'>
-                      <h5>Photo </h5>
-                      <div className='buy-sell-cryptocurrency-image'>
-                        <img src='/images/ecfa/ecosysteme/investissements/invest17.jpg' className="" width={'700'} height={'700'} alt='logo' />
+                  
+                    <div className='row justify-content-center mt-5'>
+                      <div className='col-lg-4 col-md-4 mb-3'>
+                        <h5>Photo </h5>
+                        <div className='buy-sell-cryptocurrency-image'>
+                          <img src='/images/ecfa/ecosysteme/investissements/invest17.jpg' className="" width={'700'} height={'700'} alt='logo' />
+                        </div>
                       </div>
-                    </div>
 
-                    <div className='col-lg-4 col-md-4 mb-3'>
-                      <h5>Recto de justificatif d'identité </h5>
-                      <div className='buy-sell-cryptocurrency-image'>
-                        <img src='/images/ecfa/ecosysteme/investissements/invest17.jpg' className="" width={'700'} height={'700'} alt='logo' />
+                      <div className='col-lg-4 col-md-4 mb-3'>
+                        <h5>Recto de justificatif d'identité </h5>
+                        <div className='buy-sell-cryptocurrency-image'>
+                          <img src='/images/ecfa/ecosysteme/investissements/invest17.jpg' className="" width={'700'} height={'700'} alt='logo' />
+                        </div>
                       </div>
-                    </div>
 
-                    <div className='col-lg-4 col-md-4 mb-3'>
-                      <h5>Verso de justificatif d'identité </h5>
-                      <div className='buy-sell-cryptocurrency-image'>
-                        <img src='/images/ecfa/ecosysteme/investissements/invest17.jpg' className="" width={'700'} height={'700'} alt='logo' />
+                      <div className='col-lg-4 col-md-4 mb-3'>
+                        <h5>Verso de justificatif d'identité </h5>
+                        <div className='buy-sell-cryptocurrency-image'>
+                          <img src='/images/ecfa/ecosysteme/investissements/invest17.jpg' className="" width={'700'} height={'700'} alt='logo' />
+                        </div>
                       </div>
+                      
                     </div>
-                    
+                    {/* FIN */}
+                    <Row className="my-3 justify-content-center align-items-center ">
+                      <Col
+                          xs="6"
+                          md="6"
+                          lg="6"
+                          xl="6"
+                        className="order-lg-1 text-center"
+                      >
+                        <a href='/profil/institution/depot-cash/'>
+                          <Button  className="text-white" >
+                            Continuer vers le dépôt
+                          </Button>
+                        </a>
+                      </Col>
+                    </Row>
                   </div>
-                  {/* FIN */}
-                  <Row className="my-3 justify-content-center align-items-center ">
-                    <Col
-                        xs="6"
-                        md="6"
-                        lg="6"
-                        xl="6"
-                      className="order-lg-1 text-center"
-                    >
-                      <a href='/profil/institution/depot-cash/'>
-                        <Button  className="text-white" >
-                          Continuer vers le dépôt
-                        </Button>
-                      </a>
-                    </Col>
-                  </Row>
                 </div>
               </div>
             </div>

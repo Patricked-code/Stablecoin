@@ -80,12 +80,7 @@ const CDashbaordHistorique = () => {
                 })
                   .then((result) => result.json())
                   .then((user) => {
-                    if (user?.profileId==2 || user?.profileId==3) {
-                        setCurrentUser(user)
-                    }else{
-                        Router.push("/profil/"); 
-                        
-                    }
+                    setCurrentUser(user)
                   }) 
               };
               await getUser();
@@ -102,7 +97,7 @@ const CDashbaordHistorique = () => {
 
   return (
     <>
-    {currentUser?.profileId==2 || currentUser?.profileId==3?(
+    {/* {currentUser?.profileId==2 || currentUser?.profileId==3?( */}
 
     <>
       <div className='' >
@@ -248,11 +243,11 @@ const CDashbaordHistorique = () => {
       </div>
 
     </>
-    ):(
+    {/* ):(
         <span className="text-center bg-default-2 btn-bottom-text  d-block gr-text-5 text-blackish-blue gr-opacity-10 my-35">
             <Loading/>
         </span>
-    )}
+    )} */}
     </>
   );
 };

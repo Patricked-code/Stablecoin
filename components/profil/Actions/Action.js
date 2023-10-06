@@ -426,13 +426,15 @@ const Action = () => {
                                             </div>
                                             </div>
                                             <div className='btn-box'>
-                                            <Button
-                                                block
-                                                color="primary"
-                                                type="button"
-                                            >
-                                                Voir plus
-                                            </Button>
+                                                <a href='/profil/institution/mintBurn/'>
+                                                    <Button
+                                                        block
+                                                        color="primary"
+                                                        type="button"
+                                                    >
+                                                        Voir plus
+                                                    </Button>
+                                                </a>
                                             {/* Fin */}
                                             </div>
                                         </div>

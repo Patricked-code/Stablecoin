@@ -153,82 +153,17 @@ const SignatureKyc = () => {
         
     }, [userSignature,signatureData]);
     // Fin
-   
-
-    // Fonction d'envoie des informations de la signature pour le profil entreprise
-    const addUserSignatureLeader= useCallback(async () => {
-        setIsLoggingIn(true);
-        try {
-            
-            const dataa = {
-                userSignatureLeader:signatureData,
-            }
-
-            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
-
-            const result = await fetch(`${API_URL}/api/kyc/entreprise/add-kyc-signature`, {
-            method:"PUT",
-            body: JSON.stringify(dataa),
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization:  `Bearer ${token}`
-            }
-            })
-            const data = await result.json();
-        
-            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-            * sinon on affiche le message de succès
-            */
-            if (data.message===200) {
-            Swal.fire({
-                position: 'center',
-                icon: 'success',
-                html: `<p> Votre signature a été sauvegardée avec succès.</p>` ,
-                showConfirmButton: false,
-                timer: 5000
-            }),
-            setTimeout(() => {
-                Router.push("/profil/"); 
-            }, 5000)
-            
-            }else{
-                setMessageError(data.message)
-
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> ${messageError} </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-                
-            }
-            // Fin condition 
-        
-            } catch {
-            setIsLoggingIn(false);
-            }
-        
-    }, [userSignature,signatureData]);
-    // Fin
 
     // La barre de progression de KYC du profil particulier
     const steps = ["AML 1 & 2","FATCA", "Identité 1 & 2", "Selfie", "Domicile", "Photo", "Signature"];
     const activeStep = 5;
     // Fin
 
-    // La barre de progression de KYC du profil particulier
-    const stepsEntreprise = ["Questionnaires","Documents légaux","Justificatif de domicile", "Justificatif d'identité","Photo", "Signature"];
-    const activeStepEntreprise = 4;
-    // Fin
   return (
     <>
-        {currentUser?.activated && currentUser?.codeTypeProfil==="entCom"? (
-            <ProgressBar className="mb-15" steps={stepsEntreprise} activeStep={activeStepEntreprise} />
-        ) : (
-            <ProgressBar className="mb-15" steps={steps} activeStep={activeStep} />
-        )}
+       
+        <ProgressBar className="mb-15" steps={steps} activeStep={activeStep} />
+        
         <div className='' >
             <div className=' mx-15'>
                 <div className='py-10'>
@@ -259,23 +194,14 @@ const SignatureKyc = () => {
                         <form className=''>
                             {/* Question 2 */}
                             <div className="form-group mb-6 mt-3 text-center">
-                                {currentUser?.activated && currentUser?.codeTypeProfil==="entCom"? (
-                                    <label
-                                        htmlFor="Q1"
-                                        className="text-blackish-blue mb-2"
-                                    >
-                                        Merci de signer dans la case ci-dessous(Signature du dirigeant de l'entreprise)
-                                    </label>
+                                
+                                <label
+                                    htmlFor="Q1"
+                                    className="text-blackish-blue mb-2"
+                                >
+                                    Merci de signer dans la case ci-dessous
 
-                                ) :(
-                                    <label
-                                        htmlFor="Q1"
-                                        className="text-blackish-blue mb-2"
-                                    >
-                                        Merci de signer dans la case ci-dessous
-
-                                    </label>
-                                )}
+                                </label>
                             </div >
                             <div className="form-group row mt-3 text-center">
                             <div className="form-group col-lg-3 col-md-3"></div>
@@ -305,25 +231,7 @@ const SignatureKyc = () => {
                             {/* Fin */}
                             {signatureData?(
                                 <>
-                                    {currentUser?.activated && currentUser?.codeTypeProfil==="entCom"? (
-
-                                        <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
-                                            <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                                <Link href='/profil/kyc/commun/selfie/' className="align-right">
-                                                    <a
-                                                    className=""
-                                                    >
-                                                        <button className="btn btn-primary " type='button'  > Précédente </button>
-                                                    </a>   
-                                                </Link>                          
-                                            </div> 
-
-                                            <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                                <button className="btn btn-primary " type='button' onClick={addUserSignatureLeader}  disabled={isLoggingIn}>Envoyer</button>
-                                            </div> 
-                                        </div>
-
-                                    ):(
+                                    
                                         <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
                                         <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
                                             <Link href='/profil/kyc/commun/selfie/' className="align-right">
@@ -339,7 +247,6 @@ const SignatureKyc = () => {
                                             <button className="btn btn-primary " type='button' onClick={addUserSignature}  disabled={isLoggingIn}>Envoyer</button>
                                         </div> 
                                     </div>
-                                    )}
                                 </>
                             ):("")}
 

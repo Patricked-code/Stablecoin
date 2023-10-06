@@ -140,8 +140,6 @@ const JtifDomicile = () => {
                 frontProofResidencePhoto:imageRecto,
                 backProofResidencePhoto:imageVerso
             }
-
-            console.log("dataa=>",dataa)
     
             const token = localStorage.getItem('tokenEnCours') //Le token récuperé
     

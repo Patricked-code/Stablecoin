@@ -461,24 +461,21 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
                                     </div >
 
                                     <form>
-                                   
+                                        <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                            <Link href='/profil/kyc/particulier/justificatif-identite-one/' className="align-right">
+                                                <a >
+                                                    <button className="btn btn-primary "type='button' >
+                                                        Précédente
+                                                    </button>
+                                                </a>
+                                            </Link> 
+                                        </div> 
 
-                                    <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
-                                    <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        <Link href='/profil/kyc/particulier/justificatif-identite-one/' className="align-right">
-                                            <a >
-                                                <button className="btn btn-primary "type='button' >
-                                                    Précédente
-                                                </button>
-                                            </a>
-                                        </Link> 
-                                    </div> 
-
-                                    <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                                        <button className="btn btn-primary" type='button' onClick={()=>setStatutTypeJustificatif(1)}  disabled={isLoggingIn}>Suivant </button>
-                                    </div> 
-                                    </div>
-
+                                        <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
+                                            <button className="btn btn-primary" type='button' onClick={()=>setStatutTypeJustificatif(1)}  disabled={isLoggingIn}>Suivant </button>
+                                        </div> 
+                                        </div>
                                     </form>
                                 </>
                             )}

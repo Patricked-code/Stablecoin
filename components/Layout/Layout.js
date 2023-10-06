@@ -123,6 +123,8 @@ const Layout = ({ children }) => {
       pathname === "/profil/institution/verifier-documents"||
       pathname === "/profil/institution/autre-verification-documents"||
       pathname === "/profil/institution/verifier-documents-retrait"||
+      pathname === "/profil/institution/mintBurn"||
+
 
       // FIN
 
@@ -244,6 +246,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/institution/verifier-documents"||
       pathname === "/profil/institution/verifier-documents-retrait"||
       pathname === "/profil/institution/autre-verification-documents"||
+      pathname === "/profil/institution/mintBurn"||
 
       // FIN
 
