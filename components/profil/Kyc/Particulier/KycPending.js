@@ -307,7 +307,7 @@ const KycPendingParticular = () => {
         <div className='' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                    <h1 className='text-center'>Résultat de la validation de Kyc</h1>
+                    <h1 className='text-center'>Votre Kyc</h1>
                 </div>
             </div>
 
@@ -329,77 +329,215 @@ const KycPendingParticular = () => {
             {/* Les cards */}
             <div className='cryptocurrency-search-box'>
                 <div className='row'>
-                    {/* <div className='col-lg-1 col-md-1'></div> */}
                     <div className='col-lg-12 col-md-12'>
                         <div className='currency-selection'>
-                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                <div className='col-lg-12 col-md-12 row justify-content-between'>
-                                    {/* {!allKycForParticular?.length==0 ?( */}
-                                        <Table
-                                            aria-label="Example table with static content"
-                                            css={{
-                                                height: "auto",
-                                                minWidth: "100%",
-                                            }}
-                                        >
-                                        <Table.Header>
-                                            {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom & prenom </p></Table.Column> */}
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Questionnaires</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Fatca</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Identité</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Domicile</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Photo</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Signature</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
-                                        </Table.Header>
-                                            <Table.Body>
-                                                    <Table.Row >                       
-                                                        {/* <Table.Cell ><p className=" py-0 ">Koné Arouna</p></Table.Cell> */}
-                                                        
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(1)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}>Voir détails</button> {kycForParticularUser?.validQuiz==1 && kycForParticularUser?.validQuizTwo==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(6)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}>Voir détails</button> {kycForParticularUser?.validQuizFatca==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(2)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}>Voir détails</button> {kycForParticularUser?.validIdentityOne==1 && kycForParticularUser?.validIdentity==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(3)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}>Voir détails</button> {kycForParticularUser?.validResidence==1 && kycForParticularUser?.validPhotoWithDocument==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(4)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}>Voir détails</button> {kycForParticularUser?.validPhoto==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(5)}><button className='bgColorblue text-white' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}>Voir détails</button> {kycForParticularUser?.validSignature==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 ">{kycForParticularUser?.validQuiz==1 && kycForParticularUser?.validQuizTwo==1 && kycForParticularUser?.validQuizFatca==1 && kycForParticularUser?.validIdentityOne==1 && kycForParticularUser?.validPhotoWithDocument && kycForParticularUser?.validIdentity==1 && kycForParticularUser?.validResidence==1 && kycForParticularUser?.validPhoto==1 && kycForParticularUser?.validSignature==1 ? (<b className='colorGreen'>Valider</b>):(<b className='colorRed'>En cours</b>)}</p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 ">{formatDate(kycForParticularUser?.updateAt)}</p></Table.Cell>
-                                                        <Table.Cell>
-                                                            <div className="d-flex py-0 ">
-                                                                {kycForParticularUser?.correction === 1 ?(
-                                                                    <p className="text-center">
-                                                                        <Button type='button' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}  color='success' className=''>
-                                                                            <div onClick={handleShowEvaluer}>
-                                                                                Résultat <Icon icon="bx:chevron-down-circle"  width="30"/>
-                                                                            </div>          
-                                                                        </Button>
-                                                                    </p>
-                                                                ) : (
-                                                                    <p className="text-center">Aucune correction</p>
-                                                                )}
-                                                                
-                                                            </div>
-                                                        </Table.Cell>
-                                                    </Table.Row >
-                                            </Table.Body>
-                                            <Table.Pagination
-                                                shadow
-                                                noMargin
-                                                align="center"
-                                                rowsPerPage={5}
-                                                onPageChange={(page) => console.log({ page })}
-                                            />
-                                        </Table>
-                                    {/* ):(
-                                        <div className="text-center my-5">
-                                            Aucun Kyc en attente
+                            <div className='row'>
+
+                                <div className='col-lg-3 col-md-3'>
+                                    <div className='currency-selection text-center'>
+                                        <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                            <div className='cryptocurrency-slides'>
+                                                <div className='single-cryptocurrency-box'>
+                                                    <div className='title text-center '>
+                                                        <p className=" py-0 "> Questionnaires </p>
+                                                        <p className=" py-0 ">{kycForParticularUser?.validQuiz==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                    </div>
+                                                            
+                                                    <div className='btn-box ' onClick={()=>setEtape(1)}>
+                                                        <Button
+                                                            block
+                                                            color="primary"
+                                                            type="button"
+                                                            onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}
+                                                        >
+                                                            Détails
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    )} */}
+                                    </div>
                                 </div>
-                            {/* </form> */}
+
+                                <div className='col-lg-3 col-md-3'>
+                                    <div className='currency-selection text-center'>
+                                        <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                            <div className='cryptocurrency-slides'>
+                                                <div className='single-cryptocurrency-box'>
+                                                    <div className='title text-center '>
+                                                        <p className=" py-0 "> Fatca </p>
+                                                        <p className=" py-0 ">{kycForParticularUser?.validQuizFatca==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                    </div>
+                                                            
+                                                    <div className='btn-box ' onClick={()=>setEtape(6)}>
+                                                        <Button
+                                                            block
+                                                            color="primary"
+                                                            type="button"
+                                                            onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}
+                                                        >
+                                                            Détails
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className='col-lg-3 col-md-3'>
+                                    <div className='currency-selection text-center'>
+                                        <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                            <div className='cryptocurrency-slides'>
+                                                <div className='single-cryptocurrency-box'>
+                                                    <div className='title text-center '>
+                                                        <p className=" py-0 "> Identité </p>
+                                                        <p className=" py-0 ">{kycForParticularUser?.validIdentityOne==1 && kycForParticularUser?.validIdentity==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                    </div>
+                                                            
+                                                    <div className='btn-box ' onClick={()=>setEtape(2)}>
+                                                        <Button
+                                                            block
+                                                            color="primary"
+                                                            type="button"
+                                                            onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}
+                                                        >
+                                                            Détails
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className='col-lg-3 col-md-3'>
+                                    <div className='currency-selection text-center'>
+                                        <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                            <div className='cryptocurrency-slides'>
+                                                <div className='single-cryptocurrency-box'>
+                                                    <div className='title text-center '>
+                                                        <p className=" py-0 "> Domicile </p>
+                                                        <p className=" py-0 ">{kycForParticularUser?.validResidence==1 && kycForParticularUser?.validPhotoWithDocument==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                    </div>
+                                                            
+                                                    <div className='btn-box ' onClick={()=>setEtape(3)}>
+                                                        <Button
+                                                            block
+                                                            color="primary"
+                                                            type="button"
+                                                            onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}
+                                                        >
+                                                            Détails
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className='col-lg-3 col-md-3'>
+                                    <div className='currency-selection text-center'>
+                                        <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                            <div className='cryptocurrency-slides'>
+                                                <div className='single-cryptocurrency-box'>
+                                                    <div className='title text-center '>
+                                                        <p className=" py-0 "> Photo </p>
+                                                        <p className=" py-0 ">{kycForParticularUser?.validPhoto==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                    </div>
+                                                            
+                                                    <div className='btn-box ' onClick={()=>setEtape(4)}>
+                                                        <Button
+                                                            block
+                                                            color="primary"
+                                                            type="button"
+                                                            onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}
+                                                        >
+                                                            Détails
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className='col-lg-3 col-md-3'>
+                                    <div className='currency-selection text-center'>
+                                        <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                            <div className='cryptocurrency-slides'>
+                                                <div className='single-cryptocurrency-box'>
+                                                    <div className='title text-center '>
+                                                        <p className=" py-0 "> Signature </p>
+                                                        <p className=" py-0 ">{kycForParticularUser?.validSignature==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                    </div>
+                                                            
+                                                    <div className='btn-box ' onClick={()=>setEtape(5)}>
+                                                        <Button
+                                                            block
+                                                            color="primary"
+                                                            type="button"
+                                                            onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}
+                                                        >
+                                                            Détails
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className='col-lg-3 col-md-3'>
+                                    <div className='currency-selection text-center'>
+                                        <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                            <div className='cryptocurrency-slides'>
+                                                <div className='single-cryptocurrency-box'>
+                                                    <div className='title text-center mb-5'>
+                                                        <p className=" py-0 my-2">{kycForParticularUser?.validQuiz==1 && kycForParticularUser?.validQuizTwo==1 && kycForParticularUser?.validQuizFatca==1 && kycForParticularUser?.validIdentityOne==1 && kycForParticularUser?.validPhotoWithDocument && kycForParticularUser?.validIdentity==1 && kycForParticularUser?.validResidence==1 && kycForParticularUser?.validPhoto==1 && kycForParticularUser?.validSignature==1 ? (<b className='colorGreen'>Valider</b>):(<b className='colorRed'>En cours</b>)}</p>
+                                                        <p className=" py-0 my-3">{kycForParticularUser?.validationKycDate?formatDate(kycForParticularUser?.validationKycDate):"Pas encore corrigé"}</p>
+                                                    </div>
+                                                            
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className='col-lg-3 col-md-3'>
+                                    <div className='currency-selection text-center'>
+                                        <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                            <div className='cryptocurrency-slides'>
+                                                <div className='single-cryptocurrency-box'>
+                                                    <div className='title text-center '>
+                                                        <p className=" py-0 "> Résultat </p>
+                                                    </div>
+
+                                                    {kycForParticularUser?.correction === 1 ?(      
+                                                        <div className='btn-box ' onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={handleShowEvaluer}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    ) : (
+                                                        <p className="text-center mb-2 mt-5 pb-3">Pas encore corrigé</p>
+                                                    )}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
+
                             
 
                             {/* AFFICHAGE DES INFORMATIONS DE KYC */}
@@ -687,7 +825,7 @@ const KycPendingParticular = () => {
                                             </div>
                                         </div>
 
-                                        <div className='py-10 my-10'>
+                                        <div className='py-10 my-5'>
                                             <h3 className='text-center'>Justificatif d'identité partie 2</h3>
                                         </div><br/>
 
@@ -941,18 +1079,17 @@ const KycPendingParticular = () => {
                                         </div>
                                         <div className='row'>
                                             {/* PARTIE QUESTIONNAIRE 2 */}
-                                            <div className="col-lg-12 col-md-12">
-                                                <div className='mx-5 '>
-                                                    <div className=''>
+                                            {/* <div className=""> */}
+                                                    <div className='mx-10 col-lg-6 col-md-6'>
                                                         <b> Etes-vous une "US PERSON"? (Citoyenneté Américaine (Passeport américain) / Résidence aux USA /Présence significative ou permanente (green card) / Lieu de naissance aux USA) :</b><br/>
                                                         {oneKycForParticular?.usPerson? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.usPerson}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                     </div>
 
-                                                    <div className='mx-10 '>
+                                                    <div className='mx-10 col-lg-6 col-md-6'>
                                                         <b>Adresse ou boîte postale :</b><br/>
                                                         {oneKycForParticular?.mailbox? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.mailbox }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                     </div>
-                                                    <div className='mx-10 '>
+                                                    <div className='mx-10 col-lg-6 col-md-6'>
                                                         <b> Statut professionnel :</b><br/>
                                                         {oneKycForParticular?.professionStatus? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.professionStatus }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                     </div>
@@ -960,25 +1097,25 @@ const KycPendingParticular = () => {
                                                     {/* Si le Statut professionnel est salarié */}
                                                     {oneKycForParticular?.professionStatus === "Salarié" ? (
                                                         <>
-                                                            <div className='mx-10 '>
+                                                            <div className='mx-10 col-lg-6 col-md-6'>
                                                                 <b> Nom de l'employeur :</b><br/>
                                                                 {oneKycForParticular?.employerCorporate? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.employerCorporate }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                             </div>
 
-                                                            <div className='mx-10 '>
+                                                            <div className='mx-10 col-lg-6 col-md-6'>
                                                                 <b> Adresse de l'employeur :</b><br/>
                                                                 {oneKycForParticular?.employerAddress? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.employerAddress }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                             </div>
                                                         </>
                                                     ) : ("")}
-                                                    <div className='mx-10 '>
+                                                    <div className='mx-10 col-lg-6 col-md-6'>
                                                         <b> Profession/fonction/activité :</b><br/>
                                                         {oneKycForParticular?.profession? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.profession }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                     </div>
                                                     {/* Fin */}
                                                     
                                                     {/* PARTIE MOTIVATION */}
-                                                    <div className='mx-10 '>
+                                                    <div className='mx-10 col-lg-6 col-md-6'>
                                                         <b> Motivation de l’ouverture de compte :</b><br/>
                                                         {oneKycForParticular?.motivation? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.motivation }</p>): ("")}
                                                         {oneKycForParticular?.motivationA? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.motivationA }</p>): ("")}
@@ -991,33 +1128,33 @@ const KycPendingParticular = () => {
                                                     </div>
                                                     {/* FIN PARTIE MOTIVATION */}
 
-                                                    <div className='mx-10 '>
+                                                    <div className='mx-10 col-lg-6 col-md-6'>
                                                         <b> Bénéficiez-vous d’un mandat d’administrateur dans le Conseil d’Administration d’une société ?</b><br/>
                                                         {oneKycForParticular?.directorship? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.directorship }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                     </div>
                                                     {/* Si l'utilisateur bénéficie d’un mandat d’administrateur */}
                                                     {oneKycForParticular?.directorship==="Oui"? (
-                                                        <div className='mx-10 '>
+                                                        <div className='mx-10 col-lg-6 col-md-6'>
                                                             <b> La (les)quelle(s) :</b><br/>
                                                             {oneKycForParticular?.whatBoard? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.whatBoard }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                         </div>
                                                     ) : ("")}
                                                     
 
-                                                    <div className='mx-10 '>
+                                                    <div className='mx-10 col-lg-6 col-md-6'>
                                                         <b> Etes-vous actionnaire, fondateur ou co-fondateur d'une société ??</b><br/>
                                                         {oneKycForParticular?.shareholder? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.shareholder }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                     </div>
                                                     
                                                     {oneKycForParticular?.shareholder === "Oui" ? (
-                                                    <div className='mx-10 '>
+                                                    <div className='mx-10 col-lg-6 col-md-6'>
                                                         <b> La (les)quelle(s) :</b><br/>
                                                         {oneKycForParticular?.whatHareholder? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.whatHareholder }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                     </div>
                                                     ) : ("")}
 
-                                                </div>
-                                            </div>
+                                                {/* </div> */}
+                                            {/* </div> */}
                                         </div>
                                     </>
                                 ): ("")}

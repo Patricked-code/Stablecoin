@@ -777,7 +777,7 @@ await contract.processMetaTransaction(signedRelayableTx);
                         <Col lg="12">
                             <div className="main-block">
                             <div className="form-title text-center">
-                                <h2 className="title gr-text-7 mb-9 heading-color">Mon Portefeuille Numérique </h2>
+                                <h2 className="title gr-text-7 mb-9 heading-color">Mon portefeuille numérique </h2>
                             </div>
                             <Row className="justify-content-between">
                                 {/* PARTIE DE E-WARI */}
@@ -841,7 +841,7 @@ await contract.processMetaTransaction(signedRelayableTx);
                                         >
                                         <div 
                                             className="hero-btn text-center"
-                                            onClick={()=>setSymbol("KOREE")}
+                                            onClick={()=>setSymbol("EWRITB")}
                                         >
                                             <Button
                                             color="success"
@@ -1470,7 +1470,7 @@ await contract.processMetaTransaction(signedRelayableTx);
 
                             </div>
                           </div>
-                          {symbol==="KOREE" ? (
+                          {symbol==="EWRITB" ? (
                           <Row className="my-3 justify-content-between align-items-center">
                             <Col
                                 xs="6"

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import CQuestionnaireAmlFive from '../../../../components/profil/Kyc/Entreprise/QuestionnaireAmlFive';
-import SidebarProfil from '../../../../components/profil/SideBar/Sidebar';
+import SidebarProfil from '../../../components/profil/SideBar/Sidebar';
+import CMobileMoney from '../../../components/profil/Historique/MobileMoney';
 
 
 
-const questionnaire = () => {
+const index = () => {
   const [showSidebar, setShowSidebar] = useState(false);
 
   return (
@@ -22,8 +22,8 @@ const questionnaire = () => {
             {/* FIN */}
           </aside>
 
-          {/* CONTENU PROFIL */}
-          <CQuestionnaireAmlFive />
+          {/* CONTENU */}
+            <CMobileMoney/>
           {/* FIN */}
 
         </main>
@@ -31,4 +31,4 @@ const questionnaire = () => {
   );
 };
 
-export default questionnaire;
+export default index;

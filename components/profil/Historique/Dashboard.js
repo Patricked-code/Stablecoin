@@ -167,7 +167,7 @@ const CDashbaordHistorique = () => {
                                             </div>
                                             </div>
                                             <div className='btn-box'>
-                                                <a href='/#'>
+                                                <a href='/profil/historique/mobile-money'>
                                                     <Button
                                                         block
                                                         color="primary"

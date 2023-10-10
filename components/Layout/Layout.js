@@ -71,9 +71,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/questionnaire-aml-two"||
       pathname === "/profil/kyc/entreprise/questionnaire-aml-three"||
       pathname === "/profil/kyc/entreprise/questionnaire-aml-four"||
-      pathname === "/profil/kyc/entreprise/questionnaire-aml-five"||
       pathname === "/profil/kyc/entreprise/identite-one"||
-      // pathname === "/profil/kyc/entreprise/justificatif-identite"||
       pathname === "/profil/kyc/entreprise/identite-representant-one"||
       pathname === "/profil/kyc/entreprise/identite-representant-two"||
       pathname === "/profil/kyc/entreprise/beneficiaire-effectif-one"||
@@ -97,9 +95,11 @@ const Layout = ({ children }) => {
       pathname === "/profil/wallet"||
       pathname === "/profil/paiements/paiements-attente"||
 
-       // POUR LES HISTORIQUES
-       pathname === "/profil/historique"||
-       pathname === "/profil/historique/stablecoin"||
+      // POUR LES HISTORIQUES
+      pathname === "/profil/historique"||
+      pathname === "/profil/historique/stablecoin"||
+      pathname === "/profil/historique/mobile-money"||
+
 
       // KYC OPCVM
       pathname === "/profil/kyc/opcvm/questionnaire-one"||
@@ -192,7 +192,6 @@ const Layout = ({ children }) => {
 
       // Kyc entreprise
       pathname === "/profil/kyc/entreprise/identite-one"||
-      pathname === "/profil/kyc/entreprise/justificatif-identite"||
       pathname === "/profil/kyc/entreprise/identite-representant-one"||
       pathname === "/profil/kyc/entreprise/identite-representant-two"||
       pathname === "/profil/kyc/entreprise/beneficiaire-effectif-one"||
@@ -213,7 +212,6 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/questionnaire-aml-two"||
       pathname === "/profil/kyc/entreprise/questionnaire-aml-three"||
       pathname === "/profil/kyc/entreprise/questionnaire-aml-four"||
-      pathname === "/profil/kyc/entreprise/questionnaire-aml-five"||
 
       pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/kyc/entreprise/resultat-kyc"||
@@ -225,6 +223,7 @@ const Layout = ({ children }) => {
       // POUR LES HISTORIQUES
       pathname === "/profil/historique"||
       pathname === "/profil/historique/stablecoin"||
+      pathname === "/profil/historique/mobile-money"||
 
       // KYC OPCVM
       pathname === "/profil/kyc/opcvm/questionnaire-one"||

@@ -1506,7 +1506,7 @@ const validKycIdentity= async (event) => {
         <div className='' >
             <div className=' mx-15'>
                 <div className=''>
-                    <h1 className='text-center'>Validation de Kyc entreprise / commerçant</h1>
+                    <h1 className='text-center'>Votre Kyc</h1>
                 </div>
             </div>
 
@@ -1531,79 +1531,327 @@ const validKycIdentity= async (event) => {
                     {/* <div className='col-lg-1 col-md-1'></div> */}
                     <div className='col-lg-12 col-md-12'>
                         <div className='currency-selection'>
-                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                <div className='col-lg-12 col-md-12 row justify-content-between'>
-                                    {/* {!allKycForEntreprise?.length==0 ?( */}
-                                    <Table
-                                            aria-label="Example table with static content"
-                                            css={{
-                                                height: "auto",
-                                                minWidth: "100%",
-                                            }}
-                                        >
-                                        <Table.Header>
-                                            {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom & prenom </p></Table.Column> */}
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">AML</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Identité</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 mx-2 pb-0 ">Représentant</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Bénéficiaire</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Control</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Politique</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Opérations</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Fonds</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Financière</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Transactions</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Documents</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
-                                        </Table.Header>
-                                            <Table.Body>
-                                                    <Table.Row > 
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(1)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}>Voir détails</button> {oneKycForEntreprise?.validAml==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(2)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}>Voir détails</button> {oneKycForEntreprise?.validIdentity==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(3)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}>Voir détails</button> {oneKycForEntreprise?.validRepresentative==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(4)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}>Voir détails</button> {oneKycForEntreprise?.validBeneficiary==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(5)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}>Voir détails</button> {oneKycForEntreprise?.validStructure==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(6)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}>Voir détails</button> {oneKycForEntreprise?.validPoliticallyExposed==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(7)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}>Voir détails</button> {oneKycForEntreprise?.validFinancialOperation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(8)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}>Voir détails</button> {oneKycForEntreprise?.validFundOrigin==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(9)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}>Voir détails</button> {oneKycForEntreprise?.validFinancialInformation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(10)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}>Voir détails</button> {oneKycForEntreprise?.validFinancialTransaction==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(11)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}>Voir détails</button> {oneKycForEntreprise?.validLegalDocument==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 ">{oneKycForEntreprise?.validAml==1 && oneKycForEntreprise?.validIdentity==1 && oneKycForEntreprise?.validRepresentative==1 && oneKycForEntreprise?.validBeneficiary==1 && oneKycForEntreprise?.validStructure==1 && oneKycForEntreprise?.validPoliticallyExposed==1 && oneKycForEntreprise?.validFinancialOperation==1 && oneKycForEntreprise?.validFundOrigin==1 && oneKycForEntreprise?.validFinancialInformation==1 && oneKycForEntreprise?.validFinancialTransaction==1 && oneKycForEntreprise?.validLegalDocument==1? (<b className='colorGreen'>Valider</b>):(<b className='colorRed'>En cours</b>)}</p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 ">{oneKycForEntreprise?.validationKycDate?formatDate(oneKycForEntreprise?.validationKycDate):"Pas encore évalué"}</p></Table.Cell>
-                                                         {/* validFinancialTransaction */}
-                                                                                                                                                                                                                                            
- 
-                                                        <Table.Cell>
-                                                            <div className="d-flex py-0 ">
-                                                                <p className="text-center">
-                                                                                            
-                                                                    <Button type='button' onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}  color='success' className=''>
-                                                                        <div onClick={()=>setEtape(12)}>
-                                                                            Resultats <Icon icon="bx:chevron-down-circle"  width="30"/>
-                                                                        </div>          
-                                                                    </Button>
+                                <div className='row'>
 
-                                                                    {/* <Button  color='danger' className='text-center mx-3 bg-red'>
-                                                                        Annuler <Icon icon="bx:trash"  width="30"/> 
-                                                                    </Button> */}
-                                                                </p>
-                                                            </div>
-                                                        </Table.Cell>
-                                                    </Table.Row >
-                                            </Table.Body>
-                                           
-                                        </Table>
-                                    {/* ):(
-                                        <div className="text-center my-5">
-                                            Aucun Kyc en attente
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> AML </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validAml==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(1)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    )} */}
+                                    </div>
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Identité </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validIdentity==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(2)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Représentant </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validRepresentative==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(3)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Bénéficiaire </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validBeneficiary==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(4)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Control </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validStructure==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(5)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Politique </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validPoliticallyExposed==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(6)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Opérations </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validFinancialOperation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(7)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Fonds </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validFundOrigin==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(8)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Financière </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validFinancialInformation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(9)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Transactions </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validFinancialInformation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(10)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Documents </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validFinancialInformation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(11)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center'>
+                                                        <p className=" py-0 ">{oneKycForEntreprise?.validAml==1 && oneKycForEntreprise?.validIdentity==1 && oneKycForEntreprise?.validRepresentative==1 && oneKycForEntreprise?.validBeneficiary==1 && oneKycForEntreprise?.validStructure==1 && oneKycForEntreprise?.validPoliticallyExposed==1 && oneKycForEntreprise?.validFinancialOperation==1 && oneKycForEntreprise?.validFundOrigin==1 && oneKycForEntreprise?.validFinancialInformation==1 && oneKycForEntreprise?.validFinancialTransaction==1 && oneKycForEntreprise?.validLegalDocument==1? (<b className='colorGreen'>Valider</b>):(<b className='colorRed'>En cours</b>)}</p>
+                                                        <p className=" py-0 ">{oneKycForEntreprise?.validationKycDate?formatDate(oneKycForEntreprise?.validationKycDate):"Pas encore évalué"}</p>
+                                                        </div>
+                                                        <div className='btn-box d-flex' onClick={()=>setEtape(1)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Resultats
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
-                            {/* </form> */}
-                            </div>
                             
 
                             {/* AFFICHAGE DES INFORMATIONS DE KYC */}

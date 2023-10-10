@@ -34,7 +34,7 @@ import {
 
 // FIN
 
-const CHistoriqueStablecoin = () => {
+const CMobileMoney = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
@@ -101,7 +101,7 @@ const CHistoriqueStablecoin = () => {
                     <div className='' >
                         <div className=' mx-15'>
                             <div className='py-10'>
-                                <h1 className='text-center'>Historiques de stablecoin</h1>
+                                <h1 className='text-center'>Historiques des mobile money</h1>
                             </div>
                         </div>
 
@@ -133,48 +133,28 @@ const CHistoriqueStablecoin = () => {
                                     {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom & prenom </p></Table.Column> */}
                                     <Table.Column><p className="gr-text-8 pt-3 pb-0 ">type<br/>Actif</p></Table.Column>
                                     <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Expéditeur<br/>Récepteur<br/></p></Table.Column>
+                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">N° Expéditeur<br/>N° Récepteur<br/></p></Table.Column>
                                     <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Adresse expéditeur<br/>Adresse recepteur<br/>Hash de transaction</p></Table.Column>
                                     <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant<br/>Date</p></Table.Column>
                                 </Table.Header>
                                 <Table.Body>
                                     {/* {allKycForParticular?.map((data) => ( */}
                                         <Table.Row >                       
-                                            <Table.Cell ><small className=" py-0 ">Transfert<br/>KOREE</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">Achat<br/>KOREE</small></Table.Cell>
                                             <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>Konaté Ali</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">08765434345<br/>3434455666</small></Table.Cell>
                                             <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
                                             <Table.Cell ><small className=" py-0 "><br/>1 000 000<br/>22/09/2023</small></Table.Cell>
                                         </Table.Row >
 
                                         <Table.Row >                       
-                                            <Table.Cell ><small className=" py-0 ">Mint<br/>KOREE</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">Vente<br/>KOREE</small></Table.Cell>
                                             <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>Konaté Ali</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">08765434345<br/>3434455666</small></Table.Cell>
                                             <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">1 000 000<br/>22/09/2023</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 "><br/>1 000 000<br/>22/09/2023</small></Table.Cell>
                                         </Table.Row >
-
-                                        <Table.Row >                       
-                                            <Table.Cell ><small className=" py-0 ">Burn<br/>KOREE</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>Konaté Ali</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">1 000 000<br/>22/09/2023</small></Table.Cell>
-                                        </Table.Row >
-
-                                        <Table.Row >                       
-                                            <Table.Cell ><small className=" py-0 ">GrantRol<br/>KOREE</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>Konaté Ali</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Aucun <br/>22/09/2023</small></Table.Cell>
-                                        </Table.Row >
-
-                                        <Table.Row >                       
-                                            <Table.Cell ><small className=" py-0 ">RevokeRol<br/>KOREE</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>Konaté Ali</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Aucun<br/>22/09/2023</small></Table.Cell>
-                                        </Table.Row >
-
                                         
-                                    {/* ))} */}
                                 </Table.Body>
                                 <Table.Pagination
                                     shadow
@@ -196,4 +176,4 @@ const CHistoriqueStablecoin = () => {
     );
 };
 
-export default CHistoriqueStablecoin;
+export default CMobileMoney;

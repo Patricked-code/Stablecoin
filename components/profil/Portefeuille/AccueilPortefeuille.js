@@ -166,10 +166,8 @@ const CAccueilPortefeuille = () => {
                                     {/* PORTEFEUILLE CASH*/}
                                 {/* *********************************************************** */}
                                 {showWallet==0? (
-                                    <div className='cryptocurrency-search-box  my-5'>
-                                        <div className='py-10'>
-                                            <h4 >Portefeuille cash <b className='colorGreen'> : 1 000 000 CFA</b></h4>
-                                        </div>
+                                    <div className='cryptocurrency-search-box'>
+                                        
                                         <Table
                                             aria-label="Example table with static content"
                                             css={{
@@ -181,7 +179,7 @@ const CAccueilPortefeuille = () => {
                                                 <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actifs</p></Table.Column>
                                                 <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
                                                 <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Valeur $</p></Table.Column>
-                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actions </p></Table.Column>
+                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions </p></Table.Column>
                                             </Table.Header>
                                             <Table.Body>
                                                 {/* {allKycForParticular?.map((data) => ( */}
@@ -189,28 +187,29 @@ const CAccueilPortefeuille = () => {
                                                         <Table.Cell ><p className=" py-0 "><b>KOREE</b><br/><small>Stablecoin</small></p></Table.Cell>
                                                         <Table.Cell ><p className=" py-0 "><b>1 000 000 000 KOREE</b> <br/><small >1 000 000 000 CFA</small></p></Table.Cell>
                                                         <Table.Cell ><p className=" py-0 "><b>1 000 000 000 KOREE</b> <br/><small>1 000 000 $ </small></p></Table.Cell>
-                                                        <Table.Cell className="row">
-
-                                                            <small className=" py-0  mx-2">
-                                                                <Link href="/#" >
-                                                                <a className=" text-white aNoDecor bgColorGreen ">Dépôt</a> 
-                                                                </Link>
-                                                            </small>
-                                                            <small className=" py-0 mx-2">
-                                                                <Link href="/#" >
-                                                                <a className=" text-white aNoDecor bgColorRed">Retrait</a> 
-                                                                </Link>
-                                                            </small>
-                                                            <small className=" py-0 mx-2  ">
-                                                                <Link href="/#" >
-                                                                <a className=" text-white aNoDecor bgColorblue">Transfert</a> 
-                                                                </Link>
-                                                            </small>
-                                                            <small className=" py-0 mx-2">
-                                                                <Link href="/#" >
-                                                                <a className=" text-white aNoDecor bgColorblue">Conversion</a> 
-                                                                </Link>
-                                                            </small>
+                                                        <Table.Cell className="row ">
+                                                            <div className='text-center'>
+                                                                <small className=" py-0  mx-2 ">
+                                                                    <Link href="/#" >
+                                                                    <a className=" text-white aNoDecor bgColorGreen px-3">Dépôt</a> 
+                                                                    </Link>
+                                                                </small>
+                                                                <small className=" py-0 mx-2 ">
+                                                                    <Link href="/#" >
+                                                                    <a className=" text-white aNoDecor bgColorRed px-3">Retrait</a> 
+                                                                    </Link>
+                                                                </small>
+                                                                <small className=" py-0 mx-2   ">
+                                                                    <Link href="/#" >
+                                                                    <a className=" text-white aNoDecor bgColorblue px-2">Transfert</a> 
+                                                                    </Link>
+                                                                </small>
+                                                                <small className=" py-0 mx-2 ">
+                                                                    <Link href="/#" >
+                                                                    <a className=" text-white aNoDecor bgColorblue px-2">Conversion</a> 
+                                                                    </Link>
+                                                                </small>
+                                                            </div>
                                                         </Table.Cell>
                                                     </Table.Row >
 
@@ -218,41 +217,42 @@ const CAccueilPortefeuille = () => {
                                                         <Table.Cell ><p className=" py-0 "><b>KOREE</b><br/><small>Stablecoin</small></p></Table.Cell>
                                                         <Table.Cell ><p className=" py-0 "><b>1 000 000 000 KOREE</b> <br/><small >1 000 000 000 CFA</small></p></Table.Cell>
                                                         <Table.Cell ><p className=" py-0 "><b>1 000 000 000 KOREE</b> <br/><small>1 000 000 $ </small></p></Table.Cell>
-                                                        <Table.Cell className="row">
-
-                                                            <small className=" py-0  mx-2">
-                                                                <Link href="/#" >
-                                                                <a className=" text-white aNoDecor bgColorGreen ">Dépôt</a> 
-                                                                </Link>
-                                                            </small>
-                                                            <small className=" py-0 mx-2">
-                                                                <Link href="/#" >
-                                                                <a className=" text-white aNoDecor bgColorRed">Retrait</a> 
-                                                                </Link>
-                                                            </small>
-                                                            <small className=" py-0 mx-2  ">
-                                                                <Link href="/#" >
-                                                                <a className=" text-white aNoDecor bgColorblue">Transfert</a> 
-                                                                </Link>
-                                                            </small>
-                                                            <small className=" py-0 mx-2">
-                                                                <Link href="/#" >
-                                                                <a className=" text-white aNoDecor bgColorblue">Conversion</a> 
-                                                                </Link>
-                                                            </small>
+                                                        <Table.Cell className="row ">
+                                                            <div className='text-center'>
+                                                                <small className=" py-0  mx-2 ">
+                                                                    <Link href="/#" >
+                                                                    <a className=" text-white aNoDecor bgColorGreen px-3">Dépôt</a> 
+                                                                    </Link>
+                                                                </small>
+                                                                <small className=" py-0 mx-2 ">
+                                                                    <Link href="/#" >
+                                                                    <a className=" text-white aNoDecor bgColorRed px-3">Retrait</a> 
+                                                                    </Link>
+                                                                </small>
+                                                                <small className=" py-0 mx-2   ">
+                                                                    <Link href="/#" >
+                                                                    <a className=" text-white aNoDecor bgColorblue px-2">Transfert</a> 
+                                                                    </Link>
+                                                                </small>
+                                                                <small className=" py-0 mx-2 ">
+                                                                    <Link href="/#" >
+                                                                    <a className=" text-white aNoDecor bgColorblue px-2">Conversion</a> 
+                                                                    </Link>
+                                                                </small>
+                                                            </div>
                                                         </Table.Cell>
                                                     </Table.Row >
 
                                                     
                                                 {/* ))} */}
                                             </Table.Body>
-                                            <Table.Pagination
+                                            {/* <Table.Pagination
                                                 shadow
                                                 noMargin
                                                 align="center"
                                                 rowsPerPage={3}
                                                 onPageChange={(page) => console.log({ page })}
-                                            />
+                                            /> */}
                                         </Table>
                                         
                                     </div>
@@ -277,30 +277,34 @@ const CAccueilPortefeuille = () => {
                                 <>
                                 
                                         {/* Portefeuille crowdfunding */}
-                                        <div className='mb-5'>
-                                            <h4 >Portefeuille investissement <b className='colorGreen'> : 1 000 000 CFA</b></h4>
-                                        </div>
+                                        
                                         {/* L'entête de tab*/}
-                                        <div className='row'>
+                                        {/* <div className='row'> */}
                                             {/* <div className='col-lg-3 col-md-3'></div> */}
-                                        <div className="bloc-tabs-utilite col-lg-6 col-md-6">
+                                        <div className="bloc-tabs-utilite ">
                                             
                                             <button
                                                 className={toggleState === 1 ? "tabs active-tabs gr-text-8 text-color-opacity" : "tabs gr-text-8 text-color-opacity"}
                                                 onClick={() => toggleTab(1)}
+                                                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                                             >
-                                                OPCVM
+                                                <span className=''>OPCVM</span>
+                                                <p className='text-right mb-0 '>1000 0000 $</p>
+                                                
                                             </button>
 
                                             <button
                                                 className={toggleState === 2 ? "tabs active-tabs  gr-text-8 text-color-opacity" : "tabs  gr-text-8 text-color-opacity"}
                                                 onClick={() => toggleTab(2)}
+                                                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+
                                             >
-                                                Crowfunding
+                                                <span className=''>Crowfunding</span>
+                                                <p className='text-right mb-0 '>1000 0000 $</p>
                                             </button>
                                         </div>
                                         <div className='col-lg-6 col-md-6'></div>
-                                        </div>
+                                        {/* </div> */}
                                         {/* L'entête de tab */}
 
 
@@ -310,10 +314,8 @@ const CAccueilPortefeuille = () => {
                                             <div
                                                 className={toggleState === 1 ? "content  active-content" : "content"}
                                             >
-                                                <div className='cryptocurrency-search-box my-3'>
-                                                    <div className='py-3'>
-                                                        <p className='colorGreen'><b>Solde : 1 000 000 CFA</b></p>
-                                                    </div>
+                                                <div className='cryptocurrency-search-box'>
+                                                    
                                                     <Table
                                                         aria-label="Example table with static content"
                                                         css={{
@@ -323,10 +325,10 @@ const CAccueilPortefeuille = () => {
                                                     >
                                                         <Table.Header>
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Opcvm</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
+                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actifs</p></Table.Column>
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">VL</p></Table.Column>
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Valeur $</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actions</p></Table.Column>
+                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
                                                         </Table.Header>
                                                         <Table.Body>
                                                             {/* {allKycForParticular?.map((data) => ( */}
@@ -336,34 +338,36 @@ const CAccueilPortefeuille = () => {
                                                                     <Table.Cell ><p className=" py-0 "><b>1 000 000 000 KOREE</b> <br/><small >1 000 000 000 CFA</small></p></Table.Cell>
                                                                     <Table.Cell ><p className=" py-0 "><b>1 000 000 000 KOREE</b> <br/><small>1 000 000 $ </small></p></Table.Cell>
                                                                     <Table.Cell className="row">
-                                                                        <small className=" py-0  mx-2">
-                                                                            <Link href="/#" >
-                                                                            <a className=" text-white aNoDecor bgColorGreen ">Achat</a> 
-                                                                            </Link>
-                                                                        </small>
-                                                                        <small className=" py-0 mx-2">
-                                                                            <Link href="/#" >
-                                                                                <a className=" text-white aNoDecor bgColorRed">Vente</a> 
-                                                                            </Link>
-                                                                        </small>
-                                                                        <small className=" py-0 mx-2">
-                                                                            <Link href="/#" >
-                                                                            <a className=" text-white aNoDecor bgColorblue">Conversion</a> 
-                                                                            </Link>
-                                                                        </small>
+                                                                        <div className='text-center'>
+                                                                            <small className=" py-0  mx-2">
+                                                                                <Link href="/#" >
+                                                                                <a className=" text-white aNoDecor bgColorGreen px-4">Achat</a> 
+                                                                                </Link>
+                                                                            </small>
+                                                                            <small className=" py-0 mx-2">
+                                                                                <Link href="/#" >
+                                                                                    <a className=" text-white aNoDecor bgColorRed px-4">Vente</a> 
+                                                                                </Link>
+                                                                            </small>
+                                                                            <small className=" py-0 mx-2">
+                                                                                <Link href="/#" >
+                                                                                <a className=" text-white aNoDecor bgColorblue px-3">Conversion</a> 
+                                                                                </Link>
+                                                                            </small>
+                                                                        </div>
                                                                     </Table.Cell>
                                                                 </Table.Row >
 
                                                                 
                                                             {/* ))} */}
                                                         </Table.Body>
-                                                        <Table.Pagination
+                                                        {/* <Table.Pagination
                                                             shadow
                                                             noMargin
                                                             align="center"
                                                             rowsPerPage={3}
                                                             onPageChange={(page) => console.log({ page })}
-                                                        />
+                                                        /> */}
                                                     </Table>
                                                 </div>
                                             </div>
@@ -373,10 +377,8 @@ const CAccueilPortefeuille = () => {
                                             <div
                                                 className={toggleState === 2 ? "content  active-content" : "content"}
                                             >
-                                                <div className='cryptocurrency-search-box my-5'>
-                                                    <div className='py-3'>
-                                                        <p className='colorGreen'><b>Solde : 1 000 000 CFA</b></p>
-                                                    </div>
+                                                <div className='cryptocurrency-search-box'>
+                                                    
                                                     <Table
                                                         aria-label="Example table with static content"
                                                         css={{
@@ -386,10 +388,10 @@ const CAccueilPortefeuille = () => {
                                                     >
                                                         <Table.Header>
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Opcvm</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
+                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actifs</p></Table.Column>
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">VL</p></Table.Column>
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Valeur $</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actions</p></Table.Column>
+                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
                                                         </Table.Header>
                                                         <Table.Body>
                                                             {/* {allKycForParticular?.map((data) => ( */}
@@ -399,34 +401,36 @@ const CAccueilPortefeuille = () => {
                                                                     <Table.Cell ><p className=" py-0 "><b>1 000 000 000 KOREE</b> <br/><small >1 000 000 000 CFA</small></p></Table.Cell>
                                                                     <Table.Cell ><p className=" py-0 "><b>1 000 000 000 KOREE</b> <br/><small>1 000 000 $ </small></p></Table.Cell>
                                                                     <Table.Cell className="row">
-                                                                        <small className=" py-0  mx-2">
-                                                                            <Link href="/#" >
-                                                                            <a className=" text-white aNoDecor bgColorGreen ">Achat</a> 
-                                                                            </Link>
-                                                                        </small>
-                                                                        <small className=" py-0 mx-2">
-                                                                            <Link href="/#" >
-                                                                                <a className=" text-white aNoDecor bgColorRed">Vente</a> 
-                                                                            </Link>
-                                                                        </small>
-                                                                        <small className=" py-0 mx-2">
-                                                                            <Link href="/#" >
-                                                                            <a className=" text-white aNoDecor bgColorblue">Conversion</a> 
-                                                                            </Link>
-                                                                        </small>
+                                                                        <div className='text-center'>
+                                                                            <small className=" py-0  mx-2">
+                                                                                <Link href="/#" >
+                                                                                <a className=" text-white aNoDecor bgColorGreen px-4">Achat</a> 
+                                                                                </Link>
+                                                                            </small>
+                                                                            <small className=" py-0 mx-2">
+                                                                                <Link href="/#" >
+                                                                                    <a className=" text-white aNoDecor bgColorRed px-4">Vente</a> 
+                                                                                </Link>
+                                                                            </small>
+                                                                            <small className=" py-0 mx-2">
+                                                                                <Link href="/#" >
+                                                                                <a className=" text-white aNoDecor bgColorblue px-3">Conversion</a> 
+                                                                                </Link>
+                                                                            </small>
+                                                                        </div>
                                                                     </Table.Cell>
                                                                 </Table.Row >
 
                                                                 
                                                             {/* ))} */}
                                                         </Table.Body>
-                                                        <Table.Pagination
+                                                        {/* <Table.Pagination
                                                             shadow
                                                             noMargin
                                                             align="center"
                                                             rowsPerPage={3}
                                                             onPageChange={(page) => console.log({ page })}
-                                                        />
+                                                        /> */}
                                                     </Table>
                                                 </div>
                                             </div>
