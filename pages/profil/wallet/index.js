@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Wallet from '../../../components/portefeuille.js/wallet';
-// import CAccueilPortefeuille from '../../../components/profil/Portefeuille/AccueilPortefeuille';
+// import Wallet from '../../../components/portefeuille.js/wallet';
+import CAccueilPortefeuille from '../../../components/profil/Portefeuille/AccueilPortefeuille';
 import SidebarProfil from '../../../components/profil/SideBar/Sidebar';
 
 
@@ -24,8 +24,8 @@ const index = () => {
           </aside>
 
           {/* CONTENU PROFIL */}
-          <Wallet/>
-          {/* <CAccueilPortefeuille/> */}
+          {/* <Wallet/> */}
+          <CAccueilPortefeuille/>
           {/* FIN */}
 
         </main>

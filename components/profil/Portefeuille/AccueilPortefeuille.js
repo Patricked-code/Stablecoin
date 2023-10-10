@@ -33,6 +33,7 @@ import {
     Row,
     Col,
   } from "reactstrap";
+import Wallet from '../../portefeuille.js/wallet';
 
 // FIN
 
@@ -116,7 +117,7 @@ const CAccueilPortefeuille = () => {
                         <div className='  row'>
                             <div className=' col-lg-2 col-md-2' ></div>
                             <div className=' col-lg-6 col-md-6' >
-                                <h3 className='text-center'>Mon portefeuille numérique</h3>
+                                <h3 className='text-center'>Mon portefeuille numérique </h3>
                             </div>
                             <div className=' col-lg-2 col-md-2' ></div>
 
@@ -440,6 +441,13 @@ const CAccueilPortefeuille = () => {
                                     </>
                                 ):("")}
                                 {/* ************** Fin portefeuille investissement*********** */}
+                                <div className=' bgColorblue my-3 px-3' onClick={()=>setShowWallet(2)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span className='btn text-white text-center'>Ancien Portefeuille</span>
+                                    {/* <p className='text-right mb-0 text-white'>1000 0000 $</p> */}
+                                </div>
+                                {showWallet==2? (
+                                    <p><Wallet/></p>
+                                ):("")}
                             </div>
                             <div className='col-lg-1 col-md-1'></div>
                         </div>
