@@ -55,6 +55,8 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/particulier/justificatif-identite-two"||
       pathname === "/profil/kyc/particulier/selfie-with-document"||
       pathname === "/profil/kyc/particulier/resultat-kyc"||
+      pathname === "/profil/kyc/particulier/kyc-demandes"||
+
       pathname === "/profil/action"||
       pathname === "/profil/achat/achat-carte"||
       pathname === "/profil/retrait/retrait-compte-bancaire"||
@@ -88,6 +90,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/information-financiere-four"||
       pathname === "/profil/kyc/entreprise/information-financiere-five"||
       pathname === "/profil/kyc/entreprise/documents-legaux"||
+      pathname === "/profil/kyc/entreprise/kyc-demandes"||
       
 
       pathname === "/profil/kyc/entreprise/justificatif-domicile"||
@@ -99,6 +102,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/historique"||
       pathname === "/profil/historique/stablecoin"||
       pathname === "/profil/historique/mobile-money"||
+      pathname === "/profil/historique/investissement/opcvm"||
 
 
       // KYC OPCVM
@@ -124,6 +128,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/institution/autre-verification-documents"||
       pathname === "/profil/institution/verifier-documents-retrait"||
       pathname === "/profil/institution/mintBurn"||
+      pathname === "/profil/institution/demande-kyc"||
 
 
       // FIN
@@ -179,6 +184,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/particulier/justificatif-domicile"||
       pathname === "/profil/kyc/particulier/selfie-with-document"||
       pathname === "/profil/kyc/particulier/resultat-kyc"||
+      pathname === "/profil/kyc/particulier/kyc-demandes"||
       
       pathname === "/profil/action"||
       pathname === "/profil/achat/achat-carte"||
@@ -215,6 +221,8 @@ const Layout = ({ children }) => {
 
       pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/kyc/entreprise/resultat-kyc"||
+      pathname === "/profil/kyc/entreprise/kyc-demandes"||
+
       
       // pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/wallet"||
@@ -224,6 +232,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/historique"||
       pathname === "/profil/historique/stablecoin"||
       pathname === "/profil/historique/mobile-money"||
+      pathname === "/profil/historique/investissement/opcvm"||
 
       // KYC OPCVM
       pathname === "/profil/kyc/opcvm/questionnaire-one"||
@@ -246,6 +255,8 @@ const Layout = ({ children }) => {
       pathname === "/profil/institution/verifier-documents-retrait"||
       pathname === "/profil/institution/autre-verification-documents"||
       pathname === "/profil/institution/mintBurn"||
+      pathname === "/profil/institution/demande-kyc"||
+
 
       // FIN
 

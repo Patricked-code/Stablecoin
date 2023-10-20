@@ -3,10 +3,11 @@ import { Container, Row, Col, Modal } from "react-bootstrap";
 
 import React from "react";
 import axios from 'axios';
-import Link from 'next/link';
+// import Link from 'next/link';
 import moment from 'moment';
 import { Icon } from '@iconify/react';
 import { Table } from '@nextui-org/react';
+import Link from "../../../Link";
 
 
 // Pour Magic
@@ -308,8 +309,14 @@ const KycPendingParticular = () => {
             <div className=' mx-15'>
                 <div className='py-10'>
                     <h1 className='text-center'>Votre Kyc</h1>
+                    
                 </div>
             </div>
+            <p className='text-center'>
+                <Link to='/profil/kyc/particulier/kyc-demandes' >
+                    Demandes de kyc en attente <i className='rounded-circle bgColorRed text-white p-2'>2</i>
+                </Link>
+            </p>
 
             {/* Les images de fond */}
             <div className='shape1'>

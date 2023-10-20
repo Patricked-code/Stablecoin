@@ -7,12 +7,13 @@ import Link from 'next/link';
 import { Icon } from '@iconify/react';
 import Swal from 'sweetalert2';
 
-// Pour le scanner
+// Pour l'importation du scanner
 import dynamic from 'next/dynamic';
 
 const QrScannerWithNoSSR = dynamic(() => import('react-qr-scanner'), {
   ssr: false,
 });
+// Finn scanner
 
 
 const PaymentRequest = () => {
@@ -144,7 +145,6 @@ const PaymentRequest = () => {
          
       }
 
-      console.log("dataa=>",dataa)
       // Obtenir le token en cours
       const token = localStorage.getItem('tokenEnCours');
 

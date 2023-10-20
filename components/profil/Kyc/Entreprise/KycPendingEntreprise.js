@@ -3,10 +3,11 @@ import { Container, Row, Col, Modal } from "react-bootstrap";
 
 import React from "react";
 import axios from 'axios';
-import Link from 'next/link';
+// import Link from 'next/link';
 import moment from 'moment';
 import { Icon } from '@iconify/react';
 import { Table } from '@nextui-org/react';
+import Link from "../../../Link";
 
 
 // Pour Magic
@@ -1509,7 +1510,11 @@ const validKycIdentity= async (event) => {
                     <h1 className='text-center'>Votre Kyc</h1>
                 </div>
             </div>
-
+            <p className='text-center'>
+                <Link to='/profil/kyc/entreprise/kyc-demandes' >
+                    Demandes de kyc en attente <i className='rounded-circle bgColorRed text-white p-2'>2</i>
+                </Link>
+            </p>
             {/* Les images de fond */}
             <div className='shape1'>
             {/* <img src='/images/shape/shape1.png' alt='image' /> */}

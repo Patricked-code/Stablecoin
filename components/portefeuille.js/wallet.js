@@ -751,7 +751,149 @@ await contract.processMetaTransaction(signedRelayableTx);
 
 // ******************************************************************************
 
-// ******************FIN*************************************************
+// ******************PERMIT*************************************************
+
+
+const [permitV, setPermitV] = useState()
+const [permitR, setPermitR] = useState()
+const [permitS, setPermitS] = useState()
+
+const permitAtoB = async () => {
+  const signer = provider.getSigner();
+  const owner = await signer.getAddress();
+
+  const spenderB = "0x2eb9B095202f515388973c78d8308C478f8AA6C2";
+  const tosting = String("100")
+  const value = ethers.utils.parseUnits(tosting, decimalStablecoin);
+  const nonce = await contractStablecoin.nonces(owner);
+  const deadline = Math.floor(new Date().getTime() / 1000) + 3600; // +1 heure
+
+  const domain = {
+      name: "E-WARI TestB",
+      version: "1",
+      chainId: 1287, 
+      verifyingContract: ADDRESS_CONTRAT_EWARI
+  };
+  console.log("domain=>",domain)
+
+  const types = {
+      Permit: [
+          { name: "owner", type: "address" },
+          { name: "spender", type: "address" },
+          { name: "value", type: "uint256" },
+          { name: "nonce", type: "uint256" },
+          { name: "deadline", type: "uint256" }
+      ]
+  };
+  console.log("types=>",types)
+
+
+  const valueObj = {
+      owner,
+      spenderB,
+      value: value.toString(),
+      nonce,
+      deadline
+  };
+
+  const signature = await signer._signTypedData(domain, types, valueObj);
+
+  // Récupération de v, r, s à partir de la signature
+  const { v, r, s } = ethers.utils.splitSignature(signature);
+  console.log("signature V=> 5",v)
+  console.log("signature R=> 6",r)
+  console.log("signature S=> 7",s)
+  console.log("deadline => 8",deadline)
+  console.log("nonce => 8",nonce)
+  
+  // Appel de la fonction permit avec les valeurs correctes
+  // const tx = await contractStablecoin.permit(owner, spenderB, value, deadline, v, r, s);
+  console.log('Signature:', { v, r, s });
+  return { v, r, s };  // Retourner les valeurs pour les utiliser plus tard
+  
+
+  // console.log("Transaction hash:", tx);
+};
+
+// ****************************************************************
+// permitAtoB
+// ******************************************************************
+// Code côté client pour l'utilisateur A
+const permitAtoBNo = async () => {
+  // ... (configuration de ethers.js et du contrat)
+
+  // Signature du message pour permit
+  const signature = await signer._signTypedData(domain, types, valueObj);
+  const { v, r, s } = ethers.utils.splitSignature(signature);
+
+  // Envoyer v, r, s à l'utilisateur B par un moyen sûr
+};
+// ***********FIN**************************************************
+
+// ************************************************************************
+
+// **************************************************************************
+// Code côté client pour l'utilisateur B
+const transferFromAtoC = async () => {
+  // console.log('Using signature:', { v, r, s });
+
+  const signer = provider.getSigner();
+  const spenderB = await signer.getAddress();
+
+  const tosting = String("100")
+  const value = ethers.utils.parseUnits(tosting, decimalStablecoin);
+  // const deadline = Math.floor(new Date().getTime() / 1000) + 3600; // +1 heure
+
+
+  // Récupération de v, r, s à partir de la signature 
+  const v = 27;
+  const r = "0xca88bc0aa69d873e05ca99a8352157135e259d55f5a6cae241646f0d69b94749";
+  const s = "0x7763ae42584aabfa22f3f2e8a581a5bb37024d4422d414ce77ab05895051c44f";
+  const deadline = ""; // +1 heure
+
+  const ownerA = "0x496Dd9744c3a1B0Ec4C2998656BEA67DbCec888B";
+  const recipientC ="0x09439864ddaA177C80396353Cd98e6EaDa996a39"
+
+  // Appel à permit pour obtenir la permission de dépenser des tokens de A
+  await contractStablecoin.permit(ownerA, spenderB, value, deadline, v, r, s);
+
+  // Transfert de tokens de A à C
+  const tx = await contractStablecoin.transferFrom(ownerA, recipientC, value);
+
+  // Log ou autre traitement du tx
+  console.log("Transaction hash =>1:", tx.hash);
+
+  console.log("Transaction hash:", tx);
+};
+
+// Exécution des fonctions :
+
+// const { v, r, s } = await permitAtoB();  // Exécutez d'abord cette fonction pour obtenir v, r, s
+// await transferFromAtoC(v, r, s);  // Ensuite, exécutez cette fonction avec les valeurs obtenues
+
+
+
+const transferFromAtoCNo = async () => {
+  // ... (configuration de ethers.js et du contrat)
+ const v = "";
+ const r = "";
+ const s = "";
+
+ const ownerA = "";
+ const recipientC = "";
+//  const s = "";
+
+
+  // Appel à permit pour obtenir la permission de dépenser des tokens de A
+  await contractStablecoin.permit(ownerA, spenderB, value, deadline, v, r, s);
+
+  // Transfert de tokens de A à C
+  const tx = await contractStablecoin.transferFrom(ownerA, recipientC, value);
+
+  // Log ou autre traitement du tx
+  console.log("Transaction hash:", tx.hash);
+};
+// **********FIN***********************************************************
 
 
 
@@ -778,6 +920,9 @@ await contract.processMetaTransaction(signedRelayableTx);
                             <div className="main-block">
                             <div className="form-title text-center">
                                 <h2 className="title gr-text-7 mb-9 heading-color">Mon portefeuille numérique </h2>
+                                {/* <button onClick={permitAtoB } >permitAtoB </button><br/><br/><br/>
+                                <button onClick={transferFromAtoC} >transferFromAtoC</button> */}
+                                
                             </div>
                             <Row className="justify-content-between">
                                 {/* PARTIE DE E-WARI */}
