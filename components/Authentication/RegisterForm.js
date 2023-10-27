@@ -8,6 +8,7 @@ import { Row, Col, Container } from "react-bootstrap";
 import Router from 'next/router';
 import { magic } from '../../magic';
 import Swal from 'sweetalert2';
+import LoginForm from './LoginForm';
 
 
 
@@ -30,6 +31,7 @@ function RegisterForm() {
 
   // Recuperer tous les types de profil
   const [allTypeProfil, setAllTypeProfil] = useState("")
+  const [infosOtherUser, setInfosOtherUser] = useState("")
 
   
 
@@ -38,7 +40,7 @@ function RegisterForm() {
    * Perform login action via Magic's passwordless flow. Upon successuful
    * completion of the login flow, a user is redirected to the homepage.
    */
-  const login = useCallback(async () => {
+  const loginNo = useCallback(async () => {
     setIsLoggingIn(true);
 
     try {
@@ -56,22 +58,106 @@ function RegisterForm() {
   /**
    * Saves the value of our email input into component state.
    */
-  const handleInputOnChange = useCallback((event) => {
-    setEmail(event.target.value);
-  }, []);
+  // const handleInputOnChange = useCallback((event) => {
+  //   setEmail(event.target.value);
+  // }, []);
 
 
+  // FONCTION DE LA DECONNEXION
+  const logout = useCallback(() => {
+    try {
+    magic.user.logout().then(() => {
+     
+    });
+  } catch (error) {
+    console.log("une erreur s'est produit =>", error)
+  }
+  }, [Router]);
+  // FIN
+
+
+  // ********************FONCTION DE CONNEXION***********************************
+  /**
+   * Perform login action via Magic's passwordless flow. Upon successuful
+   * completion of the login flow, a user is redirected to the homepage.
+   */
+   const login = useCallback(async () => {
+    setIsLoggingIn(true);
+
+    logout() //Appel de la fonction de déconnection à magic
+    try {
+      const dataa = {
+        email:email,
+        password:password
+  
+      }
+    
+      // Pour connexion simple
+    const res = await fetch(`${API_URL}/api/session/login`, {
+        method:"POST",
+        body: JSON.stringify(dataa),
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    const data = await res.json();
+      if (data?.message) {
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          html: `<p class='colorRed'>${data?.message}</p>` ,
+          showConfirmButton: false,
+          timer: 15000
+        })
+      setIsLoggingIn(false);
+      }else{
+        
+        if (data?.auth==1) {
+          
+            // setter Token
+            localStorage.setItem('tokenEnCours', data.token);
+          //Pour magic Grab auth token from loginWithMagicLink
+          const didToken = await magic.auth.loginWithMagicLink({
+            email,
+            redirectURI: new URL('/callback', window.location.origin).href,
+          });
+          setTimeout(() => {
+              window.location.reload()
+          }, 1000)
+          // Router.push("/profil/dashboard/"); 
+        }else{
+          //Pour magic Grab auth token from loginWithMagicLink
+          const didToken = await magic.auth.loginWithMagicLink({
+            email,
+            redirectURI: new URL('/callback_register', window.location.origin).href,
+          });
+          setTimeout(() => {
+              window.location.reload()
+          }, 1000)
+          // Router.push("/profil/dashboard/"); 
+        }
+        
+      }
+    } catch {
+      setIsLoggingIn(false);
+    }
+  }, [email, password]);
+  // Fin
+
+
+  // ********************FONCTION DE DECONNEXION***********************************
 
   const handleSubmit = async (event) =>{
     setIsLoggingIn(true)
       event.preventDefault();
 
       const dataa = {
-        codeProfile:codeProfile,
+        // codeProfile:codeProfile,
         email:email,
         password:password,
         confirmPassword:confirmPassword,
-        codeTypeProfil:codeTypeProfil
+        codeTypeProfil:codeTypeProfil,
+        platform:'Stablecoin'
       }
       
       if (!dataa.codeTypeProfil=="" && dataa.codeTypeProfil) {
@@ -151,6 +237,8 @@ function RegisterForm() {
 
       
   }
+  // FIN
+
 
   // RECUPERER TOUS LES TYPES DE PROFILE
   useEffect(() => {
@@ -163,7 +251,6 @@ function RegisterForm() {
         .then((resProfil) => resProfil.json())
         .then((profil) => {
         setAllTypeProfil(profil)
-    console.log("allTypeProfil=>",profil)
 
         }) 
 
@@ -173,12 +260,36 @@ function RegisterForm() {
   // FIN
 
 
+  // Obtenir un utilisateur en fonction de son email 
+  const searchUserWithEmail = () =>{
+    if (email) {
+      const getUser = async (_email) => {
+      
+          const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${_email}`, {
+              headers: {
+              'Content-Type': 'application/json',
+              },
+          })
+              .then((result) => result.json())
+              .then((user) => {
+                setInfosOtherUser(user)
+              }) 
+      
+          };
+          
+            getUser(email);
+        
+    }
+  }
+  // FIN
+
+
   return (
     <>
       <div className='col-lg-3 col-md-12'></div>
       <div  className='col-lg-6 col-md-12 '>
         <div className='register-form '>
-          <h2 className='text-center'>Inscription</h2>
+          <h3 className='text-center mb-3'>Se connecter / S'inscrire</h3>
           {messageError? (
             <Col lg="12" md="12" sm="12" className="mb-5 text-center ">
                 <div className="pricing-card bg-red gr-hover-shadow-1 border text-left pt-9 pb-9 pe-3 px-3 rounded-10">
@@ -192,71 +303,142 @@ function RegisterForm() {
                 </div>
             </Col>
           ):("")}
-          <form onSubmit={handleSubmit}>
-
-            <div className="form-group mb-6">
-              <select 
-                className="form-control gr-text-11 border mt-3 bg-white"
-                id="nom"
-                required
-                defaultValue={codeTypeProfil} 
-                onChange={(event)=>setCodeTypeProfil(event.target.value)}
-              >
-                <option defaultValue="">Choisissez le type de compte</option>
-                  {/* Parcourir les profils */}
-                  {allTypeProfil?(
-                  allTypeProfil.map((data) => (
-                    <optgroup className='single-cryptocurrency-box'
-                            key={data.id}>
-                      <option  value={data.code}>{data.libelle}</option>
-                    </optgroup>
-                  ))):("")}
-                {/* Fin */}
-                            
-              </select>
-            </div>
-           
           
 
             <div className='form-group'>
-            <input
-              type='email'
-              name='email'
-              required='required'
-              placeholder='Email'
-              className="form-control"
-              defaultValue={email} 
-              onChange={(event)=>setEmail(event.target.value)}
-            />
-            </div>
-            
-            <div className='form-group'>
               <input
-                type='password'
-                className='form-control'
-                placeholder='Mot de passe'
-                defaultValue={password} 
-                onChange={(event)=>setPassword(event.target.value)}
+                type='email'
+                name='email'
+                required='required'
+                placeholder='Email'
+                className="form-control"
+                defaultValue={email} 
+                onChange={(event)=>setEmail(event.target.value)}
               />
             </div>
-            <div className='form-group'>
-              <input
-                type='password'
-                className='form-control'
-                placeholder='Confirmer mot de passe'
-                defaultValue={confirmPassword} 
-                onChange={(event)=>setConfirmPassword(event.target.value)}
-                
-              />
-            </div>
+            {infosOtherUser?.email || infosOtherUser?.message==="Aucun utilisateur trouvé"? (
+              ""
+            ):(
+              <Row className="my-3 justify-content-center align-items-center">
+                <Col
+                    xs="6"
+                    md="6"
+                    lg="6"
+                    xl="6"
+                  className="order-lg-1 text-center"
+                  // onClick={()=>setShowInfoUser(3)}
+                >
+                  <button className="text-white  btn btn-primary mx-3 " onClick={searchUserWithEmail} variant="success" >
+                    Envoyer
+                  </button>
+                </Col>
+              </Row>
+            )}
 
-            <div className='col-lg-12 col-md-6 col-sm-6 lost-your-password-wrap text-center'>
-                Avez-vous déjà un compte ?  
-                <a href='/auth/authentication'className='lost-your-password mx-2'>Connectez-vous
-                </a>
-              </div>
-              <button type='submit'  className="btn btn-primary mx-3" disabled={isLoggingIn}>Enregistrer</button>
-          </form>
+            {email? (
+              <>
+                {/* *******************PARTIE CONNEXION****************************** */}
+                {infosOtherUser?.email ? (
+                  <form >
+                    {/* <div className='form-group'>
+                    <input
+                      type='email'
+                      name='email'
+                      required='required'
+                      placeholder='Email'
+                      className="form-control"
+                      defaultValue={email} 
+                      onChange={(event)=>setEmail(event.target.value)}
+                    />
+                    </div> */}
+                    <div className='form-group mt-3'>
+                      <input
+                        type='password'
+                        className='form-control'
+                        placeholder='Mot de passe'
+                        defaultValue={password} 
+                        onChange={(event)=>setPassword(event.target.value)}
+                      />
+                    </div>
+                    <div className='row align-items-center'>
+                      <div className='col-lg-6 col-md-6 col-sm-6 lost-your-password-wrap text-center'>
+                        Pas de compte?  <br/>
+                        <a href='/auth/authentication'className='lost-your-password mx-2'>Créer un compte
+                        </a>
+                      </div>
+                      <div className='col-lg-6 col-md-6 col-sm-6 lost-your-password-wrap text-center'>
+                        <a href='/auth/send-link-password'className='lost-your-password mx-2'>
+                          Mot de passe oublié
+                        </a>
+                      </div>
+                    </div>
+
+                      <button className="btn btn-primary mx-3" onClick={login} disabled={isLoggingIn}>Connecter</button>
+                  </form>
+                ):("")}
+                {/* *******************FIN PARTIE CONNEXION****************************** */}
+
+                {/* *******************PARTIE DECONNEXION****************************** */}
+                {infosOtherUser?.message==="Aucun utilisateur trouvé" ? (
+                  <form onSubmit={handleSubmit}>
+                    <div className="form-group mb-6">
+                      <select 
+                        className="form-control gr-text-11 border mt-3 bg-white"
+                        id="nom"
+                        required
+                        defaultValue={codeTypeProfil} 
+                        onChange={(event)=>setCodeTypeProfil(event.target.value)}
+                      >
+                        <option defaultValue="">Choisissez le type de compte</option>
+                          {/* Parcourir les profils */}
+                          {allTypeProfil?(
+                          allTypeProfil.map((data) => (
+                            <optgroup className='single-cryptocurrency-box'
+                                    key={data.id}>
+                              <option  value={data.code}>{data.libelle}</option>
+                            </optgroup>
+                          ))):("")}
+                        {/* Fin */}
+                                    
+                      </select>
+                    </div>
+                  
+                  
+
+                    
+                    
+                    <div className='form-group'>
+                      <input
+                        type='password'
+                        className='form-control'
+                        placeholder='Mot de passe'
+                        defaultValue={password} 
+                        onChange={(event)=>setPassword(event.target.value)}
+                      />
+                    </div>
+                    <div className='form-group'>
+                      <input
+                        type='password'
+                        className='form-control'
+                        placeholder='Confirmer mot de passe'
+                        defaultValue={confirmPassword} 
+                        onChange={(event)=>setConfirmPassword(event.target.value)}
+                        
+                      />
+                    </div>
+
+                    <div className='col-lg-12 col-md-6 col-sm-6 lost-your-password-wrap text-center'>
+                        Avez-vous déjà un compte ?  
+                        <a href='/auth/authentication'className='lost-your-password mx-2'>
+                          Connectez-vous
+                        </a>
+                      </div>
+                      <button type='submit'  className="btn btn-primary mx-3" disabled={isLoggingIn}>Enregistrer</button>
+                  </form>
+                ):("")}
+                {/* *******************FIN PARTIE DECONNEXION****************************** */}
+              </>
+            ):("")}
         </div>
       </div>
       <div className='col-lg-3 col-md-12'></div>

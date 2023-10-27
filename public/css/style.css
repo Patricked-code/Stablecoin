@@ -7903,4 +7903,12 @@ button {
 .active-content {
   display: block;
 }
+
+
+/* Pour Activer le défilement vertical si nécessaire pour le menu à gauche */
+.nav-list {
+  max-height: 120vh; /* Définir une hauteur maximale */
+  overflow-y: auto; /* Activer le défilement vertical si nécessaire */
+}
+
 /* ***********************FIN*********************************************** */

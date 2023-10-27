@@ -124,76 +124,74 @@ const [kycBusinessTransactionAnnual, setKycBusinessTransactionAnnual] = useState
 
     const [timeoutId, setTimeoutId] = useState(null);
     // Fonction pour gérer l'inactivité
-
-    
-  const resetInactivityTimeout = () => {
-    clearTimeout(timeoutId);
-    setTimeout(() => {
-      setTimeoutId(prevTimeoutId => {
-        handleInactive(); 
-        return prevTimeoutId;
-      });
-    }, 120000);
-  };
-
-  
-
-  const handleInactive = () => {
-    Swal.fire({
-      title: 'Déconnexion automatique',
-      html: 'Vous serez déconnecté dans <b></b> secondes.<br><button id="stayConnected">Rester connecté</button>',
-      timer: 120000, // 2 minutes en millisecondes
-      timerProgressBar: true,
-      didOpen: () => {
-        Swal.showLoading();
-        const b = Swal.getHtmlContainer().querySelector('b');
-        const stayConnectedButton = document.getElementById('stayConnected');
-
-        stayConnectedButton.addEventListener('click', () => {
-          clearTimeout(timeoutId); // Correction ici
-          Swal.close();
-          resetInactivityTimeout(); // Réinitialiser le délai après avoir choisi de rester connecté
-        });
-
-        const timerInterval = setInterval(() => {
-          const timeLeft = Swal.getTimerLeft();
-          if (timeLeft > 0) {
-            b.textContent = (timeLeft / 1000).toFixed(0);
-          } else {
-            clearInterval(timerInterval);
-            logout();
-          }
-        }, 100);
-      },
-      willClose: () => {
-        clearTimeout(timeoutId); // Correction ici
-      }
-    });
-  };
-
-
-  useEffect(() => {
-    const startInactivityTimeout = () => {
-      const newTimeoutId = setTimeout(() => {
+    const resetInactivityTimeout = () => {
+      clearTimeout(timeoutId);
+      setTimeout(() => {
         setTimeoutId(prevTimeoutId => {
-          handleInactive();
+          handleInactive(); 
           return prevTimeoutId;
         });
-      }, 120000);
-      setTimeoutId(newTimeoutId);
+      }, 172800000);
     };
-
-    document.addEventListener('mousemove', resetInactivityTimeout);
-    document.addEventListener('keydown', resetInactivityTimeout);
-
-    startInactivityTimeout(); // Démarrer le délai initial lors du rendu initial
-
-    return () => {
-      document.removeEventListener('mousemove', resetInactivityTimeout);
-      document.removeEventListener('keydown', resetInactivityTimeout);
-      clearTimeout(timeoutId);
+  
+    
+  
+    const handleInactive = () => {
+      Swal.fire({
+        title: 'Déconnexion automatique',
+        html: 'Vous serez déconnecté dans <b></b> secondes.<br><button id="stayConnected">Rester connecté</button>',
+        timer: 172800000, // 120000 = 2 minutes en millisecondes
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+          const b = Swal.getHtmlContainer().querySelector('b');
+          const stayConnectedButton = document.getElementById('stayConnected');
+  
+          stayConnectedButton.addEventListener('click', () => {
+            clearTimeout(timeoutId); // Correction ici
+            Swal.close();
+            resetInactivityTimeout(); // Réinitialiser le délai après avoir choisi de rester connecté
+          });
+  
+          const timerInterval = setInterval(() => {
+            const timeLeft = Swal.getTimerLeft();
+            if (timeLeft > 0) {
+              b.textContent = (timeLeft / 1000).toFixed(0);
+            } else {
+              clearInterval(timerInterval);
+              logout();
+            }
+          }, 100);
+        },
+        willClose: () => {
+          clearTimeout(timeoutId); // Correction ici
+        }
+      });
     };
-  }, [resetInactivityTimeout, timeoutId]);
+  
+  
+    useEffect(() => {
+      const startInactivityTimeout = () => {
+        const newTimeoutId = setTimeout(() => {
+          setTimeoutId(prevTimeoutId => {
+            handleInactive();
+            return prevTimeoutId;
+          });
+        }, 172800000);
+        setTimeoutId(newTimeoutId);
+      };
+  
+      document.addEventListener('mousemove', resetInactivityTimeout);
+      document.addEventListener('keydown', resetInactivityTimeout);
+  
+      startInactivityTimeout(); // Démarrer le délai initial lors du rendu initial
+  
+      return () => {
+        document.removeEventListener('mousemove', resetInactivityTimeout);
+        document.removeEventListener('keydown', resetInactivityTimeout);
+        clearTimeout(timeoutId);
+      };
+    }, [resetInactivityTimeout, timeoutId]);
     
 
 // FIN
@@ -633,7 +631,7 @@ useEffect(async() => {
 
   return (
     <>
-        <nav className='nav'>
+        <nav className='nav nav-list'>
           <div>
             <Link to='/' className='nav-logo'>
             
@@ -661,10 +659,24 @@ useEffect(async() => {
                 <i className='fas fa-user nav-link-icon'></i>
                 <span className='nav-link-name'>Mon compte</span>
             </Link>
-            <Link to='/#' className={pathname == "/#" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
-                <i className='fas fa-address-card nav-link-icon'></i>
-                <span className='nav-link-name'>Mes cartes</span>
-            </Link>
+            {currentUser?.activated && currentUser?.codeTypeProfil==="insti"? (
+              <>
+                <Link to='/profil/institution/kyc-digital' className={pathname == "/profil/institution/Kyc-digital" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                    <i className='fas fa-address-card nav-link-icon'></i>
+                    <span className='nav-link-name'>Kyc digital</span>
+                </Link>
+
+                <Link to='/profil/institution/gestion-stablecoin' className={pathname == "/profil/institution/gestion-stablecoin" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                  <i className='fas fa-address-card nav-link-icon'></i>
+                  <span className='nav-link-name'>Gestion</span>
+                </Link>
+              </>
+            ):(
+              <Link to='/#' className={pathname == "/#" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
+                  <i className='fas fa-address-card nav-link-icon'></i>
+                  <span className='nav-link-name'>Mes cartes</span>
+              </Link>
+            )}
 
             {/* Pour le palcement des liens des différentes pages du kyc particulaire en fonction de là ou le remplisage s'est arrêté */}
             {currentUser?.activated && currentUser?.codeTypeProfil==="part"? (

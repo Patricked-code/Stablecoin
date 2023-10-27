@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import LoginForm from '../../components/Authentication/LoginForm';
+import RegisterForm from '../../components/Authentication/RegisterForm';
 
 const Authentication = () => {
   return (
@@ -18,7 +18,8 @@ const Authentication = () => {
           <div className='d-table-cell'>
             <div className='container'>
               <div className='row'>
-                <LoginForm />
+                {/* <LoginForm /> */}
+                <RegisterForm />
               </div>
             </div>
           </div>

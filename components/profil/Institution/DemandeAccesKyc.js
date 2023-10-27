@@ -309,7 +309,7 @@ const dumpVariables = () =>{
         <div className='' >
             <div className=' mx-15'>
                 <div className='py-10'>
-                    <h3 className='text-center'>Vérifications des documents</h3>
+                    <h3 className='text-center'>Demande de kyc</h3>
                 </div>
             </div>
 
@@ -572,7 +572,7 @@ const dumpVariables = () =>{
                                 {/* AFFICHAGE DES TEXTES */}
                                 <div className={toggleState === 3}>
 
-                                    {infosOtherUser?.codeTypeProfil==="insti" ? (
+                                    {infosOtherUser?.codeTypeProfil==="entCom" ? (
                                         <>
                                         {/* // <p className="gr-text-8 " id="addon-wrapping">
                                         //       Nom de l'entreprise : {infosOtherUser?.entreprise}
@@ -715,11 +715,47 @@ const dumpVariables = () =>{
                                                         Documents légaux
                                                     </label>
                                                 </div>
+                                                <div className='form-group'>
+                                                  <label
+                                                        htmlFor="emailNotification"
+                                                      className="text-blackish-blue mb-2"
+                                                  >
+                                                      Votre email de notification
+                                                  </label>
+                                                  <input
+                                                    className="form-control gr-text-11 border mt-3 bg-white"
+                                                    type="text"
+                                                    id="emailNotification"
+                                                    placeholder="Votre email de notification"
+                                                    required
+                                                    // defaultValue={emailNotification} 
+                                                    // onChange={(event)=>setEmailNotification(event.target.value)}
+                                                    
+                                                  />
+                                                </div>
+                                                <div className="form-group mt-3">
+                                                  <label
+                                                      htmlFor="object"
+                                                      className="text-blackish-blue "
+                                                  >
+                                                      Objet de la demande du KYC
+                                                  </label>
+                                                  <textarea
+                                                      className="form-control gr-text-11 border bg-white"
+                                                      type="text"
+                                                      id="object"
+                                                      placeholder=""
+                                                      // defaultValue={object} 
+                                                      // onChange={(event)=>setObject(event.target.value)}
+                                                    />
+                                                </div>
                                                 <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
                                                     <button className="btn btn-primary" type='submit' disabled={isLoggingIn}>Envoyer</button>
                                                 </div>
                                             </form>
                                         </>
+
+                                      // ***********PARTIE PARTICULIER**************
                                     ) : (infosOtherUser?.firstName && infosOtherUser?.lastName && infosOtherUser?.codeTypeProfil=="part"?
                                     (
                                     <>
@@ -802,6 +838,41 @@ const dumpVariables = () =>{
                                                             />
                                                             Signature
                                                         </label>
+                                                    </div>
+
+                                                    <div className='form-group'>
+                                                      <label
+                                                            htmlFor="emailNotification"
+                                                          className="text-blackish-blue mt-3"
+                                                      >
+                                                          Votre email de notification
+                                                      </label>
+                                                      <input
+                                                        className="form-control gr-text-11 border bg-white"
+                                                        type="text"
+                                                        id="emailNotification"
+                                                        placeholder="Votre email de notification"
+                                                        required
+                                                        // defaultValue={emailNotification} 
+                                                        // onChange={(event)=>setEmailNotification(event.target.value)}
+                                                        
+                                                      />
+                                                    </div>
+                                                    <div className="form-group mt-3">
+                                                      <label
+                                                          htmlFor="object"
+                                                          className="text-blackish-blue"
+                                                      >
+                                                          Objet de la demande du KYC
+                                                      </label>
+                                                      <textarea
+                                                          className="form-control gr-text-11 border bg-white"
+                                                          type="text"
+                                                          id="object"
+                                                          placeholder=""
+                                                          // defaultValue={object} 
+                                                          // onChange={(event)=>setObject(event.target.value)}
+                                                        />
                                                     </div>
 
                                                     <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">

@@ -129,6 +129,10 @@ const Layout = ({ children }) => {
       pathname === "/profil/institution/verifier-documents-retrait"||
       pathname === "/profil/institution/mintBurn"||
       pathname === "/profil/institution/demande-kyc"||
+      pathname === "/profil/institution/kyc-digital"||
+      pathname === "/profil/institution/gestion-stablecoin"||
+
+  
 
 
       // FIN
@@ -256,6 +260,8 @@ const Layout = ({ children }) => {
       pathname === "/profil/institution/autre-verification-documents"||
       pathname === "/profil/institution/mintBurn"||
       pathname === "/profil/institution/demande-kyc"||
+      pathname === "/profil/institution/kyc-digital"||
+      pathname === "/profil/institution/gestion-stablecoin"||
 
 
       // FIN

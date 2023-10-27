@@ -142,13 +142,6 @@ const LoginForm = () => {
                   onChange={(event)=>setPassword(event.target.value)}
                 />
               </div>
-              {/* <div className='form-group'>
-                <input
-                  type='password'
-                  className='form-control'
-                  placeholder='Mot de passe'
-                />
-              </div> */}
               <div className='row align-items-center'>
                 <div className='col-lg-6 col-md-6 col-sm-6 lost-your-password-wrap text-center'>
                   Pas de compte ?  
