@@ -21,7 +21,6 @@ import Lightbox from 'react-image-lightbox';
 import 'react-image-lightbox/style.css';
 // Fin
 
-import Map from '../../CarteEmplacement/Map';
 
 
 const DemandeAccesKyc = () => {

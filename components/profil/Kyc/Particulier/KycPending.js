@@ -843,7 +843,7 @@ const KycPendingParticular = () => {
                                             </div>
 
                                             <div className='col-lg-6 col-md-6 '>
-                                                <b> Numéro de justificatif d'identité :</b><br/>
+                                                <b> Numéro du justificatif d'identité :</b><br/>
                                                 {oneKycForParticular?.pieceNumber? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.pieceNumber }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
 

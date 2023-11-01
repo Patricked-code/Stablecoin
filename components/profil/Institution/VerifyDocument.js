@@ -19,9 +19,9 @@ const QrScannerWithNoSSR = dynamic(() => import('react-qr-scanner'), {
 // PARTIE IMPORTATTION DES MODULES POUR AGRANDIR LES IMAGES
 import Lightbox from 'react-image-lightbox';
 import 'react-image-lightbox/style.css';
+import MapComponent from '../../CarteEmplacement/MapComponent';
 // Fin
 
-import Map from '../../CarteEmplacement/Map';
 
 
 const VerifyDocuments = () => {
@@ -29,6 +29,8 @@ const VerifyDocuments = () => {
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  // const position = [parseFloat(oneKycForParticular?.latitude), parseFloat(oneKycForParticular?.longiitude)];
 
     // States recherche de d'un utilisateur
     const [infosOtherUser, setInfosOtherUser] = useState();
@@ -193,7 +195,6 @@ const VerifyDocuments = () => {
   
         const data = await resKyc.json();
         setOneKycForParticular(data);
-        console.log("OneKycForParticular=>",data)
       } catch (error) {
         // Handle errors appropriately, e.g., set an error state.
         console.error('Error fetching KYC data:', error);
@@ -721,7 +722,7 @@ const formatDate = (_updatedAt) =>{
                                       </div>
 
                                       <div className='col-lg-6 col-md-6 '>
-                                          <b> Numéro de justificatif d'identité :</b><br/>
+                                          <b> Numéro du justificatif d'identité :</b><br/>
                                           {oneKycForParticular?.pieceNumber? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.pieceNumber }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                       </div>
 
@@ -825,16 +826,18 @@ const formatDate = (_updatedAt) =>{
                                       </div>
 
                                       <div className='col-lg-6 col-md-6 text-center my-5'>
+                                        
                                         <b className='text-center'>Carte de l'emplacement</b><br/>
-                                        {oneKycForParticular?.userSignature?
-                                        ""
-                                        // <Map latitude={latitude} longitude={longitude} />
+                                        {oneKycForParticular?.userSignature?(
+                                          <MapComponent className="mb-5" latitude={parseFloat(oneKycForParticular?.latitude)} longitude={parseFloat(oneKycForParticular?.longitude)} />
+                                        )
+                                        // <Map latitude={parseFloat(oneKycForParticular?.latitude)} longitude={parseFloat(oneKycForParticular?.longitude)} />
                                         : "Aucune Carte de l'emplacemen"}
                                       </div>
-                                    </div>
+                                    </div><br/>
                                 
                                     {/* FIN */}
-                                    <Row className="my-3 justify-content-center align-items-center ">
+                                    <Row className="mb-5 mt-5 justify-content-center align-items-center ">
                                       <Col
                                           xs="6"
                                           md="6"

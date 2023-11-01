@@ -100,3 +100,40 @@ Lien des tables utilisées: https://nextui.org/docs/components/table
 Lien d'ajout des graphs de next js et cahrt js : https://towardsdev.com/chart-js-next-js-beautiful-data-driven-dashboards-how-to-create-them-fast-and-efficiently-a59e313a3153
 
 Lien d'ajout de google analytic : https://www.makeuseof.com/nextjs-google-analytics/
+
+## POUR INTEGRER LA MAPBOX (LA CARTE DE LOCALISATION)
+    Inscription et Configuration de Mapbox :
+
+    Allez sur le site web de Mapbox ( https://www.mapbox.com/ ) et créez un compte.
+    Une fois connecté, créez un nouveau projet et générez une clé d'accès à l'API.
+    Installation de la dépendance Mapbox GL JS :
+
+    Ouvrez un terminal à la racine de votre projet Next.js et exécutez la commande suivante pour installer la bibliothèque Mapbox GL JS :
+    npm install mapbox-gl
+
+Utilisation de Mapbox dans votre composant :
+
+    import React, { useRef, useEffect } from 'react';
+    import mapboxgl from 'mapbox-gl';
+
+    const MapComponent = ({ latitude, longitude }) => {
+    const mapContainerRef = useRef(null);
+
+    useEffect(() => {
+        mapboxgl.accessToken = 'VOTRE_CLE_MAPBOX'; // Remplacez par votre propre clé d'accès Mapbox
+        const map = new mapboxgl.Map({
+        container: mapContainerRef.current,
+        style: 'mapbox://styles/mapbox/streets-v11', // Style de la carte (vous pouvez en choisir un autre)
+        center: [longitude, latitude],
+        zoom: 13,
+        });
+
+        // Ajoutez un marqueur
+        new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map);
+    }, [latitude, longitude]);
+
+    return <div ref={mapContainerRef} style={{ width: '100%', height: '400px' }} />;
+    };
+
+    export default MapComponent;
+## FIN
