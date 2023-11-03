@@ -14,7 +14,7 @@ import dynamic from 'next/dynamic';
 const QrScannerWithNoSSR = dynamic(() => import('react-qr-scanner'), {
   ssr: false,
 });
-// Finn scanner
+// Fin scanner
 
 // PARTIE IMPORTATTION DES MODULES POUR AGRANDIR LES IMAGES
 import Lightbox from 'react-image-lightbox';
@@ -278,9 +278,8 @@ const formatDate = (_updatedAt) =>{
             {/* Les cards */}
             <div className='row'>
                 <div className='col-lg-3 col-md-12'></div>
-                    <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
-                    
-                    <div className="bloc-tabs-utilite">
+                <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
+                  <div className="bloc-tabs-utilite">
                     <button
                       className={toggleState === 1 ? "tabs active-tabs gr-text-8 text-color-opacity" : "tabs gr-text-8 text-color-opacity"}
                       onClick={() => toggleTab(1)}
@@ -314,13 +313,13 @@ const formatDate = (_updatedAt) =>{
                           <div className='row'>
                             <div className='col-lg-6 col-md-6' onClick={()=>setShowInput(0)}>
                               <p onClick={()=>setAddressTo("")}>
-                                <button className='my-3' onClick={()=>setShowScanner(1)} disabled={isLoggingIn}>cliquez ici pour scanner le QR code du recepteur</button>
+                                <button className='my-3' onClick={()=>setShowScanner(1)} disabled={isLoggingIn}>Cliquez ici pour scanner le QR code du recepteur</button>
                               </p>
                             </div>
                               
                             <div className='col-lg-6 col-md-6' onClick={()=>setShowScanner(0)}>
                               <p  onClick={()=>setAddressTo("")}>
-                              <button className='my-3' onClick={()=>setShowInput(1)} disabled={isLoggingIn}>cliquez ici pour saisir l'adresse blockchain du recepteur</button>
+                              <button className='my-3' onClick={()=>setShowInput(1)} disabled={isLoggingIn}>Cliquez ici pour saisir l'adresse blockchain du recepteur</button>
                               </p>
                             </div>
                             {showScanner==1 && showInput==0? (
@@ -723,11 +722,11 @@ const formatDate = (_updatedAt) =>{
 
                                       <div className='col-lg-6 col-md-6 '>
                                           <b> Numéro du justificatif d'identité :</b><br/>
-                                          {oneKycForParticular?.pieceNumber? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.pieceNumber }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                          {oneKycForParticular?.pieceNumber && !oneKycForParticular?.pieceNumber=="undefined"? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.pieceNumber }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                       </div>
 
                                       <div className='col-lg-6 col-md-6 '>
-                                          <b> Date de validité :</b><br/>
+                                          <b> Date d'expiration :</b><br/>
                                           {oneKycForParticular?.validityDate? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(oneKycForParticular.validityDate) }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                       </div>
                                     </div>

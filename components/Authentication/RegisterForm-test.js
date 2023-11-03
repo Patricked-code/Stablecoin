@@ -109,48 +109,11 @@ function RegisterForm() {
             redirectURI: new URL('/callback_register', window.location.origin).href,
           }); 
           // Fin
-
-            // Swal.fire({
-            //   position: 'center',
-            //   icon: 'success',
-            //   html: "<p> Votre inscription s'est effectuée avec succès </p>" ,
-            //   showConfirmButton: false,
-            //   timer: 5000
-            // })
-
-
         }
-        //  Actualiser après l'affichage 
-        
-          // Router.push("/account/activated"); 
-        // Fin
-        // })
-        // .catch(error => {
-        //   handle error
-        //   console.log(error);
-        //   setIsLoggingIn(false);
-
-
-        // });
       }else{
         setMessageError("Veuillez choisir un type de profil")
         setIsLoggingIn(false);
       }
-
-      
-
-      // Swal.fire({
-      //   position: 'center',
-      //   icon: 'success',
-      //   html: "<p> Votre inscription s'est effectuée avec succès </p>" ,
-      //   showConfirmButton: false,
-      //   timer: 5000
-      // })
-      //  Actualiser après l'affichage 
-      
-        // Router.push("/auth/authentication"); 
-      // Fin
-
       
   }
 
@@ -165,7 +128,6 @@ function RegisterForm() {
         .then((resProfil) => resProfil.json())
         .then((profil) => {
         setAllTypeProfil(profil)
-    console.log("allTypeProfil=>",profil)
 
         }) 
 

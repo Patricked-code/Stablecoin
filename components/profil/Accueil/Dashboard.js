@@ -1730,7 +1730,36 @@ const [montantAchat, setMontantAchat] = useState(0)
                 </div>
 
                 
-                
+                {/* Abonnements */}
+                <div className='col-lg-6 col-md-6'>
+                    <div className='currency-selection text-center'>
+                        <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className='cryptocurrency-slides'>
+                                <div className='single-cryptocurrency-box'>
+                                    <div className='d-flex align-items-center'>
+                                    <div className='bestseller-coin-image'>
+                                        <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
+                                    </div>
+                                    <div className='title'>
+                                        <h3>Abonnements</h3>
+                                        <p>Je fais mon abonnement</p>
+                                    </div>
+                                    </div>
+                                    <div className='btn-box'>
+                                    <Button
+                                        block
+                                        color="success"
+                                        type="button"
+                                    >
+                                        Voir plus
+                                    </Button>
+                                    {/* Fin */}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 {/* Demander des E-WARI */}
                 {/* <div className='col-lg-6 col-md-6'> */}

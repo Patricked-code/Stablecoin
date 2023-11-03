@@ -1,11 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Container, Row, Col, Collapse, Button, Modal,Form } from "react-bootstrap";
 
 import React from "react";
 import axios from 'axios';
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
+import moment from 'moment';
 
+
+// Pour l'importation du scanner
+import dynamic from 'next/dynamic';
+import MapComponent from '../../CarteEmplacement/MapComponent';
+
+const QrScannerWithNoSSR = dynamic(() => import('react-qr-scanner'), {
+  ssr: false,
+});
+// Fin scanner
 
 const VerifyDocumentsOtherActor = () => {
     // Variable de l'url de l'api
@@ -13,15 +23,34 @@ const VerifyDocumentsOtherActor = () => {
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
 
+    // states de kyc
+    const [oneKycForParticular, setOneKycForParticular] = useState();
 
-    
+    // States recherche de d'un utilisateur
+    const [infosOtherUser, setInfosOtherUser] = useState();
+    const [emailOtherUser, setEmailOtherUser] = useState();
+    const [codeOtherUser, setCodeOtherUser] = useState();
+
+    // States du formulaire
+    const [reasonFiling, setReasonFiling] = useState();
+    const [fundsOrigin, setFundsOrigin] = useState();
+    const [senderLastName, setSenderLastName] = useState();
+    const [senderFirstName, setSenderFirstName] = useState();
+    const [senderNumberId, setSenderNumberId] = useState();
+    const [senderPhone, setSenderPhone] = useState();
+                        
+                            
+    const [showInfoUser, setShowInfoUser] = useState();
+
+
+
     // Formulaire du Modal Transfert
     const [montantEnvoyer, setMontantEnvoyer] = useState(0);
     const [addressTo, setAddressTo] = useState();
     const [montantRecu, setMontantRecu] = useState(0);
     const [percent, setPercent] = useState(1);
 
-    const [symbol, setSymbol] = useState("E-WARI");
+    // const [symbol, setSymbol] = useState("E-WARI");
 
     const [acteur, setActeur] = useState();
 
@@ -42,9 +71,177 @@ const VerifyDocumentsOtherActor = () => {
 
 
 
+        // La fonction qui vérifie si un lien est un lien pdf
+        function isPdfLink(link) {
+          return link.endsWith('.pdf');
+        }
+       
+    
+    
+            // Obtenir un utilisateur en fonction de son email 
+            const searchUserWithEmail = () =>{
+              if (emailOtherUser) {
+                const getUser = async (_emailOtherUser) => {
+                
+                    const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${_emailOtherUser}`, {
+                        headers: {
+                        'Content-Type': 'application/json',
+                        },
+                    })
+                        .then((result) => result.json())
+                        .then((user) => {
+                          setInfosOtherUser(user)
+    
+                
+                        }) 
+                
+                    };
+                    
+                      getUser(emailOtherUser);
+                  
+              }
+            }
+            // FIN
+        
+             // Obtenir un utilisateur en fonction de son adresse blockchain
+             const searchUserWithBlockchain = () =>{
+              if (addressTo) {
+                const getUser = async (_addressTo) => {
+                
+                    const result = await fetch(`${API_URL}/api/user/find-user-by-addrBlockchain?address=${_addressTo}`, {
+                        headers: {
+                        'Content-Type': 'application/json',
+    
+                        },
+                    })
+                        .then((result) => result.json())
+                        .then((user) => {
+                          setInfosOtherUser(user)
+                          console.log("InfosOtherUser=>",user)
+                
+                        }) 
+                
+                    };
+                    
+                      getUser(addressTo);
+                  
+              }
+            }
+            // FIN
+        
+             // Obtenir un utilisateur en fonction de son Identifiant
+             const searchUserWithIdentifiant = () =>{
+              if (codeOtherUser) {
+                const getUser = async (_codeOtherUser) => {
+                    const result = await fetch(`${API_URL}/api/user/find-user-by-userCode?code=${_codeOtherUser}`, {
+                        headers: {
+                        'Content-Type': 'application/json',
+                        },
+                    })
+                        .then((result) => result.json())
+                        .then((user) => {
+                          setInfosOtherUser(user)
+    
+                
+                        }) 
+                
+                    };
+                    
+                      getUser(codeOtherUser);
+                  
+              }
+            }
+            // FIN
+            
+            const handleSubmit = (e) => {
+              e.preventDefault()
+          
+            }
+            // Fin
+
+
+
+
+
+
+
+
+
+    // ************************************************************************
+    // PARTIE SCANNER DU QR CODE
+    // *************************************************************************
+    const qrScannerRef = useRef(null);
+    const [showScanner, setShowScanner] = useState();
+    const [showInput, setShowInput] = useState();
+
+    const handleScan = (data) => {
+      if (data) {
+        setAddressTo(data?.text);
+        // searchUserWithBlockchain() //Appel automatique de la fonction de recherche des informations apres avoir scanné le qr code 
+
+      }
+    };
+
+    const handleError = (error) => {
+      console.error(error);
+    };
+    // *****************************FIN SCANNER*****************************
+
+    // RECUPERER UNE SEULE LIGNE DE KYC DU PARTICULIER D'UN UTILISATEUR EN FONCTION DE SON ID
+    if (infosOtherUser?.id) {
+      
+      const getOneKycForParticular = async (_userId) => {
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
+        try {
+          const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-one-kyc-particular-by-userId?userId=${_userId}`, {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization:  `Bearer ${token}`
+
+            },
+          });
+    
+          if (!resKyc.ok) {
+            throw new Error('Failed to fetch KYC data');
+          }
+    
+          const data = await resKyc.json();
+          setOneKycForParticular(data);
+        } catch (error) {
+          // Handle errors appropriately, e.g., set an error state.
+          console.error('Error fetching KYC data:', error);
+        }
+      };
+    
+      getOneKycForParticular(infosOtherUser?.id);
+  }
+  // FIN
+
+
+
+  // FONCTION POUR VIDER DES CHAMPS QUAND ON CLIQUE SUR LE BOUTON EMAIL, ADRESSE BLOCKCHAIN ET IDENTIFAINT
+  const dumpVariables = () =>{
+    setInfosOtherUser("")
+    setAddressTo("")
+    setEmailOtherUser("")
+    setCodeOtherUser("")
+    setSenderLastName("")   
+    setSenderFirstName("")  
+    setSenderNumberId("")
+    setSenderPhone("")
+    setReasonFiling("") 
+    setFundsOrigin("")
+    
+  }
 
    
-
+// FONCTION POUR FORMATER LA DATE
+const formatDate = (_updatedAt) =>{
+  const maDate = moment(_updatedAt).format('DD/MM/YYYY');
+  return  maDate
+}
+//  FIN
 
   return (
     <>
@@ -74,28 +271,27 @@ const VerifyDocumentsOtherActor = () => {
             {/* Les cards */}
             <div className='row'>
                 <div className='col-lg-3 col-md-12'></div>
-                    <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
-                    
-                    <div className="bloc-tabs-utilite">
+                <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
+                  <div className="bloc-tabs-utilite">
                     <button
                       className={toggleState === 1 ? "tabs active-tabs gr-text-8 text-color-opacity" : "tabs gr-text-8 text-color-opacity"}
                       onClick={() => toggleTab(1)}
                     >
-                      Adresse Blockchain
+                      <p onClick={dumpVariables}>Adresse Blockchain</p>
                     </button>
 
                     <button
                     className={toggleState === 2 ? "tabs active-tabs  gr-text-8 text-color-opacity" : "tabs  gr-text-8 text-color-opacity"}
                     onClick={() => toggleTab(2)}
                     >
-                      Adresse email
+                      <p onClick={dumpVariables}>Adresse email</p>
                     </button>
 
                     <button
                     className={toggleState === 3 ? "tabs active-tabs  gr-text-8 text-color-opacity" : "tabs  gr-text-8 text-color-opacity"}
                     onClick={() => toggleTab(3)}
                     >
-                      Identifiant
+                      <p onClick={dumpVariables}>Identifiant</p>
                     </button>
                   </div>
 
@@ -103,195 +299,259 @@ const VerifyDocumentsOtherActor = () => {
                     <div
                     className={toggleState === 1 ? "content  active-content" : "content"}
                     >
-                     {/* Formulaire de la partie avec adresse blockchain  */}
-                    <form>
-                      <div className="form-group mb-6">
-                        <label
-                          htmlFor="addressTo"
-                          className="gr-text-8 fw-bold text-blackish-blue "
-                        >
-                          Adresse blockchain du bénéficiaire <sup className="text-red">*</sup>
-                        </label>
-                        <input
-                          className="form-control gr-text-11 border mt-3 bg-white"
-                          type="text"
-                          id="addressTo"
-                          placeholder="Adresse blockchain du bénéficiaire"
-                          required
-                          defaultValue={addressTo} 
-                          onChange={(event)=>setAddressTo(event.target.value)}
-                        />
-                      </div>
+                      {/* Formulaire de la partie avec adresse blockchain  */}
+                      <form onSubmit={handleSubmit}>
+                        <div className="form-group my-6 ">
 
-                      <div className='row'>
-                        <div className="form-group mb-6 col-lg-6 col-md-6">
-                          <label
-                            htmlFor="nom"
-                            className="gr-text-8 fw-bold text-blackish-blue "
-                          >
-                            Nom de l'expéditeur <sup className="text-red">*</sup>
-                          </label>
-                          <input
-                            className="form-control gr-text-11 border mt-3 bg-white"
-                            type="text"
-                            id="nom"
-                            placeholder="Nom de l'expéditeur"
-                            required
-                            // defaultValue={addressTo} 
-                            // onChange={(event)=>setAddressTo(event.target.value)}
-                          />
-                        </div>
-                        <div className="form-group mb-6 col-lg-6 col-md-6">
-                          <label
-                            htmlFor="addressTo"
-                            className="gr-text-8 fw-bold text-blackish-blue "
-                          >
-                            Prénom de l'expéditeur <sup className="text-red">*</sup>
-                          </label>
-                          <input
-                            className="form-control gr-text-11 border mt-3 bg-white"
-                            type="text"
-                            id="prenom"
-                            placeholder="Prénom de l'expéditeur"
-                            required
-                            // defaultValue={addressTo} 
-                            // onChange={(event)=>setAddressTo(event.target.value)}
-                          />
-                        </div>
-                        <div className="form-group mb-6 col-lg-6 col-md-6">
-                          <label
-                            htmlFor="numberId"
-                            className="gr-text-8 fw-bold text-blackish-blue "
-                          >
-                            Numéro ID <sup className="text-red">*</sup>
-                          </label>
-                          <input
-                            className="form-control gr-text-11 border mt-3 bg-white"
-                            type="text"
-                            id="numberId"
-                            placeholder="Numéro ID"
-                            required
-                            // defaultValue={addressTo} 
-                            // onChange={(event)=>setAddressTo(event.target.value)}
-                          />
-                        </div>
-
-                        <div className="form-group mb-6 col-lg-6 col-md-6">
-                          <label
-                            htmlFor="phone"
-                            className="gr-text-8 fw-bold text-blackish-blue "
-                          >
-                            Numéro de téléphone <sup className="text-red">*</sup>
-                          </label>
-                          <input
-                            className="form-control gr-text-11 border mt-3 bg-white"
-                            type="text"
-                            id="phone"
-                            placeholder="Numéro de téléphone"
-                            required
-                            // defaultValue={addressTo} 
-                            // onChange={(event)=>setAddressTo(event.target.value)}
-                          />
-                        </div>
-
-                        <div className="form-group mb-6 col-lg-6 col-md-6">
-                          <label
-                            htmlFor="email"
-                            className="gr-text-8 fw-bold text-blackish-blue "
-                          >
-                            Adresse email de l'expéditeur 
-                          </label>
-                          <input
-                            className="form-control gr-text-11 border mt-3 bg-white"
-                            type="email"
-                            id="email"
-                            placeholder="Adresse email de l'expéditeur"
-                            required
-                            // defaultValue={addressTo} 
-                            // onChange={(event)=>setAddressTo(event.target.value)}
-                          />
-                        </div>
-
-                        <div className="form-group mb-6 col-lg-6 col-md-6">
-                          <label
-                            htmlFor="modif"
-                            className="gr-text-8 fw-bold text-blackish-blue "
-                          >
-                            Motif du dépôt<sup className="text-red">*</sup>
-                          </label>
-                          <select 
-                            className="form-control mt-3"
-                            id="modif"
-                            required
-                            // defaultValue={employee} 
-                            // onChange={(event)=>setEmployee(event.target.value)}
-                          >
-                            <option defaultValue="">Motif du transfert</option>
-                              <optgroup className='single-cryptocurrency-box'>
-                                <option  value="Assistance familiale/Frais de subsistence">Assistance familiale/Frais de subsistence</option>
-                                <option  value="Epargne/Investissements">Epargne/Investissements</option>
-                                <option  value="Cadeau">Cadeau</option>
-                                <option  value="Paiement de biens et de services">Paiement de biens et de services </option>
-                                <option  value="Loyer/Hypothèque">Loyer/Hypothèque </option>
-                                <option  value="Urgence/Assistance médicale ">Urgence/Assistance médicale </option>
-                                <option  value="Organisme de bienfaisance/Paiement d’aide ">Organisme de bienfaisance/Paiement d’aide </option>
-                                <option  value="Frais relatifs à une loterie ou un prix/Impôts ">Frais relatifs à une loterie ou un prix/Impôts </option>
-                                <option  value="Paie des emplyés/Frais des employés">Paie des emplyés/Frais des employés </option>
-                                <option  value="Autre ">Autre </option>
-                              </optgroup>
-                          </select>
-                        </div>
-
-                        <div className="form-group mb-6 col-lg-6 col-md-6">
-                          <label
-                            htmlFor="origine"
-                            className="gr-text-8 fw-bold text-blackish-blue "
-                          >
-                            Origine des fonds <sup className="text-red">*</sup>
-                          </label>
-                          <select 
-                            className="form-control mt-3"
-                            id="origine"
-                            required
-                            // defaultValue={employee} 
-                            // onChange={(event)=>setEmployee(event.target.value)}
-                          >
-                            <option defaultValue="">Origine des fonds</option>
-                              <optgroup className='single-cryptocurrency-box'>
-                                <option  value="Salaire/Revenus">Salaire/Revenus</option>
-                                <option  value="Prêt/Emprunt">Prêt/Emprunt</option>
-                                <option  value="Cadeau">Cadeau</option>
-                                <option  value="Pension/Allocations publique/Aide sociale">Pension/Allocations publique/Aide sociale</option>
-                                <option  value="Héritage">Héritage </option>
-                                <option  value="Dons de bienfaisnce ">Dons de bienfaisnce</option>
-                                <option  value="Autre ">Autre </option>
-                              </optgroup>
-                          </select>
-                        </div>
-                      </div>
-                      
-                      <Row className="my-3 justify-content-center align-items-center">
-                        <Col
-                            xs="6"
-                            md="6"
-                            lg="6"
-                            xl="6"
-                          className="order-lg-1 text-center"
+                          <div className='row'>
+                            <div className='col-lg-6 col-md-6' onClick={()=>setShowInput(0)}>
+                              <p onClick={()=>setAddressTo("")}>
+                                <button className='my-3' onClick={()=>setShowScanner(1)} disabled={isLoggingIn}>Cliquez ici pour scanner le QR code du recepteur</button>
+                              </p>
+                            </div>
+                              
+                            <div className='col-lg-6 col-md-6' onClick={()=>setShowScanner(0)}>
+                              <p  onClick={()=>setAddressTo("")}>
+                              <button className='my-3' onClick={()=>setShowInput(1)} disabled={isLoggingIn}>Cliquez ici pour saisir l'adresse blockchain du recepteur</button>
+                              </p>
+                            </div>
+                            {showScanner==1 && showInput==0? (
+                              <>
+                                {!addressTo? (
+                                  <>
+                                    <div className='col-lg-3 col-md-3'></div>
+                                    <div className='col-lg-6 col-md-6'>
+                                    
+                                      
+                                        <QrScannerWithNoSSR
+                                          ref={qrScannerRef}
+                                          onScan={handleScan}
+                                          onError={handleError}
+                                          style={{ width: '100%', height: 'auto' }}
+                                        />
+                                      
+                                    </div>
+                                    <div className='col-lg-3 col-md-3'></div>
+                                </>
+                                ):(
+                                  <div className="input-group ">
+                                    <input
+                                        className="form-control gr-text-11 border mt-3 bg-white"
+                                        type="text"
+                                        id="addressTo"
+                                        disabled
+                                        placeholder="Entrez adresse bockchain du recepteur"
+                                        required
+                                        value={addressTo} 
+                                    />
+                                  </div>
+                                )}
+                              </>
+                            ) : ("")}
+                          </div>
                           
-                        >
-                        <Button variant="success"  className="text-white" >
-                            Vérifier
-                        </Button>
-                        </Col>
-                      </Row>
-                    </form>
+                          
+                          {showScanner==0 && showInput==1 ? (
+                            <>
+                              <label
+                                htmlFor="montant"
+                                className="gr-text-8 fw-bold text-blackish-blue"
+                              >
+                                Entrez adresse bockchain du recepteur <sup className="text-red">*</sup>
+
+                              </label>
+                              <div className="input-group flex-nowrap">
+                                <input
+                                    className="form-control gr-text-11 border mt-3 bg-white"
+                                    type="text"
+                                    id="addressTo"
+                                    placeholder="Entrez adresse bockchain du recepteur"
+                                    required
+                                    defaultValue={addressTo} 
+                                    onChange={(event)=>setAddressTo(event.target.value)}
+                                    
+                                />
+                                {/* <span className="gr-text-8 mx-2" id="addon-wrapping">
+                                  <button onClick={searchUserWithBlockchain} disabled={isLoggingIn}><Icon  icon="bx:search-alt"  />
+                                  </button>
+                                </span> */}
+
+                              </div>
+                            </>
+                          ) : ("")}
+
+                          <div className='row mt-3'>
+                            <div className="form-group mb-6 col-lg-6 col-md-6">
+                              <label
+                                htmlFor="senderLastName"
+                                className="gr-text-8 fw-bold text-blackish-blue "
+                              >
+                                Nom de l'expéditeur <sup className="text-red">*</sup>
+                              </label>
+                              <input
+                                className="form-control gr-text-11 border mt-3 bg-white"
+                                type="text"
+                                id="senderLastName"
+                                placeholder="Nom de l'expéditeur"
+                                required
+                                defaultValue={senderLastName} 
+                                onChange={(event)=>setSenderLastName(event.target.value)}
+                              />
+                            </div>
+                            <div className="form-group mb-6 col-lg-6 col-md-6">
+                              <label
+                                htmlFor="senderFirstName"
+                                className="gr-text-8 fw-bold text-blackish-blue "
+                              >
+                                Prénom de l'expéditeur <sup className="text-red">*</sup>
+                              </label>
+                              <input
+                                className="form-control gr-text-11 border mt-3 bg-white"
+                                type="text"
+                                id="senderFirstName"
+                                placeholder="Prénom de l'expéditeur"
+                                required
+                                defaultValue={senderFirstName} 
+                                onChange={(event)=>setSenderFirstName(event.target.value)}
+                              />
+                            </div>
+                            <div className="form-group mb-6 col-lg-6 col-md-6">
+                              <label
+                                htmlFor="senderNumberId"
+                                className="gr-text-8 fw-bold text-blackish-blue "
+                              >
+                                Numéro ID <sup className="text-red">*</sup>
+                              </label>
+                              <input
+                                className="form-control gr-text-11 border mt-3 bg-white"
+                                type="text"
+                                id="senderNumberId"
+                                placeholder="Numéro ID"
+                                required
+                                defaultValue={senderNumberId} 
+                                onChange={(event)=>setSenderNumberId(event.target.value)}
+                              />
+                            </div>
+                            
+                            <div className="form-group mb-6 col-lg-6 col-md-6">
+                              <label
+                                htmlFor="senderPhone"
+                                className="gr-text-8 fw-bold text-blackish-blue "
+                              >
+                                Numéro de téléphone <sup className="text-red">*</sup>
+                              </label>
+                              <input
+                                className="form-control gr-text-11 border mt-3 bg-white"
+                                type="text"
+                                id="senderPhone"
+                                placeholder="Numéro de téléphone"
+                                required
+                                defaultValue={senderPhone} 
+                                onChange={(event)=>setSenderPhone(event.target.value)}
+                              />
+                            </div>
+
+                            <div className="form-group mb-6 col-lg-6 col-md-6">
+                              <label
+                                htmlFor="email"
+                                className="gr-text-8 fw-bold text-blackish-blue "
+                              >
+                                Adresse email de l'expéditeur 
+                              </label>
+                              <input
+                                className="form-control gr-text-11 border mt-3 bg-white"
+                                type="email"
+                                id="email"
+                                placeholder="Adresse email de l'expéditeur"
+                                required
+                                // defaultValue={addressTo} 
+                                // onChange={(event)=>setAddressTo(event.target.value)}
+                              />
+                            </div>
+                              <div className="form-group mb-6 col-lg-6 col-md-6">
+                                <label
+                                  htmlFor="motif"
+                                  className="gr-text-8 fw-bold text-blackish-blue "
+                                >
+                                  Motif du dépôt <sup className="text-red">*</sup>
+                                </label>
+                                <select 
+                                  className="form-control mt-3"
+                                  id="motif"
+                                  required
+                                  defaultValue={reasonFiling} 
+                                  onChange={(event)=>setReasonFiling(event.target.value)}
+                                >
+                                  <option defaultValue="">Motif du dépôt</option>
+                                    <optgroup className='single-cryptocurrency-box'>
+                                      <option  value="Assistance familiale/Frais de subsistence">Assistance familiale/Frais de subsistence</option>
+                                      <option  value="Epargne/Investissements">Epargne/Investissements</option>
+                                      <option  value="Cadeau">Cadeau</option>
+                                      <option  value="Paiement de biens et de services">Paiement de biens et de services </option>
+                                      <option  value="Loyer/Hypothèque">Loyer/Hypothèque </option>
+                                      <option  value="Urgence/Assistance médicale ">Urgence/Assistance médicale </option>
+                                      <option  value="Organisme de bienfaisance/Paiement d’aide ">Organisme de bienfaisance/Paiement d’aide </option>
+                                      <option  value="Frais relatifs à une loterie ou un prix/Impôts ">Frais relatifs à une loterie ou un prix/impôts </option>
+                                      <option  value="Paie des employés/Frais des employés">Paie des employés/Frais des employés </option>
+                                      <option  value="Autre ">Autre </option>
+                                    </optgroup>
+                                </select>
+                              </div>
+
+                              <div className="form-group mb-6 col-lg-6 col-md-6">
+                                <label
+                                  htmlFor="origine"
+                                  className="gr-text-8 fw-bold text-blackish-blue "
+                                >
+                                  Origine des fonds <sup className="text-red">*</sup>
+                                </label>
+                                <select 
+                                  className="form-control mt-3"
+                                  id="origine"
+                                  required
+                                  defaultValue={fundsOrigin} 
+                                  onChange={(event)=>setFundsOrigin(event.target.value)}
+                                >
+                                  <option defaultValue="">Origine des fonds</option>
+                                    <optgroup className='single-cryptocurrency-box'>
+                                      <option  value="Salaire/Revenus">Salaire/Revenus</option>
+                                      <option  value="Prêt/Emprunt">Prêt/Emprunt</option>
+                                      <option  value="Cadeau">Cadeau</option>
+                                      <option  value="Pension/Allocations publique/Aide sociale">Pension/Allocations publique/Aide sociale</option>
+                                      <option  value="Héritage">Héritage </option>
+                                      <option  value="Dons de bienfaisance ">Dons de bienfaisance</option>
+                                      <option  value="Autre ">Autre </option>
+                                    </optgroup>
+                                </select>
+                              </div>
+                            </div>
+                      
+                            {addressTo && reasonFiling && fundsOrigin && senderLastName && senderFirstName && senderNumberId && senderPhone ? (
+                              <Row className="my-3 justify-content-center align-items-center">
+                                <Col
+                                    xs="6"
+                                    md="6"
+                                    lg="6"
+                                    xl="6"
+                                  className="order-lg-1 text-center"
+                                  onClick={()=>setShowInfoUser(1)}
+                                    
+                                >
+                                <Button variant="success" onClick={searchUserWithBlockchain}  className="text-white" >
+                                    Vérifier
+                                </Button>
+                                </Col>
+                              </Row>
+                            ) : ("")}
+                          </div>
+                      </form>
                     </div>
 
                     <div
                     className={toggleState === 2 ? "content  active-content" : "content"}
                     >
-                     {/* Formulaire de la partie avec adresse blockchain  */}
-                    <form>
+                      {/* Formulaire de la partie avec adresse blockchain  */}
+                      <form onSubmit={handleSubmit}>
                       <div className="form-group mb-6">
                         <label
                           htmlFor="pays"
@@ -305,15 +565,15 @@ const VerifyDocumentsOtherActor = () => {
                           id="contact"
                           placeholder="Adresse email du bénéficiaire"
                           required
-                          // defaultValue={networkMobile} 
-                          // onChange={(event)=>setNetworkMobile(event.target.value)}
+                          defaultValue={emailOtherUser} 
+                          onChange={(event)=>setEmailOtherUser(event.target.value)}
                         />
                       </div>
 
                       <div className='row'>
                         <div className="form-group mb-6 col-lg-6 col-md-6">
                           <label
-                            htmlFor="nom"
+                            htmlFor="senderLastName"
                             className="gr-text-8 fw-bold text-blackish-blue "
                           >
                             Nom de l'expéditeur <sup className="text-red">*</sup>
@@ -321,16 +581,16 @@ const VerifyDocumentsOtherActor = () => {
                           <input
                             className="form-control gr-text-11 border mt-3 bg-white"
                             type="text"
-                            id="nom"
+                            id="senderLastName"
                             placeholder="Nom de l'expéditeur"
                             required
-                            // defaultValue={addressTo} 
-                            // onChange={(event)=>setAddressTo(event.target.value)}
+                            defaultValue={senderLastName} 
+                            onChange={(event)=>setSenderLastName(event.target.value)}
                           />
                         </div>
                         <div className="form-group mb-6 col-lg-6 col-md-6">
                           <label
-                            htmlFor="prenom"
+                            htmlFor="senderFirstName"
                             className="gr-text-8 fw-bold text-blackish-blue "
                           >
                             Prénom de l'expéditeur <sup className="text-red">*</sup>
@@ -338,16 +598,16 @@ const VerifyDocumentsOtherActor = () => {
                           <input
                             className="form-control gr-text-11 border mt-3 bg-white"
                             type="text"
-                            id="prenom"
+                            id="senderFirstName"
                             placeholder="Prénom de l'expéditeur"
                             required
-                            // defaultValue={addressTo} 
-                            // onChange={(event)=>setAddressTo(event.target.value)}
+                            defaultValue={senderFirstName} 
+                            onChange={(event)=>setSenderFirstName(event.target.value)}
                           />
                         </div>
                         <div className="form-group mb-6 col-lg-6 col-md-6">
                           <label
-                            htmlFor="numberId"
+                            htmlFor="senderNumberId"
                             className="gr-text-8 fw-bold text-blackish-blue "
                           >
                             Numéro ID <sup className="text-red">*</sup>
@@ -355,17 +615,17 @@ const VerifyDocumentsOtherActor = () => {
                           <input
                             className="form-control gr-text-11 border mt-3 bg-white"
                             type="text"
-                            id="numberId"
+                            id="senderNumberId"
                             placeholder="Numéro ID"
                             required
-                            // defaultValue={addressTo} 
-                            // onChange={(event)=>setAddressTo(event.target.value)}
+                            defaultValue={senderNumberId} 
+                            onChange={(event)=>setSenderNumberId(event.target.value)}
                           />
                         </div>
-
+                            
                         <div className="form-group mb-6 col-lg-6 col-md-6">
                           <label
-                            htmlFor="phone"
+                            htmlFor="senderPhone"
                             className="gr-text-8 fw-bold text-blackish-blue "
                           >
                             Numéro de téléphone <sup className="text-red">*</sup>
@@ -373,47 +633,28 @@ const VerifyDocumentsOtherActor = () => {
                           <input
                             className="form-control gr-text-11 border mt-3 bg-white"
                             type="text"
-                            id="phone"
+                            id="senderPhone"
                             placeholder="Numéro de téléphone"
                             required
-                            // defaultValue={addressTo} 
-                            // onChange={(event)=>setAddressTo(event.target.value)}
+                            defaultValue={senderPhone} 
+                            onChange={(event)=>setSenderPhone(event.target.value)}
                           />
                         </div>
-
                         <div className="form-group mb-6 col-lg-6 col-md-6">
                           <label
-                            htmlFor="email"
+                            htmlFor="motif"
                             className="gr-text-8 fw-bold text-blackish-blue "
                           >
-                            Adresse email de l'expéditeur 
-                          </label>
-                          <input
-                            className="form-control gr-text-11 border mt-3 bg-white"
-                            type="email"
-                            id="email"
-                            placeholder="Adresse email de l'expéditeur"
-                            required
-                            // defaultValue={addressTo} 
-                            // onChange={(event)=>setAddressTo(event.target.value)}
-                          />
-                        </div>
-
-                        <div className="form-group mb-6 col-lg-6 col-md-6">
-                          <label
-                            htmlFor="modif"
-                            className="gr-text-8 fw-bold text-blackish-blue "
-                          >
-                            Motif du dépôt<sup className="text-red">*</sup>
+                            Motif du dépôt <sup className="text-red">*</sup>
                           </label>
                           <select 
                             className="form-control mt-3"
-                            id="modif"
+                            id="motif"
                             required
-                            // defaultValue={employee} 
-                            // onChange={(event)=>setEmployee(event.target.value)}
+                            defaultValue={reasonFiling} 
+                            onChange={(event)=>setReasonFiling(event.target.value)}
                           >
-                            <option defaultValue="">Motif  du transfert</option>
+                            <option defaultValue="">Motif du dépôt</option>
                               <optgroup className='single-cryptocurrency-box'>
                                 <option  value="Assistance familiale/Frais de subsistence">Assistance familiale/Frais de subsistence</option>
                                 <option  value="Epargne/Investissements">Epargne/Investissements</option>
@@ -423,7 +664,7 @@ const VerifyDocumentsOtherActor = () => {
                                 <option  value="Urgence/Assistance médicale ">Urgence/Assistance médicale </option>
                                 <option  value="Organisme de bienfaisance/Paiement d’aide ">Organisme de bienfaisance/Paiement d’aide </option>
                                 <option  value="Frais relatifs à une loterie ou un prix/Impôts ">Frais relatifs à une loterie ou un prix/Impôts </option>
-                                <option  value="Paie des emplyés/Frais des employés">Paie des emplyés/Frais des employés </option>
+                                <option  value="Paie des employés/Frais des employés">Paie des employés/Frais des employés </option>
                                 <option  value="Autre ">Autre </option>
                               </optgroup>
                           </select>
@@ -440,8 +681,8 @@ const VerifyDocumentsOtherActor = () => {
                             className="form-control mt-3"
                             id="origine"
                             required
-                            // defaultValue={employee} 
-                            // onChange={(event)=>setEmployee(event.target.value)}
+                            defaultValue={fundsOrigin} 
+                            onChange={(event)=>setFundsOrigin(event.target.value)}
                           >
                             <option defaultValue="">Origine des fonds</option>
                               <optgroup className='single-cryptocurrency-box'>
@@ -450,39 +691,41 @@ const VerifyDocumentsOtherActor = () => {
                                 <option  value="Cadeau">Cadeau</option>
                                 <option  value="Pension/Allocations publique/Aide sociale">Pension/Allocations publique/Aide sociale</option>
                                 <option  value="Héritage">Héritage </option>
-                                <option  value="Dons de bienfaisnce ">Dons de bienfaisnce</option>
+                                <option  value="Dons de bienfaisance ">Dons de bienfaisance</option>
                                 <option  value="Autre ">Autre </option>
                               </optgroup>
                           </select>
                         </div>
                       </div>
                       
+                      {emailOtherUser && reasonFiling && fundsOrigin && senderLastName && senderFirstName && senderNumberId && senderPhone ? (
                       <Row className="my-3 justify-content-center align-items-center">
-                    
                         <Col
                             xs="6"
                             md="6"
                             lg="6"
                             xl="6"
                           className="order-lg-1 text-center"
+                          onClick={()=>setShowInfoUser(2)}
                           
                         >
-                        <Button variant="success" className="text-white" >
+                        <Button variant="success" onClick={searchUserWithEmail} className="text-white" >
                             Vérifier
                         </Button>
                         </Col>
                       </Row>
-                    </form>
+                      ):("")}
+                      </form>
                     </div>
-
+                      
+                    {/* Formulaire de la partie avec Identifiant de l'utilisateur  */}
                     <div
                     className={toggleState === 3 ? "content  active-content" : "content"}
                     >
-                     {/* Formulaire de la partie avec Identifiant de l'utilisateur  */}
-                    <form>
+                     <form onSubmit={handleSubmit}>
                       <div className="form-group mb-6">
                         <label
-                          htmlFor="code"
+                          htmlFor="identifiant"
                           className="gr-text-8 fw-bold text-blackish-blue "
                         >
                           Identifiant du bénéficiaire <sup className="text-red">*</sup>
@@ -490,18 +733,18 @@ const VerifyDocumentsOtherActor = () => {
                         <input
                           className="form-control gr-text-11 border mt-3 bg-white"
                           type="text"
-                          id="code"
+                          id="identifiant"
                           placeholder="Identifiant du bénéficiaire"
                           required
-                          // defaultValue={addressTo} 
-                          // onChange={(event)=>setAddressTo(event.target.value)}
+                          defaultValue={codeOtherUser} 
+                          onChange={(event)=>setCodeOtherUser(event.target.value)}
                         />
                       </div>
 
                       <div className='row'>
-                        <div className="form-group mb-6 col-lg-6 col-md-6">
+                      <div className="form-group mb-6 col-lg-6 col-md-6">
                           <label
-                            htmlFor="nom"
+                            htmlFor="senderLastName"
                             className="gr-text-8 fw-bold text-blackish-blue "
                           >
                             Nom de l'expéditeur <sup className="text-red">*</sup>
@@ -509,16 +752,16 @@ const VerifyDocumentsOtherActor = () => {
                           <input
                             className="form-control gr-text-11 border mt-3 bg-white"
                             type="text"
-                            id="nom"
+                            id="senderLastName"
                             placeholder="Nom de l'expéditeur"
                             required
-                            // defaultValue={addressTo} 
-                            // onChange={(event)=>setAddressTo(event.target.value)}
+                            defaultValue={senderLastName} 
+                            onChange={(event)=>setSenderLastName(event.target.value)}
                           />
                         </div>
                         <div className="form-group mb-6 col-lg-6 col-md-6">
                           <label
-                            htmlFor="prenom"
+                            htmlFor="senderFirstName"
                             className="gr-text-8 fw-bold text-blackish-blue "
                           >
                             Prénom de l'expéditeur <sup className="text-red">*</sup>
@@ -526,16 +769,16 @@ const VerifyDocumentsOtherActor = () => {
                           <input
                             className="form-control gr-text-11 border mt-3 bg-white"
                             type="text"
-                            id="prenom"
+                            id="senderFirstName"
                             placeholder="Prénom de l'expéditeur"
                             required
-                            // defaultValue={addressTo} 
-                            // onChange={(event)=>setAddressTo(event.target.value)}
+                            defaultValue={senderFirstName} 
+                            onChange={(event)=>setSenderFirstName(event.target.value)}
                           />
                         </div>
                         <div className="form-group mb-6 col-lg-6 col-md-6">
                           <label
-                            htmlFor="addressTo"
+                            htmlFor="senderNumberId"
                             className="gr-text-8 fw-bold text-blackish-blue "
                           >
                             Numéro ID <sup className="text-red">*</sup>
@@ -543,17 +786,17 @@ const VerifyDocumentsOtherActor = () => {
                           <input
                             className="form-control gr-text-11 border mt-3 bg-white"
                             type="text"
-                            id="numberId"
+                            id="senderNumberId"
                             placeholder="Numéro ID"
                             required
-                            // defaultValue={addressTo} 
-                            // onChange={(event)=>setAddressTo(event.target.value)}
+                            defaultValue={senderNumberId} 
+                            onChange={(event)=>setSenderNumberId(event.target.value)}
                           />
                         </div>
-
+                            
                         <div className="form-group mb-6 col-lg-6 col-md-6">
                           <label
-                            htmlFor="phone"
+                            htmlFor="senderPhone"
                             className="gr-text-8 fw-bold text-blackish-blue "
                           >
                             Numéro de téléphone <sup className="text-red">*</sup>
@@ -561,47 +804,28 @@ const VerifyDocumentsOtherActor = () => {
                           <input
                             className="form-control gr-text-11 border mt-3 bg-white"
                             type="text"
-                            id="phone"
+                            id="senderPhone"
                             placeholder="Numéro de téléphone"
                             required
-                            // defaultValue={addressTo} 
-                            // onChange={(event)=>setAddressTo(event.target.value)}
+                            defaultValue={senderPhone} 
+                            onChange={(event)=>setSenderPhone(event.target.value)}
                           />
                         </div>
-
-                        <div className="form-group mb-6 col-lg-6 col-md-6">
-                          <label
-                            htmlFor="email"
-                            className="gr-text-8 fw-bold text-blackish-blue "
-                          >
-                            Adresse email de l'expéditeur 
-                          </label>
-                          <input
-                            className="form-control gr-text-11 border mt-3 bg-white"
-                            type="email"
-                            id="email"
-                            placeholder="Adresse email de l'expéditeur"
-                            required
-                            // defaultValue={addressTo} 
-                            // onChange={(event)=>setAddressTo(event.target.value)}
-                          />
-                        </div>
-
                         <div className="form-group mb-6 col-lg-6 col-md-6">
                           <label
                             htmlFor="motif"
                             className="gr-text-8 fw-bold text-blackish-blue "
                           >
-                            Motif du dépôt<sup className="text-red">*</sup>
+                            Motif du dépôt <sup className="text-red">*</sup>
                           </label>
                           <select 
                             className="form-control mt-3"
                             id="motif"
                             required
-                            // defaultValue={employee} 
-                            // onChange={(event)=>setEmployee(event.target.value)}
+                            defaultValue={reasonFiling} 
+                            onChange={(event)=>setReasonFiling(event.target.value)}
                           >
-                            <option defaultValue="">Motif  du transfert</option>
+                            <option defaultValue="">Motif du dépôt</option>
                               <optgroup className='single-cryptocurrency-box'>
                                 <option  value="Assistance familiale/Frais de subsistence">Assistance familiale/Frais de subsistence</option>
                                 <option  value="Epargne/Investissements">Epargne/Investissements</option>
@@ -611,7 +835,7 @@ const VerifyDocumentsOtherActor = () => {
                                 <option  value="Urgence/Assistance médicale ">Urgence/Assistance médicale </option>
                                 <option  value="Organisme de bienfaisance/Paiement d’aide ">Organisme de bienfaisance/Paiement d’aide </option>
                                 <option  value="Frais relatifs à une loterie ou un prix/Impôts ">Frais relatifs à une loterie ou un prix/Impôts </option>
-                                <option  value="Paie des emplyés/Frais des employés">Paie des emplyés/Frais des employés </option>
+                                <option  value="Paie des employés/Frais des employés">Paie des employés/Frais des employés </option>
                                 <option  value="Autre ">Autre </option>
                               </optgroup>
                           </select>
@@ -628,8 +852,8 @@ const VerifyDocumentsOtherActor = () => {
                             className="form-control mt-3"
                             id="origine"
                             required
-                            // defaultValue={employee} 
-                            // onChange={(event)=>setEmployee(event.target.value)}
+                            defaultValue={fundsOrigin} 
+                            onChange={(event)=>setFundsOrigin(event.target.value)}
                           >
                             <option defaultValue="">Origine des fonds</option>
                               <optgroup className='single-cryptocurrency-box'>
@@ -638,96 +862,217 @@ const VerifyDocumentsOtherActor = () => {
                                 <option  value="Cadeau">Cadeau</option>
                                 <option  value="Pension/Allocations publique/Aide sociale">Pension/Allocations publique/Aide sociale</option>
                                 <option  value="Héritage">Héritage </option>
-                                <option  value="Dons de bienfaisnce ">Dons de bienfaisnce</option>
+                                <option  value="Dons de bienfaisance ">Dons de bienfaisance</option>
                                 <option  value="Autre ">Autre </option>
                               </optgroup>
                           </select>
                         </div>
                       </div>
 
-                      <Row className="my-3 justify-content-center align-items-center">
-                        <Col
-                            xs="6"
-                            md="6"
-                            lg="6"
-                            xl="6"
-                          className="order-lg-1 text-center"
-                        >
-                           <Button className="text-white " variant="danger" >
-                                Vérifier
+                      {codeOtherUser && reasonFiling && fundsOrigin && senderLastName && senderFirstName && senderNumberId && senderPhone? (
+                        <Row className="my-3 justify-content-center align-items-center">
+                          <Col
+                              xs="6"
+                              md="6"
+                              lg="6"
+                              xl="6"
+                            className="order-lg-1 text-center"
+                            onClick={()=>setShowInfoUser(3)}
+                          >
+                            <Button className="text-white " onClick={searchUserWithIdentifiant} variant="success" >
+                              Vérifier
                             </Button>
-                        </Col>
-                      </Row>
+                          </Col>
+                        </Row>
+                      ):("")}
                     </form>
                     </div>
                   </div>
  
                   </div>
                 <div className='col-lg-3 col-md-12'></div>
-
-                
             </div>
+
+
 
             {/* AFFICHAGE DES INFORMATIONS */}
-            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-              <div className='cryptocurrency-slides'>
-                <div className='single-cryptocurrency-box'>
+            {infosOtherUser? (
+              <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                <div className='cryptocurrency-slides'>
+                  <div className='single-cryptocurrency-box'>
 
-                  {/* AFFICHAGE DES TEXTES */}
-                  <div className='row justify-content-center'>
-                    <div className='col-lg-4 col-md-4 mb-3'>
-                      <h5>Nom : </h5>
-                      <p>Kouamé</p>
-                    </div>
-                    <div className='col-lg-4 col-md-4 mb-3'>
-                      <h5>Prénom : </h5>
-                      <p>Yannick </p>
+                    {/* AFFICHAGE DES TEXTES */}
+                    <div className={toggleState === 3}>
+
+                    {infosOtherUser?.entreprise ? (
+                        // <p className="gr-text-8 " id="addon-wrapping">
+                        //       Nom de l'entreprise : {infosOtherUser?.entreprise}
+                        // </p>
+                        <p className="gr-text-8 colorRed text-center" >Les informations correspondantes sont pour l'entreprise {infosOtherUser?.entreprise} </p>
+
+                      ) : (infosOtherUser?.firstName && infosOtherUser?.lastName && infosOtherUser?.codeTypeProfil=="part"?
+                        (
+                          <>
+                            {!oneKycForParticular?.message ?(
+                              <>
+                                {oneKycForParticular?.validQuiz==1 && oneKycForParticular?.validQuizTwo==1 && oneKycForParticular?.validQuizFatca==1 && oneKycForParticular?.validIdentityOne==1 && oneKycForParticular.validPhotoWithDocument && oneKycForParticular?.validIdentity==1 && oneKycForParticular?.validResidence==1 && oneKycForParticular?.validPhoto==1 && oneKycForParticular?.validSignature==1 ?(
+                                  <>
+                                    <div className='row'>
+                                      <div className='col-lg-6 col-md-6'>
+                                          <b> Nom :</b><br/>
+                                          {infosOtherUser?.firstName? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{infosOtherUser.firstName }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                      </div>
+                                                          
+                                      <div className='col-lg-6 col-md-6'>
+                                          <b> Prénoms :</b><br/>
+                                          {infosOtherUser?.lastName? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{infosOtherUser.lastName }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                      </div>
+                                      <div className='col-lg-6 col-md-6 '>
+                                          <b> Type de justificatif d'identité :</b><br/>
+                                          {oneKycForParticular?.receiptType? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.receiptType }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                      </div>
+
+                                      <div className='col-lg-6 col-md-6 '>
+                                          <b> Numéro du justificatif d'identité :</b><br/>
+                                          {oneKycForParticular?.pieceNumber? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular?.pieceNumber }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                      </div>
+
+                                      <div className='col-lg-6 col-md-6 '>
+                                          <b> Date d'expiration :</b><br/>
+                                          {oneKycForParticular?.validityDate? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(oneKycForParticular.validityDate) }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                      </div>
+                                    </div>
+
+                                     {/* AFFICHAGE DES FICHIERS */}
+                                    <div className=" row col-lg-12 col-md-12 justify-content-between">
+                                      <div className='col-lg-6 col-md-6 text-center'>
+                                          <b className='text-center'>Recto</b><br/>
+                                          {/* Si le document est prise en photo */}
+                                          {oneKycForParticular?.frontReceiptPhoto? 
+                                                  <img src={oneKycForParticular?.frontReceiptPhoto} className="" width={'400'} height={'400'} alt="Recto"/> : 
+                                                  // sinon
+                                                  oneKycForParticular?.frontReceipt? (
+                                                      <>
+                                                          {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
+                                                          {isPdfLink(`${API_URL}/${oneKycForParticular?.frontReceipt}`) ? (
+                                                              <>
+                                                                  <div className="hero-btn  text-center ">
+                                                                      <a
+                                                                          className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                          role="button"
+                                                                          data-toggle="dropdown"
+                                                                          aria-haspopup="true"
+                                                                          aria-expanded="false"
+                                                                          href={`${API_URL}/${oneKycForParticular?.frontReceipt}`} 
+                                                                          target="_blank"
+                                                                      >
+                                                                      <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                          <Icon icon="bx:show-alt" width="50" />
+                                                                          Veuillez cliquer ici pour voir le fichier
+                                                                                          </p>
+                                                                      </a>
+                                                                  </div>
+                                                              </>
+                                                          ) : (
+                                                              <>
+                                                                  <img src={`${API_URL}/${oneKycForParticular?.frontReceipt}`} className="" width={'400'} height={'400'} alt="Recto"/> :
+                                                              </>
+                                                          )}
+                                                      </>
+                                                  ):"Pas de recto justificatif"
+                                          }
+                                                              
+                                      </div>
+
+                                      <div className='col-lg-6 col-md-6 text-center'>
+                                          <b className='text-center'>Verso</b><br/>
+                                          {oneKycForParticular?.backReceiptPhoto? 
+                                              <img src={oneKycForParticular?.backReceiptPhoto} className="" width={'400'} height={'400'} alt="Verso"/> : 
+                                              oneKycForParticular?.backReceipt? 
+                                              (
+                                                  <>
+                                                  {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
+                                                  {isPdfLink(`${API_URL}/${oneKycForParticular?.frontReceipt}`) ? (
+                                                      <>
+                                                          <div className="hero-btn  text-center ">
+                                                              <a
+                                                                  className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                  role="button"
+                                                                  data-toggle="dropdown"
+                                                                  aria-haspopup="true"
+                                                                  aria-expanded="false"
+                                                                  href={`${API_URL}/${oneKycForParticular?.backReceipt}`} 
+                                                                  target="_blank"
+                                                              >
+                                                              <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                  <Icon icon="bx:show-alt" width="50" />
+                                                                  Veuillez cliquer ici pour voir le fichier
+                                                              </p>
+                                                              </a>
+                                                          </div>
+                                                      </>
+                                                  ) : (
+                                                      <>
+                                                          <img src={`${API_URL}/${oneKycForParticular?.backReceipt}`} className="" width={'400'} height={'400'} alt="Verso"/> 
+                                                      </>
+                                                  )}
+                                              </>
+                                              ):"Pas de recto justificatif"
+                                          }
+                                      </div>
+
+                                      <div className='col-lg-6 col-md-6 text-center my-5'>
+                                        <b className='text-center'>Photo</b><br/>
+                                        {oneKycForParticular?.userPicture? <img src={oneKycForParticular?.userPicture} alt="Selfie" /> : "Aucune photo"}
+                                      </div>
+
+                                      <div className='col-lg-6 col-md-6 text-center my-5'>
+                                        <b className='text-center'>Photo avec document d'identité</b><br/>
+                                        {oneKycForParticular?.selfieWithDocument? <img src={oneKycForParticular?.selfieWithDocument} alt="Selfie" /> : "Aucune photo avec document"}
+                                      </div>
+
+                                      <div className='col-lg-6 col-md-6 text-center my-5'>
+                                        <b className='text-center'>Signature</b><br/>
+                                        {oneKycForParticular?.userSignature? <img src={oneKycForParticular?.userSignature} alt="Selfie" /> : "Aucune signature"}
+                                      </div>
+
+                                      <div className='col-lg-6 col-md-6 text-center my-5'>
+                                        
+                                        <b className='text-center'>Carte de l'emplacement</b><br/>
+                                        {oneKycForParticular?.userSignature?(
+                                          <MapComponent className="mb-5" latitude={parseFloat(oneKycForParticular?.latitude)} longitude={parseFloat(oneKycForParticular?.longitude)} />
+                                        )
+                                        : "Aucune Carte de l'emplacemen"}
+                                      </div>
+                                    </div><br/>
+                                
+                                    {/* FIN */}
+                                    <Row className="mb-5 mt-5 justify-content-center align-items-center ">
+                                      <Col
+                                          xs="6"
+                                          md="6"
+                                          lg="6"
+                                          xl="6"
+                                        className="order-lg-1 text-center"
+                                      >
+                                        <a href='/profil/institution/depot-cash/'>
+                                          <Button  className="text-white" >
+                                            Continuer vers le dépôt
+                                          </Button>
+                                        </a>
+                                      </Col>
+                                    </Row>
+                                  </>
+                                ):(<p className="gr-text-8 colorRed text-center">Le Kyc de cet utilisateur n'a pas encore été validé</p>)}
+                              </>
+                            ):(<p className="gr-text-8 colorRed text-center" id="addon-wrapping">Cet utilisateur n'a pas rempli le Kyc</p>)}
+                          </>
+                        ) : <p className="gr-text-8 colorRed text-center" id="addon-wrapping">{infosOtherUser?.message}</p>)}
                     </div>
                   </div>
-
-                  {/* AFFICHAGE DES FICHIERS */}
-                  <div className='row justify-content-center mt-5'>
-                    <div className='col-lg-4 col-md-4 mb-3'>
-                      <h5>Photo </h5>
-                      <div className='buy-sell-cryptocurrency-image'>
-                        <img src='/images/ecfa/ecosysteme/investissements/invest17.jpg' className="" width={'700'} height={'700'} alt='logo' />
-                      </div>
-                    </div>
-
-                    <div className='col-lg-4 col-md-4 mb-3'>
-                      <h5>Recto de justificatif d'identité </h5>
-                      <div className='buy-sell-cryptocurrency-image'>
-                        <img src='/images/ecfa/ecosysteme/investissements/invest17.jpg' className="" width={'700'} height={'700'} alt='logo' />
-                      </div>
-                    </div>
-
-                    <div className='col-lg-4 col-md-4 mb-3'>
-                      <h5>Verso de justificatif d'identité </h5>
-                      <div className='buy-sell-cryptocurrency-image'>
-                        <img src='/images/ecfa/ecosysteme/investissements/invest17.jpg' className="" width={'700'} height={'700'} alt='logo' />
-                      </div>
-                    </div>
-                    
-                  </div>
-                  {/* FIN */}
-                  <Row className="my-3 justify-content-center align-items-center ">
-                    <Col
-                        xs="6"
-                        md="6"
-                        lg="6"
-                        xl="6"
-                      className="order-lg-1 text-center"
-                    >
-                      <a href='/profil/institution/depot-cash/'>
-                        <Button  className="text-white" >
-                          Continuer vers le dépôt
-                        </Button>
-                      </a>
-                    </Col>
-                  </Row>
                 </div>
               </div>
-            </div>
+            ) : ("")}
             {/* FIN */}
           </div>
     </>
