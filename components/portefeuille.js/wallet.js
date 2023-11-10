@@ -135,6 +135,7 @@ const [codeOtherUser, setCodeOtherUser] = useState();
               // *************************************************************************
 
               const contractStablecoin = new ethers.Contract(ADDRESS_CONTRAT_EWARI,ABI_TOKEN_EWARI.abi,signer);
+              console.log("contractStablecoin111=>",contractStablecoin)
               setContractStablecoin(contractStablecoin);
                   
               //   recuperation des infos de stablecoin
@@ -758,62 +759,7 @@ const [permitV, setPermitV] = useState()
 const [permitR, setPermitR] = useState()
 const [permitS, setPermitS] = useState()
 
-const permitAtoB = async () => {
-  const signer = provider.getSigner();
-  const owner = await signer.getAddress();
 
-  const spenderB = "0x2eb9B095202f515388973c78d8308C478f8AA6C2";
-  const tosting = String("100")
-  const value = ethers.utils.parseUnits(tosting, decimalStablecoin);
-  const nonce = await contractStablecoin.nonces(owner);
-  const deadline = Math.floor(new Date().getTime() / 1000) + 3600; // +1 heure
-
-  const domain = {
-      name: "E-WARI TestB",
-      version: "1",
-      chainId: 1287, 
-      verifyingContract: ADDRESS_CONTRAT_EWARI
-  };
-  console.log("domain=>",domain)
-
-  const types = {
-      Permit: [
-          { name: "owner", type: "address" },
-          { name: "spender", type: "address" },
-          { name: "value", type: "uint256" },
-          { name: "nonce", type: "uint256" },
-          { name: "deadline", type: "uint256" }
-      ]
-  };
-  console.log("types=>",types)
-
-
-  const valueObj = {
-      owner,
-      spenderB,
-      value: value.toString(),
-      nonce,
-      deadline
-  };
-
-  const signature = await signer._signTypedData(domain, types, valueObj);
-
-  // Récupération de v, r, s à partir de la signature
-  const { v, r, s } = ethers.utils.splitSignature(signature);
-  console.log("signature V=> 5",v)
-  console.log("signature R=> 6",r)
-  console.log("signature S=> 7",s)
-  console.log("deadline => 8",deadline)
-  console.log("nonce => 8",nonce)
-  
-  // Appel de la fonction permit avec les valeurs correctes
-  // const tx = await contractStablecoin.permit(owner, spenderB, value, deadline, v, r, s);
-  console.log('Signature:', { v, r, s });
-  return { v, r, s };  // Retourner les valeurs pour les utiliser plus tard
-  
-
-  // console.log("Transaction hash:", tx);
-};
 
 // ****************************************************************
 // permitAtoB
@@ -825,7 +771,6 @@ const permitAtoBNo = async () => {
   // Signature du message pour permit
   const signature = await signer._signTypedData(domain, types, valueObj);
   const { v, r, s } = ethers.utils.splitSignature(signature);
-
   // Envoyer v, r, s à l'utilisateur B par un moyen sûr
 };
 // ***********FIN**************************************************
@@ -895,9 +840,329 @@ const transferFromAtoCNo = async () => {
 };
 // **********FIN***********************************************************
 
+// ***********************************************************************
+const permitAtoB = async () => {
+  const signer = provider.getSigner();
+  const owner = await signer.getAddress();
+console.log('signer=>',signer)
+  const spenderB = "0x2eb9B095202f515388973c78d8308C478f8AA6C2";
+  const tosting = String("100")
+  const value = ethers.utils.parseUnits(tosting, decimalStablecoin);
+  const nonce = await contractStablecoin.nonces(owner);
+  const deadline = Math.floor(new Date().getTime() / 1000) + 3600; // +1 heure
+
+  const domain = {
+      name: "E-WARI TestD",
+      version: "1",
+      chainId: 1287, 
+      verifyingContract: ADDRESS_CONTRAT_EWARI
+  };
+  console.log("domain=>",domain)
+
+  const types = {
+      Permit: [
+          { name: "owner", type: "address" },
+          { name: "spender", type: "address" },
+          { name: "value", type: "uint256" },
+          { name: "nonce", type: "uint256" },
+          { name: "deadline", type: "uint256" }
+      ]
+  };
+  console.log("types=>",types)
+
+
+  const valueObj = {
+      owner,
+      spenderB,
+      value: value.toString(),
+      nonce,
+      deadline
+  };
+  console.log("valueObj=>",valueObj)
+
+  const signature = await signer._signTypedData(domain, types, valueObj);
+
+  // Récupération de v, r, s à partir de la signature
+  const { v, r, s } = ethers.utils.splitSignature(signature);
+  console.log("signature V=> 5",v)
+  console.log("signature R=> 6",r)
+  console.log("signature S=> 7",s)
+  console.log("deadline => 8",deadline)
+  
+  // Appel de la fonction permit avec les valeurs correctes
+  // const tx = await contractStablecoin.permit(owner, spenderB, value, deadline, v, r, s);
+  console.log('Signature:', { v, r, s });
+
+  transferFromAtoCInOneTx(v,r,s,deadline)
+
+  return { v, r, s };  // Retourner les valeurs pour les utiliser plus tard
+  
+
+  // console.log("Transaction hash:", tx);
+};
+
+// *************************************************************************
+const transferFromAtoCInOneTx = async (v, r, s,deadline) => {
+  const signer = provider.getSigner();
+  // const spenderB = await signer.getAddress();
+  const spenderB ="0x2eb9B095202f515388973c78d8308C478f8AA6C2"
+  const value = ethers.utils.parseUnits("10", decimalStablecoin);
+  // const deadline = Math.floor(new Date().getTime() / 1000) + 3600; // +1 heure
+  
+  const ownerA = "0x496Dd9744c3a1B0Ec4C2998656BEA67DbCec888B";
+  const recipientC = "0x09439864ddaA177C80396353Cd98e6EaDa996a39";
+  
+  const tx = await contractStablecoin.permitAndTransferFrom(
+    ownerA,
+    spenderB,
+    value,
+    deadline,
+    v,
+    r,
+    s,
+    recipientC
+  );
+  
+  console.log("Transaction hash:", tx.hash);
+};
 
 
 
+// *************RALAYER******************************************
+async function sendTransaction() {
+  const web3 = new Web3(window.ethereum);
+  const from = YourUserAddress;
+  const to = RecipientAddress;
+  const value = 10;
+
+  const response = await fetch('/api/metaTransaction', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from, to, value })
+  });
+
+  if (response.ok) {
+      console.log('Meta-transaction sent successfully');
+  }
+}
+
+
+
+async function sendMetaTransactionNo() {
+  const from ="0x09439864ddaA177C80396353Cd98e6EaDa996a39"
+  const to = "0x496Dd9744c3a1B0Ec4C2998656BEA67DbCec888B";
+  const recipientC = "0x2eb9B095202f515388973c78d8308C478f8AA6C2 ";
+  const value = ethers.utils.parseUnits("10", decimalStablecoin);
+  
+
+  const txData = contractStablecoin.methods.metaTransfer(from, to, value).encodeABI();
+  const tx = {
+      to: ADDRESS_CONTRAT_EWARI,
+      data: txData,
+      gas: 2000000
+  };
+  const signedTx = await web3.eth.accounts.signTransaction(tx, RelayerPrivateKey);
+  console.log("signedTx=>",signedTx)
+  return web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+}
+
+
+
+async function sendMetaTransactionNON() {
+  const signer = provider.getSigner();
+
+  const from ="0x09439864ddaA177C80396353Cd98e6EaDa996a39"
+  const to = "0x496Dd9744c3a1B0Ec4C2998656BEA67DbCec888B";
+  const recipientC = "0x2eb9B095202f515388973c78d8308C478f8AA6C2 ";
+  const value = ethers.utils.parseUnits("10", decimalStablecoin);
+// Construire les données de la transaction
+const txData = contractStablecoin.interface.encodeFunctionData("metaTransfer", [from, to, value]);
+
+// Créer l'objet de transaction
+const tx = {
+  to: ADDRESS_CONTRAT_EWARI,
+  data: txData,
+  gasLimit: ethers.utils.hexlify(2000000), // Limite de gaz sous forme hexadécimale
+};
+
+// Signer la transaction
+const signedTx = await signer.signTransaction(tx);
+console.log("signedTx=>",signedTx)
+// Envoyer la transaction signée
+const txResponse = await provider.sendTransaction(signedTx);
+
+return txResponse;
+}
+
+
+// AUTRES
+const sendMetaTransactionA = async () => {
+const RelayerPrivateKeyNO = "2QyWScCUTGLW6peR4cHnjkx7p5ZJ6YPxi28zog3uSyoCs8jPpwMEfLuLJPQcY78v"
+const RelayerPrivateKey ="36ba8d431646b33e370eac06979af488bdddb6341bd067a676e5d33a8d72a1e1"
+
+const from ="0x09439864ddaA177C80396353Cd98e6EaDa996a39"
+const to = "0x496Dd9744c3a1B0Ec4C2998656BEA67DbCec888B";
+const recipientC = "0x2eb9B095202f515388973c78d8308C478f8AA6C2 ";
+const value = ethers.utils.parseUnits("10", decimalStablecoin);
+
+console.log("OK=>1")
+  // Créer un objet Wallet à partir de la clé privée
+  const wallet = new ethers.Wallet(RelayerPrivateKey, provider);
+
+  // Connecter le portefeuille au fournisseur
+  const connectedWallet = wallet.connect(provider);
+
+  // Créer l'objet Contract pour le contrat stablecoin
+  const contractStablecoin = new ethers.Contract(ADDRESS_CONTRAT_EWARI, ABI_TOKEN_EWARI.abi, connectedWallet);
+
+  // Construire les données de la transaction
+  const txData = contractStablecoin.interface.encodeFunctionData("metaTransfer", [from, to, value]);
+  console.log("OK=>2",txData)
+
+  // Créer l'objet de transaction
+  const tx = {
+    to: ADDRESS_CONTRAT_EWARI,
+    data: txData,
+    gasLimit: ethers.utils.hexlify(2000000), // Limite de gaz sous forme hexadécimale
+  };
+
+  // Envoyer la transaction
+  const txResponse = await connectedWallet.sendTransaction(tx);
+console.log("txResponse=>",txResponse)
+  return txResponse;
+}
+
+
+
+// ********AUTRE FONCTION***********************
+
+const sendMetaTransactionB = async () => {
+  // Créer un objet Provider Ethereum
+  const YOUR_RPC_URL ="https://rpc.testnet.moonbeam.network";
+  const provider = new ethers.providers.JsonRpcProvider(YOUR_RPC_URL); // Remplacez YOUR_RPC_URL par l'URL du nœud Ethereum que vous utilisez
+  
+  const from ="0x09439864ddaA177C80396353Cd98e6EaDa996a39"
+  const to = "0x496Dd9744c3a1B0Ec4C2998656BEA67DbCec888B";
+  const recipientC = "0x2eb9B095202f515388973c78d8308C478f8AA6C2 ";
+  const value = ethers.utils.parseUnits("10", decimalStablecoin);
+  const apiKey = "CAxagsqh1odZPHAogaH5QfXb9JdnpMQj"
+  const secretKey = ""
+  const privateKeyBase58 = "";
+  const privateKeyHex = ethers.utils.hexlify(ethers.utils.base58.decode(privateKeyBase58));
+
+// const wallet = new ethers.Wallet(privateKeyHex);
+  // Créer un objet Wallet à partir de la clé privée (Secret Key)
+  const wallet = new ethers.Wallet(secretKey, provider);
+  
+  console.log("pPOOOOOOO=>",)
+
+  // Récupérer l'adresse du propriétaire
+  const owner = await wallet.getAddress();
+
+  
+
+  // Créer l'objet Contract pour le contrat stablecoin
+  const contractStablecoin = new ethers.Contract(ADDRESS_CONTRAT_EWARI, ABI_TOKEN_EWARI.abi, wallet); // Remplacez ABI_DU_CONTRAT par l'ABI de votre contrat stablecoin
+
+  // Construire les données de la transaction
+  const txData = contractStablecoin.interface.encodeFunctionData("metaTransfer", [from, to, value]);
+
+  // Créer l'objet de transaction
+  const tx = {
+    to: ADDRESS_CONTRAT_EWARI,
+    data: txData,
+    gasLimit: ethers.utils.hexlify(2000000), // Limite de gaz sous forme hexadécimale
+  };
+
+  // Signer la transaction avec le Relayer
+  const signedTx = await wallet.signTransaction(tx);
+
+  // Créer l'objet Payload pour le Relayer
+  const payload = {
+    transaction: signedTx,
+    apiKey: apiKey,
+  };
+  console.log("payload=>",payload)
+
+  // Envoyer la transaction via le Relayer Defender
+  const response = await fetch("https://defender.openzeppelin.com/relay", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const result = await response.json();
+console.log("result=>",result)
+  return result;
+};
+
+
+
+
+
+// ************AUTRE ****************
+const sendMetaTransactionC = async () => {
+  const from ="0x09439864ddaA177C80396353Cd98e6EaDa996a39"
+  const to = "0x496Dd9744c3a1B0Ec4C2998656BEA67DbCec888B";
+  const recipientC = "0x2eb9B095202f515388973c78d8308C478f8AA6C2 ";
+  const value = ethers.utils.parseUnits("10", decimalStablecoin);
+
+  try {
+    
+
+    const formData = {
+      from: from,
+      to: to,
+      value: 10,
+    }
+    console.log("response=>",formData)
+
+    const result = await fetch(`/api/metaTransfer`, {
+      method:"POST",
+      body: JSON.stringify(formData),
+      headers: {
+          'Content-Type': 'application/json',
+      }
+    })
+      const data = await result.json();
+    console.log("response=>",data)
+    if (!data.ok) {
+      throw new Error(`HTTP error! status: ${data.status}`);
+    }
+
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// µ**************************AUTRE Le bon relayer*******************
+const sendMetaTransaction = async () => {
+const from ="0x09439864ddaA177C80396353Cd98e6EaDa996a39"
+const to = "0x496Dd9744c3a1B0Ec4C2998656BEA67DbCec888B";
+const recipientC = "0x2eb9B095202f515388973c78d8308C478f8AA6C2 ";
+const value = ethers.utils.parseUnits("10", decimalStablecoin);
+
+  const privateKey = "";
+  const privateKeyPS = ""
+  const wallet = new ethers.Wallet(privateKey, provider);
+
+  const contractAddress = "0x124f9343ABf61158946C7122e5B59Eb0E49084A9";
+
+  const contract = new ethers.Contract(contractAddress, ABI_TOKEN_EWARI.abi, wallet);
+    console.log("contract111=>",contract)
+  try {
+    const tx = await contract.metaTransfer(from, to, value);
+    const receipt = await tx.wait();
+    console.log("receipt=>",receipt)
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
+// ******************FIN RELAYER********************************
 
 
 
@@ -921,7 +1186,8 @@ const transferFromAtoCNo = async () => {
                             <div className="form-title text-center">
                                 <h2 className="title gr-text-7 mb-9 heading-color">Mon portefeuille numérique </h2>
                                 {/* <button onClick={permitAtoB } >permitAtoB </button><br/><br/><br/>
-                                <button onClick={transferFromAtoC} >transferFromAtoC</button> */}
+                                <button onClick={sendMetaTransaction } >Realyer </button><br/><br/><br/> */}
+                                {/* <button onClick={transferFromAtoC} >transferFromAtoC</button> */}
                                 
                             </div>
                             <Row className="justify-content-between">

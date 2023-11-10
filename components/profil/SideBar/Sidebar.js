@@ -124,74 +124,74 @@ const [kycBusinessTransactionAnnual, setKycBusinessTransactionAnnual] = useState
 
     const [timeoutId, setTimeoutId] = useState(null);
     // Fonction pour gérer l'inactivité
-    const resetInactivityTimeout = () => {
-      clearTimeout(timeoutId);
-      setTimeout(() => {
-        setTimeoutId(prevTimeoutId => {
-          handleInactive(); 
-          return prevTimeoutId;
-        });
-      }, 172800000);
-    };
+    // const resetInactivityTimeout = () => {
+    //   clearTimeout(timeoutId);
+    //   setTimeout(() => {
+    //     setTimeoutId(prevTimeoutId => {
+    //       handleInactive(); 
+    //       return prevTimeoutId;
+    //     });
+    //   }, 172800000);
+    // };
   
     
   
-    const handleInactive = () => {
-      Swal.fire({
-        title: 'Déconnexion automatique',
-        html: 'Vous serez déconnecté dans <b></b> secondes.<br><button id="stayConnected">Rester connecté</button>',
-        timer: 172800000, // 120000 = 2 minutes en millisecondes
-        timerProgressBar: true,
-        didOpen: () => {
-          Swal.showLoading();
-          const b = Swal.getHtmlContainer().querySelector('b');
-          const stayConnectedButton = document.getElementById('stayConnected');
+    // const handleInactive = () => {
+    //   Swal.fire({
+    //     title: 'Déconnexion automatique',
+    //     html: 'Vous serez déconnecté dans <b></b> secondes.<br><button id="stayConnected">Rester connecté</button>',
+    //     timer: 172800000, // 120000 = 2 minutes en millisecondes
+    //     timerProgressBar: true,
+    //     didOpen: () => {
+    //       Swal.showLoading();
+    //       const b = Swal.getHtmlContainer().querySelector('b');
+    //       const stayConnectedButton = document.getElementById('stayConnected');
   
-          stayConnectedButton.addEventListener('click', () => {
-            clearTimeout(timeoutId); // Correction ici
-            Swal.close();
-            resetInactivityTimeout(); // Réinitialiser le délai après avoir choisi de rester connecté
-          });
+    //       stayConnectedButton.addEventListener('click', () => {
+    //         clearTimeout(timeoutId); // Correction ici
+    //         Swal.close();
+    //         resetInactivityTimeout(); // Réinitialiser le délai après avoir choisi de rester connecté
+    //       });
   
-          const timerInterval = setInterval(() => {
-            const timeLeft = Swal.getTimerLeft();
-            if (timeLeft > 0) {
-              b.textContent = (timeLeft / 1000).toFixed(0);
-            } else {
-              clearInterval(timerInterval);
-              logout();
-            }
-          }, 100);
-        },
-        willClose: () => {
-          clearTimeout(timeoutId); // Correction ici
-        }
-      });
-    };
+    //       const timerInterval = setInterval(() => {
+    //         const timeLeft = Swal.getTimerLeft();
+    //         if (timeLeft > 0) {
+    //           b.textContent = (timeLeft / 1000).toFixed(0);
+    //         } else {
+    //           clearInterval(timerInterval);
+    //           logout();
+    //         }
+    //       }, 100);
+    //     },
+    //     willClose: () => {
+    //       clearTimeout(timeoutId); // Correction ici
+    //     }
+    //   });
+    // };
   
   
-    useEffect(() => {
-      const startInactivityTimeout = () => {
-        const newTimeoutId = setTimeout(() => {
-          setTimeoutId(prevTimeoutId => {
-            handleInactive();
-            return prevTimeoutId;
-          });
-        }, 172800000);
-        setTimeoutId(newTimeoutId);
-      };
+    // useEffect(() => {
+    //   const startInactivityTimeout = () => {
+    //     const newTimeoutId = setTimeout(() => {
+    //       setTimeoutId(prevTimeoutId => {
+    //         handleInactive();
+    //         return prevTimeoutId;
+    //       });
+    //     }, 172800000);
+    //     setTimeoutId(newTimeoutId);
+    //   };
   
-      document.addEventListener('mousemove', resetInactivityTimeout);
-      document.addEventListener('keydown', resetInactivityTimeout);
+    //   document.addEventListener('mousemove', resetInactivityTimeout);
+    //   document.addEventListener('keydown', resetInactivityTimeout);
   
-      startInactivityTimeout(); // Démarrer le délai initial lors du rendu initial
+    //   startInactivityTimeout(); // Démarrer le délai initial lors du rendu initial
   
-      return () => {
-        document.removeEventListener('mousemove', resetInactivityTimeout);
-        document.removeEventListener('keydown', resetInactivityTimeout);
-        clearTimeout(timeoutId);
-      };
-    }, [resetInactivityTimeout, timeoutId]);
+    //   return () => {
+    //     document.removeEventListener('mousemove', resetInactivityTimeout);
+    //     document.removeEventListener('keydown', resetInactivityTimeout);
+    //     clearTimeout(timeoutId);
+    //   };
+    // }, [resetInactivityTimeout, timeoutId]);
     
 
 // FIN

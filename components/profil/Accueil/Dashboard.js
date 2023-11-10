@@ -1746,13 +1746,15 @@ const [montantAchat, setMontantAchat] = useState(0)
                                     </div>
                                     </div>
                                     <div className='btn-box'>
-                                    <Button
-                                        block
-                                        color="success"
-                                        type="button"
-                                    >
-                                        Voir plus
-                                    </Button>
+                                    <a className='nav-link' href='/profil/abonnement'>
+                                        <Button
+                                            block
+                                            color="success"
+                                            type="button"
+                                        >
+                                            Voir plus
+                                        </Button>
+                                    </a>
                                     {/* Fin */}
                                     </div>
                                 </div>

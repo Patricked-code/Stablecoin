@@ -105,6 +105,9 @@ const Layout = ({ children }) => {
       pathname === "/profil/historique/investissement/opcvm"||
       pathname === "/profil/historique/bancaire"||
 
+      // ABONNEMENTS
+      pathname === "/profil/abonnement"||
+
 
       // KYC OPCVM
       pathname === "/profil/kyc/opcvm/questionnaire-one"||
@@ -239,6 +242,9 @@ const Layout = ({ children }) => {
       pathname === "/profil/historique/mobile-money"||
       pathname === "/profil/historique/investissement/opcvm"||
       pathname === "/profil/historique/bancaire"||
+
+      // ABONNEMENTS
+      pathname === "/profil/abonnement"||
 
       // KYC OPCVM
       pathname === "/profil/kyc/opcvm/questionnaire-one"||
