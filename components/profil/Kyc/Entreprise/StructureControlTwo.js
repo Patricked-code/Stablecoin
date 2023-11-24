@@ -597,7 +597,7 @@ const CStructureControlTwo = () => {
                                         <>
                                             <div className="form-group mb-6 mt-3">
                                                 <label
-                                                    htmlFor="firstName"
+                                                    htmlFor="lastName"
                                                     className="text-blackish-blue mb-2"
                                                 >
                                                     Nom de l'associé
@@ -605,17 +605,17 @@ const CStructureControlTwo = () => {
                                                 <div className='form-group'>
                                                     <input
                                                         type='text'
-                                                        id='firstName'
+                                                        id='lastName'
                                                         className='form-control'
                                                         placeholder="Nom de l'associé"
-                                                        defaultValue={firstName} 
-                                                        onChange={(event)=>setFirstName(event.target.value)}
+                                                        defaultValue={lastName} 
+                                                        onChange={(event)=>setLastName(event.target.value)}
                                                     />
                                                 </div>
                                             </div >
                                             <div className="form-group mb-6 mt-3">
                                                 <label
-                                                    htmlFor="lastName"
+                                                    htmlFor="firsName"
                                                     className="text-blackish-blue mb-2"
                                                 >
                                                     Prénoms de l'associé
@@ -623,11 +623,12 @@ const CStructureControlTwo = () => {
                                                 <div className='form-group'>
                                                     <input
                                                         type='text'
-                                                        id='lastName'
+                                                        id='firstName'
                                                         className='form-control'
                                                         placeholder="Prénoms de l'associé"
-                                                        defaultValue={lastName} 
-                                                        onChange={(event)=>setLastName(event.target.value)}
+                                                        defaultValue={firstName} 
+                                                        onChange={(event)=>setFirstName(event.target.value)}
+                                                        
                                                     />
                                                 </div>
                                             </div >

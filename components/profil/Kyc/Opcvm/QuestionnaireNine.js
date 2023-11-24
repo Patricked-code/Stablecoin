@@ -101,7 +101,7 @@ const CQuestionnaireNine = () => {
                   timer: 5000
                 }),
                 setTimeout(() => {
-                  Router.push("/opcvm/type-profil"); 
+                  Router.push("/profil/opcvm/type-profil"); 
                 }, 5000)
               }
               // Fin condition 

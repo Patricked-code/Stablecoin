@@ -331,7 +331,7 @@ const CJustificatifIdentiteOne = () => {
                             
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="firstName"
+                                    htmlFor="lastName"
                                     className="text-blackish-blue mb-2"
                                 >
                                     Votre nom
@@ -339,17 +339,17 @@ const CJustificatifIdentiteOne = () => {
                                 <div className='form-group'>
                                     <input
                                         type='text'
-                                        id='firstName'
+                                        id='lastName'
                                         className='form-control'
                                         placeholder='Votre nom'
-                                        defaultValue={currentUser?.firstName} 
-                                        onChange={(event)=>setFirstName(event.target.value)}
+                                        defaultValue={currentUser?.lastName} 
+                                        onChange={(event)=>setLastName(event.target.value)}
                                     />
                                 </div>
                             </div >
                             <div className="form-group mb-6 mt-3">
                                 <label
-                                    htmlFor="lastName"
+                                    htmlFor="firstName"
                                     className="text-blackish-blue mb-2"
                                 >
                                     Vos prénoms
@@ -357,11 +357,12 @@ const CJustificatifIdentiteOne = () => {
                                 <div className='form-group'>
                                     <input
                                         type='text'
-                                        id='lastName'
+                                        id='firstName'
                                         className='form-control'
                                         placeholder='Vos prénoms'
-                                        defaultValue={currentUser?.lastName} 
-                                        onChange={(event)=>setLastName(event.target.value)}
+                                        defaultValue={currentUser?.firstName} 
+                                        onChange={(event)=>setFirstName(event.target.value)}
+                                        
                                     />
                                 </div>
                             </div >

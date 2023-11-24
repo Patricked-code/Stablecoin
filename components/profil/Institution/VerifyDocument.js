@@ -50,7 +50,7 @@ const VerifyDocuments = () => {
     const [montantEnvoyer, setMontantEnvoyer] = useState(0);
     const [addressTo, setAddressTo] = useState();
     const [montantRecu, setMontantRecu] = useState(0);
-    const [percent, setPercent] = useState(1);
+    const [percent, setPercent] = useState(10);
 
 
 
@@ -206,16 +206,6 @@ const VerifyDocuments = () => {
 // FIN
 
 
-
-
-
-
-
-
-
-
-
-
 // FONCTION POUR VIDER DES CHAMPS QUAND ON CLIQUE SUR LE BOUTON EMAIL, ADRESSE BLOCKCHAIN ET IDENTIFAINT
 const dumpVariables = () =>{
   setInfosOtherUser("")
@@ -226,6 +216,16 @@ const dumpVariables = () =>{
   setFundsOrigin("")
 }
 
+
+// **************************************************************
+  // PARTIE DEPOT CASH
+// ****************************************************************
+// Modal Transfert
+const [showTransfert, setShowTransfert] = useState(false);
+const handleTransfertClose = () => setShowTransfert(false);
+const handleTransfertShow = () => setShowTransfert(true);
+
+// *************FIN*************************************************
 
 // PARTIE POUR AGRANDIR LES IMAGES
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -708,12 +708,14 @@ const formatDate = (_updatedAt) =>{
                                     <div className='row'>
                                       <div className='col-lg-6 col-md-6'>
                                           <b> Nom :</b><br/>
-                                          {infosOtherUser?.firstName? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{infosOtherUser.firstName }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                          {infosOtherUser?.lastName? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{infosOtherUser.lastName }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+
                                       </div>
                                                           
                                       <div className='col-lg-6 col-md-6'>
                                           <b> Prénoms :</b><br/>
-                                          {infosOtherUser?.lastName? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{infosOtherUser.lastName }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                          {infosOtherUser?.firstName? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{infosOtherUser.firstName }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+
                                       </div>
                                       <div className='col-lg-6 col-md-6 '>
                                           <b> Type de justificatif d'identité :</b><br/>
@@ -844,11 +846,11 @@ const formatDate = (_updatedAt) =>{
                                           xl="6"
                                         className="order-lg-1 text-center"
                                       >
-                                        <a href='/profil/institution/depot-cash/'>
-                                          <Button  className="text-white" >
+                                        {/* <a href='/profil/institution/depot-cash/'> */}
+                                          <Button  className="text-white" onClick={handleTransfertShow} >
                                             Continuer vers le dépôt
                                           </Button>
-                                        </a>
+                                        {/* </a> */}
                                       </Col>
                                     </Row>
                                   </>
@@ -864,6 +866,120 @@ const formatDate = (_updatedAt) =>{
             ) : ("")}
             {/* FIN */}
         </div>
+
+
+            {/* ********************************************************************************** */}
+              {/* MODAL DE TRANSFERT DE JETON VERS AUTRE COMPTE*/}
+            {/* ********************************************************************************** */}
+            <Modal show={showTransfert} className="mt-15" onHide={handleTransfertClose} style={{maxWidth: '1800px', width: '100%'}}>
+                <Modal.Header closeButton id="bgcolor">
+                <Modal.Title className="" >Dépôt cash </Modal.Title>
+                </Modal.Header>
+                {/* <form > */}
+                <Modal.Body>
+                    
+                    {/* Formulaire de la partie avec adresse blockchain  */}
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group my-6 ">
+                          <label
+                            htmlFor="montant"
+                            className="gr-text-8 fw-bold text-blackish-blue"
+                          >
+                            Adresse bockchain du bénéficiaire <sup className="text-red">*</sup>
+
+                          </label>
+                          <input
+                              className="form-control gr-text-11 border mt-3 bg-white"
+                              type="text"
+                              id="addressTo"
+                              placeholder="Adresse blockchain du bénéficiaire"
+                              required
+                              disabled
+                              value={infosOtherUser?.address}
+                              // defaultValue={infosOtherUser?.address} 
+                              // onChange={(event)=>setAddressTo(event.target.value)}
+                              
+                          />
+                        </div>
+
+                          <div className="form-group my-6 ">
+                            <label
+                              htmlFor="montant"
+                              className="gr-text-8 fw-bold text-blackish-blue"
+                            >
+                              Montant à envoyer <sup className="text-red">*</sup>
+                            </label>
+                            <div className="input-group flex-nowrap">
+                            <input
+                              className="form-control gr-text-11 border mt-3 bg-white"
+                              type="number"
+                              id="montant"
+                              placeholder="Montant envoyé"
+                              required
+                              defaultValue={montantEnvoyer} 
+                              onChange={(event)=>setMontantEnvoyer(event.target.value)}
+                            />
+                            <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">EWRITB</span>
+
+                            </div>
+                          </div>
+
+                          <div className="form-group my-6 ">
+                            <label
+                              htmlFor="montant"
+                              className="gr-text-8 fw-bold text-blackish-blue"
+                            >
+                              Montant à recevoir avec les frais <sup className="text-red">*</sup>
+                            </label>
+                            <div className="input-group flex-nowrap">
+                            <input
+                              className="form-control gr-text-11 border mt-3 bg-white"
+                              type="number"
+                              id="montant"
+                              placeholder="Montant reçu"
+                              required
+                              disabled={true}
+                              value={montantRecevoir} 
+                              // defaultValue={montantRecu} 
+                              // onChange={(event)=>setMontantRecu(event.target.value)}
+                            />
+                            <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">EWRITB</span>
+
+                            </div>
+                          </div>
+                          <Row className="my-3 justify-content-between align-items-center">
+                            <Col
+                                xs="6"
+                                md="6"
+                                lg="6"
+                                xl="6"
+                              className="order-lg-1 text-center"
+                            >
+                              <Button className="text-white " variant="danger" onClick={handleTransfertClose} >
+                                Fermer
+                              </Button>
+                            </Col>
+
+                            <Col
+                                xs="6"
+                                md="6"
+                                lg="6"
+                                xl="6"
+                              className="order-lg-1 text-center"
+                              
+                            >
+                              <Button variant="success"  disabled={isLoggingIn} className="text-white" >
+                                Envoyer
+                              </Button>
+                            </Col>
+                          </Row> 
+                       
+                    </form>
+                </Modal.Body>
+                
+            </Modal>
+            {/* *****************************************FIN****************************************** */}
+
     </>
   );
 };

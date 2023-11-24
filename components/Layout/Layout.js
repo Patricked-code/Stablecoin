@@ -122,7 +122,19 @@ const Layout = ({ children }) => {
 
       pathname === "/profil/opcvm/type-profil"||
       pathname === "/profil/opcvm/conditions-profil"||
-      
+
+      // QUIZ MIFID
+      pathname === "/profil/kyc/opcvm/mifid/partie-one"||
+      pathname === "/profil/kyc/opcvm/mifid/partie-two"||
+      pathname === "/profil/kyc/opcvm/mifid/partie-three"||
+      pathname === "/profil/kyc/opcvm/mifid/partie-four"||
+      pathname === "/profil/kyc/opcvm/mifid/partie-five"||
+      pathname === "/profil/kyc/opcvm/mifid/partie-six"||
+      pathname === "/profil/kyc/opcvm/mifid/partie-seven"||
+      pathname === "/profil/kyc/opcvm/mifid/partie-height"||
+
+      pathname === "/profil/opcvm/mifid/dashboard"||
+
 
 
       // LES ROUTES DE LA PARTIE DU PROFIL INSTITUTION
@@ -132,7 +144,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/institution/autre-verification-documents"||
       pathname === "/profil/institution/verifier-documents-retrait"||
       pathname === "/profil/institution/mintBurn"||
-      pathname === "/profil/institution/demande-kyc"||
+      pathname === "/profil/institution/kyc-digital/demande-kyc"||
       pathname === "/profil/institution/kyc-digital"||
       pathname === "/profil/institution/gestion-stablecoin"||
 
@@ -143,6 +155,10 @@ const Layout = ({ children }) => {
 
       // LES ROUTES DE LA PARTIE DU PROFIL ENTREPRISE / COMMERCANT
       pathname === "/profil/entreprise/actions/demande-paiement"||
+      pathname === "/profil/entreprise/actions/boutique"||
+      pathname === "/profil/entreprise/actions/boutique/ouverture-boutique"||
+
+
 
       // FIN
 
@@ -260,6 +276,19 @@ const Layout = ({ children }) => {
       pathname === "/profil/opcvm/type-profil"||
       pathname === "/profil/opcvm/conditions-profil"||
 
+      // QUIZ MIFID
+      pathname === "/profil/kyc/opcvm/mifid/partie-one"||
+      pathname === "/profil/kyc/opcvm/mifid/partie-two"||
+      pathname === "/profil/kyc/opcvm/mifid/partie-three"||
+      pathname === "/profil/kyc/opcvm/mifid/partie-four"||
+      pathname === "/profil/kyc/opcvm/mifid/partie-five"||
+      pathname === "/profil/kyc/opcvm/mifid/partie-six"||
+      pathname === "/profil/kyc/opcvm/mifid/partie-seven"||
+      pathname === "/profil/kyc/opcvm/mifid/partie-height"||
+
+      pathname === "/profil/opcvm/mifid/dashboard"||
+
+
       // LES ROUTES DE LA PARTIE DU PROFIL INSTITUTION
       pathname === "/profil/institution/depot-cash"||
       pathname === "/profil/institution/retrait-cash"||
@@ -267,7 +296,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/institution/verifier-documents-retrait"||
       pathname === "/profil/institution/autre-verification-documents"||
       pathname === "/profil/institution/mintBurn"||
-      pathname === "/profil/institution/demande-kyc"||
+      pathname === "/profil/institution/kyc-digital/demande-kyc"||
       pathname === "/profil/institution/kyc-digital"||
       pathname === "/profil/institution/gestion-stablecoin"||
 
@@ -276,6 +305,9 @@ const Layout = ({ children }) => {
 
       // LES ROUTES DE LA PARTIE DU PROFIL ENTREPRISE / COMMERCANT
       pathname === "/profil/entreprise/actions/demande-paiement"||
+      pathname === "/profil/entreprise/actions/boutique"||
+      pathname === "/profil/entreprise/actions/boutique/ouverture-boutique"||
+
 
       // FIN
 

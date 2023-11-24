@@ -640,8 +640,8 @@ const [serviceD, setServiceD] = useState([]);
                     type='text'
                     className='form-control'
                     placeholder='Nom'
-                    defaultValue={firstName} 
-                    onChange={(event)=>setFirstName(event.target.value)}
+                    defaultValue={lastName} 
+                    onChange={(event)=>setLastName(event.target.value)}
                   />
                 </div>
                 <div className='form-group mt-3'>
@@ -649,8 +649,8 @@ const [serviceD, setServiceD] = useState([]);
                     type='text'
                     className='form-control'
                     placeholder='Prénoms'
-                    defaultValue={lastName} 
-                    onChange={(event)=>setLastName(event.target.value)}
+                    defaultValue={firstName} 
+                    onChange={(event)=>setFirstName(event.target.value)}
                   />
                 </div>
                 <div className='form-group mt-3'>
@@ -1545,8 +1545,8 @@ const [serviceD, setServiceD] = useState([]);
                     type='text'
                     className='form-control'
                     placeholder='Votre nom'
-                    defaultValue={firstName} 
-                    onChange={(event)=>setFirstName(event.target.value)}
+                    defaultValue={lastName} 
+                    onChange={(event)=>setLastName(event.target.value)}
                   />
                 </div>
                 <div className='form-group col-lg-6 col-md-6'>
@@ -1554,8 +1554,9 @@ const [serviceD, setServiceD] = useState([]);
                     type='text'
                     className='form-control'
                     placeholder='Vos prénoms'
-                    defaultValue={lastName} 
-                    onChange={(event)=>setLastName(event.target.value)}
+                    defaultValue={firstName} 
+                    onChange={(event)=>setFirstName(event.target.value)}
+                    
                   />
                 </div>
            
@@ -1853,8 +1854,8 @@ const [serviceD, setServiceD] = useState([]);
                     type='text'
                     className='form-control'
                     placeholder='Nom du representant légal'
-                    defaultValue={firstName} 
-                    onChange={(event)=>setFirstName(event.target.value)}
+                    defaultValue={lastName} 
+                    onChange={(event)=>setLastName(event.target.value)}
                   />
                 </div>
                 <div className='form-group col-lg-6 col-md-6'>
@@ -1862,8 +1863,9 @@ const [serviceD, setServiceD] = useState([]);
                     type='text'
                     className='form-control'
                     placeholder='Prénoms du representant légal'
-                    defaultValue={lastName} 
-                    onChange={(event)=>setLastName(event.target.value)}
+                    defaultValue={firstName} 
+                    onChange={(event)=>setFirstName(event.target.value)}
+                    
                   />
                 </div>
            

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import DemandeAccesKyc from '../../../../components/profil/Institution/DemandeAccesKyc';
-import SidebarProfil from '../../../../components/profil/SideBar/Sidebar';
+import CPartieSeven from '../../../../../components/profil/Kyc/Opcvm/QuizMifid.js/PartieSeven';
+import SidebarProfil from '../../../../../components/profil/SideBar/Sidebar';
 
 
 
@@ -22,8 +22,8 @@ const index = () => {
             {/* FIN */}
           </aside>
 
-          {/* CONTENU PROFIL */}
-          <DemandeAccesKyc/>
+          {/* CONTENU */}
+            <CPartieSeven/>
           {/* FIN */}
 
         </main>

@@ -6,6 +6,8 @@ import axios from 'axios';
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
 import moment from 'moment';
+import Swal from 'sweetalert2';
+
 
 
 // Pour l'importation du scanner
@@ -28,12 +30,14 @@ const DemandeAccesKyc = () => {
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
+    const [messageError, setMessageError] = useState();
 
     // States recherche de d'un utilisateur
+    const [userSignIn, setUserSignIn] = useState();
     const [infosOtherUser, setInfosOtherUser] = useState();
     const [emailOtherUser, setEmailOtherUser] = useState();
     const [codeOtherUser, setCodeOtherUser] = useState();
-
+    
     const [addressTo, setAddressTo] = useState();
     
     const [reasonFiling, setReasonFiling] = useState();
@@ -47,8 +51,11 @@ const DemandeAccesKyc = () => {
     
     // State du formulaire
     const [selectedOption, setSelectedOption] = useState('');
+    const [object, setObject] = useState('');
+    const [emailNotification, setEmailNotification] = useState('');
 
-
+    
+    
     
     // States de tab
     const [toggleState, setToggleState] = useState(1);
@@ -56,6 +63,26 @@ const DemandeAccesKyc = () => {
         setToggleState(index);
     };
     // Fin
+
+
+    // Recuperer l'utilisateur connecté
+    useEffect(async() => {
+      const token = localStorage.getItem('tokenEnCours')
+          const getUserSignIn = async () => {
+          const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
+              headers: {
+              'Content-Type': 'application/json',
+              Authorization:  `Bearer ${token}`,
+              },
+          })
+              .then((result) => result.json())
+              .then((data) => {
+                  setUserSignIn(data)
+              }) 
+          };
+          await getUserSignIn();
+  }, []);
+  // FIN
 
 
         // Obtenir un utilisateur en fonction de son email 
@@ -161,7 +188,7 @@ const DemandeAccesKyc = () => {
   // *****************************FIN SCANNER*****************************
 
   // RECUPERER UNE SEULE LIGNE DE KYC DU PARTICULIER D'UN UTILISATEUR EN FONCTION DE SON ID
-  if (infosOtherUser?.id) {
+  if (infosOtherUser?.codeTypeProfil=="part") {
     
     const getOneKycForParticular = async (_userId) => {
       // Obtenir le token en cours
@@ -181,7 +208,6 @@ const DemandeAccesKyc = () => {
   
         const data = await resKyc.json();
         setOneKycForParticular(data);
-        console.log("OneKycForParticular=>",data)
       } catch (error) {
         // Handle errors appropriately, e.g., set an error state.
         console.error('Error fetching KYC data:', error);
@@ -232,28 +258,83 @@ const dumpVariables = () =>{
 
     // Fonction d'envoie des données
     const requestKycParticular = async (e) => {
-        e.preventDefault();
-    
-        const response = await fetch('/submit', {
+      e.preventDefault();
+      setIsLoggingIn(true)
+      const nameOwnerKyc = infosOtherUser?.lastName +" "+ infosOtherUser?.firstName
+      try {
+        
+      
+        const dataForm = {
+          quizAml: selectedOptions.filter(option => option.includes("Questionnaire AML")),
+          quizFatca: selectedOptions.filter(option => option.includes("Questionnaire FATCA")),
+          identity: selectedOptions.filter(option => option.includes("Justificatif d'identité")),
+          residence: selectedOptions.filter(option => option.includes("Justificatif de domicile")),
+          photo: selectedOptions.filter(option => option.includes("Photo")),
+          signature: selectedOptions.filter(option => option.includes("Signature")),
+          
+        }
+        
+        console.log("infosOtherUser?.lastNam=>",nameOwnerKyc,)
+      
+        const dataa ={
+          quizAml:dataForm?.quizAml[0]|| null,
+          quizFatca:dataForm?.quizFatca[0]|| null,
+          identity:dataForm?.identity[0]|| null,
+          residence:dataForm?.residence[0]|| null,
+          photo:dataForm?.photo[0]|| null,
+          signature:dataForm?.signature[0]|| null,
+          emailNotification:emailNotification,
+          nameOwnerKyc:nameOwnerKyc,
+          nameInstitution:userSignIn?.entreprise,
+          object:object,
+          particularKycId:oneKycForParticular?.id,
+          ownerId:infosOtherUser?.id
+        }
+
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
+        const response = await fetch(`${API_URL}/api/kyc/add-kyc-request`, {
             method: 'POST',
+            body: JSON.stringify(dataa),
             headers: {
                 'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
             },
-            body: JSON.stringify({
-                'Questionnaire AML': selectedOptions.filter(option => option.includes("Questionnaire AML")),
-                'Questionnaire FATCA': selectedOptions.filter(option => option.includes("Questionnaire FATCA")),
-                "Justificatif d'identité": selectedOptions.filter(option => option.includes("Justificatif d'identité")),
-                "Justificatif de domicile": selectedOptions.filter(option => option.includes("Justificatif de domicile")),
-                'Photo': selectedOptions.filter(option => option.includes("Photo")),
-                'Signature': selectedOptions.filter(option => option.includes("Signature"))
-            }),
         });
-    
-        if (response.ok) {
-            console.log('Données enregistrées avec succès');
-        } else {
-            console.error('Erreur lors de l\'enregistrement des données');
+        const data = await response.json();
+            
+        /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+        * sinon on affiche le message de succès
+        */
+        if (data.message==200) {
+          Swal.fire({
+            position: 'center',
+            icon: 'success',
+            html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+            showConfirmButton: false,
+            timer: 5000
+          }),
+          // Actualiser après l'affichage 
+          setTimeout(() => {
+            window.location.reload()
+          }, 7000)
+          // Fin
+        }else{
+          setMessageError(data.message)
+          setIsLoggingIn(false);
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            html: `<p> ${messageError} </p>` ,
+            showConfirmButton: false,
+            timer: 10000
+          })
+                    
         }
+        // Fin condition 
+      } catch (error) {
+        console.error('Erreur =>',error);
+      }
     };
     // FIN 
 
@@ -272,33 +353,90 @@ const dumpVariables = () =>{
     };
 
     const handleSubmitEntreprise = async (e) => {
-        e.preventDefault();
+      e.preventDefault();
+      setIsLoggingIn(true)
+      try {
+        
+      
+        const dataForm = {
+          quizAmlBusiness: selectedOptionsEntreprise.filter(option => option.includes("Questionnaire AML")),
+          identityBusiness: selectedOptionsEntreprise.filter(option => option.includes("Justificatif d'identité")),
+          legalRepresentatives: selectedOptionsEntreprise.filter(option => option.includes("Représentants légaux")),
+          beneficiaries: selectedOptionsEntreprise.filter(option => option.includes("Bénéficiaires effectifs")),
+          structures: selectedOptionsEntreprise.filter(option => option.includes("Structures de contrôle")),
+          politicallyExposed: selectedOptionsEntreprise.filter(option => option.includes("Personnes politiquement exposées")),
+          financialOperation: selectedOptionsEntreprise.filter(option => option.includes("Opérations financières")),
+          fundOrigin: selectedOptionsEntreprise.filter(option => option.includes("Origine des fonds")),
+          financialInformation: selectedOptionsEntreprise.filter(option => option.includes("Informations financières")),
+          financialTransaction: selectedOptionsEntreprise.filter(option => option.includes("Transactions financières")),
+          legalDocuments: selectedOptionsEntreprise.filter(option => option.includes("Documents légaux")),
+          
+          
+        }
+        
+        const dataa ={
+          quizAmlBusiness: dataForm?.quizAmlBusiness[0]|| null,
+          identityBusiness: dataForm?.identityBusiness[0]|| null,
+          legalRepresentatives: dataForm?.legalRepresentatives[0]|| null,
+          beneficiaries: dataForm?.beneficiaries[0]|| null,
+          structures: dataForm?.structures[0]|| null,
+          politicallyExposed: dataForm?.politicallyExposed[0]|| null,
+          financialOperation: dataForm?.financialOperation[0]|| null,
+          fundOrigin: dataForm?.fundOrigin[0]|| null,
+          financialInformation: dataForm?.financialInformation[0]|| null,
+          financialTransaction: dataForm?.financialTransaction[0]|| null,
+          legalDocuments: dataForm?.legalDocuments[0]|| null,
+          emailNotification:emailNotification,
+          nameOwnerKyc:infosOtherUser?.entreprise,
+          nameInstitution:userSignIn?.entreprise,
+          object:object,
+          ownerId:infosOtherUser?.id
+        }
 
-        const response = await fetch('/submit-entreprise', {
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
+        const response = await fetch(`${API_URL}/api/kyc/add-kyc-request`, {
             method: 'POST',
+            body: JSON.stringify(dataa),
             headers: {
                 'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
             },
-            body: JSON.stringify({
-                'quizBusiness': selectedOptionsEntreprise.filter(option => option.includes("Questionnaire AML")),
-                'identtityBusiness': selectedOptionsEntreprise.filter(option => option.includes("Justificatif d'identité")),
-                'representives': selectedOptionsEntreprise.filter(option => option.includes("Représentants légaux")),
-                'beneficiary': selectedOptionsEntreprise.filter(option => option.includes("Bénéficiaires effectifs")),
-                'structures': selectedOptionsEntreprise.filter(option => option.includes("Structures de contrôle")),
-                'politicallyExposed': selectedOptionsEntreprise.filter(option => option.includes("Personnes politiquement exposées")),
-                'financialOperation': selectedOptionsEntreprise.filter(option => option.includes("Opérations financières")),
-                'fundsOrigin': selectedOptionsEntreprise.filter(option => option.includes("Origine des fonds")),
-                'financialInformation': selectedOptionsEntreprise.filter(option => option.includes("Informations financières")),
-                'financialTransaction': selectedOptionsEntreprise.filter(option => option.includes("Transactions financières")),
-                'legalDocument': selectedOptionsEntreprise.filter(option => option.includes("Documents légaux"))
-            }),
         });
-        if (response.ok) {
-
-            console.log('Données enregistrées avec succès');
-        } else {
-            console.error('Erreur lors de l\'enregistrement des données');
+        const data = await response.json();
+            
+        /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+        * sinon on affiche le message de succès
+        */
+        if (data.message==200) {
+          Swal.fire({
+            position: 'center',
+            icon: 'success',
+            html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+            showConfirmButton: false,
+            timer: 5000
+          }),
+           // Actualiser après l'affichage 
+           setTimeout(() => {
+            window.location.reload()
+           }, 7000)
+           // Fin
+        }else{
+          setMessageError(data.message)
+          setIsLoggingIn(false);
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            html: `<p> ${messageError} </p>` ,
+            showConfirmButton: false,
+            timer: 10000
+          })
+                    
         }
+        // Fin condition 
+      } catch (error) {
+        console.error('Erreur =>',error);
+      }
     };
 
 
@@ -469,7 +607,7 @@ const dumpVariables = () =>{
                     className={toggleState === 2 ? "content  active-content" : "content"}
                     >
                      {/* Formulaire de la partie avec adresse email  */}
-                    <form onSubmit={requestKycParticular}>
+                    <form onSubmit={handleSubmit}>
                       <div className="form-group mb-6">
                         <label
                           htmlFor="pays"
@@ -581,7 +719,7 @@ const dumpVariables = () =>{
                                                 Veuillez demander les parties de KYC de <b> {infosOtherUser?.entreprise} </b> dont vous souhaiterez voir.
                                             </div>
 
-                                            <form onSubmit={handleSubmitEntreprise}>
+                                            <form onSubmit={handleSubmit}>
                                                 <div className='form-group'>
                                                     <label>
                                                         <input
@@ -717,18 +855,18 @@ const dumpVariables = () =>{
                                                 <div className='form-group'>
                                                   <label
                                                         htmlFor="emailNotification"
-                                                      className="text-blackish-blue mb-2"
+                                                      className="text-blackish-blue mt-3"
                                                   >
                                                       Votre email de notification
                                                   </label>
                                                   <input
-                                                    className="form-control gr-text-11 border mt-3 bg-white"
-                                                    type="text"
+                                                    className="form-control gr-text-11 border bg-white"
+                                                    type="email"
                                                     id="emailNotification"
                                                     placeholder="Votre email de notification"
                                                     required
-                                                    // defaultValue={emailNotification} 
-                                                    // onChange={(event)=>setEmailNotification(event.target.value)}
+                                                    defaultValue={emailNotification} 
+                                                    onChange={(event)=>setEmailNotification(event.target.value)}
                                                     
                                                   />
                                                 </div>
@@ -744,12 +882,12 @@ const dumpVariables = () =>{
                                                       type="text"
                                                       id="object"
                                                       placeholder=""
-                                                      // defaultValue={object} 
-                                                      // onChange={(event)=>setObject(event.target.value)}
+                                                      defaultValue={object} 
+                                                      onChange={(event)=>setObject(event.target.value)}
                                                     />
                                                 </div>
                                                 <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
-                                                    <button className="btn btn-primary" type='submit' disabled={isLoggingIn}>Envoyer</button>
+                                                    <button className="btn btn-primary" onClick={handleSubmitEntreprise} disabled={isLoggingIn}>Envoyer</button>
                                                 </div>
                                             </form>
                                         </>
@@ -761,7 +899,7 @@ const dumpVariables = () =>{
                                         {!oneKycForParticular?.message ?(
                                             <>
                                                 <div className='mb-3'>
-                                                    Veuillez demander les parties de KYC de <b> {infosOtherUser?.firstName} {infosOtherUser?.lastName} </b> dont vous souhaiterez voir.
+                                                    Veuillez demander les parties de KYC de <b>  {infosOtherUser?.lastName} {infosOtherUser?.firstName}</b> dont vous souhaiterez voir.
                                                     
                                                 </div>
 
@@ -848,15 +986,16 @@ const dumpVariables = () =>{
                                                       </label>
                                                       <input
                                                         className="form-control gr-text-11 border bg-white"
-                                                        type="text"
+                                                        type="email"
                                                         id="emailNotification"
                                                         placeholder="Votre email de notification"
                                                         required
-                                                        // defaultValue={emailNotification} 
-                                                        // onChange={(event)=>setEmailNotification(event.target.value)}
+                                                        defaultValue={emailNotification} 
+                                                        onChange={(event)=>setEmailNotification(event.target.value)}
                                                         
                                                       />
                                                     </div>
+                                                    
                                                     <div className="form-group mt-3">
                                                       <label
                                                           htmlFor="object"
@@ -869,13 +1008,13 @@ const dumpVariables = () =>{
                                                           type="text"
                                                           id="object"
                                                           placeholder=""
-                                                          // defaultValue={object} 
-                                                          // onChange={(event)=>setObject(event.target.value)}
+                                                          defaultValue={object} 
+                                                          onChange={(event)=>setObject(event.target.value)}
                                                         />
                                                     </div>
 
                                                     <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
-                                                        <button className="btn btn-primary" type='submit' disabled={isLoggingIn}>Envoyer</button>
+                                                        <button className="btn btn-primary" onClick={requestKycParticular } disabled={isLoggingIn}>Envoyer</button>
                                                     </div>
                                                 </form>
                                                 {/* FIN */}

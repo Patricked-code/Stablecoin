@@ -203,14 +203,17 @@ const Action = () => {
                                             <h3>Créer une boutique en ligne</h3>
                                         </div>
                                         </div>
+                                        
                                         <div className='btn-box'>
-                                        <Button
-                                            block
-                                            color="primary"
-                                            type="button"
-                                        >
-                                            Vois plus
-                                        </Button>
+                                        <Link href='/profil/entreprise/actions/boutique/ouverture-boutique' activeClassName='active'>
+                                            <Button
+                                                block
+                                                color="primary"
+                                                type="button"
+                                            >
+                                                Vois plus
+                                            </Button>
+                                        </Link>
                                         {/* Fin */}
                                         </div>
                                     </div>
@@ -319,6 +322,35 @@ const Action = () => {
                                         >
                                             Voir plus
                                         </Button>
+                                        {/* Fin */}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className='col-lg-6 col-md-6'>
+                        <div className='currency-selection text-center'>
+                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className='cryptocurrency-slides'>
+                                    <div className='single-cryptocurrency-box'>
+                                        <div className='d-flex align-items-center'>
+
+                                        <div className='title'>
+                                            <h3>Boutique</h3>
+                                        </div>
+                                        </div>
+                                        <div className='btn-box'>
+                                        <Link href='/profil/entreprise/actions/boutique' activeClassName='active'>
+                                            <Button
+                                                block
+                                                color="primary"
+                                                type="button"
+                                            >
+                                                Voir plus
+                                            </Button>
+                                        </Link>
                                         {/* Fin */}
                                         </div>
                                     </div>

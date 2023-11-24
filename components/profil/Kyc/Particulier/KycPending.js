@@ -314,7 +314,7 @@ const KycPendingParticular = () => {
             </div>
             <p className='text-center'>
                 <Link to='/profil/kyc/particulier/kyc-demandes' >
-                    Demandes de kyc en attente <i className='rounded-circle bgColorRed text-white p-2'>2</i>
+                    Demandes d'accès au kyc en attente <i className='rounded-circle bgColorblue text-white p-2'>2</i>
                 </Link>
             </p>
 
@@ -788,12 +788,14 @@ const KycPendingParticular = () => {
 
                                             <div className='col-lg-6 col-md-6'>
                                                 <b> Votre nom :</b><br/>
-                                                {currentUser?.firstName? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{currentUser.firstName }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                {currentUser?.lastName? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{currentUser.lastName }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+
                                             </div>
                                             
                                             <div className='col-lg-6 col-md-6'>
                                                 <b> Vos prénoms :</b><br/>
-                                                {currentUser?.lastName? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{currentUser.lastName }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                {currentUser?.firstName? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{currentUser.firstName }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+
                                             </div>
 
                                             <div className='col-lg-6 col-md-6'>

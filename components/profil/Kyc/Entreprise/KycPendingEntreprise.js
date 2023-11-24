@@ -1512,7 +1512,7 @@ const validKycIdentity= async (event) => {
             </div>
             <p className='text-center'>
                 <Link to='/profil/kyc/entreprise/kyc-demandes' >
-                    Demandes de kyc en attente <i className='rounded-circle bgColorRed text-white p-2'>2</i>
+                    Demandes d'accès au kyc en attente <i className='rounded-circle bgColorBlue text-white p-2'>2</i>
                 </Link>
             </p>
             {/* Les images de fond */}

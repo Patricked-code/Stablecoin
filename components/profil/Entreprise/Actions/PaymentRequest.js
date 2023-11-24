@@ -342,10 +342,10 @@ const PaymentRequest = () => {
                         ) : (infosOtherUser?.firstName && infosOtherUser?.lastName && infosOtherUser?.codeTypeProfil=="part"?
                          (<div>
                             <p className="gr-text-8 " id="addon-wrapping">
-                              Nom : {infosOtherUser?.firstName}
+                              Nom : {infosOtherUser?.lastName}
                             </p>
                             <p className="gr-text-8 " id="addon-wrapping">
-                              Prenom : {infosOtherUser?.lastName}
+                              Prenom : {infosOtherUser?.firstName}
                             </p>
                          </div>) : <p className="gr-text-8 colorRed" id="addon-wrapping">{infosOtherUser?.message}</p>)}
                       </form>
@@ -454,10 +454,10 @@ const PaymentRequest = () => {
                         ) : (infosOtherUser?.firstName && infosOtherUser?.lastName ?
                          (<div>
                             <p className="gr-text-8 " id="addon-wrapping">
-                              Nom : {infosOtherUser?.firstName}
+                              Nom : {infosOtherUser?.lastName}
                             </p>
                             <p className="gr-text-8 " id="addon-wrapping">
-                              Prenom : {infosOtherUser?.lastName}
+                              Prenom : {infosOtherUser?.firstName}
                             </p>
                          </div>) : <p className="gr-text-8 colorRed" id="addon-wrapping">{infosOtherUser?.message}</p>)}
                       </form>
@@ -565,10 +565,10 @@ const PaymentRequest = () => {
                         ) : (infosOtherUser?.firstName && infosOtherUser?.lastName ?
                          (<div>
                             <p className="gr-text-8 " id="addon-wrapping">
-                              Nom : {infosOtherUser?.firstName}
+                              Nom : {infosOtherUser?.lastName}
                             </p>
                             <p className="gr-text-8 " id="addon-wrapping">
-                              Prenom : {infosOtherUser?.lastName}
+                              Prenom : {infosOtherUser?.firstName}
                             </p>
                          </div>) : <p className="gr-text-8 colorRed" id="addon-wrapping">{infosOtherUser?.message}</p>)}
                       </form>

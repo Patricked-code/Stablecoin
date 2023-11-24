@@ -9,30 +9,11 @@ import Loading from "../../../../components/loading";
 import Router from "next/router";
 import { Table } from '@nextui-org/react';
 import Link from 'next/link';
+import moment from 'moment';
 
 
-
-// FIN
-
-
-
-// MODALS 
 // reactstrap components
-import {
-    Button,
-    Card,
-    CardHeader,
-    CardBody,
-    FormGroup,
-    Form,
-    Input,
-    InputGroupAddon,
-    InputGroupText,
-    InputGroup,
-    Modal,
-    Row,
-    Col,
-  } from "reactstrap";
+import {Button} from "reactstrap";
 
 // FIN
 
@@ -45,9 +26,10 @@ const CAccueilKycDigital = () => {
     const [provider, setProvider] = useState(null);
     const [showWallet, setShowWallet] = useState(null);
     
+    const [kycRequestInitiate, setKycRequestInitiate] = useState();
+    const [kycRequestTreaty, setKycRequestTreaty] = useState();
+    const [kycRequestAccept, setKycRequestAccept] = useState();
 
-
-    
     // States de tab
     const [toggleState, setToggleState] = useState(1);
     const toggleTab = (index) => {
@@ -99,13 +81,73 @@ const CAccueilKycDigital = () => {
               // Fin
             }
         })();
-
-       
-
-
     }, [provider, magic]);
     //  Fin
 
+    // Recuperer les donnees de la demande d'accès aux kyc initiée
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+            const getKycRequestInitiate = async () => {
+            const result = await fetch(`${API_URL}/api/kyc/find-all-kyc-request-initiate-for-institution`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((result) => result.json())
+                .then((data) => {
+                    setKycRequestInitiate(data)
+                }) 
+            };
+            await getKycRequestInitiate();
+    }, []);
+    // FIN
+    
+    // Recuperer les donnees de la demande d'accès aux kyc à traiter
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+            const getKycRequestTreaty = async () => {
+            const result = await fetch(`${API_URL}/api/kyc/find-all-kyc-request-treaty-for-institution`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((result) => result.json())
+                .then((data) => {
+                    setKycRequestTreaty(data)
+                }) 
+            };
+            await getKycRequestTreaty();
+    }, []);
+    // FIN
+
+    // Recuperer les donnees de la demande d'accès aux kyc Accepté
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+            const getKycRequestAccept = async () => {
+            const result = await fetch(`${API_URL}/api/kyc/find-all-kyc-request-accept-for-institution`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((result) => result.json())
+                .then((data) => {
+                    setKycRequestAccept(data)
+                }) 
+            };
+            await getKycRequestAccept();
+    }, []);
+    // FIN
+
+    // FONCTION POUR FORMATER LA DATE
+    const formatDate = (_updatedAt) =>{
+        const maDate = moment(_updatedAt).format('DD/MM/YYYY');
+        // const maDate = moment(_updatedAt).format('DD/MM/YYYY à HH:mm');
+        return  maDate
+    }
+    //  FIN
 
     return (
         <>
@@ -147,7 +189,7 @@ const CAccueilKycDigital = () => {
                                             </div>
                                             </div>
                                             <div className='btn-box'>
-                                            <a href='/profil/institution/demande-kyc'>
+                                            <Link href='/profil/institution/kyc-digital/demande-kyc'>
                                                 <Button
                                                     block
                                                     color="primary"
@@ -155,7 +197,7 @@ const CAccueilKycDigital = () => {
                                                 >
                                                     Vois plus
                                                 </Button>
-                                            </a>
+                                            </Link>
                                             {/* Fin */}
                                             </div>
                                         </div>
@@ -221,29 +263,18 @@ const CAccueilKycDigital = () => {
                                                         }}
                                                     >
                                                         <Table.Header>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nom</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Prenoms</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Entreprise</p></Table.Column>
+                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Propriétaire</p></Table.Column>
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
                                                         </Table.Header>
                                                         <Table.Body>
-                                                            {/* {allKycForParticular?.map((data) => ( */}
-                                                                <Table.Row >                       
-                                                                    <Table.Cell ><small className=" py-0 ">Koné</small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 ">Zié Arouna</small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 "></small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 ">25/10/2023</small></Table.Cell>
+                                                            {kycRequestInitiate?.map((data, index) => (
+                                                                <Table.Row key={index}>                       
+                                                                    <Table.Cell ><small className=" py-0 ">{data?.nameOwnerKyc}</small></Table.Cell>
+                                                                    <Table.Cell ><small className=" py-0 ">{formatDate(data?.sendingDate)}</small></Table.Cell>
                                                                 </Table.Row >
                                                                 
-                                                                <Table.Row >                       
-                                                                    <Table.Cell ><small className=" py-0 "></small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 "></small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 ">Wealthtech</small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 ">25/10/2023</small></Table.Cell>
-                                                                </Table.Row >
-
                                                                 
-                                                            {/* ))} */}
+                                                            ))} 
                                                         </Table.Body>
                                                         {/* <Table.Pagination
                                                             shadow
@@ -272,21 +303,17 @@ const CAccueilKycDigital = () => {
                                                         }}
                                                     >
                                                         <Table.Header>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nom</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Prenoms</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Entreprise</p></Table.Column>
+                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Propriétaire</p></Table.Column>
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date limite</p></Table.Column>
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
                                                         </Table.Header>
                                                         <Table.Body>
-                                                            {/* {allKycForParticular?.map((data) => ( */}
+                                                            {kycRequestAccept?.map((data) => (
                                                                 <Table.Row >                       
-                                                                    <Table.Cell ><small className=" py-0 ">Koné</small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 ">Zié Arouna</small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 "></small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 ">25/10/2023</small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 ">30/10/2023</small></Table.Cell>
+                                                                    <Table.Cell ><small className=" py-0 ">{data?.nameOwnerKyc}</small></Table.Cell>
+                                                                    <Table.Cell ><small className=" py-0 ">{formatDate(data?.sendingDate)}</small></Table.Cell>
+                                                                    <Table.Cell ><small className=" py-0 ">{formatDate(data?.deadline || "Aucune")}</small></Table.Cell>
                                                                     <Table.Cell className="row">
                                                                         <div className='text-center'>
                                                                             <small className=" py-0  mx-2">
@@ -299,7 +326,7 @@ const CAccueilKycDigital = () => {
                                                                 </Table.Row >
 
                                                                 
-                                                            {/* ))} */}
+                                                            ))} 
                                                         </Table.Body>
                                                         {/* <Table.Pagination
                                                             shadow
@@ -327,23 +354,19 @@ const CAccueilKycDigital = () => {
                                                         }}
                                                     >
                                                         <Table.Header>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nom</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Prenoms</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Entreprise</p></Table.Column>
+                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Propriétaire</p></Table.Column>
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date limite</p></Table.Column>
                                                         </Table.Header>
                                                         <Table.Body>
-                                                            {/* {allKycForParticular?.map((data) => ( */}
+                                                            {kycRequestTreaty?.map((data) => (
                                                                 <Table.Row >                       
-                                                                    <Table.Cell ><small className=" py-0 ">Koné</small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 ">Zié Arouna</small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 "></small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 ">25/10/2023</small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 ">30/10/2023</small></Table.Cell>
+                                                                    <Table.Cell ><small className=" py-0 ">{data?.nameOwnerKyc}</small></Table.Cell>
+                                                                    <Table.Cell ><small className=" py-0 ">{formatDate(data?.sendingDate)}</small></Table.Cell>
+                                                                    <Table.Cell ><small className=" py-0 ">{formatDate(data?.deadline || "Aucune")}</small></Table.Cell>
                                                                 </Table.Row >
                                                                 
-                                                            {/* ))} */}
+                                                            ))} 
                                                         </Table.Body>
                                                         {/* <Table.Pagination
                                                             shadow

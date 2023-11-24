@@ -328,7 +328,6 @@ const CPolitiquementExposeesTwo = () => {
                 <div className='col-lg-3 col-md-12'></div>
                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
                         <h5
-                            htmlFor="lastName"
                             className="text-blackish-blue mb-2 colorRed"
                         >
                             {!currentKycEntrepriseStatut || currentKycEntrepriseStatut == "undefined"? (

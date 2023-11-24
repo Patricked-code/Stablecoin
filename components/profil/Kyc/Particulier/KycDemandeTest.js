@@ -9,8 +9,6 @@ import { ethers } from "ethers";
 import Router from "next/router";
 import { Table } from '@nextui-org/react';
 import Link from 'next/link';
-import moment from 'moment';
-
 
 
 
@@ -22,9 +20,8 @@ const CKycParticulierDemander = () => {
     const [isLoggingIn, setIsLoggingIn] = useState();
     const [currentUser, setCurrentUser] = useState();
     const [provider, setProvider] = useState(null);
-    const [kycRequestOfUser, setKycRequestOfUser] = useState();
 
-    
+
     // States du formulaire d'acceptation par partie
     const [quizAmlAccept, setQuizAmlAccept] = useState();
     const [quizFatcaAccept, setQuizFatcaAccept] = useState();
@@ -87,81 +84,11 @@ const CKycParticulierDemander = () => {
     const handleShowForm = () => setShowForm(true);
     // Fin
 
-    // Modal du rejet de la demande
+    // Modal de retreit
     const [showRejection, setShowRejection] = useState(false);
     const handleCloseRejection = () => setShowRejection(false);
     const handleShowRejection = () => setShowRejection(true);
     // Fin
-
-    // PARTIE D'ENVOIE DES DONNEES DE LA DEMANDE DE KYC PARTICULIER
-    const [selectedOptions, setSelectedOptions] = useState([]);
-
-    const handleOptionChange = (e) => {
-        const value = e.target.value;
-        const isChecked = e.target.checked;
-
-        if (isChecked) {
-            setSelectedOptions([...selectedOptions, value]);
-
-        } else {
-            setSelectedOptions(selectedOptions.filter(option => option !== value));
-        }
-    };
-
-    // Fonction d'envoie des données
-    const requestKycParticular = async (e) => {
-        e.preventDefault();
-    
-        const response = await fetch('/submit', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                'Questionnaire AML': selectedOptions.filter(option => option.includes("Questionnaire AML")),
-                'Questionnaire FATCA': selectedOptions.filter(option => option.includes("Questionnaire FATCA")),
-                "Justificatif d'identité": selectedOptions.filter(option => option.includes("Justificatif d'identité")),
-                "Justificatif de domicile": selectedOptions.filter(option => option.includes("Justificatif de domicile")),
-                'Photo': selectedOptions.filter(option => option.includes("Photo")),
-                'Signature': selectedOptions.filter(option => option.includes("Signature"))
-            }),
-        });
-    
-        if (response.ok) {
-            console.log('Données enregistrées avec succès');
-        } else {
-            console.error('Erreur lors de l\'enregistrement des données');
-        }
-    };
-    // FIN 
-
-
-    // Recuperer les donnees de la demande d'accès de l'utilisateur connecté
-    useEffect(async() => {
-        const token = localStorage.getItem('tokenEnCours')
-            const getKycRequestOfUser = async () => {
-            const result = await fetch(`${API_URL}/api/kyc/find-all-kyc-request-of-kyc-owner`, {
-                headers: {
-                'Content-Type': 'application/json',
-                Authorization:  `Bearer ${token}`,
-                },
-            })
-                .then((result) => result.json())
-                .then((data) => {
-                    setKycRequestOfUser(data)
-                }) 
-            };
-            await getKycRequestOfUser();
-    }, []);
-    // FIN
-
-    // FONCTION POUR FORMATER LA DATE
-    const formatDate = (_updatedAt) =>{
-        const maDate = moment(_updatedAt).format('DD/MM/YYYY');
-        // const maDate = moment(_updatedAt).format('DD/MM/YYYY à HH:mm');
-        return  maDate
-    }
-    //  FIN
 
     return (
         <>
@@ -209,11 +136,11 @@ const CKycParticulierDemander = () => {
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
                                     </Table.Header>
                                     <Table.Body>
-                                        {kycRequestOfUser?.map((data, index) => (
-                                            <Table.Row key={index}>                       
-                                                <Table.Cell ><small className=" py-0 ">{data?.nameInstitution}</small></Table.Cell>
-                                                <Table.Cell ><small className=" py-0 ">{formatDate(data?.sendingDate)}</small></Table.Cell>
-                                                <Table.Cell ><small className=" py-0 ">{data?.status == 0?(<i>Pas encore acceptés</i>):data?.status == 1?(<i>Déjà acceptés</i>):data?.status == 2?(<i>Traités</i>):data?.status == 3?(<i>Rejeté</i>):""}</small></Table.Cell>
+                                        {/* {allKycForParticular?.map((data) => ( */}
+                                            <Table.Row >                       
+                                                <Table.Cell ><small className=" py-0 ">Fitech banque</small></Table.Cell>
+                                                <Table.Cell ><small className=" py-0 ">18/10/2023</small></Table.Cell>
+                                                <Table.Cell ><small className=" py-0 ">En cours</small></Table.Cell>
                                                 <Table.Cell >
                                                     <div className='text-center'>
                                                         <small className=" py-0  mx-2 btn btn-primary" onClick={handleShowForm}>Répondre</small>
@@ -221,7 +148,7 @@ const CKycParticulierDemander = () => {
                                                     </div>
                                                 </Table.Cell>
                                             </Table.Row >
-                                        ))}
+                                            
                                     </Table.Body>
                                     {/* <Table.Pagination
                                         shadow
@@ -252,83 +179,153 @@ const CKycParticulierDemander = () => {
                 </Modal.Header>
                 <Form role="form">
                     <Modal.Body>
-                        <div>
-                            <label className='mb-3'>
-                                Cochez les parties que vous souhaiterez autoriser l'institution financière à voir.
+                        <div className='row'>
+                        <div className='form-group my-3 col-lg-6 col-md-6'>
+                            <label className="mx-2  mb-2" htmlFor='quizAmlAccept'>
+                                Les questionnaires AML 
                             </label>
+                            {/* {!oneKycForParticular?.quizAmlAccept==1 ? ( */}
+                                <select 
+                                    className="form-control"
+                                    id="quizAmlAccept"
+                                    required
+                                    defaultValue={quizAmlAccept} 
+                                    onChange={(event)=>setQuizAmlAccept(event.target.value)}
+                                >
+                                    <option defaultValue="">Choisissez une option</option>
+                                    <optgroup className='single-cryptocurrency-box'>
+                                        <option  value="true">Autoriser</option>
+                                        <option  value="false">Refuser</option>
+                                    </optgroup>
+                                </select>
+                            {/* ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)} */}
+                        </div>
 
-                            <div className='form-group'>
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        value="Questionnaire AML"
-                                        className='mx-3'
-                                        checked={selectedOptions.includes("Questionnaire AML")}
-                                        onChange={handleOptionChange}
-                                    />
-                                    Questionnaire AML
-                                </label>
-                            </div>
-                            <div className='form-group'>
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        value="Questionnaire FATCA"
-                                        className='mx-3'
-                                        checked={selectedOptions.includes("Questionnaire FATCA")}
-                                        onChange={handleOptionChange}
-                                    />
-                                    Questionnaire FATCA
-                                </label>
-                            </div>
-                            <div className='form-group'>
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        value="Justificatif d'identité"
-                                        className='mx-3'
-                                        checked={selectedOptions.includes("Justificatif d'identité")}
-                                        onChange={handleOptionChange}
-                                    />
-                                    Justificatif d'identité
-                                </label>
-                            </div>
-                            <div className='form-group'>
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        value="Justificatif de domicile"
-                                        className='mx-3'
-                                        checked={selectedOptions.includes("Justificatif de domicile")}
-                                        onChange={handleOptionChange}
-                                    />
-                                    Justificatif de domicile
-                                </label>
-                            </div>
-                            <div className='form-group'>
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        value="Photo"
-                                        className='mx-3'
-                                        checked={selectedOptions.includes("Photo")}
-                                        onChange={handleOptionChange}
-                                    />
-                                    Photo
-                                </label>
-                            </div>
-                            <div className='form-group'>
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        value="Signature"
-                                        className='mx-3'
-                                        checked={selectedOptions.includes("Signature")}
-                                        onChange={handleOptionChange}
-                                    />
-                                    Signature
-                                </label>
-                            </div>
+                        <div className='form-group my-3 col-lg-6 col-md-6'>
+                            <label className="mx-2  mb-2" htmlFor='quizFatcaAccept'>
+                                Les questionnaires FATCA
+                            </label>
+                            {/* {!oneKycForParticular?.quizFatcaAccept==1 ? ( */}
+                                <select 
+                                    className="form-control"
+                                    id="quizFatcaAccept"
+                                    required
+                                    defaultValue={quizFatcaAccept} 
+                                    onChange={(event)=>setQuizFatcaAccept(event.target.value)}
+                                >
+                                    <option defaultValue="">Choisissez une option</option>
+                                    <optgroup className='single-cryptocurrency-box'>
+                                        <option  value="true">Autoriser</option>
+                                        <option  value="false">Refuser</option>
+                                    </optgroup>
+                                </select>
+                            {/* ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)} */}
+                        </div>
+
+                        <div className='form-group my-3 col-lg-6 col-md-6'>
+                            <label className="mx-2  mb-2" htmlFor='identityAccept'>
+                                Justificatif d'identité
+                            </label>
+                            {/* {!oneKycForParticular?.identityAccept==1 ? ( */}
+                                <select 
+                                    className="form-control"
+                                    id="identityAccept"
+                                    required
+                                    defaultValue={identityAccept} 
+                                    onChange={(event)=>setIdentityAccept(event.target.value)}
+                                >
+                                    <option defaultValue="">Choisissez une option</option>
+                                    <optgroup className='single-cryptocurrency-box'>
+                                        <option  value="true">Autoriser</option>
+                                        <option  value="false">Refuser</option>
+                                    </optgroup>
+                                </select>
+                            {/* ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)} */}
+                        </div>
+
+                        <div className='form-group my-3 col-lg-6 col-md-6'>
+                            <label className="mx-2  mb-2" htmlFor='residenceAccept'>
+                                Justificatif de domicile
+                            </label>
+                            {/* {!oneKycForParticular?.residenceAccept==1 ? ( */}
+                                <select 
+                                    className="form-control"
+                                    id="residenceAccept"
+                                    required
+                                    defaultValue={residenceAccept} 
+                                    onChange={(event)=>setResidenceAccept(event.target.value)}
+                                >
+                                    <option defaultValue="">Choisissez une option</option>
+                                    <optgroup className='single-cryptocurrency-box'>
+                                        <option  value="true">Autoriser</option>
+                                        <option  value="false">Refuser</option>
+                                    </optgroup>
+                                </select>
+                            {/* ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)} */}
+                        </div>
+
+                        <div className='form-group my-3 col-lg-6 col-md-6'>
+                            <label className="mx-2  mb-2" htmlFor='photoAccept'>
+                                Photo
+                            </label>
+                            {/* {!oneKycForParticular?.quizAmlAccept==1 ? ( */}
+                                <select 
+                                    className="form-control"
+                                    id="photoAccept"
+                                    required
+                                    defaultValue={photoAccept} 
+                                    onChange={(event)=>setPhotoAccept(event.target.value)}
+                                >
+                                    <option defaultValue="">Choisissez une option</option>
+                                    <optgroup className='single-cryptocurrency-box'>
+                                        <option  value="true">Autoriser</option>
+                                        <option  value="false">Refuser</option>
+                                    </optgroup>
+                                </select>
+                            {/* ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)} */}
+                        </div>
+
+                        <div className='form-group my-3 col-lg-6 col-md-6'>
+                            <label className="mx-2  mb-2" htmlFor='signatureAccept'>
+                                Signature
+                            </label>
+                            {/* {!oneKycForParticular?.signatureAccept==1 ? ( */}
+                                <select 
+                                    className="form-control"
+                                    id="signatureAccept"
+                                    required
+                                    defaultValue={signatureAccept} 
+                                    onChange={(event)=>setSignatureAccept(event.target.value)}
+                                >
+                                    <option defaultValue="">Choisissez une option</option>
+                                    <optgroup className='single-cryptocurrency-box'>
+                                        <option  value="true">Autoriser</option>
+                                        <option  value="false">Refuser</option>
+                                    </optgroup>
+                                </select>
+                            {/* ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)} */}
+                        </div>
+
+                        <div className='form-group my-3 col-lg-6 col-md-6'>
+                            <label className="mx-2  mb-2" htmlFor='quizAmlAccept'>
+                                Les questionnaires AML 1
+                            </label>
+                            {/* {!oneKycForParticular?.quizAmlAccept==1 ? ( */}
+                                <select 
+                                    className="form-control"
+                                    id="quizAmlAccept"
+                                    required
+                                    defaultValue={quizAmlAccept} 
+                                    onChange={(event)=>setQuizAmlAccept(event.target.value)}
+                                >
+                                    <option defaultValue="">Choisissez une option</option>
+                                    <optgroup className='single-cryptocurrency-box'>
+                                        <option  value="true">Autoriser</option>
+                                        <option  value="false">Refuser</option>
+                                    </optgroup>
+                                </select>
+                            {/* ):(<p className='colorGreen mx-2'><b>Déjà validé</b></p>)} */}
+                        </div>
                         </div>
                     </Modal.Body>
                     <Modal.Footer>

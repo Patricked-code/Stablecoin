@@ -274,17 +274,19 @@ const InfosUtilisateur = () => {
                                 <div className='cryptocurrency-slides'>
                                         <div className='single-cryptocurrency-box'>
                                             <div className='row '>
-                                                {currentUser?.firstName ? (
-                                                    <div className='col-lg-6 col-md-6 mb-3'>
-                                                        <h5>Nom</h5>
-                                                        <p>{currentUser?.firstName}</p>
-                                                    </div>
-                                                ) : ('')}
+                                               
 
                                                 {currentUser?.lastName ? (
                                                     <div className='col-lg-6 col-md-6 mb-3'>
-                                                        <h5>Prénom</h5>
+                                                        <h5>Nom</h5>
                                                         <p>{currentUser?.lastName}</p>
+                                                    </div>
+                                                ) : ('')}
+
+                                                {currentUser?.firstName ? (
+                                                    <div className='col-lg-6 col-md-6 mb-3'>
+                                                        <h5>Prénom</h5>
+                                                        <p>{currentUser?.firstName}</p>
                                                     </div>
                                                 ) : ('')}
 

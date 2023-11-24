@@ -16,9 +16,30 @@ const CAccueilAbonnement = () => {
     //State du formulaire
     const [period, setPeriod] = useState('');
     const [fee, setFee] = useState(); 
+    const [selectedOption, setSelectedOption] = useState('');
+
+    const handleOptionChange = (event) => {
+        const selectedValue = event.target.value;
+        setSelectedOption(selectedValue);
     
-
-
+        // Attribution des points en fonction de la sélection
+        switch (selectedValue) {
+          case '1 Mois':
+            setFee(10000);
+            break; 
+          case '3 Mois':
+            setFee(35000);
+            break;
+          case '6 Mois':
+            setFee(50000);
+            break;
+          case '1 An':
+            setFee(80000);
+            break;
+          default:
+            setFee(""); // Aucune sélection
+        }
+      };
   return (
     <>
       
@@ -49,43 +70,76 @@ const CAccueilAbonnement = () => {
                
                 {/* FORM  */}
                 <form >
-                    {/* <form onSubmit={updateQuestionFive}> */}
-                    <div className='form-group my-3 '>
-                        <label className="mx-2  mb-2" htmlFor='period'>
-                            Durée d'abonnement
-                        </label>
-                                                            
-                        <select 
-                            className="form-control"
-                            id="period"
-                            required
-                            defaultValue={period} 
-                            onChange={(event)=>setPeriod(event.target.value)}
-                        >
-                            <option defaultValue="">Choisissez une durée</option>
-                            <optgroup className='single-cryptocurrency-box'>
-                                <option  value="true">1 Mois</option>
-                                <option  value="false">2 Mois</option>
-                                <option  value="false">3 Mois</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                    <div className='form-group'>
-                        <label className="mx-2  mb-2" htmlFor='fee'>
-                            Les frais d'abonnement
-                        </label>
-                        <input
-                            type='number'
-                            className='form-control'
-                            disabled
-                            name='fee'
-                            defaultValue={fee}
-                            onChange={(e)=>setFee(e.target.value)}
-                        />
-                    </div>
+                  <div className='form-group'>
+                  <div className='input-group flex-nowrap'>
 
-                    {/* Les boutons */}
-                    <button className="btn btn-primary" type='submit' disabled={isLoggingIn}> Abonner </button>
+                    <label>
+                      <input
+                        type="radio"
+                        value="30"
+                        className='mx-3 '
+                        checked={selectedOption === "30"}
+                        onChange={handleOptionChange}
+                      />
+                      {/* 10000 35000 50000 80000 */}
+                          1 Mois
+                    </label>
+                        <span  className="mx-5 colorGreen" >10 000 E-WARI</span>
+                    </div>
+                  </div>
+                  <div className='form-group'>
+                  <div className='input-group flex-nowrap'>
+
+                    <label>
+                      <input
+                        type="radio"
+                        value="90"
+                        className='mx-3'
+                        checked={selectedOption === "90"}
+                        onChange={handleOptionChange}
+                      />
+                        3 Mois
+                    </label>
+                        <span  className="mx-5 colorGreen" >35 000 E-WARI</span>
+                    </div>
+                  </div>
+                  <div className='form-group'>
+                  <div className='input-group flex-nowrap'>
+
+                    <label>
+                        <input
+                        type="radio"
+                        value="180"
+                        className='mx-3'
+                        checked={selectedOption === "180"}
+                        onChange={handleOptionChange}
+                        />
+                          6 Mois
+                    </label>
+                        <span  className="mx-5 colorGreen" >50 000 E-WARI</span>
+                    </div>
+                  </div>
+                  <div className='form-group'>
+                  <div className='input-group flex-nowrap'>
+
+                    <label>
+                        <input
+                        type="radio"
+                        value="365"
+                        className='mx-3 '
+                        checked={selectedOption === "365"}
+                        onChange={handleOptionChange}
+                        />
+                        1 An
+                    </label>
+                    <span  className="mx-5 px-3 colorGreen" >80 000 E-WARI</span>
+                    </div>
+                  </div>
+
+                  {/* Les boutons */}
+                  <div className="form-group  mt-3 col-lg-12 col-md-12">
+                      <button className="btn btn-primary" type='submit' disabled={isLoggingIn}> Abonner </button>
+                  </div>
                 </form>
               </div>
               <div className='col-lg-3 col-md-12'></div>

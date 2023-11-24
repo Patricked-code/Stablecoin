@@ -535,8 +535,8 @@ const GestionRole = () => {
                                                         <Table.Body>
                                                             {dataAdminAndModerator?.map((data)=>(
                                                                 <Table.Row key={data?.id}>
-                                                                    <Table.Cell ><p className=" py-0 ">{data?.firstName} {data?.entreprise}</p></Table.Cell>
-                                                                    <Table.Cell ><p className=" py-0 ">{data?.lastName} {data?.entreprise}</p></Table.Cell>
+                                                                    <Table.Cell ><p className=" py-0 "> {data?.lastName} {data?.entreprise}</p></Table.Cell>
+                                                                    <Table.Cell ><p className=" py-0 ">{data?.firstName}{data?.entreprise}</p></Table.Cell>
                                                                     <Table.Cell ><p className=" py-0 ">{data?.email}</p></Table.Cell>
                                                                     <Table.Cell >
                                                                         {data?.profileId==1 ? (
@@ -665,10 +665,10 @@ const GestionRole = () => {
                         ) : (infosOtherUser?.firstName && infosOtherUser?.lastName ?
                          (<div>
                             <p className="gr-text-8 " id="addon-wrapping">
-                              Nom : {infosOtherUser?.firstName}
+                              Nom : {infosOtherUser?.lastName}
                             </p>
                             <p className="gr-text-8 " id="addon-wrapping">
-                              Prenom : {infosOtherUser?.lastName}
+                              Prenom : {infosOtherUser?.firstName}
                             </p>
                          </div>) : <p className="gr-text-8 colorRed" id="addon-wrapping">{infosOtherUser?.message}</p>)}
                       </form>

@@ -8,6 +8,7 @@ const TypeProfil = () => {
     
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [questionnaireForUser, setQuestionnaireForUser] = useState(false);
+    const [mifidForUser, setMifidForUser] = useState(false);
 
     // Recuperer les donnees du questionnaire de l'utilisateur connecté
     useEffect(async() => {
@@ -29,6 +30,24 @@ const TypeProfil = () => {
     // FIN
 
 
+    // Recuperer les donnees du questionnaire MIFID de l'utilisateur connecté
+    useEffect(async() => {
+        const token = localStorage.getItem('tokenEnCours')
+            const getMifidForUser = async () => {
+            const result = await fetch(`${API_URL}/api/mifid/find-quiz-mifid-of-user`, {
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`,
+                },
+            })
+                .then((result) => result.json())
+                .then((data) => {
+                    setMifidForUser(data)
+                }) 
+            };
+            await getMifidForUser();
+    }, []);
+    // FIN
     
 
     return (
@@ -143,6 +162,30 @@ const TypeProfil = () => {
                                                     </a>
                                                 </div>
                                             ):("")}
+                                            <div className='btn-box mt-3'>
+                                                {mifidForUser?.status==true? (
+                                                    <a className='nav-link' href='/profil/opcvm/mifid/dashboard'>
+                                                        <Button
+                                                            block
+                                                            color="primary"
+                                                            type="button"
+                                                        >
+                                                            Voir profil MIFID
+                                                        </Button>
+                                                    </a>
+                                                ):(
+                                                    <a className='nav-link' href='/profil/kyc/opcvm/mifid/partie-one'>
+                                                        <Button
+                                                            block
+                                                            color="primary"
+                                                            type="button"
+                                                        >
+Q                                                            Questionnaire MIFID
+                                                        </Button>
+                                                    </a>
+                                                )}
+                                                
+                                            </div>
 
                                         </div>
                                         <div className='col-lg-6 col-md-6 my-3'>

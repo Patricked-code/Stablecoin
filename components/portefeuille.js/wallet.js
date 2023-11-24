@@ -1734,7 +1734,7 @@ const value = ethers.utils.parseUnits("10", decimalStablecoin);
 
           
 
-          {/* ********************************************************************************** */}
+            {/* ********************************************************************************** */}
                 {/* MODAL DE TRANSFERT DE JETON VERS AUTRE COMPTE*/}
             {/* ********************************************************************************** */}
             <Modal show={showTransfert} className="mt-15" onHide={handleTransfertClose} style={{maxWidth: '1800px', width: '100%'}}>
@@ -1826,10 +1826,10 @@ const value = ethers.utils.parseUnits("10", decimalStablecoin);
                         ) : (infosOtherUser?.firstName && infosOtherUser?.lastName ?
                          (<div>
                             <p className="gr-text-8 " id="addon-wrapping">
-                              Nom : {infosOtherUser?.firstName}
+                              Nom : {infosOtherUser?.lastName}
                             </p>
                             <p className="gr-text-8 " id="addon-wrapping">
-                              Prenom : {infosOtherUser?.lastName}
+                              Prenom : {infosOtherUser?.firstName}
                             </p>
                          </div>) : <p className="gr-text-8 colorRed" id="addon-wrapping">{infosOtherUser?.message}</p>)}
                           {/* Fin affichage */}
@@ -1981,10 +1981,10 @@ const value = ethers.utils.parseUnits("10", decimalStablecoin);
                         ) : (infosOtherUser?.firstName && infosOtherUser?.lastName ?
                          (<div className='mb-3'>
                             <p className="gr-text-8 " id="addon-wrapping">
-                              Nom : {infosOtherUser?.firstName}
+                              Nom : {infosOtherUser?.lastName}
                             </p>
                             <p className="gr-text-8 " id="addon-wrapping">
-                              Prenom : {infosOtherUser?.lastName}
+                              Prenom : {infosOtherUser?.firstName}
                             </p>
                          </div>) : <p className="gr-text-8 mb-3 colorRed" id="addon-wrapping">{infosOtherUser?.message}</p>)}
                         {/* Fin affichage */}
@@ -2110,10 +2110,10 @@ const value = ethers.utils.parseUnits("10", decimalStablecoin);
                         ) : (infosOtherUser?.firstName && infosOtherUser?.lastName ?
                          (<div className='mb-3'>
                             <p className="gr-text-8 " id="addon-wrapping">
-                              Nom : {infosOtherUser?.firstName}
+                              Nom : {infosOtherUser?.lastName}
                             </p>
                             <p className="gr-text-8 " id="addon-wrapping">
-                              Prenom : {infosOtherUser?.lastName}
+                              Prenom : {infosOtherUser?.firstName}
                             </p>
                          </div>) : <p className="gr-text-8 mb-3 colorRed" id="addon-wrapping">{infosOtherUser?.message}</p>)}
                         {/* Fin affichage */}

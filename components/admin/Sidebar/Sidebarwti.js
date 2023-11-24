@@ -143,7 +143,7 @@ const [provider, setProvider] = useState(null);
 
             <div className='nav-list'>
             {!currentUser?.entreprise? (
-                <span className='nav-link-icon text-white mx-1'>{currentUser?.firstName} {currentUser?.lastName}</span>
+                <span className='nav-link-icon text-white mx-1'> {currentUser?.lastName} {currentUser?.firstName}</span>
             ) :('')}
             {currentUser?.entreprise? (
                 <span className='nav-link-icon text-white mx-1'>{currentUser?.entreprise}</span>

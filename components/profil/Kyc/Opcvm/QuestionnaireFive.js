@@ -246,7 +246,7 @@ const CQuestionnaireFive = () => {
                   {/* Les boutons */}
                   <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
                     <div className="form-group mb-6 mt-3 col-lg-6 col-md-6">
-                        <Link href='/profil/kyc/opcvm/questionnaire-five' className="align-right">
+                        <Link href='/profil/kyc/opcvm/questionnaire-four' className="align-right">
                             <a
                             className=""
                             >
