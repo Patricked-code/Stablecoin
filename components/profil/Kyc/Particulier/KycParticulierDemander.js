@@ -10,6 +10,8 @@ import Router from "next/router";
 import { Table } from '@nextui-org/react';
 import Link from 'next/link';
 import moment from 'moment';
+import Swal from 'sweetalert2';
+
 
 
 
@@ -22,10 +24,16 @@ const CKycParticulierDemander = () => {
     const [isLoggingIn, setIsLoggingIn] = useState();
     const [currentUser, setCurrentUser] = useState();
     const [provider, setProvider] = useState(null);
+    const [messageError, setMessageError] = useState();
     const [kycRequestOfUser, setKycRequestOfUser] = useState();
 
     
+    
     // States du formulaire d'acceptation par partie
+    const [kycRequestId, setKycRequestId] = useState();
+    const [oneKycRequest, setOneKycRequest] = useState();
+    const [deadline, setDeadline] = useState();
+    
     const [quizAmlAccept, setQuizAmlAccept] = useState();
     const [quizFatcaAccept, setQuizFatcaAccept] = useState();
     const [identityAccept, setIdentityAccept] = useState();
@@ -34,134 +42,478 @@ const CKycParticulierDemander = () => {
     const [signatureAccept, setSignatureAccept] = useState();
 
 
+    /**
+     * État de contrôle pour afficher ou masquer la modal du formulaire de réponse à la demande d'accès.
+     * @type {boolean}
+    */
+    const [showForm, setShowForm] = useState(false);
+
+    /**
+     * Fonction pour fermer la modal du formulaire.
+     * @function
+     * @returns {void}
+     */
+    const handleCloseForm = () => setShowForm(false);
+
+    /**
+     * Fonction pour afficher la modal du formulaire.
+     * @function
+     * @returns {void}
+     */
+    const handleShowForm = () => setShowForm(true);
+
+    /**
+     * État de contrôle pour afficher ou masquer la modal du rejet de la demande.
+     * @type {boolean}
+     */
+    const [showRejection, setShowRejection] = useState(false);
+
+    /**
+     * Fonction pour fermer la modal du rejet.
+     * @function
+     * @returns {void}
+     */
+    const handleCloseRejection = () => setShowRejection(false);
+
+    /**
+     * Fonction pour afficher la modal du rejet.
+     * @function
+     * @returns {void}
+     */
+    const handleShowRejection = () => setShowRejection(true);
 
 
 
 
 
+
+    /**
+     * Effet pour mettre à jour le fournisseur Ethereum lorsqu'un objet Magic est disponible.
+     * Cet effet dépend de l'existence de l'objet `magic`.
+     *
+     * @function
+     * @returns {void}
+    */
     useEffect(() => {
-
         if (!!magic) {
+            /**
+             * Fournisseur Ethereum basé sur le fournisseur RPC de l'objet Magic.
+             * @type {object}
+             */
             const pt = new ethers.providers.Web3Provider(magic.rpcProvider);
+
+            /**
+             * Mise à jour de l'état local avec le nouveau fournisseur Ethereum.
+             * @type {object}
+             */
             setProvider(pt);
         }
     }, [magic]);
 
-    // RECUPERATION DES INFORMATIONS QUI CONCERNENT MAGIC
+
+    /**
+     * Effet pour obtenir les métadonnées de l'utilisateur connecté et mettre à jour l'état local.
+     * Cet effet dépend de l'existence de l'objet `magic` et `provider`.
+     *
+     * @function
+     * @returns {void}
+    */
     useEffect(() => {
-        (async () => {
+        /**
+         * Fonction asynchrone pour récupérer les métadonnées de l'utilisateur connecté.
+         *
+         * @async
+         * @returns {void}
+         */
+        const fetchData = async () => {
             if (!!magic && !!provider) {
-              const userMetadatas = await magic.user.getMetadata();
-              const signer = provider.getSigner();
-              const network = await provider.getNetwork();
-              const userAddress = await signer.getAddress();
-              //const userBalance = ethers.utils.formatEther(await provider.getBalance(userAddress))
-              // FIN
+                /**
+                 * Métadonnées de l'utilisateur récupérées via l'objet Magic.
+                 * @type {object}
+                 */
+                const userMetadatas = await magic.user.getMetadata();
 
-              // Obtenir l'utilisateur connecté 
-              const token = localStorage.getItem('tokenEnCours')
+                /**
+                 * Signataire associé au fournisseur Ethereum.
+                 * @type {object}
+                 */
+                const signer = provider.getSigner();
 
-                const getUser = async () => {
-                  const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
-                      headers: {
-                      'Content-Type': 'application/json',
-                      Authorization:  `Bearer ${token}`,
+                /**
+                 * Réseau Ethereum actuel.
+                 * @type {object}
+                 */
+                const network = await provider.getNetwork();
 
-                      },
-                })
-                  .then((result) => result.json())
-                  .then((user) => {
-                    setCurrentUser(user)
-                  }) 
-              };
-              await getUser();
-              // Fin
+                /**
+                 * Adresse de l'utilisateur connecté.
+                 * @type {string}
+                 */
+                const userAddress = await signer.getAddress();
+
+                // Obtenir l'utilisateur connecté
+                const token = localStorage.getItem('tokenEnCours');
+                try {
+                    /**
+                     * Résultat de la requête pour obtenir l'utilisateur connecté.
+                     * @type {Response}
+                     */
+                    const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+
+                    if (!result.ok) {
+                        throw new Error('Failed to fetch user data');
+                    }
+
+                    /**
+                     * Données de l'utilisateur connecté.
+                     * @type {object}
+                     */
+                    const user = await result.json();
+
+                    /**
+                     * Mise à jour de l'état local avec les données de l'utilisateur.
+                     * @type {object}
+                     */
+                    setCurrentUser(user);
+                } catch (error) {
+                    // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
+                    console.error('Erreur lors de la récupération des données de l\'utilisateur:', error);
+                }
             }
-        })();
+        };
+
+        // Appel de la fonction asynchrone pour obtenir les données lorsqu'il y a des changements dans `provider` ou `magic`.
+        fetchData();
     }, [provider, magic]);
-    //  Fin
 
-    // Modal du formulaire pour répondre à la demande d'accès
-    const [showForm, setShowForm] = useState(false);
-    const handleCloseForm = () => setShowForm(false);
-    const handleShowForm = () => setShowForm(true);
-    // Fin
 
-    // Modal du rejet de la demande
-    const [showRejection, setShowRejection] = useState(false);
-    const handleCloseRejection = () => setShowRejection(false);
-    const handleShowRejection = () => setShowRejection(true);
-    // Fin
+    
 
-    // PARTIE D'ENVOIE DES DONNEES DE LA DEMANDE DE KYC PARTICULIER
-    const [selectedOptions, setSelectedOptions] = useState([]);
+    /**
+      * Partie d'envoi des données de la demande KYC particulier.
+      * Utilise l'état `selectedOptions` pour suivre les options sélectionnées.
+      *
+      * @type {Array<string>} selectedOptions - Les options sélectionnées pour la demande KYC.
+      * @type {Function} setSelectedOptions - Fonction pour mettre à jour l'état des options sélectionnées.
+      *
+      * @function
+      * @param {Event} e - L'événement de changement d'option.
+      * @returns {void}
+    */
+     const [selectedOptions, setSelectedOptions] = useState([]);
 
     const handleOptionChange = (e) => {
-        const value = e.target.value;
-        const isChecked = e.target.checked;
+      const value = e.target.value;
+      const isChecked = e.target.checked;
 
-        if (isChecked) {
-            setSelectedOptions([...selectedOptions, value]);
-
-        } else {
-            setSelectedOptions(selectedOptions.filter(option => option !== value));
-        }
+      if (isChecked) {
+          /**
+           * Ajoute la valeur à la liste des options sélectionnées.
+           * @type {Array<string>}
+           */
+          setSelectedOptions([...selectedOptions, value]);
+      } else {
+          /**
+           * Retire la valeur de la liste des options sélectionnées.
+           * @type {Array<string>}
+           */
+          setSelectedOptions(selectedOptions.filter(option => option !== value));
+      }
     };
 
-    // Fonction d'envoie des données
-    const requestKycParticular = async (e) => {
+
+    /**
+     * Fonction pour accepter une demande KYC particulier.
+     *
+     * @function
+     * @param {Event} e - L'événement de soumission du formulaire.
+     * @returns {void}
+    */
+    const acceptKycParticular = async (e) => {
+      e.preventDefault();
+      setIsLoggingIn(true);
+      
+      try {
+          /**
+           * Données du formulaire à envoyer pour la demande KYC particulier.
+           * @type {object}
+           */
+          const dataForm = {
+            quizAmlAccept: selectedOptions.includes("Questionnaire AML"),
+            quizFatcaAccept: selectedOptions.includes("Questionnaire FATCA"),
+            identityAccept: selectedOptions.includes("Justificatif d'identité"),
+            residenceAccept: selectedOptions.includes("Justificatif de domicile"),
+            photoAccept: selectedOptions.includes("Photo"),
+            signatureAccept: selectedOptions.includes("Signature"),
+            deadline:deadline
+          };
+          
+
+          // Obtenir le token en cours
+          const token = localStorage.getItem('tokenEnCours');
+
+          /**
+           * Réponse de la requête KYC.
+           * @type {Response}
+           */
+          const response = await fetch(`${API_URL}/api/kyc/answer-of-owner-kyc/${oneKycRequest?.id}`, {
+              method: 'PUT',
+              body: JSON.stringify(dataForm),
+              headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`
+              },
+          });
+
+          /**
+           * Données de la réponse de la requête KYC.
+           * @type {object}
+           */
+          const data = await response.json();
+
+          /* Verifier s'il y a un messsage d'erreur, on l'affiche dans SWAL 
+          * sinon on affiche le message de succès
+          */
+          if (data.message == 200) {
+              Swal.fire({
+                  position: 'center',
+                  icon: 'success',
+                  html: `<p> Votre réponse a été envoyées avec succès.</p>`,
+                  showConfirmButton: false,
+                  timer: 5000
+              });
+
+              // Actualiser après l'affichage
+              setTimeout(() => {
+                  window.location.reload();
+              }, 7000);
+              // Fin
+          } else {
+              setMessageError(data.message);
+              setIsLoggingIn(false);
+              Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  html: `<p> ${messageError} </p>`,
+                  showConfirmButton: false,
+                  timer: 10000
+              });
+          }
+          // Fin condition
+      } catch (error) {
+          console.error('Erreur =>', error);
+      }
+    };
+
+    /**
+        * Fonction de gestion de la soumission du formulaire.
+        * @function
+        * @param {Event} e - L'événement de soumission du formulaire.
+        * @returns {void}
+    */
+      const handleSubmit = (e) => {
         e.preventDefault();
-    
-        const response = await fetch('/submit', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                'Questionnaire AML': selectedOptions.filter(option => option.includes("Questionnaire AML")),
-                'Questionnaire FATCA': selectedOptions.filter(option => option.includes("Questionnaire FATCA")),
-                "Justificatif d'identité": selectedOptions.filter(option => option.includes("Justificatif d'identité")),
-                "Justificatif de domicile": selectedOptions.filter(option => option.includes("Justificatif de domicile")),
-                'Photo': selectedOptions.filter(option => option.includes("Photo")),
-                'Signature': selectedOptions.filter(option => option.includes("Signature"))
-            }),
-        });
-    
-        if (response.ok) {
-            console.log('Données enregistrées avec succès');
-        } else {
-            console.error('Erreur lors de l\'enregistrement des données');
+      };
+
+
+
+    /**
+     * Fonction pour rejeter une demande KYC particulier.
+     *
+     * @function
+     * @returns {void}
+    */
+    const rejectKycParticular = async () => {
+        setIsLoggingIn(true);
+        
+        try {
+            
+            
+           
+  
+            // Obtenir le token en cours
+            const token = localStorage.getItem('tokenEnCours');
+  
+            /**
+             * Réponse de la requête KYC.
+             * @type {Response}
+             */
+            const response = await fetch(`${API_URL}/api/kyc/rejection-request-by-owner-kyc/${oneKycRequest?.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+            });
+  
+            /**
+             * Données de la réponse de la requête KYC.
+             * @type {object}
+             */
+            const data = await response.json();
+  
+            /* Verifier s'il y a un messsage d'erreur, on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message == 200) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Vous avez rejeté cette demande avec succès.</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+  
+                // Actualiser après l'affichage
+                setTimeout(() => {
+                    window.location.reload();
+                }, 7000);
+                // Fin
+            } else {
+                setMessageError(data.message);
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>`,
+                    showConfirmButton: false,
+                    timer: 10000
+                });
+            }
+            // Fin condition
+        } catch (error) {
+            console.error('Erreur =>', error);
         }
     };
-    // FIN 
 
 
-    // Recuperer les donnees de la demande d'accès de l'utilisateur connecté
-    useEffect(async() => {
-        const token = localStorage.getItem('tokenEnCours')
-            const getKycRequestOfUser = async () => {
-            const result = await fetch(`${API_URL}/api/kyc/find-all-kyc-request-of-kyc-owner`, {
-                headers: {
-                'Content-Type': 'application/json',
-                Authorization:  `Bearer ${token}`,
-                },
-            })
-                .then((result) => result.json())
-                .then((data) => {
-                    setKycRequestOfUser(data)
-                }) 
-            };
-            await getKycRequestOfUser();
+    /**
+     * Hook d'effet pour récupérer les données des demandes d'accès de l'utilisateur connecté.
+     * Les données sont stockées dans l'état `kycRequestOfUser`.
+     *
+     * @async
+     * @function
+     * @returns {void}
+    */
+    useEffect(async () => {
+        /**
+         * Fonction pour obtenir les demandes d'accès de l'utilisateur connecté.
+         *
+         * @async
+         * @returns {void}
+         */
+        const getKycRequestOfUser = async () => {
+            const token = localStorage.getItem('tokenEnCours');
+
+            try {
+                /**
+                 * Résultat de la requête pour récupérer les demandes d'accès de l'utilisateur connecté.
+                 * @type {Response}
+                 */
+                const result = await fetch(`${API_URL}/api/kyc/find-all-kyc-request-of-kyc-owner`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!result.ok) {
+                    throw new Error('Failed to fetch KYC request data');
+                }
+
+                /**
+                 * Données des demandes d'accès de l'utilisateur connecté.
+                 * @type {object[]}
+                 */
+                const data = await result.json();
+                setKycRequestOfUser(data);
+            } catch (error) {
+                // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
+                console.error('Erreur lors de la récupération des demandes d\'accès KYC:', error);
+            }
+        };
+
+        // Appel de la fonction pour récupérer les demandes d'accès de l'utilisateur connecté.
+        await getKycRequestOfUser();
     }, []);
-    // FIN
 
-    // FONCTION POUR FORMATER LA DATE
-    const formatDate = (_updatedAt) =>{
+
+    /**
+     * Hook d'effet pour récupérer les données d'une demande d'accès en fonction de son ID.
+     * Les données sont stockées dans l'état `OnekycRequest`.
+     *
+     * @async
+     * @function
+     * @returns {void}
+    */
+     useEffect(async () => {
+        /**
+         * Fonction pour obtenir une demande d'accès en fonction de son ID.
+         *
+         * @async
+         * @returns {void}
+         */
+        const getOneKycRequest = async (_kycRequestId) => {
+            const token = localStorage.getItem('tokenEnCours');
+
+            try {
+                /**
+                 * Résultat de la requête pour récupérer une demandes d'accès en fonction de son ID.
+                 * @type {Response}
+                 */
+                const result = await fetch(`${API_URL}/api/kyc/find-one-kyc-request/${_kycRequestId}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!result.ok) {
+                    throw new Error('Failed to fetch KYC request data');
+                }
+
+                /**
+                 * Données des demandes d'accès de l'utilisateur connecté.
+                 * @type {object[]}
+                 */
+                const data = await result.json();
+                setOneKycRequest(data);
+            } catch (error) {
+                // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
+                console.error('Erreur lors de la récupération des demandes d\'accès KYC:', error);
+            }
+        };
+
+        // Appel de la fonction pour récupérer les demandes d'accès de l'utilisateur connecté.
+        if (kycRequestId) {
+            await getOneKycRequest(kycRequestId);
+        }
+        
+    }, [kycRequestId]);
+
+
+    /**
+     * Fonction pour formater une date dans le format 'DD/MM/YYYY'.
+     *
+     * @function
+     * @param {string} _updatedAt - La date à formater.
+     * @returns {string} - La date formatée.
+    */
+    const formatDate = (_updatedAt) => {
+        /**
+         * Date formatée dans le format 'DD/MM/YYYY'.
+         * @type {string}
+        */
         const maDate = moment(_updatedAt).format('DD/MM/YYYY');
-        // const maDate = moment(_updatedAt).format('DD/MM/YYYY à HH:mm');
-        return  maDate
-    }
-    //  FIN
+
+        return maDate;
+    };
+
 
     return (
         <>
@@ -205,19 +557,30 @@ const CKycParticulierDemander = () => {
                                         {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom & prenom </p></Table.Column> */}
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Institution</p></Table.Column>
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date limite</p></Table.Column>
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actions</p></Table.Column>
                                     </Table.Header>
                                     <Table.Body>
                                         {kycRequestOfUser?.map((data, index) => (
                                             <Table.Row key={index}>                       
                                                 <Table.Cell ><small className=" py-0 ">{data?.nameInstitution}</small></Table.Cell>
                                                 <Table.Cell ><small className=" py-0 ">{formatDate(data?.sendingDate)}</small></Table.Cell>
-                                                <Table.Cell ><small className=" py-0 ">{data?.status == 0?(<i>Pas encore acceptés</i>):data?.status == 1?(<i>Déjà acceptés</i>):data?.status == 2?(<i>Traités</i>):data?.status == 3?(<i>Rejeté</i>):""}</small></Table.Cell>
+                                                <Table.Cell ><small className=" py-0 ">{data?.deadline?formatDate(data?.deadline):"Aucune"}</small></Table.Cell>
+                                                <Table.Cell ><small className=" py-0 ">{data?.status == 0?(<i >Pas encore acceptée</i>):data?.status == 1?(<i className='colorBlue'>Déjà acceptée</i>):data?.status == 2?(<i className='colorGreen'>Traitée</i>):data?.status == 3?(<i className='colorRed'>Rejetée</i>):""}</small></Table.Cell>
                                                 <Table.Cell >
-                                                    <div className='text-center'>
-                                                        <small className=" py-0  mx-2 btn btn-primary" onClick={handleShowForm}>Répondre</small>
-                                                        <small className=" py-0 px-4 mx-2 btn btn-danger" onClick={handleShowRejection}>Rejeter</small>
+                                                    <div className='text-center d-flex'>
+                                                        <button onClick={()=>setKycRequestId(data?.id)}>
+                                                            <small className=" py-0  mx-2 btn btn-primary" onClick={handleShowForm}>Répondre</small>
+                                                        </button>
+
+                                                        <button 
+                                                            className={`py-0 mx-2 btn ${data?.status === 3 ? 'btn-secondary' : 'btn-danger'} d`}
+                                                            onClick={handleShowRejection}
+                                                            disabled={data?.status === 3}
+                                                        >
+                                                                Rejeter
+                                                        </button>
                                                     </div>
                                                 </Table.Cell>
                                             </Table.Row >
@@ -250,84 +613,114 @@ const CKycParticulierDemander = () => {
                 <Modal.Header closeButton id="bgcolor">
                     <Modal.Title className="" >Acceptation de la demande</Modal.Title>                
                 </Modal.Header>
-                <Form role="form">
+                <Form role="form" onSubmit={handleSubmit}>
                     <Modal.Body>
                         <div>
                             <label className='mb-3'>
                                 Cochez les parties que vous souhaiterez autoriser l'institution financière à voir.
                             </label>
+                             
+                            {oneKycRequest?.quizAml? (
+                                <div className='form-group'>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            value="Questionnaire AML"
+                                            className='mx-3'
+                                            checked={selectedOptions.includes("Questionnaire AML")}
+                                            onChange={handleOptionChange}
+                                        />
+                                        Questionnaire AML
+                                    </label>
+                                </div>
+                            ) : ('')}
 
-                            <div className='form-group'>
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        value="Questionnaire AML"
-                                        className='mx-3'
-                                        checked={selectedOptions.includes("Questionnaire AML")}
-                                        onChange={handleOptionChange}
-                                    />
-                                    Questionnaire AML
-                                </label>
-                            </div>
-                            <div className='form-group'>
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        value="Questionnaire FATCA"
-                                        className='mx-3'
-                                        checked={selectedOptions.includes("Questionnaire FATCA")}
-                                        onChange={handleOptionChange}
-                                    />
-                                    Questionnaire FATCA
-                                </label>
-                            </div>
-                            <div className='form-group'>
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        value="Justificatif d'identité"
-                                        className='mx-3'
-                                        checked={selectedOptions.includes("Justificatif d'identité")}
-                                        onChange={handleOptionChange}
-                                    />
-                                    Justificatif d'identité
-                                </label>
-                            </div>
-                            <div className='form-group'>
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        value="Justificatif de domicile"
-                                        className='mx-3'
-                                        checked={selectedOptions.includes("Justificatif de domicile")}
-                                        onChange={handleOptionChange}
-                                    />
-                                    Justificatif de domicile
-                                </label>
-                            </div>
-                            <div className='form-group'>
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        value="Photo"
-                                        className='mx-3'
-                                        checked={selectedOptions.includes("Photo")}
-                                        onChange={handleOptionChange}
-                                    />
-                                    Photo
-                                </label>
-                            </div>
-                            <div className='form-group'>
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        value="Signature"
-                                        className='mx-3'
-                                        checked={selectedOptions.includes("Signature")}
-                                        onChange={handleOptionChange}
-                                    />
-                                    Signature
-                                </label>
+                            {oneKycRequest?.quizFatca? (
+                                <div className='form-group'>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            value="Questionnaire FATCA"
+                                            className='mx-3'
+                                            checked={selectedOptions.includes("Questionnaire FATCA")}
+                                            onChange={handleOptionChange}
+                                        />
+                                        Questionnaire FATCA
+                                    </label>
+                                </div>
+                            ) : ('')}
+                              
+                            {oneKycRequest?.identity? (
+                                <div className='form-group'>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            value="Justificatif d'identité"
+                                            className='mx-3'
+                                            checked={selectedOptions.includes("Justificatif d'identité")}
+                                            onChange={handleOptionChange}
+                                        />
+                                        Justificatif d'identité
+                                    </label>
+                                </div>
+                            ) : ('')}
+
+                            {oneKycRequest?.residence? (
+                                <div className='form-group'>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            value="Justificatif de domicile"
+                                            className='mx-3'
+                                            checked={selectedOptions.includes("Justificatif de domicile")}
+                                            onChange={handleOptionChange}
+                                        />
+                                        Justificatif de domicile
+                                    </label>
+                                </div>
+                            ) : ('')}
+                             
+                            {oneKycRequest?.photo? (
+                                <div className='form-group'>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            value="Photo"
+                                            className='mx-3'
+                                            checked={selectedOptions.includes("Photo")}
+                                            onChange={handleOptionChange}
+                                        />
+                                        Photo
+                                    </label>
+                                </div>
+                            ) : ('')}
+                            
+                            {oneKycRequest?.signature? (
+                                <div className='form-group'>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            value="Signature"
+                                            className='mx-3'
+                                            checked={selectedOptions.includes("Signature")}
+                                            onChange={handleOptionChange}
+                                        />
+                                        Signature
+                                    </label>
+                                </div>
+                            ) : ('')}
+
+                            <div className='form-group my-2'>
+                                <label className='mx-3'>
+                                    Date limite d'accès (Facultatif)
+                                </label><br/>
+                                <input
+                                    type="date"
+                                    className='mx-3'
+                                    defaultValue={deadline} 
+                                    onChange={(event)=>setDeadline(event.target.value)}
+                                />
+                                  
                             </div>
                         </div>
                     </Modal.Body>
@@ -335,8 +728,8 @@ const CKycParticulierDemander = () => {
                         <Button className="text-white" color="danger" onClick={handleCloseForm}>
                             Fermer
                         </Button>
-                        <Button  type='submit'  color="success" disabled={isLoggingIn}>
-                            Attribuer
+                        <Button  onClick={acceptKycParticular}  color="success" disabled={isLoggingIn}>
+                            Autoriser
                         </Button>
                     </Modal.Footer>
                 </Form>
@@ -360,7 +753,7 @@ const CKycParticulierDemander = () => {
                         <Button className="text-white" color="primary" onClick={handleCloseRejection}>
                             Fermer
                         </Button>
-                        <Button  type='submit'  color="danger" disabled={isLoggingIn}>
+                        <Button onClick={rejectKycParticular}  color="danger" disabled={isLoggingIn}>
                             Rejeter
                         </Button>
                     </Modal.Footer>

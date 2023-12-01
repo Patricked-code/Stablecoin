@@ -1733,19 +1733,19 @@ const [montantAchat, setMontantAchat] = useState(0)
                 {/* Abonnements */}
                 <div className='col-lg-6 col-md-6'>
                     <div className='currency-selection text-center'>
-                        <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                        <div className="mt-4  credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
                             <div className='cryptocurrency-slides'>
                                 <div className='single-cryptocurrency-box'>
                                     <div className='d-flex align-items-center'>
                                     <div className='bestseller-coin-image'>
                                         <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
                                     </div>
-                                    <div className='title'>
+                                    <div className='title pb-5'>
                                         <h3>Abonnements</h3>
                                         <p>Je fais mon abonnement</p>
                                     </div>
-                                    </div>
-                                    <div className='btn-box'>
+                                    </div><br/>
+                                    <div className='btn-box pt-3'>
                                     <a className='nav-link' href='/profil/abonnement'>
                                         <Button
                                             block

@@ -145,7 +145,7 @@ function RegisterForm() {
   // Fin
 
 
-  // ********************FONCTION DE DECONNEXION***********************************
+  // ********************FONCTION D'INSCRIPTION***********************************
 
   const handleSubmit = async (event) =>{
     setIsLoggingIn(true)

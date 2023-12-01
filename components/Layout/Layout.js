@@ -147,6 +147,8 @@ const Layout = ({ children }) => {
       pathname === "/profil/institution/kyc-digital/demande-kyc"||
       pathname === "/profil/institution/kyc-digital"||
       pathname === "/profil/institution/gestion-stablecoin"||
+      pathname === "/profil/institution/kyc-digital/show-kyc"||
+
 
   
 
@@ -299,6 +301,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/institution/kyc-digital/demande-kyc"||
       pathname === "/profil/institution/kyc-digital"||
       pathname === "/profil/institution/gestion-stablecoin"||
+      pathname === "/profil/institution/kyc-digital/show-kyc"||
 
 
       // FIN

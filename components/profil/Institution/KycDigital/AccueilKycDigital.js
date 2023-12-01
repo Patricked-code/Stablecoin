@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import React from "react";
+import React,{ useState, useEffect } from 'react';
+import { Container, Row, Col, Modal } from "react-bootstrap";
+import {Button,Form} from "reactstrap";
 
 
 // Pour Magic
@@ -10,10 +11,9 @@ import Router from "next/router";
 import { Table } from '@nextui-org/react';
 import Link from 'next/link';
 import moment from 'moment';
+import Swal from 'sweetalert2';
 
 
-// reactstrap components
-import {Button} from "reactstrap";
 
 // FIN
 
@@ -21,7 +21,7 @@ const CAccueilKycDigital = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
-
+    const [isLoggingIn, setIsLoggingIn] = useState();
     const [currentUser, setCurrentUser] = useState();
     const [provider, setProvider] = useState(null);
     const [showWallet, setShowWallet] = useState(null);
@@ -29,6 +29,31 @@ const CAccueilKycDigital = () => {
     const [kycRequestInitiate, setKycRequestInitiate] = useState();
     const [kycRequestTreaty, setKycRequestTreaty] = useState();
     const [kycRequestAccept, setKycRequestAccept] = useState();
+    const [comment, setComment] = useState();
+    const [kycRequestId, setKycRequestId] = useState();
+
+
+
+    /**
+     * État de contrôle pour afficher ou masquer la modal du formulaire du retour au propriétaire.
+     * @type {boolean}
+    */
+     const [show, setShow] = useState(false);
+
+     /**
+      * Fonction pour fermer la modal du formulaire.
+      * @function
+      * @returns {void}
+      */
+     const handleClose = () => setShow(false);
+ 
+     /**
+      * Fonction pour afficher la modal du formulaire.
+      * @function
+      * @returns {void}
+      */
+     const handleShow = () => setShow(true);
+
 
     // States de tab
     const [toggleState, setToggleState] = useState(1);
@@ -83,6 +108,82 @@ const CAccueilKycDigital = () => {
         })();
     }, [provider, magic]);
     //  Fin
+
+
+
+    /**
+     * Fonction pour faire un retour au propriétaire du KYC.
+     *
+     * @function
+     * @returns {void}
+    */
+     const returnToOwner = async (e) => {
+        e.preventDefault();
+        setIsLoggingIn(true);
+        
+        try {
+            
+            const dataForm = {
+                comment:comment
+            }
+           
+  
+            // Obtenir le token en cours
+            const token = localStorage.getItem('tokenEnCours');
+  
+            /**
+             * Réponse de la requête KYC.
+             * @type {Response}
+             */
+            const response = await fetch(`${API_URL}/api/kyc/answer-of-institution-kyc/${kycRequestId}`, {
+                method: 'PUT',
+                body: JSON.stringify(dataForm),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+            });
+  
+            /**
+             * Données de la réponse de la requête KYC.
+             * @type {object}
+             */
+            const data = await response.json();
+  
+            /* Verifier s'il y a un messsage d'erreur, on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message == 200) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Votre retour a été envoyé avec succès.</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+  
+                // Actualiser après l'affichage
+                setTimeout(() => {
+                    window.location.reload();
+                }, 7000);
+                // Fin
+            } else {
+                setMessageError(data.message);
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>`,
+                    showConfirmButton: false,
+                    timer: 10000
+                });
+            }
+            // Fin condition
+        } catch (error) {
+            console.error('Erreur =>', error);
+        }
+    };
+
 
     // Recuperer les donnees de la demande d'accès aux kyc initiée
     useEffect(async() => {
@@ -149,6 +250,19 @@ const CAccueilKycDigital = () => {
     }
     //  FIN
 
+
+    /**
+     * Effet secondaire qui met à jour la clé 'kycRequestId' dans le stockage local lorsque la valeur de kycRequestId change.
+     *
+     * @function
+     * @name useEffectSetKycRequestId
+     * @param {string} kycRequestId - L'identifiant de la demande KYC.
+     * @returns {void}
+    */
+    useEffect(() => {
+        localStorage.setItem('kycRequestId', kycRequestId);
+    }, [kycRequestId]);
+
     return (
         <>
             {/* {currentUser?.profileId==2 || currentUser?.profileId==3?( */}
@@ -185,7 +299,7 @@ const CAccueilKycDigital = () => {
                                         <div className='single-cryptocurrency-box'>
                                             <div className='d-flex align-items-center'>
                                             <div className='title'>
-                                                <h3>Demander d'accès aux kyc</h3>
+                                                <h3>Demande d'accès aux kyc</h3>
                                             </div>
                                             </div>
                                             <div className='btn-box'>
@@ -195,7 +309,7 @@ const CAccueilKycDigital = () => {
                                                     color="primary"
                                                     type="button"
                                                 >
-                                                    Vois plus
+                                                    Voir plus
                                                 </Button>
                                             </Link>
                                             {/* Fin */}
@@ -306,21 +420,25 @@ const CAccueilKycDigital = () => {
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Propriétaire</p></Table.Column>
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date limite</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
+                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actions</p></Table.Column>
                                                         </Table.Header>
                                                         <Table.Body>
-                                                            {kycRequestAccept?.map((data) => (
-                                                                <Table.Row >                       
+                                                            {kycRequestAccept?.map((data, index) => (
+                                                                <Table.Row key={index}>                       
                                                                     <Table.Cell ><small className=" py-0 ">{data?.nameOwnerKyc}</small></Table.Cell>
                                                                     <Table.Cell ><small className=" py-0 ">{formatDate(data?.sendingDate)}</small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 ">{formatDate(data?.deadline || "Aucune")}</small></Table.Cell>
+                                                                    <Table.Cell ><small className=" py-0 ">{data?.deadline?formatDate(data?.deadline):"Aucune"}</small></Table.Cell>
                                                                     <Table.Cell className="row">
-                                                                        <div className='text-center'>
-                                                                            <small className=" py-0  mx-2">
-                                                                                <Link href="/#" >
-                                                                                <a className=" text-white aNoDecor bgColorGreen px-4">Traiter</a> 
+                                                                        <div className='d-flex'>
+                                                                           
+                                                                            <p className=" py-0 " onClick={()=>setKycRequestId(data?.id)}>
+                                                                                <Link href="/profil/institution/kyc-digital/show-kyc" className="">
+                                                                                    <small className=" py-0 btn btn-primary">Voir Kyc</small> 
                                                                                 </Link>
-                                                                            </small>
+                                                                            </p>
+                                                                            <p onClick={()=>setKycRequestId(data?.id)}>
+                                                                                <small className=" py-0   btn btn-success" onClick={handleShow}>Retour</small>
+                                                                            </p>
                                                                         </div>
                                                                     </Table.Cell>
                                                                 </Table.Row >
@@ -359,11 +477,11 @@ const CAccueilKycDigital = () => {
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date limite</p></Table.Column>
                                                         </Table.Header>
                                                         <Table.Body>
-                                                            {kycRequestTreaty?.map((data) => (
-                                                                <Table.Row >                       
+                                                            {kycRequestTreaty?.map((data, index) => (
+                                                                <Table.Row key={index}>                       
                                                                     <Table.Cell ><small className=" py-0 ">{data?.nameOwnerKyc}</small></Table.Cell>
                                                                     <Table.Cell ><small className=" py-0 ">{formatDate(data?.sendingDate)}</small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 ">{formatDate(data?.deadline || "Aucune")}</small></Table.Cell>
+                                                                    <Table.Cell ><small className=" py-0 ">{data?.deadline?formatDate(data?.deadline):"Aucune"}</small></Table.Cell>
                                                                 </Table.Row >
                                                                 
                                                             ))} 
@@ -392,7 +510,48 @@ const CAccueilKycDigital = () => {
                     <Loading/>
                 </span>
             )} */}
+
+
+
+
+            {/* ********************************************************************************** */}
+                {/* MODAL DU RETOUR DE L'INSTITUTION APRES LE TRAITEMENT DU KYC*/}
+            {/* ********************************************************************************** */}
+            <Modal show={show} className="mt-15" onHide={handleClose}>
+                <Modal.Header closeButton className="bgColorblue">
+                    <Modal.Title className="text-white" >Rejet de la demande</Modal.Title>                
+                </Modal.Header>
+                    <Form>
+                        <Modal.Body>
+                            <div className="form-group mb-6">
+                                <label className="mx-2  mb-2" htmlFor='contenu'>
+                                    Veuillez faire un retour au propriétaire du KYC
+                                </label>
+                                <textarea
+                                    className="form-control gr-text-11 border  bg-white"
+                                    type="text"
+                                    id="contenu"
+                                    placeholder="Le contenu ici"
+                                    defaultValue={comment} 
+                                    onChange={(event)=>setComment(event.target.value)}
+                                />
+                            </div>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button className="text-white" color="danger" onClick={handleClose}>
+                                Fermer
+                            </Button>
+                            <Button  onClick={returnToOwner}  color="primary" disabled={isLoggingIn}>
+                                Envoyer
+                            </Button>
+                        </Modal.Footer>
+                    </Form>
+            </Modal>
+            {/* *****************************************FIN****************************************** */}
         </>
+        
+
+        
     );
 };
 

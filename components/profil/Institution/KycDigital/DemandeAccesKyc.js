@@ -57,166 +57,247 @@ const DemandeAccesKyc = () => {
     
     
     
-    // States de tab
+    /**
+     * Représente l'état de bascule du tableau.
+     * @type {number}
+     */
     const [toggleState, setToggleState] = useState(1);
+
+    /**
+     * Fonction pour basculer l'onglet en fonction de l'index fourni.
+     * @param {number} index - L'index de l'onglet à basculer.
+     * @returns {void}
+     */
     const toggleTab = (index) => {
         setToggleState(index);
     };
     // Fin
 
-
-    // Recuperer l'utilisateur connecté
-    useEffect(async() => {
-      const token = localStorage.getItem('tokenEnCours')
-          const getUserSignIn = async () => {
-          const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
-              headers: {
-              'Content-Type': 'application/json',
-              Authorization:  `Bearer ${token}`,
-              },
-          })
-              .then((result) => result.json())
-              .then((data) => {
-                  setUserSignIn(data)
-              }) 
-          };
-          await getUserSignIn();
-  }, []);
-  // FIN
-
-
-        // Obtenir un utilisateur en fonction de son email 
-        const searchUserWithEmail = () =>{
-          if (emailOtherUser) {
-            const getUser = async (_emailOtherUser) => {
-            
-                const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${_emailOtherUser}`, {
-                    headers: {
-                    'Content-Type': 'application/json',
-                    },
-                })
-                    .then((result) => result.json())
-                    .then((user) => {
-                      setInfosOtherUser(user)
-
-            
-                    }) 
-            
-                };
-                
-                  getUser(emailOtherUser);
-              
-          }
-        }
-        // FIN
-    
-         // Obtenir un utilisateur en fonction de son adresse blockchain
-         const searchUserWithBlockchain = () =>{
-          if (addressTo) {
-            const getUser = async (_addressTo) => {
-            
-                const result = await fetch(`${API_URL}/api/user/find-user-by-addrBlockchain?address=${_addressTo}`, {
-                    headers: {
-                    'Content-Type': 'application/json',
-
-                    },
-                })
-                    .then((result) => result.json())
-                    .then((user) => {
-                      setInfosOtherUser(user)
-                      console.log("InfosOtherUser=>",user)
-            
-                    }) 
-            
-                };
-                
-                  getUser(addressTo);
-              
-          }
-        }
-        // FIN
-    
-         // Obtenir un utilisateur en fonction de son Identifiant
-         const searchUserWithIdentifiant = () =>{
-          if (codeOtherUser) {
-            const getUser = async (_codeOtherUser) => {
-                const result = await fetch(`${API_URL}/api/user/find-user-by-userCode?code=${_codeOtherUser}`, {
-                    headers: {
-                    'Content-Type': 'application/json',
-                    },
-                })
-                    .then((result) => result.json())
-                    .then((user) => {
-                      setInfosOtherUser(user)
-
-            
-                    }) 
-            
-                };
-                
-                  getUser(codeOtherUser);
-              
-          }
-        }
-        // FIN
+    /**
+     * Hook d'effet pour récupérer et définir les informations de l'utilisateur connecté.
+     * @returns {void}
+     */
+    useEffect(async () => {
+        const token = localStorage.getItem('tokenEnCours');
         
-        const handleSubmit = (e) => {
-          e.preventDefault()
-      
-        }
-        // Fin
+        /**
+         * Fonction pour obtenir l'utilisateur connecté et mettre à jour l'état.
+         * @returns {void}
+         */
+        const getUserSignIn = async () => {
+            const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            .then((result) => result.json())
+            .then((data) => {
+                setUserSignIn(data);
+            });
+        };
 
+        await getUserSignIn();
+    }, []);
+    // FIN
 
-   // ************************************************************************
-    // PARTIE SCANNER DU QR CODE
-  // *************************************************************************
-  const qrScannerRef = useRef(null);
-  const [showScanner, setShowScanner] = useState();
-  const [showInput, setShowInput] = useState();
+    /**
+     * Recherche un utilisateur en fonction de son adresse e-mail.
+     * @function
+     * @returns {void}
+     */
+    const searchUserWithEmail = () => {
+      if (emailOtherUser) {
+          /**
+           * Fonction pour obtenir un utilisateur en fonction de son adresse e-mail.
+           * @async
+           * @param {string} _emailOtherUser - L'adresse e-mail de l'utilisateur recherché.
+           * @returns {void}
+           */
+          const getUser = async (_emailOtherUser) => {
+              const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${_emailOtherUser}`, {
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+              })
+                  .then((result) => result.json())
+                  .then((user) => {
+                      setInfosOtherUser(user);
+                  });
+          };
 
-  const handleScan = (data) => {
-    if (data) {
-      setAddressTo(data?.text);
-      // searchUserWithBlockchain() //Appel automatique de la fonction de recherche des informations apres avoir scanné le qr code 
-
-    }
-  };
-
-  const handleError = (error) => {
-    console.error(error);
-  };
-  // *****************************FIN SCANNER*****************************
-
-  // RECUPERER UNE SEULE LIGNE DE KYC DU PARTICULIER D'UN UTILISATEUR EN FONCTION DE SON ID
-  if (infosOtherUser?.codeTypeProfil=="part") {
-    
-    const getOneKycForParticular = async (_userId) => {
-      // Obtenir le token en cours
-      const token = localStorage.getItem('tokenEnCours');
-      try {
-        const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-one-kyc-particular-by-userId?userId=${_userId}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization:  `Bearer ${token}`
-
-          },
-        });
-  
-        if (!resKyc.ok) {
-          throw new Error('Failed to fetch KYC data');
-        }
-  
-        const data = await resKyc.json();
-        setOneKycForParticular(data);
-      } catch (error) {
-        // Handle errors appropriately, e.g., set an error state.
-        console.error('Error fetching KYC data:', error);
+          getUser(emailOtherUser);
       }
     };
-  
-    getOneKycForParticular(infosOtherUser?.id);
-}
-// FIN
+    // FIN
+
+    /**
+    * Recherche un utilisateur en fonction de son adresse blockchain.
+    * @function
+    * @returns {void}
+    */
+    const searchUserWithBlockchain = () => {
+      if (addressTo) {
+          /**
+           * Fonction pour obtenir un utilisateur en fonction de son adresse blockchain.
+           * @async
+           * @param {string} _addressTo - L'adresse blockchain de l'utilisateur recherché.
+           * @returns {void}
+           */
+          const getUser = async (_addressTo) => {
+              const result = await fetch(`${API_URL}/api/user/find-user-by-addrBlockchain?address=${_addressTo}`, {
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+              })
+                  .then((result) => result.json())
+                  .then((user) => {
+                      setInfosOtherUser(user);
+                  });
+          };
+
+          getUser(addressTo);
+      }
+    };
+    // FIN
+
+    /**
+    * Recherche un utilisateur en fonction de son identifiant.
+    * @function
+    * @returns {void}
+    */
+    const searchUserWithIdentifiant = () => {
+      if (codeOtherUser) {
+          /**
+           * Fonction pour obtenir un utilisateur en fonction de son identifiant.
+           * @async
+           * @param {string} _codeOtherUser - L'identifiant de l'utilisateur recherché.
+           * @returns {void}
+           */
+          const getUser = async (_codeOtherUser) => {
+              const result = await fetch(`${API_URL}/api/user/find-user-by-userCode?code=${_codeOtherUser}`, {
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+              })
+                  .then((result) => result.json())
+                  .then((user) => {
+                      setInfosOtherUser(user);
+                  });
+          };
+
+          getUser(codeOtherUser);
+      }
+    };
+    // FIN
+
+    /**
+    * Fonction de gestion de la soumission du formulaire.
+    * @function
+    * @param {Event} e - L'événement de soumission du formulaire.
+    * @returns {void}
+    */
+    const handleSubmit = (e) => {
+      e.preventDefault();
+    };
+
+
+
+    // ************************************************************************
+      // PARTIE SCANNER DU QR CODE
+    // *************************************************************************
+
+    /**
+     * Référence à l'élément de scanner de code QR.
+     * @type {React.MutableRefObject<null>}
+   */
+    const qrScannerRef = useRef(null);
+
+    /**
+     * État pour afficher ou masquer le scanner de code QR.
+     * @type {boolean}
+     */
+    const [showScanner, setShowScanner] = useState();
+
+    /**
+     * État pour afficher ou masquer la saisie manuelle.
+     * @type {boolean}
+     */
+    const [showInput, setShowInput] = useState();
+
+    /**
+     * Fonction de gestion du résultat de la numérisation du code QR.
+     * @param {object} data - Les données extraites du code QR.
+     * @returns {void}
+     */
+    const handleScan = (data) => {
+        if (data) {
+            /**
+             * Met à jour l'adresse avec les données extraites du code QR.
+             * @type {string}
+             */
+            setAddressTo(data?.text);
+            
+            // Appel automatique de la fonction de recherche des informations après avoir scanné le code QR
+            // searchUserWithBlockchain();
+        }
+    };
+
+    /**
+     * Fonction de gestion des erreurs lors de la numérisation du code QR.
+     * @param {Error} error - L'objet d'erreur généré lors de la numérisation.
+     * @returns {void}
+     */
+    const handleError = (error) => {
+        console.error(error);
+    };
+    // *****************************FIN SCANNER*****************************
+
+
+    /**
+     * Récupère une seule ligne de KYC (Know Your Customer) particulier pour un utilisateur en fonction de son ID.
+     * Cette fonction est spécifiquement conçue pour les utilisateurs de type "particulier".
+     *
+     * @function
+     * @param {string} _userId - L'ID de l'utilisateur pour lequel récupérer les informations KYC.
+     * @returns {void}
+   */
+    if (infosOtherUser?.codeTypeProfil === "part") {
+        
+      const getOneKycForParticular = async (_userId) => {
+          // Obtenir le token en cours
+          const token = localStorage.getItem('tokenEnCours');
+          try {
+              /**
+               * Requête pour récupérer une seule ligne de KYC particulier en fonction de l'ID de l'utilisateur.
+               * @type {Response}
+               */
+              const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-one-kyc-particular-by-userId?userId=${_userId}`, {
+                  headers: {
+                      'Content-Type': 'application/json',
+                      Authorization: `Bearer ${token}`
+                  },
+              });
+
+              if (!resKyc.ok) {
+                  throw new Error('Failed to fetch KYC data');
+              }
+
+              /**
+               * Données KYC récupérées pour un particulier.
+               * @type {object}
+               */
+              const data = await resKyc.json();
+              setOneKycForParticular(data);
+          } catch (error) {
+              // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
+              console.error('Erreur lors de la récupération des données KYC :', error);
+          }
+      };
+
+      // Appel de la fonction pour récupérer le KYC pour le particulier actuel.
+      getOneKycForParticular(infosOtherUser?.id);
+    }
 
 
 
@@ -229,116 +310,172 @@ const DemandeAccesKyc = () => {
 
 
 
-// FONCTION POUR VIDER DES CHAMPS QUAND ON CLIQUE SUR LE BOUTON EMAIL, ADRESSE BLOCKCHAIN ET IDENTIFAINT
-const dumpVariables = () =>{
-  setInfosOtherUser("")
-  setAddressTo("")
-  setEmailOtherUser("")
-  setCodeOtherUser("")
-  setReasonFiling("") 
-  setFundsOrigin("")
-}
+
+    /**
+     * Fonction pour vider les champs liés à la recherche d'informations utilisateur
+     * lorsqu'on clique sur les boutons Email, Adresse Blockchain et Identifiant.
+     *
+     * @function
+     * @returns {void}
+    */
+    const dumpVariables = () => {
+      setInfosOtherUser("");
+      setAddressTo("");
+      setEmailOtherUser("");
+      setCodeOtherUser("");
+      setReasonFiling(""); 
+      setFundsOrigin("");
+    };
 
 
-
-// PARTIE D'ENVOIE DES DONNEES DE LA DEMANDE DE KYC PARTICULIER
-    const [selectedOptions, setSelectedOptions] = useState([]);
+    /**
+      * Partie d'envoi des données de la demande KYC particulier.
+      * Utilise l'état `selectedOptions` pour suivre les options sélectionnées.
+      *
+      * @type {Array<string>} selectedOptions - Les options sélectionnées pour la demande KYC.
+      * @type {Function} setSelectedOptions - Fonction pour mettre à jour l'état des options sélectionnées.
+      *
+      * @function
+      * @param {Event} e - L'événement de changement d'option.
+      * @returns {void}
+    */
+     const [selectedOptions, setSelectedOptions] = useState([]);
 
     const handleOptionChange = (e) => {
-        const value = e.target.value;
-        const isChecked = e.target.checked;
+      const value = e.target.value;
+      const isChecked = e.target.checked;
 
-        if (isChecked) {
-            setSelectedOptions([...selectedOptions, value]);
-
-        } else {
-            setSelectedOptions(selectedOptions.filter(option => option !== value));
-        }
-    };
-
-    // Fonction d'envoie des données
-    const requestKycParticular = async (e) => {
-      e.preventDefault();
-      setIsLoggingIn(true)
-      const nameOwnerKyc = infosOtherUser?.lastName +" "+ infosOtherUser?.firstName
-      try {
-        
-      
-        const dataForm = {
-          quizAml: selectedOptions.filter(option => option.includes("Questionnaire AML")),
-          quizFatca: selectedOptions.filter(option => option.includes("Questionnaire FATCA")),
-          identity: selectedOptions.filter(option => option.includes("Justificatif d'identité")),
-          residence: selectedOptions.filter(option => option.includes("Justificatif de domicile")),
-          photo: selectedOptions.filter(option => option.includes("Photo")),
-          signature: selectedOptions.filter(option => option.includes("Signature")),
-          
-        }
-        
-        console.log("infosOtherUser?.lastNam=>",nameOwnerKyc,)
-      
-        const dataa ={
-          quizAml:dataForm?.quizAml[0]|| null,
-          quizFatca:dataForm?.quizFatca[0]|| null,
-          identity:dataForm?.identity[0]|| null,
-          residence:dataForm?.residence[0]|| null,
-          photo:dataForm?.photo[0]|| null,
-          signature:dataForm?.signature[0]|| null,
-          emailNotification:emailNotification,
-          nameOwnerKyc:nameOwnerKyc,
-          nameInstitution:userSignIn?.entreprise,
-          object:object,
-          particularKycId:oneKycForParticular?.id,
-          ownerId:infosOtherUser?.id
-        }
-
-        // Obtenir le token en cours
-        const token = localStorage.getItem('tokenEnCours');
-        const response = await fetch(`${API_URL}/api/kyc/add-kyc-request`, {
-            method: 'POST',
-            body: JSON.stringify(dataa),
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization:  `Bearer ${token}`
-            },
-        });
-        const data = await response.json();
-            
-        /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-        * sinon on affiche le message de succès
-        */
-        if (data.message==200) {
-          Swal.fire({
-            position: 'center',
-            icon: 'success',
-            html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
-            showConfirmButton: false,
-            timer: 5000
-          }),
-          // Actualiser après l'affichage 
-          setTimeout(() => {
-            window.location.reload()
-          }, 7000)
-          // Fin
-        }else{
-          setMessageError(data.message)
-          setIsLoggingIn(false);
-          Swal.fire({
-            position: 'center',
-            icon: 'error',
-            html: `<p> ${messageError} </p>` ,
-            showConfirmButton: false,
-            timer: 10000
-          })
-                    
-        }
-        // Fin condition 
-      } catch (error) {
-        console.error('Erreur =>',error);
+      if (isChecked) {
+          /**
+           * Ajoute la valeur à la liste des options sélectionnées.
+           * @type {Array<string>}
+           */
+          setSelectedOptions([...selectedOptions, value]);
+      } else {
+          /**
+           * Retire la valeur de la liste des options sélectionnées.
+           * @type {Array<string>}
+           */
+          setSelectedOptions(selectedOptions.filter(option => option !== value));
       }
     };
-    // FIN 
 
-    // PARTIE D'ENVOIE DES DONNEES DE LA DEMANDE DE KYC ENTREPRISE
+
+    /**
+     * Fonction pour envoyer une demande KYC particulier.
+     *
+     * @function
+     * @param {Event} e - L'événement de soumission du formulaire.
+     * @returns {void}
+    */
+    const requestKycParticular = async (e) => {
+      e.preventDefault();
+      setIsLoggingIn(true);
+      
+      // Création du nom complet du propriétaire KYC
+      const nameOwnerKyc = infosOtherUser?.lastName + " " + infosOtherUser?.firstName;
+
+      try {
+          /**
+           * Données du formulaire à envoyer pour la demande KYC particulier.
+           * @type {object}
+           */
+          const dataForm = {
+              quizAml: selectedOptions.filter(option => option.includes("Questionnaire AML")),
+              quizFatca: selectedOptions.filter(option => option.includes("Questionnaire FATCA")),
+              identity: selectedOptions.filter(option => option.includes("Justificatif d'identité")),
+              residence: selectedOptions.filter(option => option.includes("Justificatif de domicile")),
+              photo: selectedOptions.filter(option => option.includes("Photo")),
+              signature: selectedOptions.filter(option => option.includes("Signature")),
+          };
+
+          /**
+           * Données à envoyer dans la requête KYC.
+           * @type {object}
+           */
+          const requestData = {
+              quizAml: dataForm?.quizAml[0] || null,
+              quizFatca: dataForm?.quizFatca[0] || null,
+              identity: dataForm?.identity[0] || null,
+              residence: dataForm?.residence[0] || null,
+              photo: dataForm?.photo[0] || null,
+              signature: dataForm?.signature[0] || null,
+              emailNotification: emailNotification,
+              nameOwnerKyc: nameOwnerKyc,
+              nameInstitution: userSignIn?.entreprise,
+              object: object,
+              particularKycId: oneKycForParticular?.id,
+              ownerId: infosOtherUser?.id
+          };
+
+          // Obtenir le token en cours
+          const token = localStorage.getItem('tokenEnCours');
+
+          /**
+           * Réponse de la requête KYC.
+           * @type {Response}
+           */
+          const response = await fetch(`${API_URL}/api/kyc/add-kyc-request`, {
+              method: 'POST',
+              body: JSON.stringify(requestData),
+              headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`
+              },
+          });
+
+          /**
+           * Données de la réponse de la requête KYC.
+           * @type {object}
+           */
+          const data = await response.json();
+
+          /* Verifier s'il y a un messsage d'erreur, on l'affiche dans SWAL 
+          * sinon on affiche le message de succès
+          */
+          if (data.message == 200) {
+              Swal.fire({
+                  position: 'center',
+                  icon: 'success',
+                  html: `<p> Votre demande a été envoyée avec succès.</p>`,
+                  showConfirmButton: false,
+                  timer: 5000
+              });
+
+              // Actualiser après l'affichage
+              setTimeout(() => {
+                  window.location.reload();
+              }, 7000);
+              // Fin
+          } else {
+              setMessageError(data.message);
+              setIsLoggingIn(false);
+              Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  html: `<p> ${messageError} </p>`,
+                  showConfirmButton: false,
+                  timer: 10000
+              });
+          }
+          // Fin condition
+      } catch (error) {
+          console.error('Erreur =>', error);
+      }
+    };
+
+
+    /**
+      * Partie d'envoi des données de la demande KYC entreprise.
+      * Utilise l'état `selectedOptionsEntreprise` pour suivre les options sélectionnées.
+      *
+      * @type {Array<string>} selectedOptionsEntreprise - Les options sélectionnées pour la demande KYC.
+      * @type {Function} setSelectedOptionsEntreprise - Fonction pour mettre à jour l'état des options sélectionnées.
+      *
+      * @function
+      * @param {Event} e - L'événement de changement d'option.
+      * @returns {void}
+    */
     const [selectedOptionsEntreprise, setSelectedOptionsEntreprise] = useState([]);
 
     const handleOptionChangeEntreprise = (e) => {
@@ -352,90 +489,114 @@ const dumpVariables = () =>{
         }
     };
 
+
+
+    /**
+     *
+     * @function
+     * @param {Event} e - L'événement de soumission du formulaire.
+     * @returns {void}
+     * 
+    */
     const handleSubmitEntreprise = async (e) => {
       e.preventDefault();
-      setIsLoggingIn(true)
-      try {
-        
-      
-        const dataForm = {
-          quizAmlBusiness: selectedOptionsEntreprise.filter(option => option.includes("Questionnaire AML")),
-          identityBusiness: selectedOptionsEntreprise.filter(option => option.includes("Justificatif d'identité")),
-          legalRepresentatives: selectedOptionsEntreprise.filter(option => option.includes("Représentants légaux")),
-          beneficiaries: selectedOptionsEntreprise.filter(option => option.includes("Bénéficiaires effectifs")),
-          structures: selectedOptionsEntreprise.filter(option => option.includes("Structures de contrôle")),
-          politicallyExposed: selectedOptionsEntreprise.filter(option => option.includes("Personnes politiquement exposées")),
-          financialOperation: selectedOptionsEntreprise.filter(option => option.includes("Opérations financières")),
-          fundOrigin: selectedOptionsEntreprise.filter(option => option.includes("Origine des fonds")),
-          financialInformation: selectedOptionsEntreprise.filter(option => option.includes("Informations financières")),
-          financialTransaction: selectedOptionsEntreprise.filter(option => option.includes("Transactions financières")),
-          legalDocuments: selectedOptionsEntreprise.filter(option => option.includes("Documents légaux")),
-          
-          
-        }
-        
-        const dataa ={
-          quizAmlBusiness: dataForm?.quizAmlBusiness[0]|| null,
-          identityBusiness: dataForm?.identityBusiness[0]|| null,
-          legalRepresentatives: dataForm?.legalRepresentatives[0]|| null,
-          beneficiaries: dataForm?.beneficiaries[0]|| null,
-          structures: dataForm?.structures[0]|| null,
-          politicallyExposed: dataForm?.politicallyExposed[0]|| null,
-          financialOperation: dataForm?.financialOperation[0]|| null,
-          fundOrigin: dataForm?.fundOrigin[0]|| null,
-          financialInformation: dataForm?.financialInformation[0]|| null,
-          financialTransaction: dataForm?.financialTransaction[0]|| null,
-          legalDocuments: dataForm?.legalDocuments[0]|| null,
-          emailNotification:emailNotification,
-          nameOwnerKyc:infosOtherUser?.entreprise,
-          nameInstitution:userSignIn?.entreprise,
-          object:object,
-          ownerId:infosOtherUser?.id
-        }
+      setIsLoggingIn(true);
 
-        // Obtenir le token en cours
-        const token = localStorage.getItem('tokenEnCours');
-        const response = await fetch(`${API_URL}/api/kyc/add-kyc-request`, {
-            method: 'POST',
-            body: JSON.stringify(dataa),
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization:  `Bearer ${token}`
-            },
-        });
-        const data = await response.json();
-            
-        /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-        * sinon on affiche le message de succès
-        */
-        if (data.message==200) {
-          Swal.fire({
-            position: 'center',
-            icon: 'success',
-            html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
-            showConfirmButton: false,
-            timer: 5000
-          }),
-           // Actualiser après l'affichage 
-           setTimeout(() => {
-            window.location.reload()
-           }, 7000)
-           // Fin
-        }else{
-          setMessageError(data.message)
-          setIsLoggingIn(false);
-          Swal.fire({
-            position: 'center',
-            icon: 'error',
-            html: `<p> ${messageError} </p>` ,
-            showConfirmButton: false,
-            timer: 10000
-          })
-                    
-        }
-        // Fin condition 
+      try {
+          /**
+           * Données du formulaire à envoyer pour la demande KYC entreprise.
+           * @type {object}
+           */
+          const dataForm = {
+              quizAmlBusiness: selectedOptionsEntreprise.filter(option => option.includes("Questionnaire AML")),
+              identityBusiness: selectedOptionsEntreprise.filter(option => option.includes("Justificatif d'identité")),
+              legalRepresentatives: selectedOptionsEntreprise.filter(option => option.includes("Représentants légaux")),
+              beneficiaries: selectedOptionsEntreprise.filter(option => option.includes("Bénéficiaires effectifs")),
+              structures: selectedOptionsEntreprise.filter(option => option.includes("Structures de contrôle")),
+              politicallyExposed: selectedOptionsEntreprise.filter(option => option.includes("Personnes politiquement exposées")),
+              financialOperation: selectedOptionsEntreprise.filter(option => option.includes("Opérations financières")),
+              fundOrigin: selectedOptionsEntreprise.filter(option => option.includes("Origine des fonds")),
+              financialInformation: selectedOptionsEntreprise.filter(option => option.includes("Informations financières")),
+              financialTransaction: selectedOptionsEntreprise.filter(option => option.includes("Transactions financières")),
+              legalDocuments: selectedOptionsEntreprise.filter(option => option.includes("Documents légaux")),
+          };
+
+          /**
+           * Données à envoyer dans la requête KYC entreprise.
+           * @type {object}
+           */
+          const requestData = {
+              quizAmlBusiness: dataForm?.quizAmlBusiness[0] || null,
+              identityBusiness: dataForm?.identityBusiness[0] || null,
+              legalRepresentatives: dataForm?.legalRepresentatives[0] || null,
+              beneficiaries: dataForm?.beneficiaries[0] || null,
+              structures: dataForm?.structures[0] || null,
+              politicallyExposed: dataForm?.politicallyExposed[0] || null,
+              financialOperation: dataForm?.financialOperation[0] || null,
+              fundOrigin: dataForm?.fundOrigin[0] || null,
+              financialInformation: dataForm?.financialInformation[0] || null,
+              financialTransaction: dataForm?.financialTransaction[0] || null,
+              legalDocuments: dataForm?.legalDocuments[0] || null,
+              emailNotification: emailNotification,
+              nameOwnerKyc: infosOtherUser?.entreprise,
+              nameInstitution: userSignIn?.entreprise,
+              object: object,
+              ownerId: infosOtherUser?.id
+          };
+
+          // Obtenir le token en cours
+          const token = localStorage.getItem('tokenEnCours');
+
+          /**
+           * Réponse de la requête KYC entreprise.
+           * @type {Response}
+           */
+          const response = await fetch(`${API_URL}/api/kyc/add-kyc-request`, {
+              method: 'POST',
+              body: JSON.stringify(requestData),
+              headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`
+              },
+          });
+
+          /**
+           * Données de la réponse de la requête KYC entreprise.
+           * @type {object}
+           */
+          const data = await response.json();
+
+          /* Vérifier s'il y a un message d'erreur, on l'affiche dans SWAL 
+          * sinon on affiche le message de succès
+          */
+          if (data.message == 200) {
+              Swal.fire({
+                  position: 'center',
+                  icon: 'success',
+                  html: `<p> Votre demande a été envoyée avec succès.</p>`,
+                  showConfirmButton: false,
+                  timer: 5000
+              });
+
+              // Actualiser après l'affichage
+              setTimeout(() => {
+                  window.location.reload();
+              }, 7000);
+              // Fin
+          } else {
+              setMessageError(data.message);
+              setIsLoggingIn(false);
+              Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  html: `<p> ${messageError} </p>`,
+                  showConfirmButton: false,
+                  timer: 10000
+              });
+          }
+          // Fin condition
       } catch (error) {
-        console.error('Erreur =>',error);
+          console.error('Erreur =>', error);
       }
     };
 

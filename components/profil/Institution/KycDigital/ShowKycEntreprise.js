@@ -3,10 +3,11 @@ import { Container, Row, Col, Modal } from "react-bootstrap";
 
 import React from "react";
 import axios from 'axios';
-import Link from 'next/link';
+// import Link from 'next/link';
 import moment from 'moment';
 import { Icon } from '@iconify/react';
 import { Table } from '@nextui-org/react';
+import Link from "../../../Link";
 
 
 // Pour Magic
@@ -43,7 +44,7 @@ import { id } from 'ethers/lib/utils';
 
 // FIN
 
-const ValidEntreprise = () => {
+const ShowKycEntreprise = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
@@ -150,19 +151,6 @@ const ValidEntreprise = () => {
     const [validPhoto, setValidPhoto] = useState();
     const [validSignature, setValidSignature] = useState();
     const [pattern, setPattern] = useState();
-
-    // States de classification
-    const [sensitiveCustomer, setSensitiveCustomer]=useState()
-    const [launderingRisk, setLaunderingRisk]=useState()
-    const [fundsConsistent, setFundsConsistent]=useState()
-    const [clientPolitically, setClientPolitically]=useState()
-    const [otherReasons, setOtherReasons]=useState()
-    const [isOtherReasons, setIsOtherReasons]=useState()
-    const [assessed, setAssessed]=useState()
-    const [transmission, setTransmission]=useState()
-    const [compliance, setCompliance]=useState()
-    const [opinion, setOpinion]=useState()
-    const [comment, setComment]=useState()
 
     // Les states d'après vérification des ligne des colonnes valid 
     const [verifyValidRepresentative, setVerifyValidRepresentative] = useState();
@@ -969,36 +957,14 @@ const validKycIdentity= async (event) => {
     // ********************************************************************
         // LES FONCTIONS DE RECUPERATION
     // ***********************************************************************
-// RECUPERER KYC DE L'ENTREPRISE
-useEffect(async() => {
-    const token = localStorage.getItem('tokenEnCours')
-    
-        const getAllKycForEntreprise = async () => {
-        const resKyc = await fetch(`${API_URL}/api/kyc/business/find-All-kyc`, {
-            headers: {
-            'Content-Type': 'application/json',
-            Authorization:  `Bearer ${token}`,
-            },
-        })
-            .then((resKyc) => resKyc.json())
-            .then((data) => {
-            setAllKycForEntreprise(data)
 
-            }) 
-
-        };
-        await getAllKycForEntreprise();
-    }, []);
-    // FIN
-
-
-    // RECUPERER UNE SEULE LIGNE DE KYC DE L'ENTREPRISE
+    // RECUPERER UNE SEULE LIGNE DE KYC DE L'ENTREPRISE CONNCETE
     useEffect(() => {
-        const getKycById = async (_idKycForEntreprise) => {
+        const getKycForBusinesssignup = async () => {
             const token = localStorage.getItem('tokenEnCours') //Le token récuperé
 
         try {
-            const resKyc = await fetch(`${API_URL}/api/kyc/business/find-one-kyc/${_idKycForEntreprise}`, {
+            const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-of-user`, {
                 headers: {
                 'Content-Type': 'application/json',
                 Authorization:  `Bearer ${token}`
@@ -1031,7 +997,6 @@ useEffect(async() => {
 
             // Mettre à jour verifyValidAml
             setVerifyValidOperationAndFundOrigin(areAllFieldsValidOperationAndFundOrigin);
-            
 
             setOneKycForEntreprise(data)
             
@@ -1040,12 +1005,10 @@ useEffect(async() => {
             console.error('Error fetching user data:', error);
         }
         };
-    
-        if (idKycForEntreprise) {
-        getKycById(idKycForEntreprise);
-        }
+
+         getKycForBusinesssignup();
+
     }, [idKycForEntreprise]);
-   
     // FIN
 
 
@@ -1072,7 +1035,7 @@ useEffect(async() => {
     }, []);
     // FIN
 
-     // FONCTION POUR RECUPERER LES INFOS DE L'UTILISATEUR DONT ON VERIFIE SON KYC EN FONCTION DE SON ID
+     // FONCTION POUR RECUPERER LES INFOS DE L'ENTREPRISE DONT ON VERIFIE SON KYC EN FONCTION DE SON ID
      useEffect(() => {
         const getUserById = async (_userId) => {
         try {
@@ -1501,33 +1464,6 @@ useEffect(async() => {
     // FIN 
 
 
-    
-
-    // RECUPERER UNE SEULE LIGNE DE PAYS PAR SON
-    // if (userById?.nativeCountry) {
-    //     const getOneCountry = async () => {
-    //       try {
-    //         const result = await fetch(`${API_URL}/api/country/find-one/${userById?.nativeCountry}`, {
-    //           headers: {
-    //             'Content-Type': 'application/json',
-    //           },
-    //         });
-      
-    //         if (!result.ok) {
-    //           throw new Error('Failed to fetch pays data');
-    //         }
-      
-    //         const data = await result.json();
-    //         setOneCountry(data);
-    //       } catch (error) {
-    //         // Handle errors appropriately, e.g., set an error state.
-    //         console.error('Error fetching pays data:', error);
-    //       }
-    //     };
-      
-    //     getOneCountry();
-    //   }
-    //   FIN
     const refreshPage = () =>{
         Swal.fire({
             position: 'center',
@@ -1542,86 +1478,28 @@ useEffect(async() => {
     }
 
 
-    // ****************PARTIE CLASSIFICATION*************************
-    const addClassification= async (event) => {
-        setIsLoggingIn(true);
-        event.preventDefault();
-    
-        try {
 
-            const dataa = {
-                sensitiveCustomer: sensitiveCustomer,
-                launderingRisk: launderingRisk,
-                fundsConsistent: fundsConsistent,
-                clientPolitically: clientPolitically,
-                otherReasons: otherReasons,
-                assessed: assessed,
-                transmission: transmission,
-                compliance: compliance,
-                opinion: opinion,
-                comment:comment,
-                kycEntrepriseId:idKycForEntreprise,
-                
-            }
-            // Condition pour forcer l'utilisateur à choisir au moins une reponse
-            if (idKycForEntreprise) {
-                
-                
-                const token = localStorage.getItem('tokenEnCours') //Le token récuperé
-    
-                const result = await fetch(`${API_URL}/api/kyc/particular/add-classification`, {
-                method:"POST",
-                body: JSON.stringify(dataa),
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization:  `Bearer ${token}`
-                }
-                })
-                const data = await result.json();
-            
-                /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
-                * sinon on affiche le message de succès
-                */
-                if (data.message) {
-                setMessageError(data.message)
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> ${messageError} </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-                }else{
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'success',
-                        html: `<p> Vos remarques ont été sauvegardées avec succès.</p>` ,
-                        showConfirmButton: false,
-                        timer: 5000
-                    }),
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 5000)
-                }
-                // Fin condition 
-            }else{
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-            }
-            
-            } catch {
-            setIsLoggingIn(false);
-            }
-        
-    };
-    // ****************FIN CLASSIFICATION****************************
+
+
+
+    // C'est le state qui permet de savoir si l'utilisateur vient apporter les modifications demandées par le validateur
+    const [updateKycEntrepriseStatut, setUpdateKycEntrepriseStatut] = useState();
+
+    //   localStorage pour stocker une valeur en cliquant sur un bouton reprendre qui indique qu'on veut modifier une partie Kyc 
+    useEffect(() => {
+        localStorage.setItem('currentKycEntrepriseStatut',updateKycEntrepriseStatut)  
+    }, [updateKycEntrepriseStatut]);
+
+
+
+
+
+
+
+
+
+
+
 
     return (
     <>
@@ -1629,10 +1507,14 @@ useEffect(async() => {
         <div className='' >
             <div className=' mx-15'>
                 <div className=''>
-                    <h1 className='text-center'>Validation de Kyc entreprise / commerçant</h1>
+                    <h1 className='text-center'>Votre Kyc</h1>
                 </div>
             </div>
-
+            <p className='text-center'>
+                <Link to='/profil/kyc/entreprise/kyc-demandes' >
+                    Demandes d'accès au kyc en attente <i className='rounded-circle bgColorBlue text-white p-2'>2</i>
+                </Link>
+            </p>
             {/* Les images de fond */}
             <div className='shape1'>
             {/* <img src='/images/shape/shape1.png' alt='image' /> */}
@@ -1654,90 +1536,327 @@ useEffect(async() => {
                     {/* <div className='col-lg-1 col-md-1'></div> */}
                     <div className='col-lg-12 col-md-12'>
                         <div className='currency-selection'>
-                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                <div className='col-lg-12 col-md-12 row justify-content-between'>
-                                    {!allKycForEntreprise?.length==0 ?(
-                                        <Table
-                                            aria-label="Example table with static content"
-                                            css={{
-                                                height: "auto",
-                                                minWidth: "100%",
-                                            }}
-                                        >
-                                        <Table.Header>
-                                            {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom & prenom </p></Table.Column> */}
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">AML</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Identité</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 mx-2 pb-0 ">Représentant</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Bénéficiaire</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Control</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Politique</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Opérations</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Fonds</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Financière</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Transactions</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Documents</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
-                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
-                                        </Table.Header>
-                                            <Table.Body>
-                                                {allKycForEntreprise?.map((data, index) => (
-                                                    <Table.Row key={index}> 
-                                                  
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(1)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validAml==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(2)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validIdentity==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(3)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validRepresentative==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(4)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validBeneficiary==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(5)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validStructure==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(6)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validPoliticallyExposed==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(7)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validFinancialOperation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(8)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validFundOrigin==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(9)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validFinancialInformation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(10)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validFinancialTransaction==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 " onClick={()=>setEtape(11)}><button className='bgColorblue text-white' onClick={()=>setIdKycForEntreprise(data?.id)}>Voir détails</button> {data.validLegalDocument==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : (  <Icon icon="bx:x-circle" width={30} color="#dc3545" />)} </p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 ">{data.validAml==1 && data.validIdentity==1 && data.validRepresentative==1 && data.validBeneficiary==1 && data.validStructure==1 && data.validPoliticallyExposed==1 && data.validFinancialOperation==1 && data.validFundOrigin==1 && data.validFinancialInformation==1 && data.validFinancialTransaction==1 && data.validLegalDocument==1? (<b className='colorGreen'>Valider</b>):(<b className='colorRed'>En cours</b>)}</p></Table.Cell>
-                                                        <Table.Cell ><p className=" py-0 ">{formatDate(data?.createdAt)}</p></Table.Cell>
-                                                         {/* validFinancialTransaction */}
-                                                                                                                                                                                                                                            
- 
-                                                        <Table.Cell>
-                                                            <div className="d-flex py-0 ">
-                                                                <p className="text-center">
-                                                                                            
-                                                                    <Button type='button' onClick={()=>setIdKycForEntreprise(data?.id)}  color='success' className=''>
-                                                                        <div onClick={()=>setEtape(12)}>
-                                                                            Evaluer <Icon icon="bx:chevron-down-circle"  width="30"/>
-                                                                        </div>          
-                                                                    </Button>
+                                <div className='row'>
 
-                                                                    <Button  color='primary' onClick={()=>setIdKycForEntreprise(data?.id)} className='text-center mx-3'>
-                                                                        <div onClick={()=>setEtape(13)}>
-                                                                            Remarques <Icon icon="bx:file"  width="30"/> 
-                                                                        </div>
-                                                                    </Button>
-                                                                </p>
-                                                            </div>
-                                                        </Table.Cell>
-                                                    </Table.Row >
-                                                ))}
-                                            </Table.Body>
-                                            <Table.Pagination
-                                                shadow
-                                                noMargin
-                                                align="center"
-                                                rowsPerPage={5}
-                                                onPageChange={(page) => console.log({ page })}
-                                            />
-                                        </Table>
-                                    ):(
-                                        <div className="text-center my-5">
-                                            Aucun Kyc en attente
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> AML </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validAml==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(1)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    )}
+                                    </div>
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Identité </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validIdentity==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(2)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Représentant </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validRepresentative==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(3)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Bénéficiaire </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validBeneficiary==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(4)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Control </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validStructure==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(5)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Politique </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validPoliticallyExposed==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(6)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Opérations </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validFinancialOperation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(7)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Fonds </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validFundOrigin==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(8)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Financière </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validFinancialInformation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(9)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Transactions </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validFinancialInformation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(10)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center '>
+                                                            <p className=" py-0 "> Documents </p>
+                                                            <p className=" py-0 ">{oneKycForEntreprise?.validFinancialInformation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                        </div>
+                                                        
+                                                        <div className='btn-box ' onClick={()=>setEtape(11)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Détails
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className='col-lg-2 col-md-2'>
+                                        <div className='currency-selection text-center'>
+                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='cryptocurrency-slides'>
+                                                    <div className='single-cryptocurrency-box'>
+                                                        <div className='title text-center'>
+                                                        <p className=" py-0 ">{oneKycForEntreprise?.validAml==1 && oneKycForEntreprise?.validIdentity==1 && oneKycForEntreprise?.validRepresentative==1 && oneKycForEntreprise?.validBeneficiary==1 && oneKycForEntreprise?.validStructure==1 && oneKycForEntreprise?.validPoliticallyExposed==1 && oneKycForEntreprise?.validFinancialOperation==1 && oneKycForEntreprise?.validFundOrigin==1 && oneKycForEntreprise?.validFinancialInformation==1 && oneKycForEntreprise?.validFinancialTransaction==1 && oneKycForEntreprise?.validLegalDocument==1? (<b className='colorGreen'>Valider</b>):(<b className='colorRed'>En cours</b>)}</p>
+                                                        <p className=" py-0 ">{oneKycForEntreprise?.validationKycDate?formatDate(oneKycForEntreprise?.validationKycDate):"Pas encore évalué"}</p>
+                                                        </div>
+                                                        <div className='btn-box d-flex' onClick={()=>setEtape(1)}>
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="button"
+                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                            >
+                                                                Resultats
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
-                            {/* </form> */}
-                            </div>
                             
 
                             {/* AFFICHAGE DES INFORMATIONS DE KYC */}
@@ -1748,13 +1867,99 @@ useEffect(async() => {
                                         {/* Questionnaire Aml 1 */}
                                         <div>
                                             <div className='my-3  row' >
-                                                <h4 className=' btn col-lg-3 col-md-3' onClick={() => toggleAccordion(1)}>Les questionnaires AML 1 <p>Cliquez ici pour voir le contenu</p></h4>
-                                                <h4 className=' btn col-lg-3 col-md-3' onClick={() => toggleAccordion(2)}>Les questionnaires AML 2 <p>Cliquez ici pour voir le contenu</p></h4>
-                                                <h4 className=' btn col-lg-3 col-md-3' onClick={() => toggleAccordion(3)}>Les questionnaires AML 3 <p>Cliquez ici pour voir le contenu</p></h4>
-                                                <h4 className=' btn col-lg-3 col-md-3' onClick={() => toggleAccordion(4)}>Les questionnaires AML 4 <p>Cliquez ici pour voir le contenu</p></h4>
+                                                <h4 className=' btn col-lg-3 col-md-3' onClick={() => toggleAccordion(1)}>
+                                                    Les questionnaires AML 1 
+                                                    <p>
+                                                        Cliquez ici pour voir le contenu
+                                                    </p>
+                                                    <div>
+                                                        {/* Vérifie si le kyc a été corrigé et que cette partie été validée */}
+                                                        {oneKycForEntreprise?.correction==1 ? (
+                                                            oneKycForEntreprise?.validQuiz==1 ? (
+                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                            ):(
+                                                                <p className='colorRed mx-2'>
+                                                                    <Link href='/profil/kyc/entreprise/questionnaire/'>
+                                                                        <a>
+                                                                            <Button type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
+                                                                                Reprendre 
+                                                                            </Button>
+                                                                        </a>
+                                                                    </Link>
+                                                                </p>
+                                                            )
+                                                        ):('')}
+                                                    </div>
+                                                </h4>
+                                                <h4 className=' btn col-lg-3 col-md-3' onClick={() => toggleAccordion(2)}>
+                                                    Les questionnaires AML 2 
+                                                    <p>Cliquez ici pour voir le contenu</p>
+                                                    <div>
+                                                        {/* Vérifie si le kyc a été corrigé et que cette partie été validée */}
+                                                        {oneKycForEntreprise?.correction==1 ? (
+                                                            oneKycForEntreprise?.validQuizTwo==1 ? (
+                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                            ):(
+                                                                <p className='colorRed mx-2'>
+                                                                    <Link href='/profil/kyc/entreprise/questionnaire-aml-two/'>
+                                                                        <a>
+                                                                            <Button type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
+                                                                                Reprendre 
+                                                                            </Button>
+                                                                        </a>
+                                                                    </Link>
+                                                                </p>
+                                                            )
+                                                        ):('')}
+                                                    </div>
+                                                </h4>
+                                                <h4 className=' btn col-lg-3 col-md-3' onClick={() => toggleAccordion(3)}>
+                                                    Les questionnaires AML 3 
+                                                    <p>Cliquez ici pour voir le contenu</p>
+                                                    <div>
+                                                        {/* Vérifie si le kyc a été corrigé et que cette partie été validée */}
+                                                        {oneKycForEntreprise?.correction==1 ? (
+                                                            oneKycForEntreprise?.validQuizThree==1 ? (
+                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                            ):(
+                                                                <p className='colorRed mx-2'>
+                                                                    <Link href='/profil/kyc/entreprise/questionnaire-aml-three/'>
+                                                                        <a>
+                                                                            <Button type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
+                                                                                Reprendre 
+                                                                            </Button>
+                                                                        </a>
+                                                                    </Link>
+                                                                </p>
+                                                            )
+                                                        ):('')}
+                                                    </div>
+                                                </h4>
+                                                <h4 className=' btn col-lg-3 col-md-3' onClick={() => toggleAccordion(4)}>
+                                                    Les questionnaires AML 4 
+                                                    <p>Cliquez ici pour voir le contenu</p>
+                                                    <div>
+                                                        {/* Vérifie si le kyc a été corrigé et que cette partie été validée */}
+                                                        {oneKycForEntreprise?.correction==1 ? (
+                                                            oneKycForEntreprise?.validQuizFour==1 ? (
+                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                            ):(
+                                                                <p className='colorRed mx-2'>
+                                                                    <Link href='/profil/kyc/entreprise/questionnaire-aml-four/'>
+                                                                        <a>
+                                                                            <Button type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
+                                                                                Reprendre 
+                                                                            </Button>
+                                                                        </a>
+                                                                    </Link>
+                                                                </p>
+                                                            )
+                                                        ):('')}
+                                                    </div>
+                                                </h4>
                                             </div>
                                             {isOpen1 &&
-                                                <div className=" ">
+                                                <div className="">
                                                     <div className='my-3 mx-5 text-center' >
                                                         <h4 className='colorRed '>Les questionnaires AML 1</h4>
                                                     </div>
@@ -1808,7 +2013,7 @@ useEffect(async() => {
 
                                         {/* Questionnaire Aml 2 */}
                                         <div>
-
+                                            
                                             {isOpen2 &&
                                                 <div className="">
                                                     <div className='my-3 mx-5 text-center' >
@@ -2013,7 +2218,6 @@ useEffect(async() => {
                                                     <div className='my-3 mx-5 text-center' >
                                                         <h4 className='colorRed '>Les questionnaires AML 3</h4>
                                                     </div>
-                                                
                                                     <div className='mx-5 '>
                                                         {/* Partie des autres questions */}
                                                         <div className='mt-3'>
@@ -2079,7 +2283,6 @@ useEffect(async() => {
 
                                          {/* Questionnaire Aml 4 */}
                                          <div>
-                                            
                                             {isOpen4 &&
                                                 <div className="">
                                                     <div className='my-3 mx-5 text-center' >
@@ -2162,115 +2365,6 @@ useEffect(async() => {
                                         </div>
                                         {/*Fin Questionnaire Aml 4 */}
 
-
-                                        {/* PARTIE EVALUATION DES QUESTIONNAIRE */}
-                                        <div className='my-5 mx-5 text-center' >
-                                            <h4 className='colorRed '>Evaluation des 4 questionnaires</h4>
-                                        </div>
-                                        <Form role="form" onSubmit={validKycAml}>
-                                            <div className='row justify-content-between'>
-                                                {/* Les questionnaires AML 1 */}
-                                                <div className='form-group my-3 col-lg-6 col-md-6'>
-                                                    <label className="mx-2  mb-2" htmlFor='validQuiz'>
-                                                        Les questionnaires AML 1
-                                                    </label>
-                                                    {oneKycForEntreprise?.validQuiz==1 ? (
-                                                        <p className='colorGreen mx-2'><b>Evalué</b></p>
-                                                    ):(<p className='colorRed mx-2'><b>Pas encore évalué</b></p>)}
-                                                        <select 
-                                                            className="form-control"
-                                                            id="validQuiz"
-                                                            required
-                                                            defaultValue={validQuiz} 
-                                                            onChange={(event)=>setValidQuiz(event.target.value)}
-                                                        >
-                                                            <option defaultValue="">Choisissez une option</option>
-                                                            <optgroup className='single-cryptocurrency-box'>
-                                                                <option  value="true">Valider</option>
-                                                                <option  value="false">Non valider</option>
-                                                            </optgroup>
-                                                        </select>
-                                                    
-                                                </div>
-
-                                                {/* Les questionnaires AML 2 */}
-                                                <div className='form-group my-3 col-lg-6 col-md-6'>
-                                                    <label className="mx-2  mb-2" htmlFor='validQuizTwo'>
-                                                        Les questionnaires AML 2
-                                                    </label>
-                                                    {oneKycForEntreprise?.validQuizTwo==1 ? (
-                                                        <p className='colorGreen mx-2'><b>Evalué</b></p>
-                                                    ):(<p className='colorRed mx-2'><b>Pas encore évalué</b></p>)}
-                                                        
-                                                        <select 
-                                                            className="form-control"
-                                                            id="validQuizTwo"
-                                                            required
-                                                            defaultValue={validQuizTwo} 
-                                                            onChange={(event)=>setValidQuizTwo(event.target.value)}
-                                                        >
-                                                            <option defaultValue="">Choisissez une option</option>
-                                                            <optgroup className='single-cryptocurrency-box'>
-                                                                <option  value="true">Valider</option>
-                                                                <option  value="false">Non valider</option>
-                                                            </optgroup>
-                                                        </select>
-                                                </div>
-
-                                                {/* Les questionnaires AML 3 */}
-                                                <div className='form-group my-3 col-lg-6 col-md-6'>
-                                                    <label className="mx-2  mb-2" htmlFor='validQuizThree'>
-                                                        Les questionnaires AML 3
-                                                    </label>
-                                                    {oneKycForEntreprise?.validQuizThree==1 ? (
-                                                        <p className='colorGreen mx-2'><b>Evalué</b></p>
-                                                    ):(<p className='colorRed mx-2'><b>Pas encore évalué</b></p>)}
-                                                        <select 
-                                                            className="form-control"
-                                                            id="validQuizThree"
-                                                            required
-                                                            defaultValue={validQuizThree} 
-                                                            onChange={(event)=>setValidQuizThree(event.target.value)}
-                                                        >
-                                                            <option defaultValue="">Choisissez une option</option>
-                                                            <optgroup className='single-cryptocurrency-box'>
-                                                                <option  value="true">Valider</option>
-                                                                <option  value="false">Non valider</option>
-                                                            </optgroup>
-                                                        </select>
-                                                </div>
-
-                                                {/* Les questionnaires AML 4 */}
-                                                <div className='form-group my-3 col-lg-6 col-md-6'>
-                                                    <label className="mx-2  mb-2" htmlFor='validQuizFour'>
-                                                        Les questionnaires AML 4
-                                                    </label>
-                                                    {oneKycForEntreprise?.validQuizFour==1 ? (
-                                                       <p className='colorGreen mx-2'><b>Evalué</b></p>
-                                                    ):(<p className='colorRed mx-2'><b>Pas encore évalué</b></p>)} 
-                                                        
-                                                        <select 
-                                                            className="form-control"
-                                                            id="validQuizFour"
-                                                            required
-                                                            defaultValue={validQuizFour} 
-                                                            onChange={(event)=>setValidQuizFour(event.target.value)}
-                                                        >
-                                                            <option defaultValue="">Choisissez une option</option>
-                                                            <optgroup className='single-cryptocurrency-box'>
-                                                                <option  value="true">Valider</option>
-                                                                <option  value="false">Non valider</option>
-                                                            </optgroup>
-                                                        </select>
-                                                </div>
-                                            </div>
-
-                                            <Button  type='submit'  color="primary"  disabled={isLoggingIn}>
-                                                Soumettre les évaluations
-                                            </Button>
-                                        </Form>
-                                        {/* FIN EVALUATION */}
-
                                     </>
 
                                 ): ("")}
@@ -2278,10 +2372,29 @@ useEffect(async() => {
                                 {/* Identité */}
                                 {etape===2 ? (
                                     <>
-                                        <div className='my-5'>
-                                            <h3 className='text-center'>Identité</h3>
+                                        <div className='my-5 mx-5 text-center'>
+                                            <h3 className=''>Identité</h3>
+                                            
+                                            {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                            {oneKycForEntreprise?.correction==1 ? (
+                                                // Vérifie si cette partie identité a été validée 
+                                                identityByKycId?.validIdentity==1 ? (
+                                                    <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                ):(
+                                                    <p className='colorRed mx-2'>
+                                                        <Link href='/profil/kyc/entreprise/identite-one/'>
+                                                            <a>
+                                                                <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)} color="primary" >
+                                                                    Reprendre 
+                                                                </Button>
+                                                            </a>
+                                                        </Link>
+                                                    </p>
+                                                )
+                                            ):('')}
+
                                         </div>
-                                        <div className='mx-5  row'>
+                                        <div className='mx-5 row'>
                                             <div className='mt-3 col-lg-4 col-md-4'>
                                                 <b>Domaine d’activité :</b><br/>
                                                 {identityByKycId?.international? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{identityByKycId.international }</p>): ("")}
@@ -2389,45 +2502,6 @@ useEffect(async() => {
                                                 {identityByKycId?.registrationDate? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(identityByKycId.registrationDate)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
                                         </div>
-
-
-                                        {/* PARTIE EVALUATION DES IDENTITES */}
-                                        <div className='text-center my-5'>
-                                            <h4>Evaluation</h4>
-                                        </div>
-                                        <Form role="form" onSubmit={validKycIdentity}>
-                                            <div className='row justify-content-between mx-5'>
-                                                
-                                                <div className='form-group my-3 col-lg-6 col-md-6'>
-                                                    <label className="mx-2  mb-2" htmlFor='validQuizFour'>
-                                                        <b>Approuve-vous ces réponses ? </b>
-                                                    </label>
-                                                    {identityByKycId?.validIdentity==1 ? (
-                                                       <p className='colorGreen mx-2'><b>Evalué</b></p>
-                                                    ):(<p className='colorRed mx-2'><b>Pas encore évalué</b></p>)} 
-                                                        
-                                                    <div className="input-group flex-nowrap">
-                                                        <select 
-                                                            className="form-control gr-text-11 border mt-3"
-                                                            id="validSignature"
-                                                            required
-                                                            defaultValue={validIdentity} 
-                                                            onChange={(event)=>setValidIdentity(event.target.value)}
-                                                        >
-                                                            <option defaultValue="">Choisissez une option</option>
-                                                            <optgroup className='single-cryptocurrency-box'>
-                                                                <option  value="true">Oui</option>
-                                                                <option  value="false">Non</option>
-                                                            </optgroup>
-                                                        </select>
-                                                        <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
-                                                            <button type='submit' disabled={isLoggingIn}>Soumettre</button>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </Form>
-                                        {/* FIN EVALUATION */}
                                     </>
                                 ): ("")}
 
@@ -2438,7 +2512,7 @@ useEffect(async() => {
                                         <div className='my-5'>
                                             <h3 className='text-center'>Représentants légaux</h3>
                                         </div>
-                                        <div className='my-5 mx-5'>
+                                        <div className='my-5 mx-5 '>
                                         
                                         <div className='mt-3 text-center'>
                                             <b>
@@ -2453,35 +2527,26 @@ useEffect(async() => {
                                                 {allRepresentativeByKycId?.map((data, index) => (
                                                     <div className='' key={index}>
                                                         <h5 className='colorRed mt-5 text-center'>Les informations du représentant légal {index + 1}</h5>
-                                                        <div className='form-group my-3 row text-center'>
-                                                            <div className='col-lg-3 col-md-3'></div>
-                                                            <form onSubmit={validKycRepresentative} className="col-lg-6 col-md-6">
-                                                                <label className="  mb-2">
-                                                                    Les informations de ce représentant légal sont-elles correctes?
-                                                                </label><br/>
-                                                                <label>{data?.validRepresentative==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
-                                                                <div className="input-group flex-nowrap">
-                                                                    <select 
-                                                                        className="form-control gr-text-11 border mt-3"
-                                                                        id="validSignature"
-                                                                        required
-                                                                        defaultValue={validRepresentative} 
-                                                                        onChange={(event)=>setValidRepresentative(event.target.value)}
-                                                                    >
-                                                                        <option defaultValue="">Choisissez une option</option>
-                                                                        <optgroup className='single-cryptocurrency-box'>
-                                                                            <option  value="true">Oui</option>
-                                                                            <option  value="false">Non</option>
-                                                                        </optgroup>
-                                                                    </select>
-                                                                    <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
-                                                                        <button type='submit' onClick={()=>setRepresentativeId(data?.id)} disabled={isLoggingIn}>Sauvegarder</button>
-                                                                    </span>
-                                                                </div>
+                                                        <div className='form-group my-3 text-center'>
                                                                 
-                                                            </form>
-                                                            <div className='col-lg-3 col-md-3'></div>
-
+                                                            {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                                            {oneKycForEntreprise?.correction==1 ? (
+                                                                // Vérifie si les informations de ce représentant ont été validée 
+                                                                data?.validRepresentative==1 ? (
+                                                                    <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                                ):(
+                                                                    <p className='colorRed mx-2'>
+                                                                        <Link href='/profil/kyc/entreprise/identite-representant-two/'>
+                                                                            <a>
+                                                                                <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(data?.id)}  color="primary" >
+                                                                                    Reprendre 
+                                                                                </Button>
+                                                                            </a>
+                                                                        </Link>
+                                                                    </p>
+                                                                )
+                                                            ):('')}
+                                                                    
                                                         </div>
 
                                                         <div className='row'>
@@ -2779,27 +2844,6 @@ useEffect(async() => {
                                                     </div>
                                                 ))}
                                                 
-                                                {/* Le bouton qui permettre d'actualiser la page */}
-                                                <div className='row'>
-                                                    <div className='col-lg-4 col-md-4'></div>
-                                                
-                                                    <div className="hero-btn col-lg-4 col-md-4'  text-center my-3">
-                                                        <a
-                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                            role="button"
-                                                            data-toggle="dropdown"
-                                                            aria-haspopup="true"
-                                                            aria-expanded="false"
-                                                            onClick={refreshPage}
-                                                            target="_blank"
-                                                        >
-                                                        <p className="gr-text-8 bgColorblue text-white mb-0 py-2">
-                                                            Soumettre les évaluations
-                                                        </p>
-                                                        </a>
-                                                    </div>
-                                                    <div className='col-lg-4 col-md-4'></div>
-                                                </div>
                                             </>
                                         ):("")}
                                         </div>
@@ -2827,38 +2871,28 @@ useEffect(async() => {
                                                 {allBeneficiaryByKycId?.map((data, index) => (
                                                     <div className='' key={index}>
                                                         <h5 className='colorRed mt-5 text-center'>Les informations du bénéficiaire effectif {index + 1}</h5>
-                                                        <div className='form-group my-3 row'>
-                                                            <div className='col-lg-3 col-md-3'></div>
-                                                            <form onSubmit={validKycBeneficiary} className='col-lg-6 col-md-6'>
-                                                                <label className="mx-2  mb-2" htmlFor='validSignature'>
-                                                                    Les informations de ce bénéficiaire effectif sont-elles correctes?
-                                                                </label><br/>
-                                                                <label>{data?.validBeneficiary==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+                                                        <div className='form-group my-3 text-center'>
 
-                                                                <div className="input-group flex-nowrap">
-                                                                    <select 
-                                                                        className="form-control gr-text-11 border mt-3"
-                                                                        id="validSignature"
-                                                                        required
-                                                                        defaultValue={validBeneficiary} 
-                                                                        onChange={(event)=>setValidBeneficiary(event.target.value)}
-                                                                    >
-                                                                        <option defaultValue="">Choisissez une option</option>
-                                                                        <optgroup className='single-cryptocurrency-box'>
-                                                                            <option  value="true">Oui</option>
-                                                                            <option  value="false">Non</option>
-                                                                        </optgroup>
-                                                                    </select>
-                                                                    <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
-                                                                        <button type='submit' onClick={()=>setBeneficiaryId(data?.id)}  disabled={isLoggingIn}>Envoyer</button>
-                                                                    </span>
-                                                                </div>
-                                                                
-                                                            </form>
-                                                            <div className='col-lg-3 col-md-3'></div>
-                                                        </div>
-
-                                                        <div className='mt-3 col-lg-4 col-md-4'>
+                                                            {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                                            {oneKycForEntreprise?.correction==1 ? (
+                                                            // Vérifie si les informations de ce bénéficiaire effectif ont été validée 
+                                                            data?.validBeneficiary==1 ? (
+                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                            ):(
+                                                                <p className='colorRed mx-2'>
+                                                                    <Link href='/profil/kyc/entreprise/beneficiaire-effectif-two/'>
+                                                                        <a>
+                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(data?.id)}  color="primary" >
+                                                                                Reprendre 
+                                                                            </Button>
+                                                                        </a>
+                                                                    </Link>
+                                                                </p>
+                                                            )
+                                                        ):('')}  
+                                                                                                                        </div>
+                                                       
+                                                        <div className='mt-3'>
                                                             <b>
                                                                 Type de bénéficiaire
                                                             </b><br/>
@@ -2869,399 +2903,22 @@ useEffect(async() => {
                                                         {data?.typeBeneficiary==="Personne physique" ? (
                                                             <>
                                                                 <div className='row'>
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            Nom du bénéficiaire
-                                                                        </b><br/>
-                                                                        {data?.lastName? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.lastName}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            Prénom du bénéficiaire
-                                                                        </b><br/>
-                                                                        {data?.firstName? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.firstName}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            Nationalité du bénéficiaire
-                                                                        </b><br/>
-                                                                        {data?.nationality? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.nationality}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            Email
-                                                                        </b><br/>
-                                                                        {data?.email? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.email}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            Date de naissance
-                                                                        </b><br/>
-                                                                        {data?.dateBirth? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.dateBirth)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            Pays de résidence
-                                                                        </b><br/>
-                                                                        {data?.residenceCountry? (
-                                                                            <>
-                                                                                {allCountry?.map((dataCountry) => (
-                                                                                    <p className='my-0' key={dataCountry?.id}>
-                                                                                        {data.residenceCountry==dataCountry?.code? (
-                                                                                            <>
-                                                                                                <Icon icon="bx:check-double" color="#208454" />
-                                                                                                {dataCountry.libelle}
-                                                                                            </>
-                                                                                        ):("")}
-                                                                                    </p>
-                                                                                ))}
-                                                                            </>
-                                                                        ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            Téléphone mobile
-                                                                        </b><br/>
-                                                                        {data?.residenceCountry && data?.mobile? (
-                                                                            <>
-                                                                                {allCountry?.map((dataCountry) => (
-                                                                                    <p className='my-0' key={dataCountry?.id}>
-                                                                                        {data.residenceCountry==dataCountry?.code? (
-                                                                                            <>
-                                                                                                <Icon icon="bx:check-double" color="#208454" />
-                                                                                                {dataCountry.indicator} {data.mobile}
-                                                                                            </>
-                                                                                        ):("")}
-                                                                                    </p>
-                                                                                ))}
-                                                                            </>
-                                                                        ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            % Participation/ Contrôle (de 0-100)
-                                                                        </b><br/>
-                                                                        {data?.percentControl? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.percentControl} %</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            Type de document d’identité
-                                                                        </b><br/>
-                                                                        {data?.typeDocIdentity? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.typeDocIdentity}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            Numéro du document d’identité
-                                                                        </b><br/>
-                                                                        {data?.identityDocNumber? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.identityDocNumber}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            Date d'expiration du document d’identité
-                                                                        </b><br/>
-                                                                        {data?.expirationDate? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.expirationDate)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            Pays émetteur du document d'identité
-                                                                        </b><br/>
-                                                                        {data?.issuingCountry? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.issuingCountry}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-                                                                </div>
-                                                                
-                                                                {/* Les fichiers && photos*/}
-                                                                {/* Documents de justificatif d'identité */}
-                                                                <div className=" row col-lg-12 col-md-12 my-5 mx-5 justify-content-between">
-                                                                    <div className='col-lg-6 col-md-6 text-center'>
-                                                                        <h4 className='text-center'>Recto du justificatif d'identité du représentant </h4>
-                                                                        {/* Si le document est prise en photo */}
-                                                                        {data?.frontIdentityPhoto? 
-                                                                            <img src={data?.frontIdentityPhoto} className="" width={'400'} height={'400'} alt="Recto"/> :(
-                                                                                // Sinon
-                                                                                <>
-                                                                                    {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
-                                                                                    {isPdfLink(`${API_URL}/${data?.frontIdentityFile}`) ? (
-                                                                                        <>
-                                                                                            <div className="hero-btn  text-center ">
-                                                                                            <a
-                                                                                                className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                                                                role="button"
-                                                                                                data-toggle="dropdown"
-                                                                                                aria-haspopup="true"
-                                                                                                aria-expanded="false"
-                                                                                                href={`${API_URL}/${data?.frontIdentityFile}`} 
-                                                                                                // download
-                                                                                                // onClick={handleShow}
-                                                                                                target="_blank"
-                                                                                            >
-                                                                                            <p className="gr-text-8 bgColorblue text-white mb-0">
-                                                                                                <Icon icon="bx:show-alt" width="50" />
-                                                                                                Veuillez cliquer ici pour voir le fichier
-                                                                                            </p>
-                                                                                            </a>
-                                                                                            </div>
-                                                                                        </>
-                                                                                    ) : (
-                                                                                        <>
-                                                                                            {data?.frontIdentityFile? <img src={`${API_URL}/${data?.frontIdentityFile}`} className="" width={'400'} height={'400'} alt="Recto"/> : "Pas de recto de justificatif d'identité"}
-                                                                                        </>
-                                                                                    )}
-                                                                                </>
-                                                                            )
-                                                                        } 
-                                                                    </div>
-
-                                                                    <div className='col-lg-6 col-md-6 text-center'>
-                                                                        <h4 className='text-center'>Verso du justificatif d'identité du représentant</h4>
-                                                                        {/* Si le document est prise en photo */}
-                                                                        {data?.backIdentityPhoto? 
-                                                                            <img src={data?.backIdentityPhoto} className="" width={'400'} height={'400'} alt="Recto"/> :(
-                                                                                // Sinon
-                                                                                <>
-                                                                                    {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
-                                                                                    {isPdfLink(`${API_URL}/${data?.backIdentityFile}`) ? (
-                                                                                        <>
-                                                                                            <div className="hero-btn  text-center ">
-                                                                                            <a
-                                                                                                className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                                                                role="button"
-                                                                                                data-toggle="dropdown"
-                                                                                                aria-haspopup="true"
-                                                                                                aria-expanded="false"
-                                                                                                href={`${API_URL}/${data?.backIdentityFile}`}
-                                                                                                target="_blank"
-                                                                                            >
-                                                                                            <p className="gr-text-8 bgColorblue text-white mb-0">
-                                                                                                <Icon icon="bx:show-alt" width="50" />
-                                                                                                Veuillez cliquer ici pour voir le fichier
-                                                                                            </p>
-                                                                                            </a>
-                                                                                            </div>
-                                                                                        </>
-                                                                                    ) : (
-                                                                                        <>
-                                                                                            {data?.backIdentityFile? <img src={`${API_URL}/${data?.backIdentityFile}`} width={'400'} height={'400'} alt="Verso"/> : "Pas de verso de justificatif d'identité"}
-                                                                                        </>
-                                                                                    )}
-                                                                                </>
-                                                                            )
-                                                                        }
-                                                                    </div>
-                                                                </div>
-                                                                {/*Fin Documents de justificatif d'identité */}
-
-                                                            </>
-                                                        ):("")}
-                                                        {/* Fin Vérifie si le type du bénéficiaire est une Personne physique */}
-
-                                                        {/* Vérifie si le type du bénéficiaire est une Personne morale */}
-                                                        {data?.typeBeneficiary==="Personne morale" ? (
-                                                            <>
-                                                                <div className='row'>
-
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            Raison sociale
-                                                                        </b><br/>
-                                                                        {data?.socialReason? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.socialReason}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            Numéro RCCM
-                                                                        </b><br/>
-                                                                        {data?.numberRccm? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.numberRccm}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            Email
-                                                                        </b><br/>
-                                                                        {data?.email? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.email}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            Pays d'immatriculation
-                                                                        </b><br/>
-                                                                        {data?.countryRegistration? (
-                                                                            <>
-                                                                                {allCountry?.map((dataCountry) => (
-                                                                                    <p className='my-0' key={dataCountry?.id}>
-                                                                                        {data.countryRegistration==dataCountry?.code? (
-                                                                                            <>
-                                                                                                <Icon icon="bx:check-double" color="#208454" />
-                                                                                                {dataCountry.libelle}
-                                                                                            </>
-                                                                                        ):("")}
-                                                                                    </p>
-                                                                                ))}
-                                                                            </>
-                                                                        ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            Téléphone fixe
-                                                                        </b><br/>
-                                                                        {data?.countryRegistration && data?.phoneFixe? (
-                                                                            <>
-                                                                                {allCountry?.map((dataCountry) => (
-                                                                                    <p className='my-0' key={dataCountry?.id}>
-                                                                                        {data.countryRegistration==dataCountry?.code? (
-                                                                                            <>
-                                                                                                <Icon icon="bx:check-double" color="#208454" />
-                                                                                                {dataCountry.indicator} {data.phoneFixe}
-                                                                                            </>
-                                                                                        ):("")}
-                                                                                    </p>
-                                                                                ))}
-                                                                            </>
-                                                                        ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            % Participation/ Contrôle (de 0-100)
-                                                                        </b><br/>
-                                                                        {data?.percentControl? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.percentControl} %</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-
-                                                                    <div className='mt-3 col-lg-4 col-md-4'>
-                                                                        <b>
-                                                                            Date de création
-                                                                        </b><br/>
-                                                                        {data?.startDate? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.startDate)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                                    </div>
-                                                            </div>
-                                                            </>
-                                                        ):("")}
-                                                        {/* Fin Vérifie si le type du bénéficiaire est une Personne morale */}
-
-                                                    </div>
-                                                ))}
-
-                                                 {/* Le bouton qui permettre d'actualiser la page */}
-                                                 <div className='row'>
-                                                    <div className='col-lg-4 col-md-4'></div>
-                                                
-                                                    <div className="hero-btn col-lg-4 col-md-4'  text-center my-3">
-                                                        <a
-                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                            role="button"
-                                                            data-toggle="dropdown"
-                                                            aria-haspopup="true"
-                                                            aria-expanded="false"
-                                                            onClick={refreshPage}
-                                                            target="_blank"
-                                                        >
-                                                        <p className="gr-text-8 bgColorblue text-white mb-0 py-2">
-                                                            Soumettre les évaluations
-                                                        </p>
-                                                        </a>
-                                                    </div>
-                                                    <div className='col-lg-4 col-md-4'></div>
-                                                </div>
-                                            </>
-                                        ):("")}
-                                        </div>
-                                    </>
-                                ): ("")}
-
-
-                                {/* Structure de propriété ou de contrôle*/}
-                                {etape===5 ? (
-                                    <>
-                                        <div className='my-5'>
-                                            <h3 className='text-center'>Structure de propriété ou de contrôle</h3>
-                                        </div>
-                                        <div className='my-5 mx-5'>
-                                        
-                                        <div className='mt-3 text-center'>
-                                            <b>
-                                                Nombre d'associé
-                                            </b><br/>
-                                            {oneKycForEntreprise?.numberAssociates? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.numberAssociates}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                        </div>
-                                        {oneKycForEntreprise?.numberAssociates==="Plus de 10" ? (
-                                            <div className='mt-3 text-center'>
-                                                <b>
-                                                    Nombre d'associés qui ont 5% du capital
-                                                </b><br/>
-                                                {oneKycForEntreprise?.fivePercent? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.fivePercent}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                            </div>
-                                        ):("")}
-                                        {/* On affiche ce qui suit si nombre du bénéficiaire effectif est supérieur à zéro */}
-                                        {oneKycForEntreprise?.numberAssociates>0 || oneKycForEntreprise?.numberAssociates==="Plus de 10"? (
-                                            <>
-                                                {allAssociatesByKycId?.map((data, index) => (
-                                                    <div className='' key={index}>
-                                                        <h5 className='colorRed mt-5 text-center'>Les informations de l'associé {index + 1}</h5>
-                                                        <div className='form-group my-3 row'>
-                                                            <div className='col-lg-3 col-md-3'></div>
-                                                            <form onSubmit={validKycStructure} className="col-lg-6 col-md-6">
-                                                                <label className="mx-2  mb-2" htmlFor='validSignature'>
-                                                                    Les informations de cet associé sont-elles correctes?
-                                                                </label><br/>
-                                                                <label>{data?.validStructure==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
-
-                                                                <div className="input-group flex-nowrap">
-                                                                    <select 
-                                                                        className="form-control gr-text-11 border mt-3"
-                                                                        id="validSignature"
-                                                                        required
-                                                                        defaultValue={validStructure} 
-                                                                        onChange={(event)=>setValidStructure(event.target.value)}
-                                                                    >
-                                                                        <option defaultValue="">Choisissez une option</option>
-                                                                        <optgroup className='single-cryptocurrency-box'>
-                                                                            <option  value="true">Oui</option>
-                                                                            <option  value="false">Non</option>
-                                                                        </optgroup>
-                                                                    </select>
-                                                                    <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
-                                                                        <button type='submit' onClick={()=>setStructureId(data?.id)}  disabled={isLoggingIn}>Envoyer</button>
-                                                                    </span>
-                                                                </div>
-                                                                
-                                                            </form>
-                                                            <div className='col-lg-3 col-md-3'></div>
-                                                        </div>
-
-                                                        <div className='mt-3'>
-                                                            <b>
-                                                                Type d'associé
-                                                            </b><br/>
-                                                            {data?.typePartner? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.typePartner}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
-                                                        </div>
-
-                                                        {/* Vérifie si le type du bénéficiaire est une Personne physique */}
-                                                        {data?.typePartner==="Personne physique" ? (
-                                                            <>
-                                                                <div className='row'>
                                                                 <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
-                                                                        Nom de l'associé
+                                                                        Nom du bénéficiaire
                                                                     </b><br/>
                                                                     {data?.lastName? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.lastName}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
 
                                                                 <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
-                                                                        Prénom de l'associé
+                                                                        Prénom du bénéficiaire
                                                                     </b><br/>
                                                                     {data?.firstName? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.firstName}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
                                                                 <div className='mt-3 col-lg-4 col-md-4'>
                                                                     <b>
-                                                                        Nationalité de l'associé
+                                                                        Nationalité du bénéficiaire
                                                                     </b><br/>
                                                                     {data?.nationality? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.nationality}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                                 </div>
@@ -3440,6 +3097,353 @@ useEffect(async() => {
                                                         {/* Fin Vérifie si le type du bénéficiaire est une Personne physique */}
 
                                                         {/* Vérifie si le type du bénéficiaire est une Personne morale */}
+                                                        {data?.typeBeneficiary==="Personne morale" ? (
+                                                            <>
+                                                                <div className='row'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        Raison sociale
+                                                                    </b><br/>
+                                                                    {data?.socialReason? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.socialReason}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        Numéro RCCM
+                                                                    </b><br/>
+                                                                    {data?.numberRccm? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.numberRccm}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        Email
+                                                                    </b><br/>
+                                                                    {data?.email? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.email}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        Pays d'immatriculation
+                                                                    </b><br/>
+                                                                    {data?.countryRegistration? (
+                                                                        <>
+                                                                            {allCountry?.map((dataCountry) => (
+                                                                                <p className='my-0' key={dataCountry?.id}>
+                                                                                    {data.countryRegistration==dataCountry?.code? (
+                                                                                        <>
+                                                                                            <Icon icon="bx:check-double" color="#208454" />
+                                                                                            {dataCountry.libelle}
+                                                                                        </>
+                                                                                    ):("")}
+                                                                                </p>
+                                                                            ))}
+                                                                        </>
+                                                                    ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        Téléphone fixe
+                                                                    </b><br/>
+                                                                    {data?.countryRegistration && data?.phoneFixe? (
+                                                                        <>
+                                                                            {allCountry?.map((dataCountry) => (
+                                                                                <p className='my-0' key={dataCountry?.id}>
+                                                                                    {data.countryRegistration==dataCountry?.code? (
+                                                                                        <>
+                                                                                            <Icon icon="bx:check-double" color="#208454" />
+                                                                                            {dataCountry.indicator} {data.phoneFixe}
+                                                                                        </>
+                                                                                    ):("")}
+                                                                                </p>
+                                                                            ))}
+                                                                        </>
+                                                                    ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        % Participation/ Contrôle (de 0-100)
+                                                                    </b><br/>
+                                                                    {data?.percentControl? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.percentControl} %</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        Date de création
+                                                                    </b><br/>
+                                                                    {data?.startDate? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.startDate)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+                                                                </div>
+                                                            </>
+                                                        ):("")}
+                                                        {/* Fin Vérifie si le type du bénéficiaire est une Personne morale */}
+
+                                                    </div>
+                                                ))}
+                                                
+                                            </>
+                                        ):("")}
+                                        </div>
+                                    </>
+                                ): ("")}
+
+
+                                {/* Structure de propriété ou de contrôle*/}
+                                {etape===5 ? (
+                                    <>
+                                        <div className='my-5'>
+                                            <h3 className='text-center'>Structure de propriété ou de contrôle</h3>
+                                        </div>
+                                        <div className='my-5 mx-5'>
+                                        
+                                        <div className='mt-3 text-center'>
+                                            <b>
+                                                Nombre d'associé
+                                            </b><br/>
+                                            {oneKycForEntreprise?.numberAssociates? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.numberAssociates}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                        </div>
+                                        {oneKycForEntreprise?.numberAssociates==="Plus de 10" ? (
+                                            <div className='mt-3'>
+                                                <b>
+                                                    Nombre d'associés qui ont 5% du capital
+                                                </b><br/>
+                                                {oneKycForEntreprise?.fivePercent? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForEntreprise.fivePercent}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                            </div>
+                                        ):("")}
+                                        {/* On affiche ce qui suit si nombre du bénéficiaire effectif est supérieur à zéro */}
+                                        {oneKycForEntreprise?.numberAssociates>0 || oneKycForEntreprise?.numberAssociates==="Plus de 10"? (
+                                            <>
+                                                {allAssociatesByKycId?.map((data, index) => (
+                                                    <div className='' key={index}>
+                                                        <h5 className='colorRed mt-5 text-center'>Les informations de l'associé {index + 1}</h5>
+                                                        <div className='form-group my-3 text-center'>
+                                                            
+                                                            {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                                            {oneKycForEntreprise?.correction==1 ? (
+                                                            // Vérifie si les informations de cet associé effectif ont été validée 
+                                                            data?.validStructure==1 ? (
+                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                            ):(
+                                                                <p className='colorRed mx-2'>
+                                                                    <Link href='/profil/kyc/entreprise/structure-control-two/'>
+                                                                        <a>
+                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(data?.id)}  color="primary" >
+                                                                                Reprendre 
+                                                                            </Button>
+                                                                        </a>
+                                                                    </Link>
+                                                                </p>
+                                                            )
+                                                        ):('')} 
+
+
+                                                        </div>
+                                                        <div className='mt-3'>
+                                                            <b>
+                                                                Type d'associé
+                                                            </b><br/>
+                                                            {data?.typePartner? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.typePartner}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                        </div>
+
+                                                        {/* Vérifie si le type du bénéficiaire est une Personne physique */}
+                                                        {data?.typePartner==="Personne physique" ? (
+                                                            <>
+                                                                <div className='row'>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        Nom de l'associé
+                                                                    </b><br/>
+                                                                    {data?.lastName? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.lastName}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        Prénom de l'associé
+                                                                    </b><br/>
+                                                                    {data?.firstName? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.firstName}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        Nationalité de l'associé
+                                                                    </b><br/>
+                                                                    {data?.nationality? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.nationality}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        Email
+                                                                    </b><br/>
+                                                                    {data?.email? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.email}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        Date de naissance
+                                                                    </b><br/>
+                                                                    {data?.dateBirth? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.dateBirth)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        Pays de résidence
+                                                                    </b><br/>
+                                                                    {data?.residenceCountry? (
+                                                                        <>
+                                                                            {allCountry?.map((dataCountry) => (
+                                                                                <p className='my-0' key={dataCountry?.id}>
+                                                                                    {data.residenceCountry==dataCountry?.code? (
+                                                                                        <>
+                                                                                            <Icon icon="bx:check-double" color="#208454" />
+                                                                                            {dataCountry.libelle}
+                                                                                        </>
+                                                                                    ):("")}
+                                                                                </p>
+                                                                            ))}
+                                                                        </>
+                                                                    ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        Téléphone mobile
+                                                                    </b><br/> 
+                                                                    {data?.residenceCountry && data?.mobile? (
+                                                                        <>
+                                                                            {allCountry?.map((dataCountry) => (
+                                                                                <p className='my-0' key={dataCountry?.id}>
+                                                                                    {data.residenceCountry==dataCountry?.code? (
+                                                                                        <>
+                                                                                            <Icon icon ="bx:check-double" color="#208454" />
+                                                                                            {dataCountry.indicator} {data.mobile}
+                                                                                        </>
+                                                                                    ):("")}
+                                                                                </p>
+                                                                            ))}
+                                                                        </>
+                                                                    ): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        % Participation/ Contrôle (de 0-100)
+                                                                    </b><br/>
+                                                                    {data?.percentControl? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.percentControl} %</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        Type de document d’identité
+                                                                    </b><br/>
+                                                                    {data?.typeDocIdentity? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.typeDocIdentity}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        Numéro du document d’identité
+                                                                    </b><br/>
+                                                                    {data?.identityDocNumber? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.identityDocNumber}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        Date d'expiration du document d’identité
+                                                                    </b><br/>
+                                                                    {data?.expirationDate? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(data.expirationDate)}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+
+                                                                <div className='mt-3 col-lg-4 col-md-4'>
+                                                                    <b>
+                                                                        Pays émetteur du document d'identité
+                                                                    </b><br/>
+                                                                    {data?.issuingCountry? (<p className='my-0'><Icon icon="bx:check-double" color="#208454" />{data.issuingCountry}</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                                                </div>
+                                                                </div>
+                                                               
+
+                                                                {/* Les fichiers && photos*/}
+                                                                {/* Documents de justificatif d'identité */}
+                                                                <div className=" row col-lg-12 col-md-12 my-5 mx-5 justify-content-between">
+                                                                    <div className='col-lg-6 col-md-6 text-center'>
+                                                                        <h4 className='text-center'>Recto du justificatif d'identité du représentant </h4>
+                                                                        {/* Si le document est prise en photo */}
+                                                                        {data?.frontIdentityPhoto? 
+                                                                            <img src={data?.frontIdentityPhoto} className="" width={'400'} height={'400'} alt="Recto"/> :(
+                                                                                // Sinon
+                                                                                <>
+                                                                                    {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
+                                                                                    {isPdfLink(`${API_URL}/${data?.frontIdentityFile}`) ? (
+                                                                                        <>
+                                                                                            <div className="hero-btn  text-center ">
+                                                                                            <a
+                                                                                                className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                                                role="button"
+                                                                                                data-toggle="dropdown"
+                                                                                                aria-haspopup="true"
+                                                                                                aria-expanded="false"
+                                                                                                href={`${API_URL}/${data?.frontIdentityFile}`} 
+                                                                                                // download
+                                                                                                // onClick={handleShow}
+                                                                                                target="_blank"
+                                                                                            >
+                                                                                            <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                                                <Icon icon="bx:show-alt" width="50" />
+                                                                                                Veuillez cliquer ici pour voir le fichier
+                                                                                            </p>
+                                                                                            </a>
+                                                                                            </div>
+                                                                                        </>
+                                                                                    ) : (
+                                                                                        <>
+                                                                                            {data?.frontIdentityFile? <img src={`${API_URL}/${data?.frontIdentityFile}`} className="" width={'400'} height={'400'} alt="Recto"/> : "Pas de recto de justificatif d'identité"}
+                                                                                        </>
+                                                                                    )}
+                                                                                </>
+                                                                            )
+                                                                        } 
+                                                                    </div>
+
+                                                                    <div className='col-lg-6 col-md-6 text-center'>
+                                                                        <h4 className='text-center'>Verso du justificatif d'identité du représentant</h4>
+                                                                        {/* Si le document est prise en photo */}
+                                                                        {data?.backIdentityPhoto? 
+                                                                            <img src={data?.backIdentityPhoto} className="" width={'400'} height={'400'} alt="Recto"/> :(
+                                                                                // Sinon
+                                                                                <>
+                                                                                    {/* Utilisation de la fonction isPdfLink pour vérifier si un lien est pour un fichier PDF */}
+                                                                                    {isPdfLink(`${API_URL}/${data?.backIdentityFile}`) ? (
+                                                                                        <>
+                                                                                            <div className="hero-btn  text-center ">
+                                                                                            <a
+                                                                                                className="nav-link btn btn-blue nav-link btn btn-outline-green"
+                                                                                                role="button"
+                                                                                                data-toggle="dropdown"
+                                                                                                aria-haspopup="true"
+                                                                                                aria-expanded="false"
+                                                                                                href={`${API_URL}/${data?.backIdentityFile}`}
+                                                                                                target="_blank"
+                                                                                            >
+                                                                                            <p className="gr-text-8 bgColorblue text-white mb-0">
+                                                                                                <Icon icon="bx:show-alt" width="50" />
+                                                                                                Veuillez cliquer ici pour voir le fichier
+                                                                                            </p>
+                                                                                            </a>
+                                                                                            </div>
+                                                                                        </>
+                                                                                    ) : (
+                                                                                        <>
+                                                                                            {data?.backIdentityFile? <img src={`${API_URL}/${data?.backIdentityFile}`} width={'400'} height={'400'} alt="Verso"/> : "Pas de verso de justificatif d'identité"}
+                                                                                        </>
+                                                                                    )}
+                                                                                </>
+                                                                            )
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                                {/*Fin Documents de justificatif d'identité */}
+
+                                                            </>
+                                                        ):("")}
+                                                        {/* Fin Vérifie si le type du bénéficiaire est une Personne physique */}
+
+                                                        {/* Vérifie si le type du bénéficiaire est une Personne morale */}
                                                         {data?.typePartner==="Personne morale" ? (
                                                             <>
                                                                 <div className='row'>
@@ -3523,28 +3527,6 @@ useEffect(async() => {
 
                                                     </div>
                                                 ))}
-
-                                                 {/* Le bouton qui permettre d'actualiser la page */}
-                                                 <div className='row'>
-                                                    <div className='col-lg-4 col-md-4'></div>
-                                                
-                                                    <div className="hero-btn col-lg-4 col-md-4'  text-center my-3">
-                                                        <a
-                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                            role="button"
-                                                            data-toggle="dropdown"
-                                                            aria-haspopup="true"
-                                                            aria-expanded="false"
-                                                            onClick={refreshPage}
-                                                            target="_blank"
-                                                        >
-                                                        <p className="gr-text-8 bgColorblue text-white mb-0 py-2">
-                                                            Soumettre les évaluations
-                                                        </p>
-                                                        </a>
-                                                    </div>
-                                                    <div className='col-lg-4 col-md-4'></div>
-                                                </div>
                                             </>
                                         ):("")}
                                         </div>
@@ -3572,36 +3554,25 @@ useEffect(async() => {
                                                 {allPoliticallyExposedByKycId?.map((data, index) => (
                                                     <div className='' key={index}>
                                                         <h5 className='colorRed mt-5 text-center'>Les informations de personne politiquement exposée {index + 1}</h5>
-                                                        <div className='form-group my-3 row'>
-                                                            <div className='col-lg-3 col-md-3'></div>
-                                                            <form onSubmit={validKycPoliticallyExposed} className="col-lg-6 col-md-6">
-                                                                <label className="mx-2  mb-2" htmlFor='validSignature'>
-                                                                    Les informations de cette personne sont-elles correctes?
-                                                                </label><br/>
-                                                                <label>{data?.validPoliticallyExposed==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
+                                                        <div className='form-group my-3 text-center'>
 
-                                                                <div className="input-group flex-nowrap">
-                                                                    <select 
-                                                                        className="form-control gr-text-11 border mt-3"
-                                                                        id="validSignature"
-                                                                        required
-                                                                        defaultValue={validPoliticallyExposed} 
-                                                                        onChange={(event)=>setValidPoliticallyExposed(event.target.value)}
-                                                                    >
-                                                                        <option defaultValue="">Choisissez une option</option>
-                                                                        <optgroup className='single-cryptocurrency-box'>
-                                                                            <option  value="true">Oui</option>
-                                                                            <option  value="false">Non</option>
-                                                                        </optgroup>
-                                                                    </select>
-                                                                    <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
-                                                                        <button type='submit' onClick={()=>setPoliticallyExposedId(data?.id)}  disabled={isLoggingIn}>Envoyer</button>
-                                                                    </span>
-                                                                </div>
-                                                                
-                                                            </form>
-                                                            <div className='col-lg-3 col-md-3'></div>
-
+                                                            {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                                            {oneKycForEntreprise?.correction==1 ? (
+                                                            // Vérifie si les informations de cet politiquement exposée ont été validée 
+                                                            data?.validPoliticallyExposed==1 ? (
+                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                            ):(
+                                                                <p className='colorRed mx-2'>
+                                                                    <Link href='/profil/kyc/entreprise/politiquement-exposees-two/'>
+                                                                        <a>
+                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(data?.id)}  color="primary" >
+                                                                                Reprendre 
+                                                                            </Button>
+                                                                        </a>
+                                                                    </Link>
+                                                                </p>
+                                                            )
+                                                        ):('')}
                                                         </div>
                                                             <div className='row'>
                                                             <div className='mt-3 col-lg-6 col-md-6'>
@@ -3633,28 +3604,6 @@ useEffect(async() => {
                                                             </div>
                                                     </div>
                                                 ))}
-
-                                                 {/* Le bouton qui permettre d'actualiser la page */}
-                                                 <div className='row'>
-                                                    <div className='col-lg-4 col-md-4'></div>
-                                                
-                                                    <div className="hero-btn col-lg-4 col-md-4'  text-center my-3">
-                                                        <a
-                                                            className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                            role="button"
-                                                            data-toggle="dropdown"
-                                                            aria-haspopup="true"
-                                                            aria-expanded="false"
-                                                            onClick={refreshPage}
-                                                            target="_blank"
-                                                        >
-                                                        <p className="gr-text-8 bgColorblue text-white mb-0 py-2">
-                                                            Soumettre les évaluations
-                                                        </p>
-                                                        </a>
-                                                    </div>
-                                                    <div className='col-lg-4 col-md-4'></div>
-                                                </div>
                                             </>
                                         ):("")}
                                         </div>
@@ -3666,8 +3615,29 @@ useEffect(async() => {
                                     <>
                                         <div className='my-5'>
                                             <h3 className='text-center'>Description des opérations financières</h3>
+                                            
+                                            {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                            <div className='text-center'>
+                                                {oneKycForEntreprise?.correction==1 ? (
+                                                    // Vérifie si les informations des opérations financières ont été validée 
+                                                    oneKycForEntreprise?.validFinancialOperation==1 ? (
+                                                        <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                    ):(
+                                                        <p className='colorRed mx-2'>
+                                                            <Link href='/profil/kyc/entreprise/operations-financieres-one/'>
+                                                                <a>
+                                                                    <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)} color="primary" >
+                                                                        Reprendre 
+                                                                    </Button>
+                                                                </a>
+                                                            </Link>
+                                                        </p>
+                                                    )
+                                                ):('')} 
+                                            </div> 
+                                            {/* Fin condition */}
+                                                                
                                         </div>
-
                                         <div className='row mx-5 my-5'>
                                             {allFinancialOperationByKycId?.map((data, index) => (
                                                 <div className='mt-3 col-lg-6 col-md-6' key={index}>
@@ -3679,43 +3649,6 @@ useEffect(async() => {
                                                 </div>
                                             ))}
                                         </div>
-
-                                        {/* PARTIE EVALUATION DES OPERATIONS FINANCIERES */}
-                                        <Form role="form" onSubmit={validKycFinancialOperation}>
-                                            <div className='row justify-content-center'>
-                                                <div className='col-lg-3 col-md-3'></div>
-                                                <div className='form-group my-3 col-lg-6 col-md-6'>
-                                                    <label className="mx-2  mb-2" htmlFor='validQuizFour'>
-                                                        <b>Approuve-vous ces réponses ? </b>
-                                                    </label>
-                                                    {oneKycForEntreprise?.validFinancialOperation==1 ? (
-                                                       <p className='colorGreen mx-2'><b>Evalué</b></p>
-                                                    ):(<p className='colorRed mx-2'><b>Pas encore évalué</b></p>)} 
-                                                        
-                                                    <div className="input-group flex-nowrap">
-                                                        <select 
-                                                            className="form-control gr-text-11 border mt-3"
-                                                            id="validSignature"
-                                                            required
-                                                            defaultValue={validFinancialOperation} 
-                                                            onChange={(event)=>setValidFinancialOperation(event.target.value)}
-                                                        >
-                                                            <option defaultValue="">Choisissez une option</option>
-                                                            <optgroup className='single-cryptocurrency-box'>
-                                                                <option  value="true">Oui</option>
-                                                                <option  value="false">Non</option>
-                                                            </optgroup>
-                                                        </select>
-                                                        <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
-                                                            <button type='submit' disabled={isLoggingIn}>Soumettre</button>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div className='col-lg-3 col-md-3'></div>
-
-                                            </div>
-                                        </Form>
-                                        {/* FIN EVALUATION */}
                                     </>
                                 ):("")}
 
@@ -3724,6 +3657,28 @@ useEffect(async() => {
                                     <>
                                         <div className='my-5'>
                                             <h3 className='text-center'>Origine des fonds</h3>
+                                        
+                                            {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                            <div className='text-center'>
+                                                {oneKycForEntreprise?.correction==1 ? (
+                                                    // Vérifie si les informations des origines des fonds ont été validée 
+                                                    oneKycForEntreprise?.validFundOrigin==1 ? (
+                                                        <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                    ):(
+                                                        <p className='colorRed mx-2'>
+                                                            <Link href='/profil/kyc/entreprise/origine-fonds/'>
+                                                                <a>
+                                                                    <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
+                                                                        Reprendre 
+                                                                    </Button>
+                                                                </a>
+                                                            </Link>
+                                                        </p>
+                                                    )
+                                                ):('')} 
+                                            </div> 
+                                            {/* Fin condition */}
+
                                         </div>
 
                                         <div className='row mx-5 my-5'>
@@ -3737,43 +3692,6 @@ useEffect(async() => {
                                                 </div>
                                             ))}
                                         </div>
-
-                                        {/* PARTIE EVALUATION DES ORGINES DES FONDS */}
-                                        <Form role="form" onSubmit={validKycFundOrigin} >
-                                            <div className='row justify-content-center'>
-                                                <div className='col-lg-3 col-md-3'></div>
-                                                <div className='form-group my-3 col-lg-6 col-md-6'>
-                                                    <label className="mx-2  mb-2" htmlFor='validQuizFour'>
-                                                        <b>Approuve-vous ces réponses ? </b>
-                                                    </label>
-                                                    {oneKycForEntreprise?.validFundOrigin==1 ? (
-                                                       <p className='colorGreen mx-2'><b>Evalué</b></p>
-                                                    ):(<p className='colorRed mx-2'><b>Pas encore évalué</b></p>)} 
-                                                        
-                                                    <div className="input-group flex-nowrap">
-                                                        <select 
-                                                            className="form-control gr-text-11 border mt-3"
-                                                            id="validSignature"
-                                                            required
-                                                            defaultValue={validFundOrigin} 
-                                                            onChange={(event)=>setValidFundOrigin(event.target.value)}
-                                                        >
-                                                            <option defaultValue="">Choisissez une option</option>
-                                                            <optgroup className='single-cryptocurrency-box'>
-                                                                <option  value="true">Oui</option>
-                                                                <option  value="false">Non</option>
-                                                            </optgroup>
-                                                        </select>
-                                                        <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
-                                                            <button type='submit' disabled={isLoggingIn}>Soumettre</button>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div className='col-lg-3 col-md-3'></div>
-
-                                            </div>
-                                        </Form>
-                                        {/* FIN EVALUATION */}
                                     </>
                                 ):("")}
 
@@ -3796,33 +3714,28 @@ useEffect(async() => {
                                         {oneMonthlyFinancialInformation?.map((data, index)=>(
                                             <div className='row'>
                                                 <div className="col-lg-4 col-md-4"></div>
-                                                <form onSubmit={validKycFinancialInformation} className="text-center col-lg-4 col-md-4">
-                                                    <label className="mx-2  mb-2" htmlFor='validSignature'>
-                                                        Approuvez-vous la réponse ?
-                                                    </label><br/>
-                                                    <label>{data?.validFinancialInformation==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
-                                                    
-                                                    <div className="input-group flex-nowrap ">
-                                                        <select 
-                                                            className="form-control gr-text-11 border mt-3"
-                                                            id="validSignature"
-                                                            required
-                                                            defaultValue={validFinancialInformation} 
-                                                            onChange={(event)=>setValidFinancialInformation(event.target.value)}
-                                                        >
-                                                            <option defaultValue="">Choisissez une option</option>
-                                                            <optgroup className='single-cryptocurrency-box'>
-                                                                <option  value="true">Oui</option>
-                                                                <option  value="false">Non</option>
-                                                            </optgroup>
-                                                        </select>
-                                                        <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
-                                                            <button type='submit' onClick={()=>setFinancialInformationId(data?.id)}  disabled={isLoggingIn}>Envoyer</button>
-                                                        </span>
-                                                    </div>
-                                                    
-                                                    
-                                                </form>
+                                                
+                                                {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                                <div className='text-center'>
+                                                    {oneKycForEntreprise?.correction==1 ? (
+                                                        // Vérifie si les informations des information financièreont été validée 
+                                                        data?.validFinancialInformation==1 ? (
+                                                            <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                        ):(
+                                                            <p className='colorRed mx-2'>
+                                                                <Link href='/profil/kyc/entreprise/information-financiere-one/'>
+                                                                    <a>
+                                                                        <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
+                                                                            Reprendre 
+                                                                        </Button>
+                                                                    </a>
+                                                                </Link>
+                                                            </p>
+                                                        )
+                                                    ):('')} 
+                                                </div> 
+                                                {/* Fin condition */}
+
                                                 <div className="col-lg-4 col-md-4"></div>
                                             </div>
                                         ))}
@@ -3919,31 +3832,28 @@ useEffect(async() => {
                                         {oneQuarterlyFinancialInformation?.map((data, index)=>(
                                             <div className='row'>
                                                 <div className="col-lg-4 col-md-4"></div>
-                                                <form onSubmit={validKycFinancialInformation} className="text-center col-lg-4 col-md-4">
-                                                    <label className="mx-2  mb-2" htmlFor='validSignature'>
-                                                        Approuvez-vous la réponse ?
-                                                    </label><br/>
-                                                    <label>{data?.validFinancialInformation==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
-                                                    
-                                                    <div className="input-group flex-nowrap ">
-                                                        <select 
-                                                            className="form-control gr-text-11 border mt-3"
-                                                            id="validSignature"
-                                                            required
-                                                            defaultValue={validFinancialInformation} 
-                                                            onChange={(event)=>setValidFinancialInformation(event.target.value)}
-                                                        >
-                                                            <option defaultValue="">Choisissez une option</option>
-                                                            <optgroup className='single-cryptocurrency-box'>
-                                                                <option  value="true">Oui</option>
-                                                                <option  value="false">Non</option>
-                                                            </optgroup>
-                                                        </select>
-                                                        <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
-                                                            <button type='submit' onClick={()=>setFinancialInformationId(data?.id)}  disabled={isLoggingIn}>Envoyer</button>
-                                                        </span>
-                                                    </div>
-                                                </form>
+                                                
+                                                {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                                <div className='text-center'>
+                                                    {oneKycForEntreprise?.correction==1 ? (
+                                                        // Vérifie si les informations des information financière ont été validée 
+                                                        data?.validFinancialInformation==1 ? (
+                                                            <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                        ):(
+                                                            <p className='colorRed mx-2'>
+                                                                <Link href='/profil/kyc/entreprise/information-financiere-two/'>
+                                                                    <a>
+                                                                        <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
+                                                                            Reprendre 
+                                                                        </Button>
+                                                                    </a>
+                                                                </Link>
+                                                            </p>
+                                                        )
+                                                    ):('')} 
+                                                </div> 
+                                                {/* Fin condition */}
+
                                                 <div className="col-lg-4 col-md-4"></div>
                                             </div>
                                         ))}
@@ -4039,31 +3949,28 @@ useEffect(async() => {
                                         {oneAnnualFinancialInformation?.map((data, index)=>(
                                             <div className='row'>
                                                 <div className="col-lg-4 col-md-4"></div>
-                                                <form onSubmit={validKycFinancialInformation} className="text-center col-lg-4 col-md-4">
-                                                    <label className="mx-2  mb-2" htmlFor='validSignature'>
-                                                        Approuvez-vous la réponse ?
-                                                    </label><br/>
-                                                    <label>{data?.validFinancialInformation==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
-                                                    
-                                                    <div className="input-group flex-nowrap ">
-                                                        <select 
-                                                            className="form-control gr-text-11 border mt-3"
-                                                            id="validSignature"
-                                                            required
-                                                            defaultValue={validFinancialInformation} 
-                                                            onChange={(event)=>setValidFinancialInformation(event.target.value)}
-                                                        >
-                                                            <option defaultValue="">Choisissez une option</option>
-                                                            <optgroup className='single-cryptocurrency-box'>
-                                                                <option  value="true">Oui</option>
-                                                                <option  value="false">Non</option>
-                                                            </optgroup>
-                                                        </select>
-                                                        <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
-                                                            <button type='submit' onClick={()=>setFinancialInformationId(data?.id)}  disabled={isLoggingIn}>Envoyer</button>
-                                                        </span>
-                                                    </div>
-                                                </form>
+                                                
+                                                {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                                <div className='text-center'>
+                                                    {oneKycForEntreprise?.correction==1 ? (
+                                                        // Vérifie si les informations des information financière ont été validée 
+                                                        data?.validFinancialInformation==1 ? (
+                                                            <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                        ):(
+                                                            <p className='colorRed mx-2'>
+                                                                <Link href='/profil/kyc/entreprise/information-financiere-three/'>
+                                                                    <a>
+                                                                        <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
+                                                                            Reprendre 
+                                                                        </Button>
+                                                                    </a>
+                                                                </Link>
+                                                            </p>
+                                                        )
+                                                    ):('')} 
+                                                </div> 
+                                                {/* Fin condition */}
+
                                                 <div className="col-lg-4 col-md-4"></div>
                                             </div>
                                         ))}
@@ -4147,28 +4054,6 @@ useEffect(async() => {
                                             ))}  
                                         </Table>
                                         {/* Fin partie annuelle */}
-                                        
-                                        {/* Le bouton qui permettre d'actualiser la page */}
-                                        <div className='row'>
-                                            <div className='col-lg-4 col-md-4'></div>
-                                                
-                                            <div className="hero-btn col-lg-4 col-md-4'  text-center my-3">
-                                                <a
-                                                    className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                    role="button"
-                                                    data-toggle="dropdown"
-                                                    aria-haspopup="true"
-                                                    aria-expanded="false"
-                                                    onClick={refreshPage}
-                                                    target="_blank"
-                                                >
-                                                <p className="gr-text-8 bgColorblue text-white mb-0 py-2">
-                                                    Soumettre les évaluations
-                                                </p>
-                                                </a>
-                                            </div>
-                                            <div className='col-lg-4 col-md-4'></div>
-                                        </div>
                                     </>
                                 ):("")}
                                 {/* ******Fin Autre information financière**** */}
@@ -4178,7 +4063,7 @@ useEffect(async() => {
                                 {etape===10 ? (
                                     <>
                                         <div className='my-5'>
-                                            <h3 className='text-center'>Informations sur les transactions</h3>
+                                            <h3 className='text-center'>Les transactions financières</h3>
                                         </div>
                                         {/* Partie mensuelle */}
                                         <div className='mt-5'>
@@ -4191,33 +4076,28 @@ useEffect(async() => {
                                         {oneMonthlyFinancialTransaction?.map((data, index)=>(
                                             <div className='row'>
                                                 <div className="col-lg-4 col-md-4"></div>
-                                                <form onSubmit={validKycFinancialTransaction} className="text-center col-lg-4 col-md-4">
-                                                    <label className="mx-2  mb-2" htmlFor='validSignature'>
-                                                        Approuvez-vous la réponse ?
-                                                    </label><br/>
-                                                    <label>{data?.validFinancialTransaction==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
-                                                    
-                                                    <div className="input-group flex-nowrap ">
-                                                        <select 
-                                                            className="form-control gr-text-11 border mt-3"
-                                                            id="validSignature"
-                                                            required
-                                                            defaultValue={validFinancialTransaction} 
-                                                            onChange={(event)=>setValidFinancialTransaction(event.target.value)}
-                                                        >
-                                                            <option defaultValue="">Choisissez une option</option>
-                                                            <optgroup className='single-cryptocurrency-box'>
-                                                                <option  value="true">Oui</option>
-                                                                <option  value="false">Non</option>
-                                                            </optgroup>
-                                                        </select>
-                                                        <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
-                                                            <button type='submit' onClick={()=>setFinancialTransactionId(data?.id)}  disabled={isLoggingIn}>Envoyer</button>
-                                                        </span>
-                                                    </div>
-                                                    
-                                                    
-                                                </form>
+                                                
+                                                {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                                <div className='text-center'>
+                                                    {oneKycForEntreprise?.correction==1 ? (
+                                                        // Vérifie si les informations des transactions financières ont été validée 
+                                                        data?.validFinancialTransaction==1 ? (
+                                                            <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                        ):(
+                                                            <p className='colorRed mx-2'>
+                                                                <Link href='/profil/kyc/entreprise/information-financiere-four/'>
+                                                                    <a>
+                                                                        <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
+                                                                            Reprendre 
+                                                                        </Button>
+                                                                    </a>
+                                                                </Link>
+                                                            </p>
+                                                        )
+                                                    ):('')} 
+                                                </div> 
+                                                {/* Fin condition */}
+
                                                 <div className="col-lg-4 col-md-4"></div>
                                             </div>
                                         ))}
@@ -4368,31 +4248,28 @@ useEffect(async() => {
                                         {oneAnnualFinancialTransaction?.map((data, index)=>(
                                             <div className='row'>
                                                 <div className="col-lg-4 col-md-4"></div>
-                                                <form onSubmit={validKycFinancialTransaction} className="text-center col-lg-4 col-md-4">
-                                                    <label className="mx-2  mb-2" htmlFor='validSignature'>
-                                                        Approuvez-vous la réponse ?
-                                                    </label><br/>
-                                                    <label>{data?.validFinancialTransaction==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
-                                                    
-                                                    <div className="input-group flex-nowrap ">
-                                                        <select 
-                                                            className="form-control gr-text-11 border mt-3"
-                                                            id="validSignature"
-                                                            required
-                                                            defaultValue={validFinancialTransaction} 
-                                                            onChange={(event)=>setValidFinancialTransaction(event.target.value)}
-                                                        >
-                                                            <option defaultValue="">Choisissez une option</option>
-                                                            <optgroup className='single-cryptocurrency-box'>
-                                                                <option  value="true">Oui</option>
-                                                                <option  value="false">Non</option>
-                                                            </optgroup>
-                                                        </select>
-                                                        <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
-                                                            <button type='submit' onClick={()=>setFinancialTransactionId(data?.id)}  disabled={isLoggingIn}>Envoyer</button>
-                                                        </span>
-                                                    </div>
-                                                </form>
+                                                
+                                                {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                                <div className='text-center'>
+                                                    {oneKycForEntreprise?.correction==1 ? (
+                                                        // Vérifie si les informations des transactions financières ont été validée 
+                                                        data?.validFinancialTransaction==1 ? (
+                                                            <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                        ):(
+                                                            <p className='colorRed mx-2'>
+                                                                <Link href='/profil/kyc/entreprise/information-financiere-five/'>
+                                                                    <a>
+                                                                        <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
+                                                                            Reprendre 
+                                                                        </Button>
+                                                                    </a>
+                                                                </Link>
+                                                            </p>
+                                                        )
+                                                    ):('')} 
+                                                </div> 
+                                                {/* Fin condition */}
+
                                                 <div className="col-lg-4 col-md-4"></div>
                                             </div>
                                         ))}
@@ -4587,36 +4464,12 @@ useEffect(async() => {
 
                                         </div>
                                         {/* Fin partie des monnnaies et des pays les plus utilisés */}
-                                        
-
-                                        {/* Le bouton qui permettre d'actualiser la page */}
-                                        <div className='row'>
-                                            <div className='col-lg-4 col-md-4'></div>
-                                                
-                                            <div className="hero-btn col-lg-4 col-md-4'  text-center my-3">
-                                                <a
-                                                    className="nav-link btn btn-blue nav-link btn btn-outline-green"
-                                                    role="button"
-                                                    data-toggle="dropdown"
-                                                    aria-haspopup="true"
-                                                    aria-expanded="false"
-                                                    onClick={refreshPage}
-                                                    target="_blank"
-                                                >
-                                                <p className="gr-text-8 bgColorblue text-white mb-0 py-2">
-                                                    Soumettre les évaluations
-                                                </p>
-                                                </a>
-                                            </div>
-                                            <div className='col-lg-4 col-md-4'></div>
-                                        </div>
                                     </>
                                 ):("")}
 
                                 {/* Les documents legaux */}
                                 {etape===11 ? (
                                     <>
-                                        <form onSubmit={validKycLegalDocument}>
                                             <div className='my-5'>
                                                 <h3 className='text-center'>Documents légaux de l'entreprise</h3>
                                             </div>
@@ -4636,34 +4489,26 @@ useEffect(async() => {
                                                 <div className='col-lg-6 col-md-6 text-center'>
                                                     <p className='text-center'>Extrait de registre de commerce</p>
                                                     
-                                                    {/* Partie évaluation */}
-                                                    <div className='row mb-3'>
-                                                        <div className='col-lg-3 col-md-3'></div>
-                                                        <div className='col-lg-6 col-md-6'>
-                                                            <label className="mx-2  mb-2" htmlFor='validRegister'>
-                                                                Approuvez-vous ce fichier ?
-                                                            </label><br/>
-                                                            <label>{oneLegalDocumentByKycId?.validRegister==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
-                                                            <div className="input-group flex-nowrap">
-                                                                <select 
-                                                                    className="form-control gr-text-11 border mt-3"
-                                                                    id="validRegister"
-                                                                    required
-                                                                    defaultValue={validRegister} 
-                                                                    onChange={(event)=>setValidRegister(event.target.value)}
-                                                                >
-                                                                    <option defaultValue="">Choisissez une option</option>
-                                                                    <optgroup className='single-cryptocurrency-box'>
-                                                                        <option  value="true">Oui</option>
-                                                                        <option  value="false">Non</option>
-                                                                    </optgroup>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div className='col-lg-3 col-md-3'></div>
-                                                    </div>
-                                                    {/* Fin Partie évaluation */}
-
+                                                    {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                                    <div className='text-center mb-3'>
+                                                        {oneKycForEntreprise?.correction==1 ? (
+                                                            // Vérifie si les informations des documents légaux ont été validée 
+                                                            oneLegalDocumentByKycId?.validRegister==1 ? (
+                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                            ):(
+                                                                <p className='colorRed mx-2'>
+                                                                    <Link href='/profil/kyc/entreprise/documents-legaux/'>
+                                                                        <a>
+                                                                            <Button  type='button'onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
+                                                                                Reprendre 
+                                                                            </Button>
+                                                                        </a>
+                                                                    </Link>
+                                                                </p>
+                                                            )
+                                                        ):('')} 
+                                                    </div> 
+                                                    {/* Fin condition */}
                                                                     
                                                     {/* Si le document est prise en photo */}
                                                     {oneLegalDocumentByKycId?.registerPhoto ? 
@@ -4707,33 +4552,27 @@ useEffect(async() => {
                                                 <div className='col-lg-6 col-md-6 text-center'>
                                                     <p className='text-center'>Le DFE</p>
 
-                                                    {/* Partie évaluation */}
-                                                    <div className='row mb-3'>
-                                                        <div className='col-lg-3 col-md-3'></div>
-                                                        <div className='col-lg-6 col-md-6'>
-                                                            <label className="mx-2  mb-2" htmlFor='validDfe'>
-                                                                Approuvez-vous ce fichier ?
-                                                            </label><br/>
-                                                            <label>{oneLegalDocumentByKycId?.validDfe==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
-                                                            <div className="input-group flex-nowrap">
-                                                                <select 
-                                                                    className="form-control gr-text-11 border mt-3"
-                                                                    id="validDfe"
-                                                                    required
-                                                                    defaultValue={validDfe} 
-                                                                    onChange={(event)=>setValidDfe(event.target.value)}
-                                                                >
-                                                                    <option defaultValue="">Choisissez une option</option>
-                                                                    <optgroup className='single-cryptocurrency-box'>
-                                                                        <option  value="true">Oui</option>
-                                                                        <option  value="false">Non</option>
-                                                                    </optgroup>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div className='col-lg-3 col-md-3'></div>
-                                                    </div>
-                                                    {/* Fin Partie évaluation */}
+                                                    {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                                    <div className='text-center mb-3'>
+                                                        {oneKycForEntreprise?.correction==1 ? (
+                                                            // Vérifie si les informations des documents légaux ont été validée 
+                                                            oneLegalDocumentByKycId?.validDfe==1 ? (
+                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                            ):(
+                                                                <p className='colorRed mx-2'>
+                                                                    <Link href='/profil/kyc/entreprise/documents-legaux/'>
+                                                                        <a>
+                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(2)}  color="primary" >
+                                                                                Reprendre 
+                                                                            </Button>
+                                                                        </a>
+                                                                    </Link>
+                                                                </p>
+                                                            )
+                                                        ):('')} 
+                                                    </div> 
+                                                    {/* Fin condition */}
+
 
                                                     {/* Si le document est prise en photo */}
                                                     {oneLegalDocumentByKycId?.dfePhoto? 
@@ -4786,34 +4625,27 @@ useEffect(async() => {
                                             <div className=" row col-lg-12 col-md-12 mx-5 justify-content-between">
                                                 <div className='col-lg-6 col-md-6 text-center'>
                                                     <p className='text-center'>Copie des statuts</p>
-
-                                                    {/* Partie évaluation */}
-                                                    <div className='row mb-3'>
-                                                        <div className='col-lg-3 col-md-3'></div>
-                                                        <div className='col-lg-6 col-md-6'>
-                                                            <label className="mx-2  mb-2" htmlFor='validCopyStatutes'>
-                                                                Approuvez-vous ce fichier ?
-                                                            </label><br/>
-                                                            <label>{oneLegalDocumentByKycId?.validCopyStatutes==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
-                                                            <div className="input-group flex-nowrap">
-                                                                <select 
-                                                                    className="form-control gr-text-11 border mt-3"
-                                                                    id="validCopyStatutes"
-                                                                    required
-                                                                    defaultValue={validCopyStatutes} 
-                                                                    onChange={(event)=>setValidCopyStatutes(event.target.value)}
-                                                                >
-                                                                    <option defaultValue="">Choisissez une option</option>
-                                                                    <optgroup className='single-cryptocurrency-box'>
-                                                                        <option  value="true">Oui</option>
-                                                                        <option  value="false">Non</option>
-                                                                    </optgroup>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div className='col-lg-3 col-md-3'></div>
-                                                    </div>
-                                                    {/* Fin Partie évaluation */}
+                                                    
+                                                    {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                                    <div className='text-center mb-3'>
+                                                        {oneKycForEntreprise?.correction==1 ? (
+                                                            // Vérifie si les informations des documents légaux ont été validée 
+                                                            oneLegalDocumentByKycId?.validCopyStatutes==1 ? (
+                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                            ):(
+                                                                <p className='colorRed mx-2'>
+                                                                    <Link href='/profil/kyc/entreprise/documents-legaux/'>
+                                                                        <a>
+                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(3)}  color="primary" >
+                                                                                Reprendre 
+                                                                            </Button>
+                                                                        </a>
+                                                                    </Link>
+                                                                </p>
+                                                            )
+                                                        ):('')} 
+                                                    </div> 
+                                                    {/* Fin condition */}
 
                                                     {/* Si le document est prise en photo */}
                                                     {oneLegalDocumentByKycId?.copyStatutesPhoto? 
@@ -4856,33 +4688,26 @@ useEffect(async() => {
                                                 <div className='col-lg-6 col-md-6 text-center'>
                                                     <p className='text-center'>Délégation de pouvoirs</p>
                                                     
-                                                    {/* Partie évaluation */}
-                                                    <div className='row mb-3'>
-                                                        <div className='col-lg-3 col-md-3'></div>
-                                                        <div className='col-lg-6 col-md-6'>
-                                                            <label className="mx-2  mb-2" htmlFor='validDelegationPowers'>
-                                                                Approuvez-vous ce fichier ?
-                                                            </label><br/>
-                                                            <label>{oneLegalDocumentByKycId?.validDelegationPowers==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
-                                                            <div className="input-group flex-nowrap">
-                                                                <select 
-                                                                    className="form-control gr-text-11 border mt-3"
-                                                                    id="validDelegationPowers"
-                                                                    required
-                                                                    defaultValue={validDelegationPowers} 
-                                                                    onChange={(event)=>setValidDelegationPowers(event.target.value)}
-                                                                >
-                                                                    <option defaultValue="">Choisissez une option</option>
-                                                                    <optgroup className='single-cryptocurrency-box'>
-                                                                        <option  value="true">Oui</option>
-                                                                        <option  value="false">Non</option>
-                                                                    </optgroup>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div className='col-lg-3 col-md-3'></div>
-                                                    </div>
-                                                    {/* Fin Partie évaluation */}
+                                                    {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                                    <div className='text-center mb-3'>
+                                                        {oneKycForEntreprise?.correction==1 ? (
+                                                            // Vérifie si les informations des documents légaux ont été validée 
+                                                            oneLegalDocumentByKycId?.validDelegationPowers==1 ? (
+                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                            ):(
+                                                                <p className='colorRed mx-2'>
+                                                                    <Link href='/profil/kyc/entreprise/documents-legaux/'>
+                                                                        <a>
+                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(4)}  color="primary" >
+                                                                                Reprendre 
+                                                                            </Button>
+                                                                        </a>
+                                                                    </Link>
+                                                                </p>
+                                                            )
+                                                        ):('')} 
+                                                    </div> 
+                                                    {/* Fin condition */}
                                                     
                                                     {/* Si le document est prise en photo */}
                                                     {oneLegalDocumentByKycId?.delegationPowersPhoto? 
@@ -4936,33 +4761,26 @@ useEffect(async() => {
                                                 <div className='col-lg-6 col-md-6 text-center'>
                                                     <p className='text-center'>PV de nomination des dirigeants publication journal officiel</p>
                                                     
-                                                    {/* Partie évaluation */}
-                                                    <div className='row mb-3'>
-                                                        <div className='col-lg-3 col-md-3'></div>
-                                                        <div className='col-lg-6 col-md-6'>
-                                                            <label className="mx-2  mb-2" htmlFor='validPvAppointment'>
-                                                                Approuvez-vous ce fichier ?
-                                                            </label><br/>
-                                                            <label>{oneLegalDocumentByKycId?.validPvAppointment==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
-                                                            <div className="input-group flex-nowrap">
-                                                                <select 
-                                                                    className="form-control gr-text-11 border mt-3"
-                                                                    id="validPvAppointment"
-                                                                    required
-                                                                    defaultValue={validPvAppointment} 
-                                                                    onChange={(event)=>setValidPvAppointment(event.target.value)}
-                                                                >
-                                                                    <option defaultValue="">Choisissez une option</option>
-                                                                    <optgroup className='single-cryptocurrency-box'>
-                                                                        <option  value="true">Oui</option>
-                                                                        <option  value="false">Non</option>
-                                                                    </optgroup>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div className='col-lg-3 col-md-3'></div>
-                                                    </div>
-                                                    {/* Fin Partie évaluation */}
+                                                    {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                                    <div className='text-center mb-3'>
+                                                        {oneKycForEntreprise?.correction==1 ? (
+                                                            // Vérifie si les informations des documents légaux ont été validée 
+                                                            oneLegalDocumentByKycId?.validPvAppointment==1 ? (
+                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                            ):(
+                                                                <p className='colorRed mx-2'>
+                                                                    <Link href='/profil/kyc/entreprise/documents-legaux/'>
+                                                                        <a>
+                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(5)}  color="primary" >
+                                                                                Reprendre 
+                                                                            </Button>
+                                                                        </a>
+                                                                    </Link>
+                                                                </p>
+                                                            )
+                                                        ):('')} 
+                                                    </div> 
+                                                    {/* Fin condition */}
                                                     
                                                     {/* Si le document est prise en photo */}
                                                     {oneLegalDocumentByKycId?.pvAppointmentPhoto? 
@@ -5005,33 +4823,27 @@ useEffect(async() => {
                                                 <div className='col-lg-6 col-md-6 text-center'>
                                                     <p className='text-center'>Plan de localisation géographique</p>
 
-                                                    {/* Partie évaluation */}
-                                                    <div className='row mb-3'>
-                                                        <div className='col-lg-3 col-md-3'></div>
-                                                        <div className='col-lg-6 col-md-6'>
-                                                            <label className="mx-2  mb-2" htmlFor='validMapLocation'>
-                                                                Approuvez-vous ce fichier ?
-                                                            </label><br/>
-                                                            <label>{oneLegalDocumentByKycId?.validMapLocation==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
-                                                            <div className="input-group flex-nowrap">
-                                                                <select 
-                                                                    className="form-control gr-text-11 border mt-3"
-                                                                    id="validMapLocation"
-                                                                    required
-                                                                    defaultValue={validMapLocation} 
-                                                                    onChange={(event)=>setValidMapLocation(event.target.value)}
-                                                                >
-                                                                    <option defaultValue="">Choisissez une option</option>
-                                                                    <optgroup className='single-cryptocurrency-box'>
-                                                                        <option  value="true">Oui</option>
-                                                                        <option  value="false">Non</option>
-                                                                    </optgroup>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div className='col-lg-3 col-md-3'></div>
-                                                    </div>
-                                                    {/* Fin Partie évaluation */}
+                                                    {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                                    <div className='text-center mb-3'>
+                                                        {oneKycForEntreprise?.correction==1 ? (
+                                                            // Vérifie si les informations des documents légaux ont été validée 
+                                                            oneLegalDocumentByKycId?.validMapLocation==1 ? (
+                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                            ):(
+                                                                <p className='colorRed mx-2'>
+                                                                    <Link href='/profil/kyc/entreprise/documents-legaux/'>
+                                                                        <a>
+                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(6)}  color="primary" >
+                                                                                Reprendre 
+                                                                            </Button>
+                                                                        </a>
+                                                                    </Link>
+                                                                </p>
+                                                            )
+                                                        ):('')} 
+                                                    </div> 
+                                                    {/* Fin condition */}
+                                                    
 
                                                     {/* Si le document est prise en photo */}
                                                     {oneLegalDocumentByKycId?.mapLocationPhoto? 
@@ -5085,33 +4897,27 @@ useEffect(async() => {
                                                 <div className='col-lg-6 col-md-6 text-center'>
                                                     <p className='text-center'>Facture eau / électricité ou contrat de bail</p>
 
-                                                    {/* Partie évaluation */}
-                                                    <div className='row mb-3'>
-                                                        <div className='col-lg-3 col-md-3'></div>
-                                                        <div className='col-lg-6 col-md-6'>
-                                                            <label className="mx-2  mb-2" htmlFor='validFacture'>
-                                                                Approuvez-vous ce fichier ?
-                                                            </label><br/>
-                                                            <label>{oneLegalDocumentByKycId?.validFacture==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
-                                                            <div className="input-group flex-nowrap">
-                                                                <select 
-                                                                    className="form-control gr-text-11 border mt-3"
-                                                                    id="validFacture"
-                                                                    required
-                                                                    defaultValue={validFacture} 
-                                                                    onChange={(event)=>setValidFacture(event.target.value)}
-                                                                >
-                                                                    <option defaultValue="">Choisissez une option</option>
-                                                                    <optgroup className='single-cryptocurrency-box'>
-                                                                        <option  value="true">Oui</option>
-                                                                        <option  value="false">Non</option>
-                                                                    </optgroup>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div className='col-lg-3 col-md-3'></div>
-                                                    </div>
-                                                    {/* Fin Partie évaluation */}
+                                                    {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                                    <div className='text-center mb-3'>
+                                                        {oneKycForEntreprise?.correction==1 ? (
+                                                            // Vérifie si les informations des documents légaux ont été validée 
+                                                            oneLegalDocumentByKycId?.validFacture==1 ? (
+                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                            ):(
+                                                                <p className='colorRed mx-2'>
+                                                                    <Link href='/profil/kyc/entreprise/documents-legaux/'>
+                                                                        <a>
+                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(7)}  color="primary" >
+                                                                                Reprendre 
+                                                                            </Button>
+                                                                        </a>
+                                                                    </Link>
+                                                                </p>
+                                                            )
+                                                        ):('')} 
+                                                    </div> 
+                                                    {/* Fin condition */}
+                                                    
 
                                                     {/* Si le document est prise en photo */}
                                                     {oneLegalDocumentByKycId?.facturePhoto? 
@@ -5154,33 +4960,26 @@ useEffect(async() => {
                                                 <div className='col-lg-6 col-md-6 text-center'>
                                                     <p className='text-center'>La copie du justificatif de pouvoir conféré au signataire</p>
                                                     
-                                                    {/* Partie évaluation */}
-                                                    <div className='row mb-3'>
-                                                        <div className='col-lg-3 col-md-3'></div>
-                                                        <div className='col-lg-6 col-md-6'>
-                                                            <label className="mx-2  mb-2" htmlFor='validProofPower'>
-                                                                Approuvez-vous ce fichier ?
-                                                            </label><br/>
-                                                            <label>{oneLegalDocumentByKycId?.validProofPower==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
-                                                            <div className="input-group flex-nowrap">
-                                                                <select 
-                                                                    className="form-control gr-text-11 border mt-3"
-                                                                    id="validProofPower"
-                                                                    required
-                                                                    defaultValue={validProofPower} 
-                                                                    onChange={(event)=>setValidProofPower(event.target.value)}
-                                                                >
-                                                                    <option defaultValue="">Choisissez une option</option>
-                                                                    <optgroup className='single-cryptocurrency-box'>
-                                                                        <option  value="true">Oui</option>
-                                                                        <option  value="false">Non</option>
-                                                                    </optgroup>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div className='col-lg-3 col-md-3'></div>
-                                                    </div>
-                                                    {/* Fin Partie évaluation */}
+                                                    {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                                    <div className='text-center mb-3'>
+                                                        {oneKycForEntreprise?.correction==1 ? (
+                                                            // Vérifie si les informations des documents légaux ont été validée 
+                                                            oneLegalDocumentByKycId?.validProofPower==1 ? (
+                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                            ):(
+                                                                <p className='colorRed mx-2'>
+                                                                    <Link href='/profil/kyc/entreprise/documents-legaux/'>
+                                                                        <a>
+                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(8)}  color="primary" >
+                                                                                Reprendre 
+                                                                            </Button>
+                                                                        </a>
+                                                                    </Link>
+                                                                </p>
+                                                            )
+                                                        ):('')} 
+                                                    </div> 
+                                                    {/* Fin condition */}
                                                     
                                                     {/* Si le document est prise en photo */}
                                                     {oneLegalDocumentByKycId?.proofPowerPhoto? 
@@ -5227,33 +5026,27 @@ useEffect(async() => {
                                                     </b>
                                                 </h5>
                                             </div>
-                                            {/* Partie évaluation */}
-                                            <div className='row mb-3 text-center'>
-                                                <div className='col-lg-3 col-md-3'></div>
-                                                <div className='col-lg-6 col-md-6'>
-                                                    <label className="mx-2  mb-2" htmlFor='validIdentitySignatory'>
-                                                        Approuvez-vous ce fichier ?
-                                                    </label><br/>
-                                                    <label>{oneLegalDocumentByKycId?.validIdentitySignatory==1?(<b className='colorGreen'>Evalué</b>):(<b className='colorRed'>Pas encore évalué</b>)}</label>
-                                                    <div className="input-group flex-nowrap">
-                                                        <select 
-                                                            className="form-control gr-text-11 border mt-3"
-                                                            id="validIdentitySignatory"
-                                                            required
-                                                            defaultValue={validIdentitySignatory} 
-                                                            onChange={(event)=>setValidIdentitySignatory(event.target.value)}
-                                                        >
-                                                            <option defaultValue="">Choisissez une option</option>
-                                                            <optgroup className='single-cryptocurrency-box'>
-                                                                <option  value="true">Oui</option>
-                                                                <option  value="false">Non</option>
-                                                            </optgroup>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div className='col-lg-3 col-md-3'></div>
-                                            </div>
-                                            {/* Fin Partie évaluation */}
+
+                                            {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
+                                            <div className='text-center mb-3'>
+                                                {oneKycForEntreprise?.correction==1 ? (
+                                                    // Vérifie si les informations des documents légaux ont été validée 
+                                                    oneLegalDocumentByKycId?.validIdentitySignatory==1 ? (
+                                                        <p className='colorGreen mx-2'><b>Validé</b></p>
+                                                    ):(
+                                                        <p className='colorRed mx-2'>
+                                                            <Link href='/profil/kyc/entreprise/documents-legaux/'>
+                                                                <a>
+                                                                    <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(9)} color="primary" >
+                                                                        Reprendre 
+                                                                    </Button>
+                                                                </a>
+                                                            </Link>
+                                                        </p>
+                                                    )
+                                                ):('')} 
+                                            </div> 
+                                            {/* Fin condition */}
 
                                             <div className='mt-3 text-center'>
                                                 <b>
@@ -5340,24 +5133,6 @@ useEffect(async() => {
                                                 </div>
                                             </div>
                                             {/*Fin Documents de justificatif d'identité */}
-
-                                            {/* Le bouton qui permettre d'actualiser la page */}
-                                            <div className='row my-3'>
-                                                <div className='col-lg-3 col-md-3'></div>
-                                                    <button
-                                                     type='submit'
-                                                     className="gr-text-8 hero-btn bgColorblue col-lg-6 col-md-6 text-center text-white mb-0 py-2"
-                                                     role="button"
-                                                        data-toggle="dropdown"
-                                                        aria-haspopup="true"
-                                                        aria-expanded="false"
-                                                    >
-                                                        Soumettre les évaluations
-                                                    </button>
-                                                <div className='col-lg-3 col-md-3'></div>
-                                            </div>
-                                        </form>
-
                                     </>
                                 ):("")}
 
@@ -5493,16 +5268,9 @@ useEffect(async() => {
                                         
                                             <div className="form-group mb-6">
                                                 <label className="mx-2  mb-2" htmlFor='contenu'>
-                                                    Les remarques ici
+                                                    Les remarques à prendre en compte
                                                 </label>
-                                                <textarea
-                                                    className="form-control gr-text-11 border  bg-white"
-                                                    type="text"
-                                                    id="contenu"
-                                                    placeholder="Les remarques ici"
-                                                    defaultValue={pattern} 
-                                                    onChange={(event)=>setPattern(event.target.value)}
-                                                />
+                                                <p> {oneKycForEntreprise?.pattern}</p>
                                             </div>
 
                                             <Button className='mt-3'  type='button'  color="success" onClick={validKycBusiness}  disabled={isLoggingIn}>
@@ -5511,315 +5279,6 @@ useEffect(async() => {
                                         </Form>
                                     </>
                                 ):("")}
-
-
-                                {/*  CLASSIFICATION */}
-                                {etape===13 ? (
-                                    <>
-                                        <div className='mt-15' >
-                                            <div className=' mx-15'>
-                                                <div className='py-10'>
-                                                <br/><br/><h1 className='text-center '>Classification</h1>
-                                                </div>
-                                            </div>
-
-                                            {/* Les cards */}
-                                            <div className='row'>
-                                                <div className='col-lg-3 col-md-12'></div>
-                                                    <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
-                                                        <form className='' onSubmit={addClassification} >
-                                                        {/* <form className='' onSubmit={updateQuestionnaireFatca}> */}
-                                                            
-                                                            <label
-                                                                htmlFor="usPerson"
-                                                                className="text-blackish-blue mb-2"
-                                                            >
-                                                                Classification du client en risque élevé si le client remplit au moins une des conditions ci-dessous :
-                                                            </label>
-                                                            
-                                                            {/* <input
-                                                                type='text'
-                                                                className='form-control'
-                                                                defaultValue={idKycForParticular} 
-                                                                onChange={(event)=>setKycParticularId(event.target.value)}
-                                                            /> */}
-                                                            <div className="form-group mb-6 mt-3">
-
-                                                                <label
-                                                                    htmlFor="sensitiveCustomer"
-                                                                    className="text-blackish-blue mb-2"
-                                                                >
-                                                                   S’agit-il d’un client sensible ou d’un client (personne morale) dont le siège social figure sur la liste des pays à risques. (annexe procédures des opérations) ?
-                                                                </label>
-                                                                <select 
-                                                                    className="form-control"
-                                                                    id="sensitiveCustomer"
-                                                                    required
-                                                                    defaultValue={sensitiveCustomer} 
-                                                                    onChange={(event)=>setSensitiveCustomer(event.target.value)}
-                                                                >
-                                                                <option defaultValue="">Choisissez</option>
-                                                                    <optgroup className='single-cryptocurrency-box'>
-                                                                    <option  value="Oui">Oui</option>
-                                                                    <option  value="Non">Non</option>
-                                                                    </optgroup>
-                                                                </select>
-                                                            </div >
-
-                                                            <div className="form-group mb-6 mt-3">
-
-                                                                <label
-                                                                    htmlFor="launderingRisk"
-                                                                    className="text-blackish-blue mb-2"
-                                                                >
-                                                                    Évaluation du Risque de Blanchiment d’argent 
-                                                                </label>
-                                                                <select 
-                                                                className="form-control"
-                                                                id="launderingRisk"
-                                                                required
-                                                                defaultValue={launderingRisk} 
-                                                                onChange={(event)=>setLaunderingRisk (event.target.value)}
-                                                                >
-                                                                <option defaultValue="">Choisissez</option>
-                                                                    <optgroup className='single-cryptocurrency-box'>
-                                                                    <option  value="Elevé">Elevé</option>
-                                                                    <option  value="Moyen">Moyen</option>
-                                                                    <option  value="Faible">Faible</option>
-                                                                    </optgroup>
-                                                                </select>
-                                                            </div >
-                                                            
-                                                            <div className="form-group mb-6 mt-3">
-
-                                                                <label
-                                                                    htmlFor="fundsConsistent "
-                                                                    className="text-blackish-blue mb-2"
-                                                                >
-                                                                    Le type de services bancaires ainsi que l’origine/la destination des fonds du client sont-ils cohérents avec son activité ? 
-                                                                </label>
-                                                                <select 
-                                                                className="form-control"
-                                                                id="fundsConsistent "
-                                                                required
-                                                                defaultValue={fundsConsistent } 
-                                                                onChange={(event)=>setFundsConsistent (event.target.value)}
-                                                                >
-                                                                <option defaultValue="">Choisissez</option>
-                                                                    <optgroup className='single-cryptocurrency-box'>
-                                                                    <option  value="Oui">Oui</option>
-                                                                    <option  value="Non">Non</option>
-                                                                    </optgroup>
-                                                                </select>
-                                                            </div >
-
-                                                            <div className="form-group mb-6 mt-3">
-                                                                <label
-                                                                    htmlFor="clientPolitically"
-                                                                    className="text-blackish-blue mb-2"
-                                                                >
-                                                                    Le client est-il une personne politiquement exposée ou la société est-elle détenue par des personnes politiquement exposées ? 
-                                                                </label>
-                                                                <select 
-                                                                className="form-control"
-                                                                id="clientPolitically"
-                                                                required
-                                                                defaultValue={clientPolitically} 
-                                                                onChange={(event)=>setClientPolitically(event.target.value)}
-                                                                >
-                                                                <option defaultValue="">Choisissez</option>
-                                                                    <optgroup className='single-cryptocurrency-box'>
-                                                                    <option  value="Oui">Oui</option>
-                                                                    <option  value="Non">Non</option>
-                                                                    </optgroup>
-                                                                </select>
-                                                            </div >
-
-                                                            <div className="form-group mb-6 mt-3">
-                                                                <label
-                                                                    htmlFor="otherReasons"
-                                                                    className="text-blackish-blue mb-2"
-                                                                >
-                                                                    Existe-t-il d’autres raisons pour lesquelles l’évaluation du client par rapport aux activités de blanchiment d’argent devrait être faite ? 
-                                                                </label>
-                                                                <select 
-                                                                className="form-control"
-                                                                id="otherReasons"
-                                                                required
-                                                                defaultValue={otherReasons} 
-                                                                onChange={(event)=>setOtherReasons(event.target.value)}
-                                                                >
-                                                                <option defaultValue="">Choisissez</option>
-                                                                    <optgroup className='single-cryptocurrency-box'>
-                                                                    <option  value="Oui">Oui</option>
-                                                                    <option  value="Non">Non</option>
-                                                                    </optgroup>
-                                                                </select>
-                                                            </div >
-
-                                                            <div className="form-group mb-6 mt-3">
-                                                                <label
-                                                                    htmlFor="isOtherReasons"
-                                                                    className="text-blackish-blue mb-2"
-                                                                >
-                                                                    Existe-t-il d’autres raisons pour lesquelles l’évaluation du client par rapport aux activités de blanchiment d’argent devrait être faite ? 
-                                                                </label>
-                                                                <select 
-                                                                className="form-control"
-                                                                id="isOtherReasons"
-                                                                required
-                                                                defaultValue={isOtherReasons} 
-                                                                onChange={(event)=>setIsOtherReasons(event.target.value)}
-                                                                >
-                                                                <option defaultValue="">Choisissez</option>
-                                                                    <optgroup className='single-cryptocurrency-box'>
-                                                                    <option  value="Oui">Oui</option>
-                                                                    <option  value="Non">Non</option>
-                                                                    </optgroup>
-                                                                </select>
-                                                            </div>
-
-                                                            {/* Si oui il une autre raison */}
-                                                            {isOtherReasons==='Oui'? (
-                                                                <>
-                                                                    <div className="form-group mb-6 mt-3">
-                                                                        <label
-                                                                            htmlFor="otherReasons"
-                                                                            className="text-blackish-blue mb-2"
-                                                                        >
-                                                                        
-                                                                        Lesquelles ?
-                                                                        </label>
-                                                                        <div className='form-group mt-3'>
-                                                                            <input
-                                                                                type='text'
-                                                                                id='otherReasons'
-                                                                                className='form-control'
-                                                                                defaultValue={otherReasons} 
-                                                                                onChange={(event)=>setOtherReasons(event.target.value)}
-                                                                            />
-                                                                        </div>
-                                                                    </div >
-
-                                                                    <div className="form-group mb-6 mt-3">
-                                                                        <label
-                                                                            htmlFor="assessed"
-                                                                            className="text-blackish-blue mb-2"
-                                                                        >
-                                                                            Comment seraient-elles évaluées ? 
-                                                                        </label>
-                                                                        <select 
-                                                                            className="form-control"
-                                                                            id="assessed"
-                                                                            required
-                                                                            defaultValue={assessed} 
-                                                                            onChange={(event)=>setAssessed(event.target.value)}
-                                                                        >
-                                                                        <option defaultValue="">Choisissez</option>
-                                                                            <optgroup className='single-cryptocurrency-box'>
-                                                                            <option  value="Très risuqées">Très risuqées</option>
-                                                                            <option  value="Moyennement risquées">Moyennement risquées</option>
-                                                                            <option  value="Peu risquées">Peu risquées</option>
-                                                                            </optgroup>
-                                                                        </select>
-                                                                    </div >
-                                                                </>
-                                                            ):("")}
-                                                            {/* Fin si oui */}
-
-
-                                                            <div className="form-group mb-6 mt-3">
-                                                                <label
-                                                                    htmlFor="transmission"
-                                                                    className="text-blackish-blue mb-2"
-                                                                >
-                                                                    Transmission exhaustive de toutes les pièces justificatives ? 
-                                                                </label>
-                                                                <select 
-                                                                    className="form-control"
-                                                                    id="transmission"
-                                                                    required
-                                                                    defaultValue={transmission} 
-                                                                    onChange={(event)=>setTransmission(event.target.value)}
-                                                                >
-                                                                <option defaultValue="">Choisissez</option>
-                                                                    <optgroup className='single-cryptocurrency-box'>
-                                                                    <option  value="Oui">Oui</option>
-                                                                    <option  value="Non">Non</option>
-                                                                    </optgroup>
-                                                                </select>
-                                                            </div>
-
-                                                            <div className="form-group mb-6 mt-3">
-                                                                <label
-                                                                    htmlFor="compliance"
-                                                                    className="text-blackish-blue mb-2"
-                                                                >
-                                                                    Conformité des pièces justificatives 
-                                                                </label>
-                                                                <select 
-                                                                    className="form-control"
-                                                                    id="transmission"
-                                                                    required
-                                                                    defaultValue={compliance} 
-                                                                    onChange={(event)=>setCompliance(event.target.value)}
-                                                                >
-                                                                <option defaultValue="">Choisissez</option>
-                                                                    <optgroup className='single-cryptocurrency-box'>
-                                                                    <option  value="Oui">Oui</option>
-                                                                    <option  value="Non">Non</option>
-                                                                    </optgroup>
-                                                                </select>
-                                                            </div>
-
-                                                            <div className="form-group mb-6 mt-3">
-                                                                <label
-                                                                    htmlFor="opinion"
-                                                                    className="text-blackish-blue mb-2"
-                                                                >
-                                                                    Avis favorable pour l’ouverture du compte  
-                                                                </label>
-                                                                <select 
-                                                                    className="form-control"
-                                                                    id="opinion"
-                                                                    required
-                                                                    defaultValue={opinion} 
-                                                                    onChange={(event)=>setOpinion(event.target.value)}
-                                                                >
-                                                                <option defaultValue="">Choisissez</option>
-                                                                    <optgroup className='single-cryptocurrency-box'>
-                                                                    <option  value="Oui">Oui</option>
-                                                                    <option  value="Non">Non</option>
-                                                                    </optgroup>
-                                                                </select>
-                                                            </div>
-
-                                                            <div className="form-group mb-6">
-                                                                <label
-                                                                    htmlFor="comment"
-                                                                    className="text-blackish-blue mb-2"
-                                                                >
-                                                                    Commentaire
-                                                                </label>
-                                                                <textarea
-                                                                    className="form-control gr-text-11 border mt-3 bg-white"
-                                                                    type="text"
-                                                                    id="comment"
-                                                                    placeholder="commentaire ici"
-                                                                    defaultValue={comment} 
-                                                                    onChange={(event)=>setComment(event.target.value)}
-                                                                />
-                                                            </div>
-
-                                                            <button className="btn btn-primary " type='submit' disabled={isLoggingIn} > Suivant </button>
-                                                        </form>       
-                                                    </div>
-                                                <div className='col-lg-3 col-md-12'></div>
-                                            </div>
-                                        </div>
-                                    </>
-                                ) : ("")}
-                                {/* FIN  CLASSIFICATION */}
                             </div>
 
                         </div>
@@ -5833,4 +5292,4 @@ useEffect(async() => {
   );
 };
 
-export default ValidEntreprise;
+export default ShowKycEntreprise;

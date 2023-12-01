@@ -365,7 +365,7 @@ const ValidParticular = () => {
                     Swal.fire({
                         position: 'center',
                         icon: 'success',
-                        html: `<p> Vos réponses ont été sauvegardées avec succès.</p>` ,
+                        html: `<p> Vos remarques ont été sauvegardées avec succès.</p>` ,
                         showConfirmButton: false,
                         timer: 5000
                     }),
@@ -1140,7 +1140,7 @@ const ValidParticular = () => {
                                                     
 
                                                     <div className='mx-10 col-lg-6 col-md-6'>
-                                                        <b> Etes-vous actionnaire, fondateur ou co-fondateur d'une société ??</b><br/>
+                                                        <b> Etes-vous actionnaire, fondateur ou co-fondateur d'une société ?</b><br/>
                                                         {oneKycForParticular?.shareholder? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.shareholder }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                                     </div>
                                                     
@@ -1173,8 +1173,6 @@ const ValidParticular = () => {
                                                 <div className='col-lg-3 col-md-12'></div>
                                                     <div className='m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white cryptocurrency-search-box login-form col-lg-6 col-md-12'>
                                                         <form className='' onSubmit={addClassification} >
-                                                        {/* <form className='' onSubmit={updateQuestionnaireFatca}> */}
-                                                            
                                                             <label
                                                                 htmlFor="usPerson"
                                                                 className="text-blackish-blue mb-2"
@@ -1187,6 +1185,7 @@ const ValidParticular = () => {
                                                                 className='form-control'
                                                                 defaultValue={idKycForParticular} 
                                                                 onChange={(event)=>setKycParticularId(event.target.value)}
+                                                                hidden
                                                             />
                                                             <div className="form-group mb-6 mt-3">
 

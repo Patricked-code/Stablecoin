@@ -43,7 +43,7 @@ import {
 
 // FIN
 
-const KycPendingParticular = () => {
+const ShowKycParticular = ({kycForParticularId}) => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
@@ -135,8 +135,8 @@ const KycPendingParticular = () => {
     useEffect(async() => {
         const token = localStorage.getItem('tokenEnCours')
 
-            const getKycForUserParticular = async () => {
-            const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-kyc-particular-for-user`, {
+            const getKycForUserParticular = async (_idKycForParticular) => {
+            const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-one-kyc-particular/${_idKycForParticular}`, {
                 headers: {
                 'Content-Type': 'application/json',
                 Authorization:  `Bearer ${token}`,
@@ -145,9 +145,10 @@ const KycPendingParticular = () => {
                 .then((resKyc) => resKyc.json())
                 .then((data) => {
                 setKycForParticularUser(data)
+                console.log("setKycForParticularUser=>",data)
                 }) 
             };
-            await getKycForUserParticular();
+            await getKycForUserParticular(kycForParticularId);
     }, []);
     // FIN
 
@@ -163,9 +164,10 @@ const KycPendingParticular = () => {
                 .then((resKyc) => resKyc.json())
                 .then((data) => {
                 setOneKycForParticular(data)
+                console.log("Data=>",data)
                 }) 
             };
-            getOneKycForParticular(idKycForParticular);
+            getOneKycForParticular(kycForParticularId);
     }
     // FIN
 
@@ -312,11 +314,6 @@ const KycPendingParticular = () => {
                     
                 </div>
             </div>
-            <p className='text-center'>
-                <Link to='/profil/kyc/particulier/kyc-demandes' >
-                    Demandes d'accès au kyc en attente <i className='rounded-circle bgColorblue text-white p-2'>2</i>
-                </Link>
-            </p>
 
             {/* Les images de fond */}
             <div className='shape1'>
@@ -1990,4 +1987,4 @@ const KycPendingParticular = () => {
   );
 };
 
-export default KycPendingParticular;
+export default ShowKycParticular;

@@ -4033,6 +4033,19 @@ Wallet Area CSS
   margin-bottom: 0;
 }
 
+/* Add this CSS for mobile responsiveness */
+.bloc-tabs-utilite {
+  display: flex;
+  flex-wrap: wrap; /* Autoriser les éléments à passer à la ligne suivante */
+}
+
+.tabs {
+  flex: 1; /* Chaque bouton occupe le même espace */
+  box-sizing: border-box;
+  margin: 2px; /* Ajustez la marge si nécessaire */
+}
+
+
 /*================================================
 Advisor Area CSS
 =================================================*/
@@ -7903,6 +7916,9 @@ button {
 .active-content {
   display: block;
 }
+
+
+
 
 
 /* Pour Activer le défilement vertical si nécessaire pour le menu à gauche */
