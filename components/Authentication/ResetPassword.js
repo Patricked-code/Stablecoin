@@ -13,6 +13,8 @@ import Swal from 'sweetalert2';
 const ResetPassword = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [showForm, setShowForm] = useState(false);
 
@@ -45,6 +47,7 @@ const ResetPassword = () => {
 
         const dataa = {
             password:password,
+            confirmPassword:confirmPassword
         }
         // Pour connexion simple
         const res = await fetch(`${API_URL}/api/user/password-reset/${userId}`, {
@@ -103,6 +106,16 @@ const ResetPassword = () => {
                 />
               </div>
 
+              <div className='form-group'>
+                <input
+                  type='confirmPassword'
+                  className='form-control'
+                  placeholder='Confirmer le nouveau mot de passe'
+                  defaultValue={confirmPassword} 
+                  onChange={(event)=>setConfirmPassword(event.target.value)}
+                />
+              </div>
+              
                 <button className="btn btn-primary mx-3" onClick={sendPasswordResetLink} disabled={isLoggingIn}>Réinitialiser</button>
             </form>
         </div>

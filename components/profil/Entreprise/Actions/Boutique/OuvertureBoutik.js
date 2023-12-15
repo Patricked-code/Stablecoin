@@ -29,11 +29,19 @@ const OuvertureBoutik = () => {
 
 
     const [currentUser, setCurrentUser] = useState();
+    const [isLoggingIn, setIsLoggingIn] = useState();
     const [provider, setProvider] = useState(null);
+        
 
-    //state qui contient other user pour des conditions sur la page de vérification
-    const [acteur, setActeur] = useState(); 
+    //state de la demande de stablecoin
+    const [shopName, setShopName] = useState(); 
+    const [dataRequestUseStablecoin, setDataRequestUseStablecoin] =useState()
 
+
+    //states de la demande de stablecoin pour ecommerce
+    const [partner, setPartner]=useState()
+    const [notificationLink, setNotificationLink] = useState()
+    const [dataRequestUseStablecoinEshop, setDataRequestUseStablecoinEshop] =useState()
 
     // States de tab
     const [toggleState, setToggleState] = useState(1);
@@ -80,21 +88,199 @@ const OuvertureBoutik = () => {
               // Fin
             }
         })();
-
-       
-
-
     }, [provider, magic]);
     //  Fin
 
-    if (typeof window !== 'undefined') {
-        localStorage.setItem('acteurOfDepot',acteur);
 
-        const actor = localStorage.getItem('acteurOfDepot');
 
-        console.log("Acteur=>",actor)
+    // FONCTION DE LA DEMANDE D'UTILISATION DE STABLECOIN COMME MOYEN DE PAIEMENT
+    const requestUseStablecoin= async(event) =>{
+        event.preventDefault();
+        setIsLoggingIn(true)
+        
+        const dataa = {
+            shopName:shopName
+        }
+
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
+
+        const result = await fetch(`${API_URL}/api/payment-request/add-of-request-use-stablecoin`, {
+            method:"POST",
+            body: JSON.stringify(dataa),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+        })
+        .then(res=>{
+            if (res.status==200) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: "<p> Votre demande a été envoyée avec succès.<br/> Merci de patienter le temps que le traitement de votre demande finisse.</p>" ,
+                showConfirmButton: false,
+                timer: 10000
+            })
+
+            //  Actualiser après l'affichage 
+            setTimeout(() => {
+                window.location.reload()
+            }, 10000) 
+            // Fin
+            }else{
+            setIsLoggingIn(false)
+
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: "<p>  Votre demande a échoué. </p>" ,
+                showConfirmButton: false,
+                timer: 15000
+            })
+        }
+        })
+        .catch(error => {
+            setIsLoggingIn(false)
+        //handle error
+        console.log(error);
+
+        });
     }
+    // FIN
 
+
+    // FONCTION DE LA DEMANDE D'UTILISATION DE STABLECOIN COMME MOYEN DE PAIEMENT SUR ECOMMERCE
+    const requestUseStablecoinOnEshop= async(event) =>{
+        event.preventDefault();
+        setIsLoggingIn(true)
+        
+        const requestBody = {
+            partner: partner,
+            notificationLink: notificationLink,
+        }
+
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
+
+        const result = await fetch(`${API_URL}/api/apikey/generate-apikey`, {
+            method:"POST",
+            body: JSON.stringify(requestBody),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+        })
+        .then(res=>{
+            if (res.status==200) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: "<p> Votre demande a été envoyée avec succès.<br/> Merci de patienter le temps que le traitement de votre demande finisse.</p>" ,
+                showConfirmButton: false,
+                timer: 10000
+            })
+
+            //  Actualiser après l'affichage 
+            setTimeout(() => {
+                window.location.reload()
+            }, 10000) 
+            // Fin
+            }else{
+            setIsLoggingIn(false)
+
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: "<p>  Votre demande a échoué. </p>" ,
+                showConfirmButton: false,
+                timer: 15000
+            })
+        }
+        })
+        .catch(error => {
+            setIsLoggingIn(false)
+        //handle error
+        console.log(error);
+
+        });
+    }
+    // FIN
+
+             
+   /**
+     * Hook d'effet pour récupérer et définir la demande d'utilisation de stablecoin de l'utilisateur connecté.
+     * @returns {void}
+     */
+    useEffect(async () => {
+        const token = localStorage.getItem('tokenEnCours');
+    
+        /**
+         * Fonction pour obtenir la demande d'utilisation de stablecoin de l'utilisateur connecté.
+         * @returns {void}
+         */
+        const getDataRequestUseStablecoin = async () => {
+            const result = await fetch(`${API_URL}/api/payment-request/find-request-use-stablecoin-of-user`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+    
+            if (!result.ok) {
+                throw new Error('Failed to fetch KYC data');
+            } else {
+                // Vérifier si la réponse n'est pas vide avant de la parser en JSON
+                const text = await result.text();
+                const data = text ? JSON.parse(text) : null;
+    
+                setDataRequestUseStablecoin(data);
+            }
+        };
+    
+        await getDataRequestUseStablecoin();
+    }, []);
+    
+    // FIN
+
+
+
+    /**
+     * Hook d'effet pour récupérer et définir la demande d'utilisation de stablecoin sur ecommerce de l'utilisateur connecté.
+     * @returns {void}
+     */
+     useEffect(() => {
+        const token = localStorage.getItem('tokenEnCours');
+    
+        /**
+         * Fonction pour obtenir la demande d'utilisation de stablecoin sur ecommerce de l'utilisateur connecté.
+         * @returns {void}
+         */
+        const getDataRequestUseStablecoinEshop = async () => {
+            try {
+                const result = await fetch(`${API_URL}/api/apikey/find-request-use-stablecoin-for-eshop-of-user`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+    
+                if (!result.ok) {
+                    throw new Error("Échec de la récupération des données pour l'utilisation du stablecoin sur le commerce électronique");
+                }
+    
+                const data = await result.json();
+                setDataRequestUseStablecoinEshop(data);
+            } catch (error) {
+                console.error("Erreur lors de la récupération des données pour l'utilisation de stablecoin sur le commerce électronique:", error.message);
+                // Handle the error as needed
+            }
+        };
+    
+        getDataRequestUseStablecoinEshop();
+    }, []);
+    
+    // FIN
 
   return (
     <>
@@ -102,7 +288,7 @@ const OuvertureBoutik = () => {
       <div className='' >
         <div className=' mx-15'>
             <div className='py-10'>
-                <h1 className='text-center'>Ouverture de boutique</h1>
+                <h3 className='text-center'>Demande d'utilisation de stablecoin comme moyen de paiement</h3>
             </div>
         </div>
 
@@ -152,100 +338,115 @@ const OuvertureBoutik = () => {
 
                                         {/* Le corps de tab */}
                                         <div className="content-tabs">
-                                            {/* Portefeuille OPCVM */}
+                                            {/* demande d'ulisation de stablecoin sur la plafeforme stablecoin */}
                                             <div
                                                 className={toggleState === 1 ? "content  active-content" : "content"}
                                             >
                                                 <div className='cryptocurrency-search-box'>
-                                                    
-                                                    <form >
-                                                        <div className="form-group my-6 ">
-                                                            <label
-                                                            htmlFor="shopName"
-                                                            className="mt-3"
-                                                            >
-                                                                Nom de la boutique <sup className="text-red">*</sup>
-                                                            </label>
-                                                            <div className="input-group flex-nowrap">
-                                                                <input
-                                                                    className="form-control gr-text-11 border  bg-white"
-                                                                    type="text"
-                                                                    id="shopName"
-                                                                    placeholder="Nom de la boutique"
-                                                                    required
-                                                                    // defaultValue={shopName} 
-                                                                    // onChange={(event)=>setShopName(event.target.value)}
-                                                                />
+                                                    {dataRequestUseStablecoin?.allow==0? (
+                                                        <div className='colorRed text-center'>Votre demande est en cours de traitement</div>
+                                                    ):dataRequestUseStablecoin?.allow==1? (
+                                                        <div className='colorGreen text-center'>Félicitations, votre demande a été acceptée</div>
+                                                    ):(
+                                                        <form onSubmit={requestUseStablecoin}>
+                                                            <div className="form-group my-6 ">
+                                                                <label
+                                                                htmlFor="shopName"
+                                                                className="mt-3"
+                                                                >
+                                                                    Nom de la boutique <sup className="text-red">*</sup>
+                                                                </label>
+                                                                <div className="input-group flex-nowrap">
+                                                                    <input
+                                                                        className="form-control gr-text-11 border  bg-white"
+                                                                        type="text"
+                                                                        id="shopName"
+                                                                        placeholder="Nom de la boutique"
+                                                                        required
+                                                                        defaultValue={shopName} 
+                                                                        onChange={(event)=>setShopName(event.target.value)}
+                                                                    />
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <Button
-                                                            block
-                                                            color="primary"
-                                                            type="button"
-                                                            className='mt-3'
-                                                        >
-                                                            Envoyer
-                                                        </Button>
-                                                    </form> 
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="submit"
+                                                                className='mt-3'
+                                                                disabled={isLoggingIn}
+
+                                                            >
+                                                                Envoyer
+                                                            </Button>
+                                                        </form>
+                                                    )}
+                                                     
                                                 </div>
                                             </div>
-                                            {/* Fin portefeuille OPCVM */}
+                                            {/* Fin*/}
 
-                                            
+                                            {/* demande d'ulisation de stablecoin sur la plafeforme sur votre commerce */}
                                             <div
                                                 className={toggleState === 2 ? "content  active-content" : "content"}
                                             >
                                                 <div className='cryptocurrency-search-box'>
-                                                    <form >
-                                                        <div className="form-group my-6 ">
-                                                            <label
-                                                            htmlFor="siteName"
-                                                            className="mt-3"
-                                                            >
-                                                                Nom du site <sup className="text-red">*</sup>
-                                                            </label>
-                                                            <div className="input-group flex-nowrap">
-                                                                <input
-                                                                    className="form-control gr-text-11 border bg-white"
-                                                                    type="text"
-                                                                    id="siteName"
-                                                                    placeholder="Nom du site"
-                                                                    required
-                                                                    // defaultValue={siteName} 
-                                                                    // onChange={(event)=>setSiteName(event.target.value)}
-                                                                />
+                                                {dataRequestUseStablecoinEshop?.allow==0? (
+                                                        <div className='colorRed text-center'>Votre demande est en cours de traitement</div>
+                                                    ):dataRequestUseStablecoinEshop?.allow==1? (
+                                                        <div className='colorGreen text-center'>Félicitations, votre demande a été acceptée</div>
+                                                    ):(
+                                                        <form onSubmit={requestUseStablecoinOnEshop}>
+                                                            <div className="form-group my-6 ">
+                                                                <label
+                                                                htmlFor="partner"
+                                                                className="mt-3"
+                                                                >
+                                                                    Nom du site <sup className="text-red">*</sup>
+                                                                </label>
+                                                                <div className="input-group flex-nowrap">
+                                                                    <input
+                                                                        className="form-control gr-text-11 border bg-white"
+                                                                        type="text"
+                                                                        id="partner"
+                                                                        placeholder="Nom du site"
+                                                                        required
+                                                                        defaultValue={partner} 
+                                                                        onChange={(event)=>setPartner(event.target.value)}
+                                                                    />
+                                                                </div>
                                                             </div>
-                                                        </div>
 
-                                                        <div className="form-group my-6 ">
-                                                            <label
-                                                            htmlFor="notificationsPageLink"
-                                                            className="mt-3"
-                                                            >
-                                                                Lien de la page de notifications <sup className="text-red">*</sup>
-                                                            </label>
-                                                            <div className="input-group flex-nowrap">
-                                                                <input
-                                                                    className="form-control gr-text-11 border bg-white"
-                                                                    type="text"
-                                                                    id="notificationsPageLink"
-                                                                    placeholder="Lien de la page de notifications"
-                                                                    required
-                                                                    // defaultValue={notificationsPageLink} 
-                                                                    // onChange={(event)=>setNotificationsPageLink(event.target.value)}
-                                                                />
+                                                            <div className="form-group my-6 ">
+                                                                <label
+                                                                htmlFor="notificationsLink"
+                                                                className="mt-3"
+                                                                >
+                                                                    Lien de la page de notifications <sup className="text-red">*</sup>
+                                                                </label>
+                                                                <div className="input-group flex-nowrap">
+                                                                    <input
+                                                                        className="form-control gr-text-11 border bg-white"
+                                                                        type="text"
+                                                                        id="notificationsLink"
+                                                                        placeholder="Lien de la page de notifications"
+                                                                        required
+                                                                        defaultValue={notificationLink} 
+                                                                        onChange={(event)=>setNotificationLink(event.target.value)}
+                                                                    />
+                                                                </div>
                                                             </div>
-                                                        </div>
 
-                                                        <Button
-                                                            block
-                                                            color="primary"
-                                                            type="button"
-                                                            className='mt-3'
-                                                        >
-                                                            Envoyer
-                                                        </Button>
-                                                    </form> 
+                                                            <Button
+                                                                block
+                                                                color="primary"
+                                                                type="submit"
+                                                                className='mt-3'
+                                                                disabled={isLoggingIn}
+                                                            >
+                                                                Envoyer
+                                                            </Button>
+                                                        </form> 
+                                                    )}
                                                 </div>
                                             </div>
                                             {/* Fin portefeuille crowdfunding*/}

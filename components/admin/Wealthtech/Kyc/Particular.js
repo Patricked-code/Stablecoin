@@ -833,7 +833,7 @@ const ValidParticular = () => {
                                             </div>
 
                                             <div className='col-lg-6 col-md-6 '>
-                                                <b> Date de validité :</b><br/>
+                                                <b> Date d'expiration :</b><br/>
                                                 {oneKycForParticular?.validityDate? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(oneKycForParticular.validityDate) }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
                                         </div>

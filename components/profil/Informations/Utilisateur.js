@@ -50,12 +50,106 @@ const InfosUtilisateur = () => {
     const [currentUserAddress, setCurrentUserAddress] = useState();
     const [provider, setProvider] = useState(null);
     const [dataCountryOfUser, setDataCountryOfUser] = useState(null);
+    const [isLoggingIn, setIsLoggingIn]=useState(false)
+    const [messageError, setMessageError]=useState()
 
     // State de copy
     const [successCopy, setSuccessCopy] = useState();
 
     
-    
+    // Pour avatar
+    const [avatar, setAvatar] = useState(null);
+    const [uploadStatus, setUploadStatus] = useState(null);
+
+    /**
+      * État de contrôle pour afficher ou masquer la modal du changement de photo.
+      * @type {boolean}
+      */
+     const [showChangeAvatar, setShowChangeAvatar] = useState(false);
+ 
+     /**
+      * Fonction pour fermer du changement de photo.
+      * @function
+      * @returns {void}
+      */
+     const handleCloseChangeAvatar = () => setShowChangeAvatar(false);
+ 
+     /**
+      * Fonction pour afficher du changement de photo.
+      * @function
+      * @returns {void}
+      */
+     const handleShowChangeAvatar = () => setShowChangeAvatar(true);
+ 
+
+    const handleFileChange = (event) => {
+        setAvatar(event.target.files[0]);
+    };
+
+    // FONCTION DU CHANGEMENT DE LA PHOTO DE L'AVATAR
+    const handleUpdatePicture = async (event) => {
+        event.preventDefault();
+        // setIsLoggingIn(true);
+        
+        if (!avatar) {
+        setUploadStatus('Vous devez sélectionner un fichier.');
+        return;
+        }
+
+        const formData = new FormData();
+        formData.append('avatar', avatar);
+
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
+
+        try {
+        const response = await fetch(`${API_URL}/api/session/update-picture`, {
+            method: 'PUT',
+            body: formData,
+            headers: {
+                // 'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const responseData = await response.json();
+
+        if (response.ok) {
+            setUploadStatus(responseData.message);
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p>${responseData.message}</p>` ,
+                showConfirmButton: false,
+                timer: 5000
+            })
+            setTimeout(() => {
+                window.location.reload()
+            }, 5000)
+        } else {
+            console.error('Error updating picture:', responseData.message);
+            setIsLoggingIn(false);
+              Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  html: `<p>Une erreur s'est produite lors du changement de votre photo</p>` ,
+                  showConfirmButton: false,
+                  timer: 6000
+              })
+        }
+        } catch (error) {
+            console.error('Error updating picture:', error);
+            setIsLoggingIn(false);
+              Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  html: `<p>Une erreur s'est produite lors du changement de votre photo</p>` ,
+                  showConfirmButton: false,
+                  timer: 6000
+              })
+        }
+    };
+    //Fin
     
     
         useEffect(() => {
@@ -204,26 +298,31 @@ const InfosUtilisateur = () => {
                         <div className='currency-selection text-center'>
                             <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
                                 <div className='cryptocurrency-slides'>
-                                    <div className='bestseller-coin-image text-center'>
-                                        <img src="/images/ecfa/logo/logo_ewari1.jpg" width={150} className="rounded-circle "  alt='image' />
-                                        
+                                    <div className='bestseller-coin-image text-center '>
+                                        {currentUser?.picture?(
+                                            <img src={`${API_URL}/${currentUser?.picture}`} width={100} className="rounded-circle mt-3"  alt='image' />
+                                        ):(
+                                            // D:\Projets\WTI\STABLECOIN\FRONTEND\GITLAB\stablecoin\public\images\ecfa\profil\avatar
+                                            <img src="/images/ecfa/profil/avatar/avatar1.jpg" width={100} className="rounded-circle mt-3"  alt='image' />
+                                        )}
                                     </div>
                                     {/* <div className='title'>
                                         <h4>Mes infos de connexion</h4>
                                     </div> */}
+
                                     <div className='single-cryptocurrency-box'>
-                                        
                                         <div className='btn-box'>
                                         <Button
                                             block
                                             color="primary"
-                                            type="button"
+                                            onClick={handleShowChangeAvatar}
                                         >
                                             Changer la photo
                                         </Button>
-                                        {/* Fin */}
                                         </div>
                                     </div>
+                                    {/* Fin */}
+                                        
                                 </div>
                             </div>
 
@@ -518,6 +617,86 @@ const InfosUtilisateur = () => {
                     </div>
                 ) : ("")}
                 {/* FIN */}
+
+                 {/* INFORMATIONS DU PROFIL Institution et société de gestion des opcvm */}
+                 {currentUser?.codeTypeProfil === "socGest" ? (   
+                    <div className='col-lg-8 col-md-8'>
+                        <div className='currency-selection '>
+                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className='cryptocurrency-slides'>
+                                    <div className='single-cryptocurrency-box'>
+                                        <div className='row '>
+                                            {currentUser?.entreprise ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Nom de la société de gestion</h5>
+                                                    <p>{currentUser?.entreprise}</p>
+                                                </div>
+                                            ) : ('')}
+
+                                            {dataCountryOfUser?.libelle ? (
+                                                <Col
+                                                    xs="6"
+                                                    md="6"
+                                                    lg="6"
+                                                >
+                                                    <div>
+                                                        <h5>Pays</h5>
+                                                        <p>{dataCountryOfUser?.libelle}</p>
+                                                    </div>
+                                                </Col>
+                                            ) : ("")}   
+
+                                            {currentUser?.city ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Ville</h5>
+                                                    <p>{currentUser?.city}</p>
+                                                </div>
+                                            ) : ('')}
+
+                                            {currentUser?.site ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Site internet</h5>
+                                                    <p>{currentUser?.site}</p>
+                                                </div>
+                                            ) : ('')}
+
+                                            {currentUser?.mobile && dataCountryOfUser?.indicator ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Numéro de téléphone</h5>
+                                                    <p>{dataCountryOfUser?.indicator} {currentUser?.mobile}</p>
+                                                </div>
+                                            ) : ('')}
+
+                                            {currentUser?.approvalNumber ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Numéro d'approbation</h5>
+                                                    <p>{currentUser?.approvalNumber}</p>
+                                                </div>
+                                            ) : ('')}
+
+                                            
+                                            {currentUser?.regulator ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Régulateur</h5>
+                                                    <p>{currentUser?.regulator}</p>
+                                                </div>
+                                            ) : ('')}
+
+                                            {currentUser?.email ? (
+                                                <div className='col-lg-6 col-md-6 mb-3'>
+                                                    <h5>Email de la société de gestion</h5>
+                                                    <p>{currentUser?.email}</p>
+                                                </div>
+                                            ) : ('')}
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ) : ("")}
+                {/* FIN */}
             </div>
         </div>
 
@@ -579,6 +758,29 @@ const InfosUtilisateur = () => {
             {/* Fin */}
 
 
+            {/* ********************************************************************************** */}
+                {/* MODAL DU CHANGEMENT DE L'AVATAR'*/}
+            {/* ********************************************************************************** */}
+            <Modal show={showChangeAvatar} className="mt-15" onHide={handleCloseChangeAvatar}>
+                <Modal.Header closeButton className="bgColorblue">
+                    <Modal.Title className="text-white" >Changer votre photo de profil</Modal.Title>                
+                </Modal.Header>
+                    <form onSubmit={handleUpdatePicture}>
+                        <Modal.Body>
+                            <input type="file" onChange={handleFileChange} accept="image/*" />
+                            
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button className="text-white" color="danger" onClick={handleCloseChangeAvatar}>
+                                Fermer
+                            </Button>
+                            <Button  type='submit'  color="success" disabled={isLoggingIn}>
+                                Changer la photo
+                            </Button>
+                        </Modal.Footer>
+                    </form>
+            </Modal>
+            {/* *****************************************FIN****************************************** */}
 
       
     </>

@@ -44,7 +44,7 @@ import { id } from 'ethers/lib/utils';
 
 // FIN
 
-const ShowKycEntreprise = () => {
+const ShowKycEntreprise = ({kycForBusinessId, kycRequestId}) => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
@@ -69,6 +69,9 @@ const ShowKycEntreprise = () => {
 
     // States des représentant légaux
     const [allRepresentativeByKycId, setAllRepresentativeByKycId] = useState();
+
+    // State des infos du kyc demandé
+    const [oneKycRequest, setOneKycRequest] = useState();
 
     // States des bénéficiaire effectifs
     const [allBeneficiaryByKycId, setAllBeneficiaryByKycId] = useState();
@@ -958,13 +961,68 @@ const validKycIdentity= async (event) => {
         // LES FONCTIONS DE RECUPERATION
     // ***********************************************************************
 
-    // RECUPERER UNE SEULE LIGNE DE KYC DE L'ENTREPRISE CONNCETE
+    /**
+     * Hook d'effet pour récupérer les données d'une demande d'accès en fonction de son ID.
+     * Les données sont stockées dans l'état `OnekycRequest`.
+     *
+     * @async
+     * @function
+     * @returns {void}
+    */
+     useEffect(async () => {
+        /**
+         * Fonction pour obtenir une demande d'accès en fonction de son ID.
+         *
+         * @async
+         * @returns {void}
+         */
+        const getOneKycRequest = async (_kycRequestId) => {
+            const token = localStorage.getItem('tokenEnCours');
+
+            try {
+                /**
+                 * Résultat de la requête pour récupérer une demandes d'accès en fonction de son ID.
+                 * @type {Response}
+                 */
+                const result = await fetch(`${API_URL}/api/kyc/find-one-kyc-request/${_kycRequestId}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!result.ok) {
+                    throw new Error('Failed to fetch KYC request data');
+                }
+
+                /**
+                 * Données des demandes d'accès de l'utilisateur connecté.
+                 * @type {object[]}
+                 */
+                const data = await result.json();
+                setOneKycRequest(data);
+            } catch (error) {
+                // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
+                console.error('Erreur lors de la récupération des demandes d\'accès KYC:', error);
+            }
+        };
+
+        // Appel de la fonction pour récupérer les demandes d'accès de l'utilisateur connecté.
+        if (kycRequestId) {
+            await getOneKycRequest(kycRequestId);
+        }
+        
+    }, [kycRequestId]);
+
+    // RECUPERER UNE SEULE LIGNE DE KYC DE L'ENTREPRISE EN FONCTION DE SON ID
     useEffect(() => {
-        const getKycForBusinesssignup = async () => {
+        console.log("okkkkkk")
+        const getKycForBusiness = async (_userId) => {
             const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+            console.log("okkkkkk=>",_userId)
 
         try {
-            const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-of-user`, {
+            const resKyc = await fetch(`${API_URL}/api/kyc/business/find-one-kyc/${_userId}`, {
                 headers: {
                 'Content-Type': 'application/json',
                 Authorization:  `Bearer ${token}`
@@ -973,7 +1031,7 @@ const validKycIdentity= async (event) => {
             });
     
             if (!resKyc.ok) {
-            throw new Error('Failed to fetch user data');
+                throw new Error('Failed to fetch user data');
             }
     
             const data = await resKyc.json();
@@ -999,6 +1057,7 @@ const validKycIdentity= async (event) => {
             setVerifyValidOperationAndFundOrigin(areAllFieldsValidOperationAndFundOrigin);
 
             setOneKycForEntreprise(data)
+            console.log("setOneKycForEntreprisepppppp=>",data)
             
         } catch (error) {
             // Handle errors appropriately, e.g., set an error state.
@@ -1006,9 +1065,9 @@ const validKycIdentity= async (event) => {
         }
         };
 
-         getKycForBusinesssignup();
+         getKycForBusiness(kycForBusinessId);
 
-    }, [idKycForEntreprise]);
+    }, [kycForBusinessId]);
     // FIN
 
 
@@ -1507,14 +1566,10 @@ const validKycIdentity= async (event) => {
         <div className='' >
             <div className=' mx-15'>
                 <div className=''>
-                    <h1 className='text-center'>Votre Kyc</h1>
+                    <h1 className='text-center'>Kyc autorisé par l'entreprise</h1>
                 </div>
             </div>
-            <p className='text-center'>
-                <Link to='/profil/kyc/entreprise/kyc-demandes' >
-                    Demandes d'accès au kyc en attente <i className='rounded-circle bgColorBlue text-white p-2'>2</i>
-                </Link>
-            </p>
+            
             {/* Les images de fond */}
             <div className='shape1'>
             {/* <img src='/images/shape/shape1.png' alt='image' /> */}
@@ -1537,299 +1592,313 @@ const validKycIdentity= async (event) => {
                     <div className='col-lg-12 col-md-12'>
                         <div className='currency-selection'>
                                 <div className='row'>
-
-                                    <div className='col-lg-2 col-md-2'>
-                                        <div className='currency-selection text-center'>
-                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                                <div className='cryptocurrency-slides'>
-                                                    <div className='single-cryptocurrency-box'>
-                                                        <div className='title text-center '>
-                                                            <p className=" py-0 "> AML </p>
-                                                            <p className=" py-0 ">{oneKycForEntreprise?.validAml==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
-                                                        </div>
-                                                        
-                                                        <div className='btn-box ' onClick={()=>setEtape(1)}>
-                                                            <Button
-                                                                block
-                                                                color="primary"
-                                                                type="button"
-                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
-                                                            >
-                                                                Détails
-                                                            </Button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className='col-lg-2 col-md-2'>
-                                        <div className='currency-selection text-center'>
-                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                                <div className='cryptocurrency-slides'>
-                                                    <div className='single-cryptocurrency-box'>
-                                                        <div className='title text-center '>
-                                                            <p className=" py-0 "> Identité </p>
-                                                            <p className=" py-0 ">{oneKycForEntreprise?.validIdentity==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
-                                                        </div>
-                                                        
-                                                        <div className='btn-box ' onClick={()=>setEtape(2)}>
-                                                            <Button
-                                                                block
-                                                                color="primary"
-                                                                type="button"
-                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
-                                                            >
-                                                                Détails
-                                                            </Button>
+                                    {oneKycRequest?.quizAmlBusinessAccept==1 ? (
+                                        <div className='col-lg-2 col-md-2'>
+                                            <div className='currency-selection text-center'>
+                                                <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                    <div className='cryptocurrency-slides'>
+                                                        <div className='single-cryptocurrency-box'>
+                                                            <div className='title text-center '>
+                                                                <p className=" py-0 "> Questionnaire AML </p>
+                                                                <p className=" py-0 ">{oneKycForEntreprise?.validAml==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                            </div>
+                                                            
+                                                            <div className='btn-box ' onClick={()=>setEtape(1)}>
+                                                                <Button
+                                                                    block
+                                                                    color="primary"
+                                                                    type="button"
+                                                                    onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                                >
+                                                                    Détails
+                                                                </Button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    ):("")}
 
-
-                                    <div className='col-lg-2 col-md-2'>
-                                        <div className='currency-selection text-center'>
-                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                                <div className='cryptocurrency-slides'>
-                                                    <div className='single-cryptocurrency-box'>
-                                                        <div className='title text-center '>
-                                                            <p className=" py-0 "> Représentant </p>
-                                                            <p className=" py-0 ">{oneKycForEntreprise?.validRepresentative==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
-                                                        </div>
-                                                        
-                                                        <div className='btn-box ' onClick={()=>setEtape(3)}>
-                                                            <Button
-                                                                block
-                                                                color="primary"
-                                                                type="button"
-                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
-                                                            >
-                                                                Détails
-                                                            </Button>
+                                    {oneKycRequest?.identityBusinessAccept==1? (
+                                        <div className='col-lg-2 col-md-2'>
+                                            <div className='currency-selection text-center'>
+                                                <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                    <div className='cryptocurrency-slides'>
+                                                        <div className='single-cryptocurrency-box'>
+                                                            <div className='title text-center '>
+                                                                <p className=" py-0 "> Identité </p><br/>
+                                                                <p className=" py-0 ">{oneKycForEntreprise?.validIdentity==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                            </div>
+                                                            
+                                                            <div className='btn-box ' onClick={()=>setEtape(2)}>
+                                                                <Button
+                                                                    block
+                                                                    color="primary"
+                                                                    type="button"
+                                                                    onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                                >
+                                                                    Détails
+                                                                </Button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    ):("")}
 
-
-                                    <div className='col-lg-2 col-md-2'>
-                                        <div className='currency-selection text-center'>
-                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                                <div className='cryptocurrency-slides'>
-                                                    <div className='single-cryptocurrency-box'>
-                                                        <div className='title text-center '>
-                                                            <p className=" py-0 "> Bénéficiaire </p>
-                                                            <p className=" py-0 ">{oneKycForEntreprise?.validBeneficiary==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
-                                                        </div>
-                                                        
-                                                        <div className='btn-box ' onClick={()=>setEtape(4)}>
-                                                            <Button
-                                                                block
-                                                                color="primary"
-                                                                type="button"
-                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
-                                                            >
-                                                                Détails
-                                                            </Button>
+                                    {oneKycRequest?.legalRepresentativesAccept==1? (
+                                        <div className='col-lg-2 col-md-2'>
+                                            <div className='currency-selection text-center'>
+                                                <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                    <div className='cryptocurrency-slides'>
+                                                        <div className='single-cryptocurrency-box'>
+                                                            <div className='title text-center '>
+                                                                <p className=" py-0 "> Représentants légaux </p>
+                                                                <p className=" py-0 ">{oneKycForEntreprise?.validRepresentative==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                            </div>
+                                                            
+                                                            <div className='btn-box ' onClick={()=>setEtape(3)}>
+                                                                <Button
+                                                                    block
+                                                                    color="primary"
+                                                                    type="button"
+                                                                    onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                                >
+                                                                    Détails
+                                                                </Button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    ):("")}
 
-
-                                    <div className='col-lg-2 col-md-2'>
-                                        <div className='currency-selection text-center'>
-                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                                <div className='cryptocurrency-slides'>
-                                                    <div className='single-cryptocurrency-box'>
-                                                        <div className='title text-center '>
-                                                            <p className=" py-0 "> Control </p>
-                                                            <p className=" py-0 ">{oneKycForEntreprise?.validStructure==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
-                                                        </div>
-                                                        
-                                                        <div className='btn-box ' onClick={()=>setEtape(5)}>
-                                                            <Button
-                                                                block
-                                                                color="primary"
-                                                                type="button"
-                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
-                                                            >
-                                                                Détails
-                                                            </Button>
+                                    {oneKycRequest?.beneficiariesAccept==1? (
+                                        <div className='col-lg-2 col-md-2'>
+                                            <div className='currency-selection text-center'>
+                                                <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                    <div className='cryptocurrency-slides'>
+                                                        <div className='single-cryptocurrency-box'>
+                                                            <div className='title text-center '>
+                                                                <p className=" py-0 "> Bénéficiaire effectif </p>
+                                                                <p className=" py-0 ">{oneKycForEntreprise?.validBeneficiary==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                            </div>
+                                                            
+                                                            <div className='btn-box ' onClick={()=>setEtape(4)}>
+                                                                <Button
+                                                                    block
+                                                                    color="primary"
+                                                                    type="button"
+                                                                    onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                                >
+                                                                    Détails
+                                                                </Button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    ):("")}
 
-
-                                    <div className='col-lg-2 col-md-2'>
-                                        <div className='currency-selection text-center'>
-                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                                <div className='cryptocurrency-slides'>
-                                                    <div className='single-cryptocurrency-box'>
-                                                        <div className='title text-center '>
-                                                            <p className=" py-0 "> Politique </p>
-                                                            <p className=" py-0 ">{oneKycForEntreprise?.validPoliticallyExposed==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
-                                                        </div>
-                                                        
-                                                        <div className='btn-box ' onClick={()=>setEtape(6)}>
-                                                            <Button
-                                                                block
-                                                                color="primary"
-                                                                type="button"
-                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
-                                                            >
-                                                                Détails
-                                                            </Button>
+                                    {oneKycRequest?.structuresAccept==1? (
+                                        <div className='col-lg-2 col-md-2'>
+                                            <div className='currency-selection text-center'>
+                                                <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                    <div className='cryptocurrency-slides'>
+                                                        <div className='single-cryptocurrency-box'>
+                                                            <div className='title text-center '>
+                                                                <p className=" py-0 ">Structure de contrôle </p>
+                                                                <p className=" py-0 ">{oneKycForEntreprise?.validStructure==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                            </div>
+                                                            
+                                                            <div className='btn-box ' onClick={()=>setEtape(5)}>
+                                                                <Button
+                                                                    block
+                                                                    color="primary"
+                                                                    type="button"
+                                                                    onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                                >
+                                                                    Détails
+                                                                </Button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    ):("")}
 
-
-
-                                    <div className='col-lg-2 col-md-2'>
-                                        <div className='currency-selection text-center'>
-                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                                <div className='cryptocurrency-slides'>
-                                                    <div className='single-cryptocurrency-box'>
-                                                        <div className='title text-center '>
-                                                            <p className=" py-0 "> Opérations </p>
-                                                            <p className=" py-0 ">{oneKycForEntreprise?.validFinancialOperation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
-                                                        </div>
-                                                        
-                                                        <div className='btn-box ' onClick={()=>setEtape(7)}>
-                                                            <Button
-                                                                block
-                                                                color="primary"
-                                                                type="button"
-                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
-                                                            >
-                                                                Détails
-                                                            </Button>
+                                    {oneKycRequest?.politicallyExposedAccept==1? (
+                                        <div className='col-lg-2 col-md-2'>
+                                            <div className='currency-selection text-center'>
+                                                <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                    <div className='cryptocurrency-slides'>
+                                                        <div className='single-cryptocurrency-box'>
+                                                            <div className='title text-center '>
+                                                                <p className=" py-0 "> Politiquement exposées </p>
+                                                                <p className=" py-0 ">{oneKycForEntreprise?.validPoliticallyExposed==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                            </div>
+                                                            
+                                                            <div className='btn-box ' onClick={()=>setEtape(6)}>
+                                                                <Button
+                                                                    block
+                                                                    color="primary"
+                                                                    type="button"
+                                                                    onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                                >
+                                                                    Détails
+                                                                </Button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    ):("")}
 
-
-                                    <div className='col-lg-2 col-md-2'>
-                                        <div className='currency-selection text-center'>
-                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                                <div className='cryptocurrency-slides'>
-                                                    <div className='single-cryptocurrency-box'>
-                                                        <div className='title text-center '>
-                                                            <p className=" py-0 "> Fonds </p>
-                                                            <p className=" py-0 ">{oneKycForEntreprise?.validFundOrigin==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
-                                                        </div>
-                                                        
-                                                        <div className='btn-box ' onClick={()=>setEtape(8)}>
-                                                            <Button
-                                                                block
-                                                                color="primary"
-                                                                type="button"
-                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
-                                                            >
-                                                                Détails
-                                                            </Button>
+                                    {oneKycRequest?.financialOperationAccept==1? (
+                                        <div className='col-lg-2 col-md-2'>
+                                            <div className='currency-selection text-center'>
+                                                <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                    <div className='cryptocurrency-slides'>
+                                                        <div className='single-cryptocurrency-box'>
+                                                            <div className='title text-center '>
+                                                                <p className=" py-0 "> Opérations financières </p>
+                                                                <p className=" py-0 ">{oneKycForEntreprise?.validFinancialOperation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                            </div>
+                                                            
+                                                            <div className='btn-box ' onClick={()=>setEtape(7)}>
+                                                                <Button
+                                                                    block
+                                                                    color="primary"
+                                                                    type="button"
+                                                                    onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                                >
+                                                                    Détails
+                                                                </Button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    ):("")}
 
-                                    <div className='col-lg-2 col-md-2'>
-                                        <div className='currency-selection text-center'>
-                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                                <div className='cryptocurrency-slides'>
-                                                    <div className='single-cryptocurrency-box'>
-                                                        <div className='title text-center '>
-                                                            <p className=" py-0 "> Financière </p>
-                                                            <p className=" py-0 ">{oneKycForEntreprise?.validFinancialInformation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
-                                                        </div>
-                                                        
-                                                        <div className='btn-box ' onClick={()=>setEtape(9)}>
-                                                            <Button
-                                                                block
-                                                                color="primary"
-                                                                type="button"
-                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
-                                                            >
-                                                                Détails
-                                                            </Button>
+                                    {oneKycRequest?.fundOriginAccept==1? (
+                                        <div className='col-lg-2 col-md-2'>
+                                            <div className='currency-selection text-center'>
+                                                <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                    <div className='cryptocurrency-slides'>
+                                                        <div className='single-cryptocurrency-box'>
+                                                            <div className='title text-center '>
+                                                                <p className=" py-0 "> Origine des fonds </p>
+                                                                <p className=" py-0 ">{oneKycForEntreprise?.validFundOrigin==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                            </div>
+                                                            
+                                                            <div className='btn-box ' onClick={()=>setEtape(8)}>
+                                                                <Button
+                                                                    block
+                                                                    color="primary"
+                                                                    type="button"
+                                                                    onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                                >
+                                                                    Détails
+                                                                </Button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    ):("")}
 
-                                    <div className='col-lg-2 col-md-2'>
-                                        <div className='currency-selection text-center'>
-                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                                <div className='cryptocurrency-slides'>
-                                                    <div className='single-cryptocurrency-box'>
-                                                        <div className='title text-center '>
-                                                            <p className=" py-0 "> Transactions </p>
-                                                            <p className=" py-0 ">{oneKycForEntreprise?.validFinancialInformation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
-                                                        </div>
-                                                        
-                                                        <div className='btn-box ' onClick={()=>setEtape(10)}>
-                                                            <Button
-                                                                block
-                                                                color="primary"
-                                                                type="button"
-                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
-                                                            >
-                                                                Détails
-                                                            </Button>
+                                    {oneKycRequest?.financialInformationAccept==1? (
+                                        <div className='col-lg-2 col-md-2'>
+                                            <div className='currency-selection text-center'>
+                                                <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                    <div className='cryptocurrency-slides'>
+                                                        <div className='single-cryptocurrency-box'>
+                                                            <div className='title text-center '>
+                                                                <p className=" py-0 "> Informations financières </p>
+                                                                <p className=" py-0 ">{oneKycForEntreprise?.validFinancialInformation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                            </div>
+                                                            
+                                                            <div className='btn-box ' onClick={()=>setEtape(9)}>
+                                                                <Button
+                                                                    block
+                                                                    color="primary"
+                                                                    type="button"
+                                                                    onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                                >
+                                                                    Détails
+                                                                </Button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    ):("")}
 
-                                    <div className='col-lg-2 col-md-2'>
-                                        <div className='currency-selection text-center'>
-                                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                                <div className='cryptocurrency-slides'>
-                                                    <div className='single-cryptocurrency-box'>
-                                                        <div className='title text-center '>
-                                                            <p className=" py-0 "> Documents </p>
-                                                            <p className=" py-0 ">{oneKycForEntreprise?.validFinancialInformation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
-                                                        </div>
-                                                        
-                                                        <div className='btn-box ' onClick={()=>setEtape(11)}>
-                                                            <Button
-                                                                block
-                                                                color="primary"
-                                                                type="button"
-                                                                onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
-                                                            >
-                                                                Détails
-                                                            </Button>
+                                    {oneKycRequest?.financialTransactionAccept==1? (
+                                        <div className='col-lg-2 col-md-2'>
+                                            <div className='currency-selection text-center'>
+                                                <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                    <div className='cryptocurrency-slides'>
+                                                        <div className='single-cryptocurrency-box'>
+                                                            <div className='title text-center '>
+                                                                <p className=" py-0 "> Transactions financières</p>
+                                                                <p className=" py-0 ">{oneKycForEntreprise?.validFinancialInformation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                            </div>
+                                                            
+                                                            <div className='btn-box ' onClick={()=>setEtape(10)}>
+                                                                <Button
+                                                                    block
+                                                                    color="primary"
+                                                                    type="button"
+                                                                    onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                                >
+                                                                    Détails
+                                                                </Button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    ):("")}
+
+                                    {oneKycRequest?.legalDocumentsAccept==1? (
+                                        <div className='col-lg-2 col-md-2'>
+                                            <div className='currency-selection text-center'>
+                                                <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                    <div className='cryptocurrency-slides'>
+                                                        <div className='single-cryptocurrency-box'>
+                                                            <div className='title text-center '>
+                                                                <p className=" py-0 "> Documents légaux </p>
+                                                                <p className=" py-0 ">{oneKycForEntreprise?.validFinancialInformation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
+                                                            </div>
+                                                            
+                                                            <div className='btn-box ' onClick={()=>setEtape(11)}>
+                                                                <Button
+                                                                    block
+                                                                    color="primary"
+                                                                    type="button"
+                                                                    onClick={()=>setIdKycForEntreprise(oneKycForEntreprise?.id)}
+                                                                >
+                                                                    Détails
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ):("")}
 
                                     <div className='col-lg-2 col-md-2'>
                                         <div className='currency-selection text-center'>
@@ -1837,9 +1906,9 @@ const validKycIdentity= async (event) => {
                                                 <div className='cryptocurrency-slides'>
                                                     <div className='single-cryptocurrency-box'>
                                                         <div className='title text-center'>
-                                                        <p className=" py-0 ">{oneKycForEntreprise?.validAml==1 && oneKycForEntreprise?.validIdentity==1 && oneKycForEntreprise?.validRepresentative==1 && oneKycForEntreprise?.validBeneficiary==1 && oneKycForEntreprise?.validStructure==1 && oneKycForEntreprise?.validPoliticallyExposed==1 && oneKycForEntreprise?.validFinancialOperation==1 && oneKycForEntreprise?.validFundOrigin==1 && oneKycForEntreprise?.validFinancialInformation==1 && oneKycForEntreprise?.validFinancialTransaction==1 && oneKycForEntreprise?.validLegalDocument==1? (<b className='colorGreen'>Valider</b>):(<b className='colorRed'>En cours</b>)}</p>
+                                                        <p className=" py-0 ">{oneKycForEntreprise?.validationKycDate && oneKycForEntreprise?.validAml==1 && oneKycForEntreprise?.validIdentity==1 && oneKycForEntreprise?.validRepresentative==1 && oneKycForEntreprise?.validBeneficiary==1 && oneKycForEntreprise?.validStructure==1 && oneKycForEntreprise?.validPoliticallyExposed==1 && oneKycForEntreprise?.validFinancialOperation==1 && oneKycForEntreprise?.validFundOrigin==1 && oneKycForEntreprise?.validFinancialInformation==1 && oneKycForEntreprise?.validFinancialTransaction==1 && oneKycForEntreprise?.validLegalDocument==1? (<b className='colorGreen'>Valider</b>):(<b className='colorRed'>En cours</b>)}</p>
                                                         <p className=" py-0 ">{oneKycForEntreprise?.validationKycDate?formatDate(oneKycForEntreprise?.validationKycDate):"Pas encore évalué"}</p>
-                                                        </div>
+                                                        </div><br/>
                                                         <div className='btn-box d-flex' onClick={()=>setEtape(1)}>
                                                             <Button
                                                                 block
@@ -1872,90 +1941,21 @@ const validKycIdentity= async (event) => {
                                                     <p>
                                                         Cliquez ici pour voir le contenu
                                                     </p>
-                                                    <div>
-                                                        {/* Vérifie si le kyc a été corrigé et que cette partie été validée */}
-                                                        {oneKycForEntreprise?.correction==1 ? (
-                                                            oneKycForEntreprise?.validQuiz==1 ? (
-                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                            ):(
-                                                                <p className='colorRed mx-2'>
-                                                                    <Link href='/profil/kyc/entreprise/questionnaire/'>
-                                                                        <a>
-                                                                            <Button type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
-                                                                                Reprendre 
-                                                                            </Button>
-                                                                        </a>
-                                                                    </Link>
-                                                                </p>
-                                                            )
-                                                        ):('')}
-                                                    </div>
+                                                    
                                                 </h4>
                                                 <h4 className=' btn col-lg-3 col-md-3' onClick={() => toggleAccordion(2)}>
                                                     Les questionnaires AML 2 
                                                     <p>Cliquez ici pour voir le contenu</p>
-                                                    <div>
-                                                        {/* Vérifie si le kyc a été corrigé et que cette partie été validée */}
-                                                        {oneKycForEntreprise?.correction==1 ? (
-                                                            oneKycForEntreprise?.validQuizTwo==1 ? (
-                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                            ):(
-                                                                <p className='colorRed mx-2'>
-                                                                    <Link href='/profil/kyc/entreprise/questionnaire-aml-two/'>
-                                                                        <a>
-                                                                            <Button type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
-                                                                                Reprendre 
-                                                                            </Button>
-                                                                        </a>
-                                                                    </Link>
-                                                                </p>
-                                                            )
-                                                        ):('')}
-                                                    </div>
+                                                    
                                                 </h4>
                                                 <h4 className=' btn col-lg-3 col-md-3' onClick={() => toggleAccordion(3)}>
                                                     Les questionnaires AML 3 
                                                     <p>Cliquez ici pour voir le contenu</p>
-                                                    <div>
-                                                        {/* Vérifie si le kyc a été corrigé et que cette partie été validée */}
-                                                        {oneKycForEntreprise?.correction==1 ? (
-                                                            oneKycForEntreprise?.validQuizThree==1 ? (
-                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                            ):(
-                                                                <p className='colorRed mx-2'>
-                                                                    <Link href='/profil/kyc/entreprise/questionnaire-aml-three/'>
-                                                                        <a>
-                                                                            <Button type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
-                                                                                Reprendre 
-                                                                            </Button>
-                                                                        </a>
-                                                                    </Link>
-                                                                </p>
-                                                            )
-                                                        ):('')}
-                                                    </div>
+                                                    
                                                 </h4>
                                                 <h4 className=' btn col-lg-3 col-md-3' onClick={() => toggleAccordion(4)}>
                                                     Les questionnaires AML 4 
                                                     <p>Cliquez ici pour voir le contenu</p>
-                                                    <div>
-                                                        {/* Vérifie si le kyc a été corrigé et que cette partie été validée */}
-                                                        {oneKycForEntreprise?.correction==1 ? (
-                                                            oneKycForEntreprise?.validQuizFour==1 ? (
-                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                            ):(
-                                                                <p className='colorRed mx-2'>
-                                                                    <Link href='/profil/kyc/entreprise/questionnaire-aml-four/'>
-                                                                        <a>
-                                                                            <Button type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
-                                                                                Reprendre 
-                                                                            </Button>
-                                                                        </a>
-                                                                    </Link>
-                                                                </p>
-                                                            )
-                                                        ):('')}
-                                                    </div>
                                                 </h4>
                                             </div>
                                             {isOpen1 &&
@@ -2374,25 +2374,6 @@ const validKycIdentity= async (event) => {
                                     <>
                                         <div className='my-5 mx-5 text-center'>
                                             <h3 className=''>Identité</h3>
-                                            
-                                            {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                            {oneKycForEntreprise?.correction==1 ? (
-                                                // Vérifie si cette partie identité a été validée 
-                                                identityByKycId?.validIdentity==1 ? (
-                                                    <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                ):(
-                                                    <p className='colorRed mx-2'>
-                                                        <Link href='/profil/kyc/entreprise/identite-one/'>
-                                                            <a>
-                                                                <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)} color="primary" >
-                                                                    Reprendre 
-                                                                </Button>
-                                                            </a>
-                                                        </Link>
-                                                    </p>
-                                                )
-                                            ):('')}
-
                                         </div>
                                         <div className='mx-5 row'>
                                             <div className='mt-3 col-lg-4 col-md-4'>
@@ -2529,24 +2510,6 @@ const validKycIdentity= async (event) => {
                                                         <h5 className='colorRed mt-5 text-center'>Les informations du représentant légal {index + 1}</h5>
                                                         <div className='form-group my-3 text-center'>
                                                                 
-                                                            {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                                            {oneKycForEntreprise?.correction==1 ? (
-                                                                // Vérifie si les informations de ce représentant ont été validée 
-                                                                data?.validRepresentative==1 ? (
-                                                                    <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                                ):(
-                                                                    <p className='colorRed mx-2'>
-                                                                        <Link href='/profil/kyc/entreprise/identite-representant-two/'>
-                                                                            <a>
-                                                                                <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(data?.id)}  color="primary" >
-                                                                                    Reprendre 
-                                                                                </Button>
-                                                                            </a>
-                                                                        </Link>
-                                                                    </p>
-                                                                )
-                                                            ):('')}
-                                                                    
                                                         </div>
 
                                                         <div className='row'>
@@ -2871,27 +2834,7 @@ const validKycIdentity= async (event) => {
                                                 {allBeneficiaryByKycId?.map((data, index) => (
                                                     <div className='' key={index}>
                                                         <h5 className='colorRed mt-5 text-center'>Les informations du bénéficiaire effectif {index + 1}</h5>
-                                                        <div className='form-group my-3 text-center'>
-
-                                                            {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                                            {oneKycForEntreprise?.correction==1 ? (
-                                                            // Vérifie si les informations de ce bénéficiaire effectif ont été validée 
-                                                            data?.validBeneficiary==1 ? (
-                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                            ):(
-                                                                <p className='colorRed mx-2'>
-                                                                    <Link href='/profil/kyc/entreprise/beneficiaire-effectif-two/'>
-                                                                        <a>
-                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(data?.id)}  color="primary" >
-                                                                                Reprendre 
-                                                                            </Button>
-                                                                        </a>
-                                                                    </Link>
-                                                                </p>
-                                                            )
-                                                        ):('')}  
-                                                                                                                        </div>
-                                                       
+                                                        
                                                         <div className='mt-3'>
                                                             <b>
                                                                 Type de bénéficiaire
@@ -3216,28 +3159,7 @@ const validKycIdentity= async (event) => {
                                                 {allAssociatesByKycId?.map((data, index) => (
                                                     <div className='' key={index}>
                                                         <h5 className='colorRed mt-5 text-center'>Les informations de l'associé {index + 1}</h5>
-                                                        <div className='form-group my-3 text-center'>
-                                                            
-                                                            {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                                            {oneKycForEntreprise?.correction==1 ? (
-                                                            // Vérifie si les informations de cet associé effectif ont été validée 
-                                                            data?.validStructure==1 ? (
-                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                            ):(
-                                                                <p className='colorRed mx-2'>
-                                                                    <Link href='/profil/kyc/entreprise/structure-control-two/'>
-                                                                        <a>
-                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(data?.id)}  color="primary" >
-                                                                                Reprendre 
-                                                                            </Button>
-                                                                        </a>
-                                                                    </Link>
-                                                                </p>
-                                                            )
-                                                        ):('')} 
-
-
-                                                        </div>
+                                                        
                                                         <div className='mt-3'>
                                                             <b>
                                                                 Type d'associé
@@ -3554,26 +3476,7 @@ const validKycIdentity= async (event) => {
                                                 {allPoliticallyExposedByKycId?.map((data, index) => (
                                                     <div className='' key={index}>
                                                         <h5 className='colorRed mt-5 text-center'>Les informations de personne politiquement exposée {index + 1}</h5>
-                                                        <div className='form-group my-3 text-center'>
-
-                                                            {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                                            {oneKycForEntreprise?.correction==1 ? (
-                                                            // Vérifie si les informations de cet politiquement exposée ont été validée 
-                                                            data?.validPoliticallyExposed==1 ? (
-                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                            ):(
-                                                                <p className='colorRed mx-2'>
-                                                                    <Link href='/profil/kyc/entreprise/politiquement-exposees-two/'>
-                                                                        <a>
-                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(data?.id)}  color="primary" >
-                                                                                Reprendre 
-                                                                            </Button>
-                                                                        </a>
-                                                                    </Link>
-                                                                </p>
-                                                            )
-                                                        ):('')}
-                                                        </div>
+                                                        
                                                             <div className='row'>
                                                             <div className='mt-3 col-lg-6 col-md-6'>
                                                                     <b>
@@ -3615,28 +3518,7 @@ const validKycIdentity= async (event) => {
                                     <>
                                         <div className='my-5'>
                                             <h3 className='text-center'>Description des opérations financières</h3>
-                                            
-                                            {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                            <div className='text-center'>
-                                                {oneKycForEntreprise?.correction==1 ? (
-                                                    // Vérifie si les informations des opérations financières ont été validée 
-                                                    oneKycForEntreprise?.validFinancialOperation==1 ? (
-                                                        <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                    ):(
-                                                        <p className='colorRed mx-2'>
-                                                            <Link href='/profil/kyc/entreprise/operations-financieres-one/'>
-                                                                <a>
-                                                                    <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)} color="primary" >
-                                                                        Reprendre 
-                                                                    </Button>
-                                                                </a>
-                                                            </Link>
-                                                        </p>
-                                                    )
-                                                ):('')} 
-                                            </div> 
-                                            {/* Fin condition */}
-                                                                
+                                         
                                         </div>
                                         <div className='row mx-5 my-5'>
                                             {allFinancialOperationByKycId?.map((data, index) => (
@@ -3657,28 +3539,6 @@ const validKycIdentity= async (event) => {
                                     <>
                                         <div className='my-5'>
                                             <h3 className='text-center'>Origine des fonds</h3>
-                                        
-                                            {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                            <div className='text-center'>
-                                                {oneKycForEntreprise?.correction==1 ? (
-                                                    // Vérifie si les informations des origines des fonds ont été validée 
-                                                    oneKycForEntreprise?.validFundOrigin==1 ? (
-                                                        <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                    ):(
-                                                        <p className='colorRed mx-2'>
-                                                            <Link href='/profil/kyc/entreprise/origine-fonds/'>
-                                                                <a>
-                                                                    <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
-                                                                        Reprendre 
-                                                                    </Button>
-                                                                </a>
-                                                            </Link>
-                                                        </p>
-                                                    )
-                                                ):('')} 
-                                            </div> 
-                                            {/* Fin condition */}
-
                                         </div>
 
                                         <div className='row mx-5 my-5'>
@@ -3714,27 +3574,6 @@ const validKycIdentity= async (event) => {
                                         {oneMonthlyFinancialInformation?.map((data, index)=>(
                                             <div className='row'>
                                                 <div className="col-lg-4 col-md-4"></div>
-                                                
-                                                {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                                <div className='text-center'>
-                                                    {oneKycForEntreprise?.correction==1 ? (
-                                                        // Vérifie si les informations des information financièreont été validée 
-                                                        data?.validFinancialInformation==1 ? (
-                                                            <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                        ):(
-                                                            <p className='colorRed mx-2'>
-                                                                <Link href='/profil/kyc/entreprise/information-financiere-one/'>
-                                                                    <a>
-                                                                        <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
-                                                                            Reprendre 
-                                                                        </Button>
-                                                                    </a>
-                                                                </Link>
-                                                            </p>
-                                                        )
-                                                    ):('')} 
-                                                </div> 
-                                                {/* Fin condition */}
 
                                                 <div className="col-lg-4 col-md-4"></div>
                                             </div>
@@ -3832,27 +3671,6 @@ const validKycIdentity= async (event) => {
                                         {oneQuarterlyFinancialInformation?.map((data, index)=>(
                                             <div className='row'>
                                                 <div className="col-lg-4 col-md-4"></div>
-                                                
-                                                {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                                <div className='text-center'>
-                                                    {oneKycForEntreprise?.correction==1 ? (
-                                                        // Vérifie si les informations des information financière ont été validée 
-                                                        data?.validFinancialInformation==1 ? (
-                                                            <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                        ):(
-                                                            <p className='colorRed mx-2'>
-                                                                <Link href='/profil/kyc/entreprise/information-financiere-two/'>
-                                                                    <a>
-                                                                        <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
-                                                                            Reprendre 
-                                                                        </Button>
-                                                                    </a>
-                                                                </Link>
-                                                            </p>
-                                                        )
-                                                    ):('')} 
-                                                </div> 
-                                                {/* Fin condition */}
 
                                                 <div className="col-lg-4 col-md-4"></div>
                                             </div>
@@ -3949,28 +3767,6 @@ const validKycIdentity= async (event) => {
                                         {oneAnnualFinancialInformation?.map((data, index)=>(
                                             <div className='row'>
                                                 <div className="col-lg-4 col-md-4"></div>
-                                                
-                                                {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                                <div className='text-center'>
-                                                    {oneKycForEntreprise?.correction==1 ? (
-                                                        // Vérifie si les informations des information financière ont été validée 
-                                                        data?.validFinancialInformation==1 ? (
-                                                            <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                        ):(
-                                                            <p className='colorRed mx-2'>
-                                                                <Link href='/profil/kyc/entreprise/information-financiere-three/'>
-                                                                    <a>
-                                                                        <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
-                                                                            Reprendre 
-                                                                        </Button>
-                                                                    </a>
-                                                                </Link>
-                                                            </p>
-                                                        )
-                                                    ):('')} 
-                                                </div> 
-                                                {/* Fin condition */}
-
                                                 <div className="col-lg-4 col-md-4"></div>
                                             </div>
                                         ))}
@@ -4076,27 +3872,6 @@ const validKycIdentity= async (event) => {
                                         {oneMonthlyFinancialTransaction?.map((data, index)=>(
                                             <div className='row'>
                                                 <div className="col-lg-4 col-md-4"></div>
-                                                
-                                                {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                                <div className='text-center'>
-                                                    {oneKycForEntreprise?.correction==1 ? (
-                                                        // Vérifie si les informations des transactions financières ont été validée 
-                                                        data?.validFinancialTransaction==1 ? (
-                                                            <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                        ):(
-                                                            <p className='colorRed mx-2'>
-                                                                <Link href='/profil/kyc/entreprise/information-financiere-four/'>
-                                                                    <a>
-                                                                        <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
-                                                                            Reprendre 
-                                                                        </Button>
-                                                                    </a>
-                                                                </Link>
-                                                            </p>
-                                                        )
-                                                    ):('')} 
-                                                </div> 
-                                                {/* Fin condition */}
 
                                                 <div className="col-lg-4 col-md-4"></div>
                                             </div>
@@ -4248,28 +4023,6 @@ const validKycIdentity= async (event) => {
                                         {oneAnnualFinancialTransaction?.map((data, index)=>(
                                             <div className='row'>
                                                 <div className="col-lg-4 col-md-4"></div>
-                                                
-                                                {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                                <div className='text-center'>
-                                                    {oneKycForEntreprise?.correction==1 ? (
-                                                        // Vérifie si les informations des transactions financières ont été validée 
-                                                        data?.validFinancialTransaction==1 ? (
-                                                            <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                        ):(
-                                                            <p className='colorRed mx-2'>
-                                                                <Link href='/profil/kyc/entreprise/information-financiere-five/'>
-                                                                    <a>
-                                                                        <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
-                                                                            Reprendre 
-                                                                        </Button>
-                                                                    </a>
-                                                                </Link>
-                                                            </p>
-                                                        )
-                                                    ):('')} 
-                                                </div> 
-                                                {/* Fin condition */}
-
                                                 <div className="col-lg-4 col-md-4"></div>
                                             </div>
                                         ))}
@@ -4488,27 +4241,6 @@ const validKycIdentity= async (event) => {
                                             <div className=" row col-lg-12 col-md-12 mx-5 justify-content-between">
                                                 <div className='col-lg-6 col-md-6 text-center'>
                                                     <p className='text-center'>Extrait de registre de commerce</p>
-                                                    
-                                                    {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                                    <div className='text-center mb-3'>
-                                                        {oneKycForEntreprise?.correction==1 ? (
-                                                            // Vérifie si les informations des documents légaux ont été validée 
-                                                            oneLegalDocumentByKycId?.validRegister==1 ? (
-                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                            ):(
-                                                                <p className='colorRed mx-2'>
-                                                                    <Link href='/profil/kyc/entreprise/documents-legaux/'>
-                                                                        <a>
-                                                                            <Button  type='button'onClick={()=>setUpdateKycEntrepriseStatut(1)}  color="primary" >
-                                                                                Reprendre 
-                                                                            </Button>
-                                                                        </a>
-                                                                    </Link>
-                                                                </p>
-                                                            )
-                                                        ):('')} 
-                                                    </div> 
-                                                    {/* Fin condition */}
                                                                     
                                                     {/* Si le document est prise en photo */}
                                                     {oneLegalDocumentByKycId?.registerPhoto ? 
@@ -4551,28 +4283,6 @@ const validKycIdentity= async (event) => {
                                                 {/* Le DFE */}
                                                 <div className='col-lg-6 col-md-6 text-center'>
                                                     <p className='text-center'>Le DFE</p>
-
-                                                    {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                                    <div className='text-center mb-3'>
-                                                        {oneKycForEntreprise?.correction==1 ? (
-                                                            // Vérifie si les informations des documents légaux ont été validée 
-                                                            oneLegalDocumentByKycId?.validDfe==1 ? (
-                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                            ):(
-                                                                <p className='colorRed mx-2'>
-                                                                    <Link href='/profil/kyc/entreprise/documents-legaux/'>
-                                                                        <a>
-                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(2)}  color="primary" >
-                                                                                Reprendre 
-                                                                            </Button>
-                                                                        </a>
-                                                                    </Link>
-                                                                </p>
-                                                            )
-                                                        ):('')} 
-                                                    </div> 
-                                                    {/* Fin condition */}
-
 
                                                     {/* Si le document est prise en photo */}
                                                     {oneLegalDocumentByKycId?.dfePhoto? 
@@ -4625,28 +4335,6 @@ const validKycIdentity= async (event) => {
                                             <div className=" row col-lg-12 col-md-12 mx-5 justify-content-between">
                                                 <div className='col-lg-6 col-md-6 text-center'>
                                                     <p className='text-center'>Copie des statuts</p>
-                                                    
-                                                    {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                                    <div className='text-center mb-3'>
-                                                        {oneKycForEntreprise?.correction==1 ? (
-                                                            // Vérifie si les informations des documents légaux ont été validée 
-                                                            oneLegalDocumentByKycId?.validCopyStatutes==1 ? (
-                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                            ):(
-                                                                <p className='colorRed mx-2'>
-                                                                    <Link href='/profil/kyc/entreprise/documents-legaux/'>
-                                                                        <a>
-                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(3)}  color="primary" >
-                                                                                Reprendre 
-                                                                            </Button>
-                                                                        </a>
-                                                                    </Link>
-                                                                </p>
-                                                            )
-                                                        ):('')} 
-                                                    </div> 
-                                                    {/* Fin condition */}
-
                                                     {/* Si le document est prise en photo */}
                                                     {oneLegalDocumentByKycId?.copyStatutesPhoto? 
                                                         <img src={oneLegalDocumentByKycId?.copyStatutesPhoto} className="" width={'400'} height={'400'} /> :(
@@ -4687,28 +4375,6 @@ const validKycIdentity= async (event) => {
                                                 {/* Délégation de pouvoirs */}
                                                 <div className='col-lg-6 col-md-6 text-center'>
                                                     <p className='text-center'>Délégation de pouvoirs</p>
-                                                    
-                                                    {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                                    <div className='text-center mb-3'>
-                                                        {oneKycForEntreprise?.correction==1 ? (
-                                                            // Vérifie si les informations des documents légaux ont été validée 
-                                                            oneLegalDocumentByKycId?.validDelegationPowers==1 ? (
-                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                            ):(
-                                                                <p className='colorRed mx-2'>
-                                                                    <Link href='/profil/kyc/entreprise/documents-legaux/'>
-                                                                        <a>
-                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(4)}  color="primary" >
-                                                                                Reprendre 
-                                                                            </Button>
-                                                                        </a>
-                                                                    </Link>
-                                                                </p>
-                                                            )
-                                                        ):('')} 
-                                                    </div> 
-                                                    {/* Fin condition */}
-                                                    
                                                     {/* Si le document est prise en photo */}
                                                     {oneLegalDocumentByKycId?.delegationPowersPhoto? 
                                                         <img src={oneLegalDocumentByKycId?.delegationPowersPhoto} className="" width={'400'} height={'400'}/> :(
@@ -4761,27 +4427,6 @@ const validKycIdentity= async (event) => {
                                                 <div className='col-lg-6 col-md-6 text-center'>
                                                     <p className='text-center'>PV de nomination des dirigeants publication journal officiel</p>
                                                     
-                                                    {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                                    <div className='text-center mb-3'>
-                                                        {oneKycForEntreprise?.correction==1 ? (
-                                                            // Vérifie si les informations des documents légaux ont été validée 
-                                                            oneLegalDocumentByKycId?.validPvAppointment==1 ? (
-                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                            ):(
-                                                                <p className='colorRed mx-2'>
-                                                                    <Link href='/profil/kyc/entreprise/documents-legaux/'>
-                                                                        <a>
-                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(5)}  color="primary" >
-                                                                                Reprendre 
-                                                                            </Button>
-                                                                        </a>
-                                                                    </Link>
-                                                                </p>
-                                                            )
-                                                        ):('')} 
-                                                    </div> 
-                                                    {/* Fin condition */}
-                                                    
                                                     {/* Si le document est prise en photo */}
                                                     {oneLegalDocumentByKycId?.pvAppointmentPhoto? 
                                                         <img src={oneLegalDocumentByKycId?.pvAppointmentPhoto} className="" width={'400'} height={'400'} /> :(
@@ -4822,28 +4467,6 @@ const validKycIdentity= async (event) => {
                                                 {/* Plan de localisation géographique */}
                                                 <div className='col-lg-6 col-md-6 text-center'>
                                                     <p className='text-center'>Plan de localisation géographique</p>
-
-                                                    {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                                    <div className='text-center mb-3'>
-                                                        {oneKycForEntreprise?.correction==1 ? (
-                                                            // Vérifie si les informations des documents légaux ont été validée 
-                                                            oneLegalDocumentByKycId?.validMapLocation==1 ? (
-                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                            ):(
-                                                                <p className='colorRed mx-2'>
-                                                                    <Link href='/profil/kyc/entreprise/documents-legaux/'>
-                                                                        <a>
-                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(6)}  color="primary" >
-                                                                                Reprendre 
-                                                                            </Button>
-                                                                        </a>
-                                                                    </Link>
-                                                                </p>
-                                                            )
-                                                        ):('')} 
-                                                    </div> 
-                                                    {/* Fin condition */}
-                                                    
 
                                                     {/* Si le document est prise en photo */}
                                                     {oneLegalDocumentByKycId?.mapLocationPhoto? 
@@ -4897,28 +4520,6 @@ const validKycIdentity= async (event) => {
                                                 <div className='col-lg-6 col-md-6 text-center'>
                                                     <p className='text-center'>Facture eau / électricité ou contrat de bail</p>
 
-                                                    {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                                    <div className='text-center mb-3'>
-                                                        {oneKycForEntreprise?.correction==1 ? (
-                                                            // Vérifie si les informations des documents légaux ont été validée 
-                                                            oneLegalDocumentByKycId?.validFacture==1 ? (
-                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                            ):(
-                                                                <p className='colorRed mx-2'>
-                                                                    <Link href='/profil/kyc/entreprise/documents-legaux/'>
-                                                                        <a>
-                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(7)}  color="primary" >
-                                                                                Reprendre 
-                                                                            </Button>
-                                                                        </a>
-                                                                    </Link>
-                                                                </p>
-                                                            )
-                                                        ):('')} 
-                                                    </div> 
-                                                    {/* Fin condition */}
-                                                    
-
                                                     {/* Si le document est prise en photo */}
                                                     {oneLegalDocumentByKycId?.facturePhoto? 
                                                         <img src={oneLegalDocumentByKycId?.facturePhoto} className="" width={'400'} height={'400'} /> :(
@@ -4959,28 +4560,6 @@ const validKycIdentity= async (event) => {
                                                 {/* La copie du justificatif de pouvoir conféré au signataire */}
                                                 <div className='col-lg-6 col-md-6 text-center'>
                                                     <p className='text-center'>La copie du justificatif de pouvoir conféré au signataire</p>
-                                                    
-                                                    {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                                    <div className='text-center mb-3'>
-                                                        {oneKycForEntreprise?.correction==1 ? (
-                                                            // Vérifie si les informations des documents légaux ont été validée 
-                                                            oneLegalDocumentByKycId?.validProofPower==1 ? (
-                                                                <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                            ):(
-                                                                <p className='colorRed mx-2'>
-                                                                    <Link href='/profil/kyc/entreprise/documents-legaux/'>
-                                                                        <a>
-                                                                            <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(8)}  color="primary" >
-                                                                                Reprendre 
-                                                                            </Button>
-                                                                        </a>
-                                                                    </Link>
-                                                                </p>
-                                                            )
-                                                        ):('')} 
-                                                    </div> 
-                                                    {/* Fin condition */}
-                                                    
                                                     {/* Si le document est prise en photo */}
                                                     {oneLegalDocumentByKycId?.proofPowerPhoto? 
                                                         <img src={oneLegalDocumentByKycId?.proofPowerPhoto} className="" width={'400'} height={'400'}/> :(
@@ -5026,28 +4605,6 @@ const validKycIdentity= async (event) => {
                                                     </b>
                                                 </h5>
                                             </div>
-
-                                            {/* Vérifie si le kyc de la table kyc_entreprise a été corrigé */}
-                                            <div className='text-center mb-3'>
-                                                {oneKycForEntreprise?.correction==1 ? (
-                                                    // Vérifie si les informations des documents légaux ont été validée 
-                                                    oneLegalDocumentByKycId?.validIdentitySignatory==1 ? (
-                                                        <p className='colorGreen mx-2'><b>Validé</b></p>
-                                                    ):(
-                                                        <p className='colorRed mx-2'>
-                                                            <Link href='/profil/kyc/entreprise/documents-legaux/'>
-                                                                <a>
-                                                                    <Button  type='button' onClick={()=>setUpdateKycEntrepriseStatut(9)} color="primary" >
-                                                                        Reprendre 
-                                                                    </Button>
-                                                                </a>
-                                                            </Link>
-                                                        </p>
-                                                    )
-                                                ):('')} 
-                                            </div> 
-                                            {/* Fin condition */}
-
                                             <div className='mt-3 text-center'>
                                                 <b>
                                                     Date d'expiration du document d’identité

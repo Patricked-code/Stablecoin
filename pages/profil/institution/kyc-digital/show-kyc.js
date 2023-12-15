@@ -100,9 +100,10 @@ const index = () => {
             {/* FIN */}
           </aside>
 
-          {/* CONTENU PROFIL */}
-          {oneKycRequest?.particularKycId ? <ShowKycParticular kycForParticularId={oneKycRequest?.particularKycId}/> : oneKycRequest?.particularKycId ? <ShowKycEntreprise/>:<p className='mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white'>Indisponible</p>}
-          
+          {/* CONTENU KYC PARTICULIER */}
+          {oneKycRequest?.particularKycId ? <ShowKycParticular kycForParticularId={oneKycRequest?.particularKycId} kycRequestId={oneKycRequest?.id}/> 
+          // CONTENU KYC ENTREPRISE 
+          : oneKycRequest?.entrepriseKycId ? <ShowKycEntreprise kycForBusinessId={oneKycRequest?.entrepriseKycId} kycRequestId={oneKycRequest?.id}/>:<p className='mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white'>Indisponible</p>}
           {/* FIN */}
 
         </main>

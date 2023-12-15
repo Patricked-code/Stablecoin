@@ -173,7 +173,13 @@ const Layout = ({ children }) => {
       pathname === "/admin/wealthtech/kyc"||
       pathname === "/admin/wealthtech/kyc/validation/particular"||
       pathname === "/admin/wealthtech/kyc/validation/entreprise"||
-      pathname === "/admin/wealthtech/roles/attribution"
+      pathname === "/admin/wealthtech/roles/attribution"||
+
+      pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement"||
+      pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement/sur-plateforme"||
+      pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement/sur-ecommerces"
+
+
 
 
 
@@ -324,7 +330,9 @@ const Layout = ({ children }) => {
       pathname === "/admin/wealthtech/kyc/validation/entreprise"||
       pathname === "/admin/wealthtech/roles/attribution"||
 
-
+      pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement"||
+      pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement/sur-plateforme"||
+      pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement/sur-ecommerces"||
 
 
 

@@ -1,11 +1,16 @@
 import { useRef, useState, useEffect } from 'react';
 import { Container, Row, Col, Collapse, Button, Modal,Form } from "react-bootstrap";
+import ABI_TOKEN_EWARI from "../../../components/Contrats/Abi/AbiStablecoin.json"
 
+// Pour Magic
+import { magic } from "../../../magic";
+import { ethers } from "ethers";
 import React from "react";
-import axios from 'axios';
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
 import moment from 'moment';
+import Swal from 'sweetalert2'
+
 
 
 // Pour l'importation du scanner
@@ -27,15 +32,30 @@ import MapComponent from '../../CarteEmplacement/MapComponent';
 const VerifyDocumentsRetrait = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+    const ADDRESS_CONTRAT_EWARI =process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
+    const [currentUser, setCurrentUser] = useState();
+    const [magicCurrentAddress, setMagicCurrentAddress] = useState();
+    const [currentAdresse, setCurrentAdresse] = useState("...");
+    const [provider, setProvider] = useState(null);
 
+    //***************************************************************** *
+     // LES STATES DU STABLECOIN
+    // ******************************************************************
+    const [contractStablecoin, setContractStablecoin] = useState();
+    const [signer, setSigner] = useState();
+    const [nameStablecoin, setNameStablecoin] = useState();
+    const [symbolStablecoin, setSymbolStablecoin] = useState();
+    const [balanceStablecoin, setBalanceStablecoin] = useState();
+    const [decimalStablecoin, setDecimalStablecoin] = useState();
   // const position = [parseFloat(oneKycForParticular?.latitude), parseFloat(oneKycForParticular?.longiitude)];
 
     // States recherche de d'un utilisateur
     const [infosOtherUser, setInfosOtherUser] = useState();
     const [emailOtherUser, setEmailOtherUser] = useState();
     const [codeOtherUser, setCodeOtherUser] = useState();
+    const [infosDistributer, setInfosDistributer] = useState();
     
     const [reasonFiling, setReasonFiling] = useState();
     const [fundsOrigin, setFundsOrigin] = useState();
@@ -45,19 +65,107 @@ const VerifyDocumentsRetrait = () => {
     // states de kyc
     const [oneKycForParticular, setOneKycForParticular] = useState();
 
+    // states de retrait cash
+    const [fees, setFees] = useState(0);
+    const [institutionalCommission, setInstitutionalCommission] = useState(0);
+    const [wealthtechCommission, setWealthtechCommission] = useState(0);
     
     // Formulaire du Modal Transfert
     const [montantRetirer, setMontantRetirer] = useState(0);
     const [addressTo, setAddressTo] = useState();
-    const [montantRecu, setMontantRecu] = useState(0);
+    const [montantRetirerAvecFrais, setMontantRetirerAvecFrais] = useState(0);
     const [percent, setPercent] = useState(10);
 
 
 
      // Calcule des frais de transaction
-     const frais = montantRetirer*percent/100
-     const montantRetirerAvecFrais =  parseFloat(montantRetirer) + frais 
+    //  const frais = montantRetirer*percent/100
+    //  const montantRetirerAvecFrais =  parseFloat(montantRetirer) + frais 
      // Fin
+
+      // Calcule des frais de transaction
+      useEffect(() => {
+        const getInfos = async () => {
+        const frais = montantRetirer*infosDistributer?.percentage/100
+        const montantRetirerAvecFrais =  parseFloat(montantRetirer) + frais 
+        setMontantRetirerAvecFrais(montantRetirerAvecFrais)
+        const commissionInstitution = frais*infosDistributer?.percentageInstitution/100
+        const commissionWti = frais*infosDistributer?.percentageWealthtech/100
+        
+       
+        // setFees(frais)
+        // setAmount(montantEnvoyer)
+        setWealthtechCommission(commissionWti)
+        setInstitutionalCommission(commissionInstitution)
+        setFees(frais)
+      };
+        getInfos()
+      },[montantRetirer])
+      // Fin
+
+
+      useEffect(() => {
+
+        if (!!magic) {
+            const pt = new ethers.providers.Web3Provider(magic.rpcProvider);
+            setProvider(pt);
+        }
+    }, [magic]);
+  
+    // RECUPERATION DES INFORMATIONS QUI CONCERNENT MAGIC
+    useEffect(() => {
+        (async () => {
+            if (!!magic && !!provider) {
+                const userMetadatas = await magic.user.getMetadata();
+                const signer = provider.getSigner();
+                setSigner(signer)
+                const network = await provider.getNetwork();
+                const userAddress = await signer.getAddress();
+                setMagicCurrentAddress(userAddress)
+  
+                //const userBalance = ethers.utils.formatEther(await provider.getBalance(userAddress))
+                // FIN
+  
+                // *************************************************************************
+                    // INTERACTION AVEC LE SMART CONTRAT DE STABLECOIN
+                // *************************************************************************
+  
+                const contractStablecoin = new ethers.Contract(ADDRESS_CONTRAT_EWARI,ABI_TOKEN_EWARI.abi,signer);
+                setContractStablecoin(contractStablecoin);
+                    
+                //   recuperation des infos de stablecoin
+                const nameStablecoin = await contractStablecoin.name()
+                const symbolStablecoin = await contractStablecoin.symbol()
+                const decimalStablecoin = await contractStablecoin.decimals()
+                const balanceStablecoin = await contractStablecoin.balanceOf(userAddress)
+                // Fin 
+  
+                // Stocker les infos de stablecoin dans leur state
+                // setNameStablecoin(nameStablecoin)
+                setSymbolStablecoin(symbolStablecoin)
+                setDecimalStablecoin(decimalStablecoin)
+                // setBalanceStablecoin(balanceStablecoin/10**decimalStablecoin)
+                // Fin
+                
+              // Obtenir un utilisateur en fonction de son email 
+              const getUser = async () => {
+                const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
+                    headers: {
+                    'Content-Type': 'application/json',
+                    },
+                })
+                  .then((result) => result.json())
+                  .then((user) => {
+                  setCurrentUser(user)
+                  }) 
+              };
+              await getUser();
+              // Fin
+            }
+        })();
+  
+    }, [provider, magic]);
+    //  Fin
 
 
     // La fonction qui vérifie si un lien est un lien pdf
@@ -216,15 +324,225 @@ const dumpVariables = () =>{
 
 
 
-// **************************************************************
-  // PARTIE DEPOT CASH
-// ****************************************************************
-// Modal Transfert
-const [showWithdrawal, setShowWithdrawal] = useState(false);
-const handleWithdrawalClose = () => setShowWithdrawal(false);
-const handleWithdrawalShow = () => setShowWithdrawal(true);
+  // **************************************************************
+    // PARTIE RETRAIT CASH
+  // ****************************************************************
+  // Modal Transfert
+  const [showWithdrawal, setShowWithdrawal] = useState(false);
+  const handleWithdrawalClose = () => setShowWithdrawal(false);
+  const handleWithdrawalShow = () => setShowWithdrawal(true);
 
-// *************FIN*************************************************
+  // Fonction d'enregistrement de dépôt cash
+  const addWithdrawalCash = async (_amountBurn, _wealthtechCommission, _institutionalCommission, _amount, _addressCustomer, _addressInstitution, _hash) => {
+    setIsLoggingIn(true);
+
+    try {
+        
+        const dataBody = {
+          addressCustomer: _addressCustomer,
+          addressInstitution: _addressInstitution,
+          amount: _amount,
+          amountBurn: _amountBurn,
+          fees: fees,
+          institutionalCommission: _institutionalCommission,
+          wealthtechCommission: _wealthtechCommission,
+          hash: _hash,
+          state: "Succès",
+          customerId: infosOtherUser?.id
+        }
+
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
+        /**
+         * Réponse de la requête KYC.
+         * @type {Response}
+         */
+        const response = await fetch(`${API_URL}/api/transaction/add-cash-withdrawal`, {
+            method: 'POST',
+            body: JSON.stringify(dataBody),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+        });
+
+        /**
+         * Données de la réponse de la requête .
+         * @type {object}
+         */
+        const data = await response.json();
+
+        /* Verifier s'il y a un messsage d'erreur, on l'affiche dans SWAL 
+        * sinon on affiche le message de succès
+        */
+        if (!data.message) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p> Le retrait s'est effectué avec succès.</p>`,
+                showConfirmButton: false,
+                timer: 5000
+            });
+
+            // Actualiser après l'affichage
+            setTimeout(() => {
+                window.location.reload();
+            }, 7000);
+            // Fin
+        } else {
+            setMessageError(data.message);
+            setIsLoggingIn(false);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p> ${messageError} </p>`,
+                showConfirmButton: false,
+                timer: 10000
+            });
+        }
+        // Fin condition
+    } catch (error) {
+        console.error('Erreur =>', error);
+    }
+  };
+
+  // FONCTION POUR RECUPERER LES INFOS DE COMMISION DE DEPOT DE L'INSTITUTION EN FONCTION DE L'UTILISATEUR CONNECTE
+  useEffect(() => {
+    // Obtenir le token en cours
+    const token = localStorage.getItem('tokenEnCours');
+    const getInfosDistributer = async () => {
+    try {
+        const result = await fetch(`${API_URL}/api/distributer/find-request-distributer-withdrawal-of-user`, {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+
+        },
+        });
+
+        if (!result.ok) {
+        throw new Error('Failed to fetch user data');
+        }
+
+        const data = await result.json();
+        setInfosDistributer(data);
+    } catch (error) {
+        // Handle errors appropriately, e.g., set an error state.
+        console.error('Error fetching user data:', error);
+    }
+    };
+
+    getInfosDistributer();
+    
+  }, []);
+  // FIN
+
+  // FONCTION DE L'EXECUTION DES TRANSFERT EN BLOC ET DE Burn
+  const transferBatchWithBurn = async () => {
+    setIsLoggingIn(true);
+
+    try {
+      // Parse the amount that the client will burn
+      const tostingA = String(montantRetirer);
+      const mountWeiA = ethers.utils.parseUnits(tostingA, decimalStablecoin);
+
+      // Parse the amount of WTI commission
+      const tostingB = String(wealthtechCommission);
+      const mountWeiB = ethers.utils.parseUnits(tostingB, decimalStablecoin);
+  
+      // Parse the amount of institutional commission
+      const tostingC = String(institutionalCommission);
+      const mountWeiC = ethers.utils.parseUnits(tostingC, decimalStablecoin);
+  
+      // Calculate the total burn amount
+      // const totalAmount = mountWeiA.add(mountWeiB).add(mountWeiC);
+
+      const dataForm = {
+        addressBurn: infosOtherUser?.address,
+        recipients: [infosDistributer?.wealthtechCommissionAddress, magicCurrentAddress],
+        amounts: [mountWeiB, mountWeiC],
+        amountBurn: mountWeiA,
+      };
+  
+      // Check if the executor has enough gas fees (DEV)
+      const gasEstimate = await contractStablecoin.estimateGas.transferBatchWithBurn(
+        dataForm.addressBurn,
+        dataForm.recipients,
+        dataForm.amounts,
+        dataForm.amountBurn
+      );
+      const gasCost = gasEstimate.mul(await signer.getGasPrice());
+      const senderBalance = await signer.getBalance();
+  
+      if (gasCost.gt(senderBalance)) {
+      setIsLoggingIn(false);
+
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          title: "L'institution n'a pas suffisamment de frais de gas pour exécuter cette transaction.",
+          showConfirmButton: false,
+          timer: 5000,
+        });
+        throw new Error("L'exécuteur n'a pas suffisamment de DEV pour couvrir les frais de gas.");
+      }
+  
+      // Check if addressBurn has an amount greater than or equal to montantRetirerAvecFrais
+      const addressBurnBalance = await contractStablecoin.balanceOf(dataForm.addressBurn);
+      if (addressBurnBalance.lt(montantRetirerAvecFrais)) {
+      setIsLoggingIn(false);
+
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          title: `Le client n'a pas un montant suffisant pour cette transaction.<br/> Son solde est : ${addressBurnBalance}  ${symbolStablecoin}`,
+          showConfirmButton: false,
+          timer: 5000,
+        });
+        throw new Error("Le client n'a pas un montant suffisant pour cette transaction.");
+      }
+  
+      // Perform burn once before the loop
+      const transferBatchWithBurnTx = await contractStablecoin.transferBatchWithBurn(
+        dataForm.addressBurn,
+        dataForm.recipients,
+        dataForm.amounts,
+        dataForm.amountBurn
+      );
+  
+      await transferBatchWithBurnTx.wait();
+      
+      // Appel de la fonction d'ajout des données dans la table des historique de transactions dans base de données
+      addWithdrawalCash(
+        montantRetirer,
+        wealthtechCommission,
+        institutionalCommission,
+        montantRetirerAvecFrais,
+        infosOtherUser?.address,
+        magicCurrentAddress,
+        transferBatchWithBurnTx.hash
+      )
+      
+    } catch (error) {
+      setIsLoggingIn(false);
+
+      // Show error notification using Swal
+      Swal.fire({
+        position: 'center',
+        icon: 'error',
+        title: "Une erreur s'est produite lors de la transaction.",
+        showConfirmButton: false,
+        timer: 5000,
+      });
+  
+      console.error("Erreur:", error.message);
+    }
+  };
+
+
+
+  
+  // *************FIN*************************************************
 
 
 // PARTIE POUR AGRANDIR LES IMAGES
@@ -549,7 +867,7 @@ const formatDate = (_updatedAt) =>{
 
                                       <div className='col-lg-6 col-md-6 '>
                                           <b> Numéro du justificatif d'identité :</b><br/>
-                                          {oneKycForParticular?.pieceNumber && !oneKycForParticular?.pieceNumber=="undefined"? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.pieceNumber }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
+                                          {oneKycForParticular?.pieceNumber? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{oneKycForParticular.pieceNumber }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                       </div>
 
                                       <div className='col-lg-6 col-md-6 '>
@@ -744,7 +1062,7 @@ const formatDate = (_updatedAt) =>{
                               defaultValue={montantRetirer} 
                               onChange={(event)=>setMontantRetirer(event.target.value)}
                             />
-                            <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">EWRITB</span>
+                            <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">{symbolStablecoin}</span>
 
                             </div>
                           </div>
@@ -768,7 +1086,7 @@ const formatDate = (_updatedAt) =>{
                               // defaultValue={montantRecu} 
                               // onChange={(event)=>setMontantRecu(event.target.value)}
                             />
-                            <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">EWRITB</span>
+                            <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">{symbolStablecoin}</span>
 
                             </div>
                           </div>
@@ -793,8 +1111,9 @@ const formatDate = (_updatedAt) =>{
                               className="order-lg-1 text-center"
                               
                             >
-                              <Button variant="success"  disabled={isLoggingIn} className="text-white" >
-                                Envoyer
+                              <Button variant="success" onClick={transferBatchWithBurn}  disabled={isLoggingIn} className="text-white" >
+                                Retirer
+                                {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg"></i>) : ("")}
                               </Button>
                             </Col>
                           </Row> 

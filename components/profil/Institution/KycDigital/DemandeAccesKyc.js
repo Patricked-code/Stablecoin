@@ -47,7 +47,8 @@ const DemandeAccesKyc = () => {
 
     // states de kyc
     const [oneKycForParticular, setOneKycForParticular] = useState();
-
+    const [oneKycForBusiness, setOneKycForBusiness] = useState();
+    
     
     // State du formulaire
     const [selectedOption, setSelectedOption] = useState('');
@@ -300,6 +301,52 @@ const DemandeAccesKyc = () => {
     }
 
 
+    /**
+     * Récupère une seule ligne de KYC (Know Your Customer) entreprise pour une entreprise en fonction de son ID.
+     * Cette fonction est spécifiquement conçue pour les utilisateurs de type "entreprise".
+     *
+     * @function
+     * @param {string} _userId - L'ID de l'entreprise pour lequel récupérer les informations KYC.
+     * @returns {void}
+   */
+     if (infosOtherUser?.codeTypeProfil === "entCom") {
+        
+        const getOneKycForBusiness = async (_userId) => {
+            // Obtenir le token en cours
+            const token = localStorage.getItem('tokenEnCours');
+            try {
+                /**
+                 * Requête pour récupérer une seule ligne de KYC entreprise en fonction de l'ID de l'entreprise.
+                 * @type {Response}
+                 */
+                const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-by-userId?userId=${_userId}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                });
+  
+                if (!resKyc.ok) {
+                    throw new Error('Failed to fetch KYC data');
+                }
+  
+                /**
+                 * Données KYC récupérées pour un particulier.
+                 * @type {object}
+                 */
+                const data = await resKyc.json();
+                setOneKycForBusiness(data);
+            } catch (error) {
+                // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
+                console.error('Erreur lors de la récupération des données KYC :', error);
+            }
+        };
+  
+        // Appel de la fonction pour récupérer le KYC pour le particulier actuel.
+        getOneKycForBusiness(infosOtherUser?.id);
+      }
+
+
 
 
 
@@ -541,7 +588,8 @@ const DemandeAccesKyc = () => {
               nameOwnerKyc: infosOtherUser?.entreprise,
               nameInstitution: userSignIn?.entreprise,
               object: object,
-              ownerId: infosOtherUser?.id
+              ownerId: infosOtherUser?.id,
+              entrepriseKycId:oneKycForBusiness?.id
           };
 
           // Obtenir le token en cours
@@ -876,181 +924,186 @@ const DemandeAccesKyc = () => {
                                         //       Nom de l'entreprise : {infosOtherUser?.entreprise}
                                         // </p>
                                             // <p className="gr-text-8 colorRed text-center" >Les informations correspondantes sont pour l'entreprise {infosOtherUser?.entreprise} </p> */}
-                                            <div className='mb-3'>
-                                                Veuillez demander les parties de KYC de <b> {infosOtherUser?.entreprise} </b> dont vous souhaiterez voir.
-                                            </div>
+                                            {oneKycForBusiness?.validationKycDate && oneKycForBusiness?.validAml==1 && oneKycForBusiness?.validIdentity==1 && oneKycForBusiness?.validRepresentative==1 && oneKycForBusiness?.validBeneficiary==1 && oneKycForBusiness?.validStructure==1 && oneKycForBusiness?.validPoliticallyExposed==1 && oneKycForBusiness?.validFinancialOperation==1 && oneKycForBusiness?.validFundOrigin==1 && oneKycForBusiness?.validFinancialInformation==1 && oneKycForBusiness?.validFinancialTransaction==1 && oneKycForBusiness?.validLegalDocument==1? (
+                                                <>
+                                                
+                                                    <div className='mb-3'>
+                                                        Veuillez demander les parties de KYC de <b> {infosOtherUser?.entreprise} </b> dont vous souhaiterez voir.
+                                                    </div>
 
-                                            <form onSubmit={handleSubmit}>
-                                                <div className='form-group'>
-                                                    <label>
+                                                    <form onSubmit={handleSubmit}>
+                                                        <div className='form-group'>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    value="Questionnaire AML"
+                                                                    className='mx-3'
+                                                                    checked={selectedOptionsEntreprise.includes("Questionnaire AML")}
+                                                                    onChange={handleOptionChangeEntreprise}
+                                                                />
+                                                                Questionnaire AML
+                                                            </label>
+                                                        </div>
+                                                        <div className='form-group'>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    value="Justificatif d'identité"
+                                                                    className='mx-3'
+                                                                    checked={selectedOptionsEntreprise.includes("Justificatif d'identité")}
+                                                                    onChange={handleOptionChangeEntreprise}
+                                                                />
+                                                                Justificatif d'identité
+                                                            </label>
+                                                        </div>
+                                                        <div className='form-group'>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    value="Représentants légaux"
+                                                                    className='mx-3'
+                                                                    checked={selectedOptionsEntreprise.includes("Représentants légaux")}
+                                                                    onChange={handleOptionChangeEntreprise}
+                                                                />
+                                                                Représentants légaux
+                                                            </label>
+                                                        </div>
+                                                        <div className='form-group'>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    value="Bénéficiaires effectifs"
+                                                                    className='mx-3'
+                                                                    checked={selectedOptionsEntreprise.includes("Bénéficiaires effectifs")}
+                                                                    onChange={handleOptionChangeEntreprise}
+                                                                />
+                                                                Bénéficiaires effectifs
+                                                            </label>
+                                                        </div>
+                                                        <div className='form-group'>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    value="Structures de contrôle"
+                                                                    className='mx-3'
+                                                                    checked={selectedOptionsEntreprise.includes("Structures de contrôle")}
+                                                                    onChange={handleOptionChangeEntreprise}
+                                                                />
+                                                                Structures de contrôle
+                                                            </label>
+                                                        </div>
+                                                        <div className='form-group'>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    value="Personnes politiquement exposées"
+                                                                    className='mx-3'
+                                                                    checked={selectedOptionsEntreprise.includes("Personnes politiquement exposées")}
+                                                                    onChange={handleOptionChangeEntreprise}
+                                                                />
+                                                                Personnes politiquement exposées
+                                                            </label>
+                                                        </div>
+                                                        <div className='form-group'>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    value="Opérations financières"
+                                                                    className='mx-3'
+                                                                    checked={selectedOptionsEntreprise.includes("Opérations financières")}
+                                                                    onChange={handleOptionChangeEntreprise}
+                                                                />
+                                                                Opérations financières
+                                                            </label>
+                                                        </div>
+                                                        <div className='form-group'>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    value="Origine des fonds"
+                                                                    className='mx-3'
+                                                                    checked={selectedOptionsEntreprise.includes("Origine des fonds")}
+                                                                    onChange={handleOptionChangeEntreprise}
+                                                                />
+                                                                Origine des fonds
+                                                            </label>
+                                                        </div>
+                                                        <div className='form-group'>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    value="Informations financières"
+                                                                    className='mx-3'
+                                                                    checked={selectedOptionsEntreprise.includes("Informations financières")}
+                                                                    onChange={handleOptionChangeEntreprise}
+                                                                />
+                                                                Informations financières
+                                                            </label>
+                                                        </div>
+                                                        <div className='form-group'>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    value="Transactions financières"
+                                                                    className='mx-3'
+                                                                    checked={selectedOptionsEntreprise.includes("Transactions financières")}
+                                                                    onChange={handleOptionChangeEntreprise}
+                                                                />
+                                                                Transactions financières
+                                                            </label>
+                                                        </div>
+                                                        <div className='form-group'>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    value="Documents légaux"
+                                                                    className='mx-3'
+                                                                    checked={selectedOptionsEntreprise.includes("Documents légaux")}
+                                                                    onChange={handleOptionChangeEntreprise}
+                                                                />
+                                                                Documents légaux
+                                                            </label>
+                                                        </div>
+                                                        <div className='form-group'>
+                                                        <label
+                                                                htmlFor="emailNotification"
+                                                            className="text-blackish-blue mt-3"
+                                                        >
+                                                            Votre email de notification
+                                                        </label>
                                                         <input
-                                                            type="checkbox"
-                                                            value="Questionnaire AML"
-                                                            className='mx-3'
-                                                            checked={selectedOptionsEntreprise.includes("Questionnaire AML")}
-                                                            onChange={handleOptionChangeEntreprise}
+                                                            className="form-control gr-text-11 border bg-white"
+                                                            type="email"
+                                                            id="emailNotification"
+                                                            placeholder="Votre email de notification"
+                                                            required
+                                                            defaultValue={emailNotification} 
+                                                            onChange={(event)=>setEmailNotification(event.target.value)}
+                                                            
                                                         />
-                                                        Questionnaire AML
-                                                    </label>
-                                                </div>
-                                                <div className='form-group'>
-                                                    <label>
-                                                        <input
-                                                            type="checkbox"
-                                                            value="Justificatif d'identité"
-                                                            className='mx-3'
-                                                            checked={selectedOptionsEntreprise.includes("Justificatif d'identité")}
-                                                            onChange={handleOptionChangeEntreprise}
-                                                        />
-                                                        Justificatif d'identité
-                                                    </label>
-                                                </div>
-                                                <div className='form-group'>
-                                                    <label>
-                                                        <input
-                                                            type="checkbox"
-                                                            value="Représentants légaux"
-                                                            className='mx-3'
-                                                            checked={selectedOptionsEntreprise.includes("Représentants légaux")}
-                                                            onChange={handleOptionChangeEntreprise}
-                                                        />
-                                                        Représentants légaux
-                                                    </label>
-                                                </div>
-                                                <div className='form-group'>
-                                                    <label>
-                                                        <input
-                                                            type="checkbox"
-                                                            value="Bénéficiaires effectifs"
-                                                            className='mx-3'
-                                                            checked={selectedOptionsEntreprise.includes("Bénéficiaires effectifs")}
-                                                            onChange={handleOptionChangeEntreprise}
-                                                        />
-                                                        Bénéficiaires effectifs
-                                                    </label>
-                                                </div>
-                                                <div className='form-group'>
-                                                    <label>
-                                                        <input
-                                                            type="checkbox"
-                                                            value="Structures de contrôle"
-                                                            className='mx-3'
-                                                            checked={selectedOptionsEntreprise.includes("Structures de contrôle")}
-                                                            onChange={handleOptionChangeEntreprise}
-                                                        />
-                                                        Structures de contrôle
-                                                    </label>
-                                                </div>
-                                                <div className='form-group'>
-                                                    <label>
-                                                        <input
-                                                            type="checkbox"
-                                                            value="Personnes politiquement exposées"
-                                                            className='mx-3'
-                                                            checked={selectedOptionsEntreprise.includes("Personnes politiquement exposées")}
-                                                            onChange={handleOptionChangeEntreprise}
-                                                        />
-                                                        Personnes politiquement exposées
-                                                    </label>
-                                                </div>
-                                                <div className='form-group'>
-                                                    <label>
-                                                        <input
-                                                            type="checkbox"
-                                                            value="Opérations financières"
-                                                            className='mx-3'
-                                                            checked={selectedOptionsEntreprise.includes("Opérations financières")}
-                                                            onChange={handleOptionChangeEntreprise}
-                                                        />
-                                                        Opérations financières
-                                                    </label>
-                                                </div>
-                                                <div className='form-group'>
-                                                    <label>
-                                                        <input
-                                                            type="checkbox"
-                                                            value="Origine des fonds"
-                                                            className='mx-3'
-                                                            checked={selectedOptionsEntreprise.includes("Origine des fonds")}
-                                                            onChange={handleOptionChangeEntreprise}
-                                                        />
-                                                        Origine des fonds
-                                                    </label>
-                                                </div>
-                                                <div className='form-group'>
-                                                    <label>
-                                                        <input
-                                                            type="checkbox"
-                                                            value="Informations financières"
-                                                            className='mx-3'
-                                                            checked={selectedOptionsEntreprise.includes("Informations financières")}
-                                                            onChange={handleOptionChangeEntreprise}
-                                                        />
-                                                        Informations financières
-                                                    </label>
-                                                </div>
-                                                <div className='form-group'>
-                                                    <label>
-                                                        <input
-                                                            type="checkbox"
-                                                            value="Transactions financières"
-                                                            className='mx-3'
-                                                            checked={selectedOptionsEntreprise.includes("Transactions financières")}
-                                                            onChange={handleOptionChangeEntreprise}
-                                                        />
-                                                        Transactions financières
-                                                    </label>
-                                                </div>
-                                                <div className='form-group'>
-                                                    <label>
-                                                        <input
-                                                            type="checkbox"
-                                                            value="Documents légaux"
-                                                            className='mx-3'
-                                                            checked={selectedOptionsEntreprise.includes("Documents légaux")}
-                                                            onChange={handleOptionChangeEntreprise}
-                                                        />
-                                                        Documents légaux
-                                                    </label>
-                                                </div>
-                                                <div className='form-group'>
-                                                  <label
-                                                        htmlFor="emailNotification"
-                                                      className="text-blackish-blue mt-3"
-                                                  >
-                                                      Votre email de notification
-                                                  </label>
-                                                  <input
-                                                    className="form-control gr-text-11 border bg-white"
-                                                    type="email"
-                                                    id="emailNotification"
-                                                    placeholder="Votre email de notification"
-                                                    required
-                                                    defaultValue={emailNotification} 
-                                                    onChange={(event)=>setEmailNotification(event.target.value)}
-                                                    
-                                                  />
-                                                </div>
-                                                <div className="form-group mt-3">
-                                                  <label
-                                                      htmlFor="object"
-                                                      className="text-blackish-blue "
-                                                  >
-                                                      Objet de la demande du KYC
-                                                  </label>
-                                                  <textarea
-                                                      className="form-control gr-text-11 border bg-white"
-                                                      type="text"
-                                                      id="object"
-                                                      placeholder=""
-                                                      defaultValue={object} 
-                                                      onChange={(event)=>setObject(event.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
-                                                    <button className="btn btn-primary" onClick={handleSubmitEntreprise} disabled={isLoggingIn}>Envoyer</button>
-                                                </div>
-                                            </form>
+                                                        </div>
+                                                        <div className="form-group mt-3">
+                                                        <label
+                                                            htmlFor="object"
+                                                            className="text-blackish-blue "
+                                                        >
+                                                            Objet de la demande du KYC
+                                                        </label>
+                                                        <textarea
+                                                            className="form-control gr-text-11 border bg-white"
+                                                            type="text"
+                                                            id="object"
+                                                            placeholder=""
+                                                            defaultValue={object} 
+                                                            onChange={(event)=>setObject(event.target.value)}
+                                                            />
+                                                        </div>
+                                                        <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                                            <button className="btn btn-primary" onClick={handleSubmitEntreprise} disabled={isLoggingIn}>Envoyer</button>
+                                                        </div>
+                                                    </form>
+                                                </>
+                                            ):(<b className='colorRed text-center'>Désolé le Kyc de cette entreprise n'a pas encore été validé </b>)}
                                         </>
 
                                       // ***********PARTIE PARTICULIER**************
@@ -1059,126 +1112,132 @@ const DemandeAccesKyc = () => {
                                     <>
                                         {!oneKycForParticular?.message ?(
                                             <>
-                                                <div className='mb-3'>
-                                                    Veuillez demander les parties de KYC de <b>  {infosOtherUser?.lastName} {infosOtherUser?.firstName}</b> dont vous souhaiterez voir.
-                                                    
-                                                </div>
 
-                                                <form onSubmit={handleSubmit}>
-                                                    <div className='form-group'>
-                                                        <label>
-                                                            <input
-                                                                type="checkbox"
-                                                                value="Questionnaire AML"
-                                                                className='mx-3'
-                                                                checked={selectedOptions.includes("Questionnaire AML")}
-                                                                onChange={handleOptionChange}
-                                                            />
-                                                            Questionnaire AML
-                                                        </label>
-                                                    </div>
-                                                    <div className='form-group'>
-                                                        <label>
-                                                            <input
-                                                                type="checkbox"
-                                                                value="Questionnaire FATCA"
-                                                                className='mx-3'
-                                                                checked={selectedOptions.includes("Questionnaire FATCA")}
-                                                                onChange={handleOptionChange}
-                                                            />
-                                                            Questionnaire FATCA
-                                                        </label>
-                                                    </div>
-                                                    <div className='form-group'>
-                                                        <label>
-                                                            <input
-                                                                type="checkbox"
-                                                                value="Justificatif d'identité"
-                                                                className='mx-3'
-                                                                checked={selectedOptions.includes("Justificatif d'identité")}
-                                                                onChange={handleOptionChange}
-                                                            />
-                                                            Justificatif d'identité
-                                                        </label>
-                                                    </div>
-                                                    <div className='form-group'>
-                                                        <label>
-                                                            <input
-                                                                type="checkbox"
-                                                                value="Justificatif de domicile"
-                                                                className='mx-3'
-                                                                checked={selectedOptions.includes("Justificatif de domicile")}
-                                                                onChange={handleOptionChange}
-                                                            />
-                                                            Justificatif de domicile
-                                                        </label>
-                                                    </div>
-                                                    <div className='form-group'>
-                                                        <label>
-                                                            <input
-                                                                type="checkbox"
-                                                                value="Photo"
-                                                                className='mx-3'
-                                                                checked={selectedOptions.includes("Photo")}
-                                                                onChange={handleOptionChange}
-                                                            />
-                                                            Photo
-                                                        </label>
-                                                    </div>
-                                                    <div className='form-group'>
-                                                        <label>
-                                                            <input
-                                                                type="checkbox"
-                                                                value="Signature"
-                                                                className='mx-3'
-                                                                checked={selectedOptions.includes("Signature")}
-                                                                onChange={handleOptionChange}
-                                                            />
-                                                            Signature
-                                                        </label>
-                                                    </div>
-
-                                                    <div className='form-group'>
-                                                      <label
-                                                            htmlFor="emailNotification"
-                                                          className="text-blackish-blue mt-3"
-                                                      >
-                                                          Votre email de notification
-                                                      </label>
-                                                      <input
-                                                        className="form-control gr-text-11 border bg-white"
-                                                        type="email"
-                                                        id="emailNotification"
-                                                        placeholder="Votre email de notification"
-                                                        required
-                                                        defaultValue={emailNotification} 
-                                                        onChange={(event)=>setEmailNotification(event.target.value)}
+                                            {oneKycForParticular?.validQuiz==1 && oneKycForParticular?.validQuizTwo==1 && oneKycForParticular?.validQuizFatca==1 && oneKycForParticular?.validIdentityOne==1 && oneKycForParticular?.validPhotoWithDocument && oneKycForParticular?.validIdentity==1 && oneKycForParticular?.validResidence==1 && oneKycForParticular?.validPhoto==1 && oneKycForParticular?.validSignature==1 ? (
+                                                <>
+                                                
+                                                    <div className='mb-3'>
+                                                        Veuillez demander les parties de KYC de <b>  {infosOtherUser?.lastName} {infosOtherUser?.firstName}</b> dont vous souhaiterez voir.
                                                         
-                                                      />
-                                                    </div>
-                                                    
-                                                    <div className="form-group mt-3">
-                                                      <label
-                                                          htmlFor="object"
-                                                          className="text-blackish-blue"
-                                                      >
-                                                          Objet de la demande du KYC
-                                                      </label>
-                                                      <textarea
-                                                          className="form-control gr-text-11 border bg-white"
-                                                          type="text"
-                                                          id="object"
-                                                          placeholder=""
-                                                          defaultValue={object} 
-                                                          onChange={(event)=>setObject(event.target.value)}
-                                                        />
                                                     </div>
 
-                                                    <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
-                                                        <button className="btn btn-primary" onClick={requestKycParticular } disabled={isLoggingIn}>Envoyer</button>
-                                                    </div>
-                                                </form>
-                                                {/* FIN */}
+                                                    <form onSubmit={handleSubmit}>
+                                                        <div className='form-group'>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    value="Questionnaire AML"
+                                                                    className='mx-3'
+                                                                    checked={selectedOptions.includes("Questionnaire AML")}
+                                                                    onChange={handleOptionChange}
+                                                                />
+                                                                Questionnaire AML
+                                                            </label>
+                                                        </div>
+                                                        <div className='form-group'>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    value="Questionnaire FATCA"
+                                                                    className='mx-3'
+                                                                    checked={selectedOptions.includes("Questionnaire FATCA")}
+                                                                    onChange={handleOptionChange}
+                                                                />
+                                                                Questionnaire FATCA
+                                                            </label>
+                                                        </div>
+                                                        <div className='form-group'>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    value="Justificatif d'identité"
+                                                                    className='mx-3'
+                                                                    checked={selectedOptions.includes("Justificatif d'identité")}
+                                                                    onChange={handleOptionChange}
+                                                                />
+                                                                Justificatif d'identité
+                                                            </label>
+                                                        </div>
+                                                        <div className='form-group'>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    value="Justificatif de domicile"
+                                                                    className='mx-3'
+                                                                    checked={selectedOptions.includes("Justificatif de domicile")}
+                                                                    onChange={handleOptionChange}
+                                                                />
+                                                                Justificatif de domicile
+                                                            </label>
+                                                        </div>
+                                                        <div className='form-group'>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    value="Photo"
+                                                                    className='mx-3'
+                                                                    checked={selectedOptions.includes("Photo")}
+                                                                    onChange={handleOptionChange}
+                                                                />
+                                                                Photo
+                                                            </label>
+                                                        </div>
+                                                        <div className='form-group'>
+                                                            <label>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    value="Signature"
+                                                                    className='mx-3'
+                                                                    checked={selectedOptions.includes("Signature")}
+                                                                    onChange={handleOptionChange}
+                                                                />
+                                                                Signature
+                                                            </label>
+                                                        </div>
+
+                                                        <div className='form-group'>
+                                                        <label
+                                                                htmlFor="emailNotification"
+                                                            className="text-blackish-blue mt-3"
+                                                        >
+                                                            Votre email de notification
+                                                        </label>
+                                                        <input
+                                                            className="form-control gr-text-11 border bg-white"
+                                                            type="email"
+                                                            id="emailNotification"
+                                                            placeholder="Votre email de notification"
+                                                            required
+                                                            defaultValue={emailNotification} 
+                                                            onChange={(event)=>setEmailNotification(event.target.value)}
+                                                            
+                                                        />
+                                                        </div>
+                                                        
+                                                        <div className="form-group mt-3">
+                                                        <label
+                                                            htmlFor="object"
+                                                            className="text-blackish-blue"
+                                                        >
+                                                            Objet de la demande du KYC
+                                                        </label>
+                                                        <textarea
+                                                            className="form-control gr-text-11 border bg-white"
+                                                            type="text"
+                                                            id="object"
+                                                            placeholder=""
+                                                            defaultValue={object} 
+                                                            onChange={(event)=>setObject(event.target.value)}
+                                                            />
+                                                        </div>
+
+                                                        <div className="form-group mb-6 mt-3 col-lg-12 col-md-12  row justify-content-between">
+                                                            <button className="btn btn-primary" onClick={requestKycParticular } disabled={isLoggingIn}>Envoyer</button>
+                                                        </div>
+                                                    </form>
+                                                </>
+                                            ):(<b className='colorRed text-center'>Désolé le Kyc de cet utilisateur n'a pas encore été validé </b>)}
+                                            {/* FIN */}
                                             </>
                                         ):(<p className="gr-text-8 colorRed text-center" id="addon-wrapping">Cet utilisateur n'a pas rempli le Kyc</p>)}
                                     </>

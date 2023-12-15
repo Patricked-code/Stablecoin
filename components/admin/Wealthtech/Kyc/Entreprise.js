@@ -5797,12 +5797,12 @@ useEffect(async() => {
                                                             <div className="form-group mb-6">
                                                                 <label
                                                                     htmlFor="comment"
-                                                                    className="text-blackish-blue mb-2"
+                                                                    className="text-blackish-blue "
                                                                 >
                                                                     Commentaire
                                                                 </label>
                                                                 <textarea
-                                                                    className="form-control gr-text-11 border mt-3 bg-white"
+                                                                    className="form-control gr-text-11 border bg-white"
                                                                     type="text"
                                                                     id="comment"
                                                                     placeholder="commentaire ici"

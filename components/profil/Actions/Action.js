@@ -143,7 +143,7 @@ const Action = () => {
                                             <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
                                         </div> */}
                                         <div className='title'>
-                                            <h3>Demande de paiement</h3>
+                                            <h3>Demande de paiement</h3><br/>
                                         </div>
                                         </div>
                                         <div className='btn-box'>
@@ -174,7 +174,7 @@ const Action = () => {
                                             <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
                                         </div> */}
                                         <div className='title'>
-                                            <h3>Financer mon projet </h3>
+                                            <h3>Financer mon projet </h3><br/>
                                         </div>
                                         </div>
                                         <div className='btn-box'>
@@ -200,7 +200,7 @@ const Action = () => {
                                     <div className='single-cryptocurrency-box'>
                                         <div className='d-flex align-items-center'>
                                         <div className='title'>
-                                            <h3>Créer une boutique en ligne</h3>
+                                            <h3>Demande d'utilisation de stablecoin comme moyen de paiement</h3>
                                         </div>
                                         </div>
                                         
@@ -221,7 +221,6 @@ const Action = () => {
                             </div>
                         </div>
                     </div>
-
                     <div className='col-lg-6 col-md-6'>
                         <div className='currency-selection text-center'>
                             <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
@@ -230,115 +229,7 @@ const Action = () => {
                                         <div className='d-flex align-items-center'>
 
                                         <div className='title'>
-                                            <h3>Fonds collectés "crowdfunding" </h3>
-                                        </div>
-                                        </div>
-                                        <div className='btn-box'>
-                                        <Button
-                                            block
-                                            color="primary"
-                                            type="button"
-                                        >
-                                            Voir plus
-                                        </Button>
-                                        {/* Fin */}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className='col-lg-6 col-md-6'>
-                        <div className='currency-selection text-center'>
-                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                            <div className='cryptocurrency-slides'>
-                                    <div className='single-cryptocurrency-box'>
-                                        <div className='d-flex align-items-center'>
-
-                                        <div className='title'>
-                                            <h3>Investir dans OPCVM</h3>
-                                        </div>
-                                        </div>
-                                        <div className='btn-box'>
-                                        <Button
-                                            block
-                                            color="primary"
-                                            type="button"
-                                        >
-                                            Voir plus
-                                        </Button>
-                                        {/* Fin */}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className='col-lg-6 col-md-6'>
-                        <div className='currency-selection text-center'>
-                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                            <div className='cryptocurrency-slides'>
-                                    <div className='single-cryptocurrency-box'>
-                                        <div className='d-flex align-items-center'>
-
-                                        <div className='title'>
-                                            <h3>Ma dette "crowdfunding"</h3>
-                                        </div>
-                                        </div>
-                                        <div className='btn-box'>
-                                        <Button
-                                            block
-                                            color="primary"
-                                            type="button"
-                                        >
-                                            Voir plus
-                                        </Button>
-                                        {/* Fin */}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className='col-lg-6 col-md-6'>
-                        <div className='currency-selection text-center'>
-                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                            <div className='cryptocurrency-slides'>
-                                    <div className='single-cryptocurrency-box'>
-                                        <div className='d-flex align-items-center'>
-
-                                        <div className='title'>
-                                            <h3>Integrer E-WARI comme moyen de paiement sur mon site en ligne</h3>
-                                        </div>
-                                        </div>
-                                        <div className='btn-box'>
-                                        <Button
-                                            block
-                                            color="primary"
-                                            type="button"
-                                        >
-                                            Voir plus
-                                        </Button>
-                                        {/* Fin */}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className='col-lg-6 col-md-6'>
-                        <div className='currency-selection text-center'>
-                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                            <div className='cryptocurrency-slides'>
-                                    <div className='single-cryptocurrency-box'>
-                                        <div className='d-flex align-items-center'>
-
-                                        <div className='title'>
-                                            <h3>Boutique</h3>
+                                            <h3>Boutique</h3><br/>
                                         </div>
                                         </div>
                                         <div className='btn-box'>
@@ -358,6 +249,87 @@ const Action = () => {
                             </div>
                         </div>
                     </div>
+                    <div className='col-lg-6 col-md-6'>
+                        <div className='currency-selection text-center'>
+                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className='cryptocurrency-slides'>
+                                    <div className='single-cryptocurrency-box'>
+                                        <div className='d-flex align-items-center'>
+
+                                        <div className='title'>
+                                            <h3>Fonds collectés "crowdfunding" </h3><br/>
+                                        </div>
+                                        </div>
+                                        <div className='btn-box'>
+                                        <Button
+                                            block
+                                            color="primary"
+                                            type="button"
+                                        >
+                                            Voir plus
+                                        </Button>
+                                        {/* Fin */}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className='col-lg-6 col-md-6'>
+                        <div className='currency-selection text-center'>
+                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className='cryptocurrency-slides'>
+                                    <div className='single-cryptocurrency-box'>
+                                        <div className='d-flex align-items-center'>
+
+                                        <div className='title'>
+                                            <h3>Investir dans OPCVM</h3> <br/>
+                                        </div>
+                                        </div>
+                                        <div className='btn-box'>
+                                        <Button
+                                            block
+                                            color="primary"
+                                            type="button"
+                                        >
+                                            Voir plus
+                                        </Button>
+                                        {/* Fin */}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className='col-lg-6 col-md-6'>
+                        <div className='currency-selection text-center'>
+                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className='cryptocurrency-slides'>
+                                    <div className='single-cryptocurrency-box'>
+                                        <div className='d-flex align-items-center'>
+
+                                        <div className='title'>
+                                            <h3>Ma dette "crowdfunding"</h3> <br/>
+                                        </div>
+                                        </div>
+                                        <div className='btn-box'>
+                                        <Button
+                                            block
+                                            color="primary"
+                                            type="button"
+                                        >
+                                            Voir plus
+                                        </Button>
+                                        {/* Fin */}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         ) : ('')}

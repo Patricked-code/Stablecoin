@@ -205,7 +205,7 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
             Swal.fire({
                 position: 'center',
                 icon: 'error',
-                html: `<p> Désolé la date de validité doit être supérieure à la date du jour. </p>` ,
+                html: `<p> Désolé la date d'expiration doit être supérieure à la date du jour. </p>` ,
                 showConfirmButton: false,
                 timer: 10000
             })
@@ -275,7 +275,7 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
                 Swal.fire({
                     position: 'center',
                     icon: 'error',
-                    html: `<p> Désolé la date de validité doit être supérieure à la date du jour. </p>` ,
+                    html: `<p> Désolé la date d'expiration doit être supérieure à la date du jour. </p>` ,
                     showConfirmButton: false,
                     timer: 10000
                 })
@@ -581,7 +581,7 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
                                                 type='date'
                                                 id='firstName'
                                                 className='form-control'
-                                                placeholder='Date de validité '
+                                                placeholder="Date d'expiration"
                                                 defaultValue={validityDate} 
                                                 onChange={(event)=>setValidityDate(event.target.value)}
                                             />

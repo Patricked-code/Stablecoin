@@ -250,6 +250,14 @@ const CAccueilKycDigital = () => {
     }
     //  FIN
 
+    // FONCTION POUR FORMATER LA DATE POUR LES COMPARAISONS
+    const formatDateCompared = (_updatedAt) =>{
+        const maDate = moment(_updatedAt).format('YYYY/MM/DD');
+        // const maDate = moment(_updatedAt).format('DD/MM/YYYY à HH:mm');
+        return  maDate
+    }
+    //  FIN
+
 
     /**
      * Effet secondaire qui met à jour la clé 'kycRequestId' dans le stockage local lorsque la valeur de kycRequestId change.
@@ -432,9 +440,13 @@ const CAccueilKycDigital = () => {
                                                                         <div className='d-flex'>
                                                                            
                                                                             <p className=" py-0 " onClick={()=>setKycRequestId(data?.id)}>
-                                                                                <Link href="/profil/institution/kyc-digital/show-kyc" className="">
-                                                                                    <small className=" py-0 btn btn-primary">Voir Kyc</small> 
-                                                                                </Link>
+                                                                                {formatDateCompared(data?.deadline) < formatDateCompared(new Date()) ? (
+                                                                                    <small className="py-0 btn btn-secondary" disabled>Voir Kyc</small>
+                                                                                ) : (
+                                                                                    <Link href="/profil/institution/kyc-digital/show-kyc" className="">
+                                                                                        <small className="py-0 btn btn-primary">Voir Kyc</small>
+                                                                                    </Link>
+                                                                                )}
                                                                             </p>
                                                                             <p onClick={()=>setKycRequestId(data?.id)}>
                                                                                 <small className=" py-0   btn btn-success" onClick={handleShow}>Retour</small>
@@ -475,6 +487,7 @@ const CAccueilKycDigital = () => {
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Propriétaire</p></Table.Column>
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date limite</p></Table.Column>
+                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actions</p></Table.Column>
                                                         </Table.Header>
                                                         <Table.Body>
                                                             {kycRequestTreaty?.map((data, index) => (
@@ -482,6 +495,20 @@ const CAccueilKycDigital = () => {
                                                                     <Table.Cell ><small className=" py-0 ">{data?.nameOwnerKyc}</small></Table.Cell>
                                                                     <Table.Cell ><small className=" py-0 ">{formatDate(data?.sendingDate)}</small></Table.Cell>
                                                                     <Table.Cell ><small className=" py-0 ">{data?.deadline?formatDate(data?.deadline):"Aucune"}</small></Table.Cell>
+                                                                    <Table.Cell className="row">
+                                                                        <div className='d-flex'>
+                                                                           
+                                                                            <p className=" py-0 " onClick={()=>setKycRequestId(data?.id)}>
+                                                                                {formatDateCompared(data?.deadline) < formatDateCompared(new Date()) ? (
+                                                                                    <small className="py-0 btn btn-secondary" disabled>Voir Kyc</small>
+                                                                                ) : (
+                                                                                    <Link href="/profil/institution/kyc-digital/show-kyc" className="">
+                                                                                        <small className="py-0 btn btn-primary">Voir Kyc</small>
+                                                                                    </Link>
+                                                                                )}
+                                                                            </p>
+                                                                        </div>
+                                                                    </Table.Cell>
                                                                 </Table.Row >
                                                                 
                                                             ))} 

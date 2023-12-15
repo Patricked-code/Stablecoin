@@ -20,7 +20,8 @@ import Web3 from "web3";
 
 // Importer ABI de E-WARI
 import ABI_TOKEN_EWARI from "../../../components/Contrats/Abi/AbiStablecoin.json";
-
+import ABI_FACTORY_ESCROW from "../../../components/Contrats/Abi/AbiFactoryEscrow.json";
+import ABI_ESCROW_STABLECOIN from "../../../components/Contrats/Abi/AbiFactoryEscrow.json";
 
 
 
@@ -47,8 +48,11 @@ import {
 const PaiementPending = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
-    const ADDRESS_CONTRAT_EWARI =process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
-    
+
+    // Pour les smart contrats
+    const ADDRESS_CONTRAT_FACTORY_ESCROW = process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_FACTORY_ESCROW
+    const ADDRESS_CONTRAT_EWARI = process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
+    const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY
     const [currentUser, setCurrentUser] = useState();
     const [magicCurrentAddress, setMagicCurrentAddress] = useState();
     const [provider, setProvider] = useState(null);
@@ -61,10 +65,10 @@ const PaiementPending = () => {
     const [idPaymentPending, setIdPaymentPending] = useState();
     const [currentnameEntreprise, setCurrentEntreprise] = useState();
     const [currentSenderEmail, setCurrentSenderEmail] = useState();
-    const [currentsenderAddress, setCurrentSenderAddress] = useState();
+    const [currentSenderAddress, setCurrentSenderAddress] = useState();
     const [currentAmount, setCurrentAmount] = useState();
     const [currentSenderId, setCurrentSenderId] = useState();
-    
+    const [contractFactoryEscrow, setContractFactoryEscrow] = useState()
     
     
 
@@ -81,7 +85,8 @@ const PaiementPending = () => {
     const [verifyAddress, setVerifyAddress] = useState();
     const [addressBcOtherUser, setAddressBcOtherUser] = useState();
     const [addressBcOtherUserRevoke, setAddressBcOtherUserRevoke] = useState();
-
+    const [escrowContractAddress, setEscrowContractAddress] = useState();
+    
     
     
 
@@ -109,7 +114,7 @@ const PaiementPending = () => {
 
     // RECUPERATION DES INFORMATIONS QUI CONCERNENT MAGIC
     useEffect(() => {
-        (async () => {
+        const fetchData = async () => {
             if (!!magic && !!provider) {
                 const userMetadatas = await magic.user.getMetadata();
                 const signer = provider.getSigner();
@@ -118,6 +123,46 @@ const PaiementPending = () => {
                 setMagicCurrentAddress(userAddress)
                 //const userBalance = ethers.utils.formatEther(await provider.getBalance(userAddress))
                 // FIN
+
+                
+                /**
+                 * Smart contrat du factory d'escrow.
+                 * @type {string}
+                 */
+                 const walletRelay = new ethers.Wallet(PRIVATE_KEY, provider);
+                 const contract_factoryEscrow = new ethers.Contract(ADDRESS_CONTRAT_FACTORY_ESCROW, ABI_FACTORY_ESCROW.abi, signer);
+                 setContractFactoryEscrow(contract_factoryEscrow)
+
+                 console.log("contract_factoryEscrow=>",contract_factoryEscrow)
+                 console.log("currentSenderAddress=>",currentSenderAddress)
+                 try {
+                    // Code qui provoque l'erreur
+                    const escrow_contractAddress = await contract_factoryEscrow.getEscrowContractByBeneficiary("0x2eb9B095202f515388973c78d8308C478f8AA6C2");
+                    // const escrow_contractAddress = await contract_factoryEscrow.getEscrowContracts();
+                    
+                    setEscrowContractAddress(escrow_contractAddress)
+                    console.log("escrow_contractAddress=>",escrow_contractAddress)
+                  } catch (error) {
+                    if (error.message.includes("Aucun contrat Escrow trouve pour ce beneficiaire")) {
+                      // Afficher un message personnalisé
+                      console.error("Aucun contrat Escrow trouvé pour ce bénéficiaire");
+                    } else {
+                      // Gérer d'autres erreurs ici
+                      console.error("Une erreur inattendue s'est produite:", error.message);
+                    }
+                  }
+                  
+                //  try {
+                    // const escrow_contractAddress = await contract_factoryEscrow.getEscrowContractByBeneficiary("0x2eb9B095202f515388973c78d8308C478f8AA6C2");
+                    // setEscrowContractAddress(escrow_contractAddress)
+                    // console.log("escrow_contractAddress=>",escrow_contractAddress)
+                    // return escrow_contractAddress;
+    
+                // } catch (error) {
+                //     console.error('Error:', error);
+                //     // throw new Error('Aucun contrat Escrow trouvé pour ce bénéficiaire');
+                // }
+                    
 
                 // *************************************************************************
                     // INTERACTION AVEC LE SMART CONTRAT DE STABLECOIN
@@ -132,14 +177,38 @@ const PaiementPending = () => {
 
              
             }
-        })();
+        }
+        // Appel de la fonction asynchrone pour obtenir les données lorsqu'il y a des changements dans `provider` ou `magic`.
+        fetchData();;
 
     }, [provider, magic]);
     //  Fin
 
+    // useEffect(() => {
+    //     const fetchDataEscrowContractAddress = async () => {
+    //     //  Obtenir l'adresse du contrat d'escrow de l'utilisateur
+    //     console.log("contractFactoryEscrow=>",contractFactoryEscrow)
+    //     // if (currentSenderAddress) {
+    //         try {
+    //             const escrow_contractAddress = await contractFactoryEscrow.getEscrowContractByBeneficiary("0x2eb9B095202f515388973c78d8308C478f8AA6C2");
+    //             setEscrowContractAddress(escrow_contractAddress)
+    //             console.log("escrow_contractAddress=>",escrow_contractAddress)
+    //             return escrow_contractAddress;
+
+    //         } catch (error) {
+    //             console.error('Error:', error);
+    //             // throw new Error('Aucun contrat Escrow trouvé pour ce bénéficiaire');
+    //         }
+    //     // } 
+    //     };
+    //     // Appel de la fonction asynchrone pour obtenir les données lorsqu'il y a des changements dans `provider` ou `magic`.
+    //     fetchDataEscrowContractAddress();
+    // },[])
+
+
 
     useEffect(() => {
-        (async () => {
+        const fetchData = async () => {
     
         // Obtenir un utilisateur en fonction de son email 
         const getUser = async () => {
@@ -161,6 +230,9 @@ const PaiementPending = () => {
         };
         await getUser();
         // Fin
+
+
+   
     
     
         // Obtenir les données de la demande de paiement en fonction de l'utilisateur connecté 
@@ -185,7 +257,9 @@ const PaiementPending = () => {
             await getPaymentPendingOfUser();
         }
         // Fin
-    })();
+    }
+    // Appel de la fonction asynchrone pour obtenir les données lorsqu'il y a des changements dans `provider` ou `magic`.
+    fetchData();
     
     }, [currentUser, dataPaymentPending]);
 
@@ -280,7 +354,7 @@ const transferKorre = async () => {
   try {
     const tosting = String(currentAmount)
     const mountWei = ethers.utils.parseUnits(tosting, 10);
-    await contractTokenEwari.transfer(currentsenderAddress, mountWei).then((transferResult) => {
+    await contractTokenEwari.transfer(currentSenderAddress, mountWei).then((transferResult) => {
      
 
       // PARTIE SWITCH ALERT
@@ -363,7 +437,7 @@ const transferKorre = async () => {
         console.log("AAAAAAAAAAAAAAAAAA")
       const tosting = String(currentAmount)
       const mountWei = ethers.utils.parseUnits(tosting, 10);
-      await contractTokenEwari.transfer(currentsenderAddress, mountWei).then((transferResult) => {
+      await contractTokenEwari.transfer(currentSenderAddress, mountWei).then((transferResult) => {
         console.log("AAAAAAAAAAAAAAAAAA 22")
        
 
@@ -538,7 +612,7 @@ const formatDate = (_updatedAt) =>{
 
     return (
         <>
-        {magicCurrentAddress?( 
+        {/* {magicCurrentAddress?(  */}
             <>
                 <div className='' >
                     <div className=' mx-15'>
@@ -660,11 +734,11 @@ const formatDate = (_updatedAt) =>{
                         </div>
                 </div>
             </>
-        ):(
+         {/* ):(
             <span className="text-center bg-default-2 btn-bottom-text  d-block gr-text-5 text-blackish-blue gr-opacity-10 my-35">
                 <Loading/>
             </span>
-        )}
+        )}  */}
 
 
 
@@ -710,7 +784,7 @@ const formatDate = (_updatedAt) =>{
         {/* ********************************************************************************** */}
         <Modal show={showPayer} className="mt-15" onHide={handleClosePayer}>
             <Modal.Header closeButton className='bgColorGreen'>
-                <Modal.Title className="text-white" >Validation de paiement</Modal.Title>                
+                <Modal.Title className="text-white" >Validation de paiement= {currentSenderAddress} <br/>{escrowContractAddress}</Modal.Title>                
             </Modal.Header>
             {/* <Form role="form" onSubmit={hant}> */}
                 <Modal.Body>

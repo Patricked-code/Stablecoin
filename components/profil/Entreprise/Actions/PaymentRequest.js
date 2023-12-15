@@ -133,8 +133,8 @@ const PaymentRequest = () => {
       
 
 
-     // FONCTION DE LA DEMANDE DE PAIEMENT
-     const addPaymentRequest= async(event) =>{
+  // FONCTION DE LA DEMANDE DE PAIEMENT
+  const addPaymentRequest= async(event) =>{
       event.preventDefault();
       setIsLoggingIn(true)
       
@@ -406,7 +406,7 @@ const PaymentRequest = () => {
                                   xl="6"
                                 className="order-lg-1 text-center"
                               >
-                              <Button variant="success" onClick={addPaymentRequest} className="text-white" >
+                              <Button variant="success" disabled={isLoggingIn} onClick={addPaymentRequest} className="text-white" >
                                 Envoyer
                               </Button>
                               </Col>
@@ -518,7 +518,7 @@ const PaymentRequest = () => {
                                   xl="6"
                                 className="order-lg-1 text-center"
                               >
-                              <Button variant="success" onClick={addPaymentRequest} className="text-white" >
+                              <Button variant="success" disabled={isLoggingIn} onClick={addPaymentRequest} className="text-white" >
                                 Envoyer
                               </Button>
                               </Col>
@@ -629,7 +629,7 @@ const PaymentRequest = () => {
                                   xl="6"
                                 className="order-lg-1 text-center"
                               >
-                              <Button variant="success" onClick={addPaymentRequest} className="text-white" >
+                              <Button variant="success" onClick={addPaymentRequest} disabled={isLoggingIn} className="text-white" >
                                 Envoyer
                               </Button>
                               </Col>

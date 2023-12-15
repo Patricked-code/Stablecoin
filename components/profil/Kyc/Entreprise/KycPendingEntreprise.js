@@ -1544,7 +1544,7 @@ const validKycIdentity= async (event) => {
                                                 <div className='cryptocurrency-slides'>
                                                     <div className='single-cryptocurrency-box'>
                                                         <div className='title text-center '>
-                                                            <p className=" py-0 "> AML </p>
+                                                            <p className=" py-0 "> Questionnaires AML </p>
                                                             <p className=" py-0 ">{oneKycForEntreprise?.validAml==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
                                                         </div>
                                                         
@@ -1573,6 +1573,7 @@ const validKycIdentity= async (event) => {
                                                             <p className=" py-0 "> Identité </p>
                                                             <p className=" py-0 ">{oneKycForEntreprise?.validIdentity==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
                                                         </div>
+                                                        <br/>
                                                         
                                                         <div className='btn-box ' onClick={()=>setEtape(2)}>
                                                             <Button
@@ -1597,7 +1598,7 @@ const validKycIdentity= async (event) => {
                                                 <div className='cryptocurrency-slides'>
                                                     <div className='single-cryptocurrency-box'>
                                                         <div className='title text-center '>
-                                                            <p className=" py-0 "> Représentant </p>
+                                                            <p className=" py-0 "> Représentants légaux </p>
                                                             <p className=" py-0 ">{oneKycForEntreprise?.validRepresentative==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
                                                         </div>
                                                         
@@ -1624,7 +1625,7 @@ const validKycIdentity= async (event) => {
                                                 <div className='cryptocurrency-slides'>
                                                     <div className='single-cryptocurrency-box'>
                                                         <div className='title text-center '>
-                                                            <p className=" py-0 "> Bénéficiaire </p>
+                                                            <p className=" py-0 "> Bénéficiaire effectif </p>
                                                             <p className=" py-0 ">{oneKycForEntreprise?.validBeneficiary==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
                                                         </div>
                                                         
@@ -1651,7 +1652,7 @@ const validKycIdentity= async (event) => {
                                                 <div className='cryptocurrency-slides'>
                                                     <div className='single-cryptocurrency-box'>
                                                         <div className='title text-center '>
-                                                            <p className=" py-0 "> Control </p>
+                                                            <p className=" py-0 "> Structure de contrôle</p>
                                                             <p className=" py-0 ">{oneKycForEntreprise?.validStructure==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
                                                         </div>
                                                         
@@ -1678,7 +1679,7 @@ const validKycIdentity= async (event) => {
                                                 <div className='cryptocurrency-slides'>
                                                     <div className='single-cryptocurrency-box'>
                                                         <div className='title text-center '>
-                                                            <p className=" py-0 "> Politique </p>
+                                                            <p className=" py-0 "> Politiquement exposées </p>
                                                             <p className=" py-0 ">{oneKycForEntreprise?.validPoliticallyExposed==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
                                                         </div>
                                                         
@@ -1706,7 +1707,7 @@ const validKycIdentity= async (event) => {
                                                 <div className='cryptocurrency-slides'>
                                                     <div className='single-cryptocurrency-box'>
                                                         <div className='title text-center '>
-                                                            <p className=" py-0 "> Opérations </p>
+                                                            <p className=" py-0 "> Opérations financières </p>
                                                             <p className=" py-0 ">{oneKycForEntreprise?.validFinancialOperation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
                                                         </div>
                                                         
@@ -1733,7 +1734,7 @@ const validKycIdentity= async (event) => {
                                                 <div className='cryptocurrency-slides'>
                                                     <div className='single-cryptocurrency-box'>
                                                         <div className='title text-center '>
-                                                            <p className=" py-0 "> Fonds </p>
+                                                            <p className=" py-0 "> Origine des fonds </p>
                                                             <p className=" py-0 ">{oneKycForEntreprise?.validFundOrigin==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
                                                         </div>
                                                         
@@ -1759,7 +1760,7 @@ const validKycIdentity= async (event) => {
                                                 <div className='cryptocurrency-slides'>
                                                     <div className='single-cryptocurrency-box'>
                                                         <div className='title text-center '>
-                                                            <p className=" py-0 "> Financière </p>
+                                                            <p className=" py-0 "> Informations financières </p>
                                                             <p className=" py-0 ">{oneKycForEntreprise?.validFinancialInformation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
                                                         </div>
                                                         
@@ -1785,7 +1786,7 @@ const validKycIdentity= async (event) => {
                                                 <div className='cryptocurrency-slides'>
                                                     <div className='single-cryptocurrency-box'>
                                                         <div className='title text-center '>
-                                                            <p className=" py-0 "> Transactions </p>
+                                                            <p className=" py-0 "> Transactions financières</p>
                                                             <p className=" py-0 ">{oneKycForEntreprise?.validFinancialInformation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
                                                         </div>
                                                         
@@ -1811,7 +1812,7 @@ const validKycIdentity= async (event) => {
                                                 <div className='cryptocurrency-slides'>
                                                     <div className='single-cryptocurrency-box'>
                                                         <div className='title text-center '>
-                                                            <p className=" py-0 "> Documents </p>
+                                                            <p className=" py-0 "> Documents légaux </p>
                                                             <p className=" py-0 ">{oneKycForEntreprise?.validFinancialInformation==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
                                                         </div>
                                                         
@@ -1837,9 +1838,9 @@ const validKycIdentity= async (event) => {
                                                 <div className='cryptocurrency-slides'>
                                                     <div className='single-cryptocurrency-box'>
                                                         <div className='title text-center'>
-                                                        <p className=" py-0 ">{oneKycForEntreprise?.validAml==1 && oneKycForEntreprise?.validIdentity==1 && oneKycForEntreprise?.validRepresentative==1 && oneKycForEntreprise?.validBeneficiary==1 && oneKycForEntreprise?.validStructure==1 && oneKycForEntreprise?.validPoliticallyExposed==1 && oneKycForEntreprise?.validFinancialOperation==1 && oneKycForEntreprise?.validFundOrigin==1 && oneKycForEntreprise?.validFinancialInformation==1 && oneKycForEntreprise?.validFinancialTransaction==1 && oneKycForEntreprise?.validLegalDocument==1? (<b className='colorGreen'>Valider</b>):(<b className='colorRed'>En cours</b>)}</p>
+                                                        <p className=" py-0 ">{oneKycForEntreprise?.validationKycDate && oneKycForEntreprise?.validAml==1 && oneKycForEntreprise?.validIdentity==1 && oneKycForEntreprise?.validRepresentative==1 && oneKycForEntreprise?.validBeneficiary==1 && oneKycForEntreprise?.validStructure==1 && oneKycForEntreprise?.validPoliticallyExposed==1 && oneKycForEntreprise?.validFinancialOperation==1 && oneKycForEntreprise?.validFundOrigin==1 && oneKycForEntreprise?.validFinancialInformation==1 && oneKycForEntreprise?.validFinancialTransaction==1 && oneKycForEntreprise?.validLegalDocument==1? (<b className='colorGreen'>Valider</b>):(<b className='colorRed'>En cours</b>)}</p>
                                                         <p className=" py-0 ">{oneKycForEntreprise?.validationKycDate?formatDate(oneKycForEntreprise?.validationKycDate):"Pas encore évalué"}</p>
-                                                        </div>
+                                                        </div><br/>
                                                         <div className='btn-box d-flex' onClick={()=>setEtape(1)}>
                                                             <Button
                                                                 block

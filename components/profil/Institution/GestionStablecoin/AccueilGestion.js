@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
+import { Container, Row, Col, Modal } from "react-bootstrap";
+import {Button} from "reactstrap";
+
 import React from "react";
 import axios from 'axios';
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
+
 
 
 // Pour Magic
@@ -17,23 +21,7 @@ import Web3 from "web3";
 
 
 
-// MODALS 
-// reactstrap components
-import {
-    Button,
-    Card,
-    CardHeader,
-    CardBody,
-    FormGroup,
-    Form,
-    Input,
-    InputGroupAddon,
-    InputGroupText,
-    InputGroup,
-    Modal,
-    Row,
-    Col,
-  } from "reactstrap";
+
 
 // FIN
 
@@ -44,12 +32,28 @@ const AccueilGestion = () => {
 
     const [currentUser, setCurrentUser] = useState();
     const [provider, setProvider] = useState(null);
+    const [isLoggingIn, setIsLoggingIn] = useState(null);
 
-    //state qui contient other user pour des conditions sur la page de vérification
-    const [acteur, setActeur] = useState(); 
+    
+    /**
+     * État de contrôle pour afficher ou masquer la modal du formulaire de réponse à la demande d'accès.
+     * @type {boolean}
+    */
+     const [showForm, setShowForm] = useState(false);
 
-
-
+     /**
+      * Fonction pour fermer la modal du formulaire.
+      * @function
+      * @returns {void}
+      */
+     const handleCloseForm = () => setShowForm(false);
+ 
+     /**
+      * Fonction pour afficher la modal du formulaire.
+      * @function
+      * @returns {void}
+      */
+     const handleShowForm = () => setShowForm(true);
     
 
 
@@ -88,20 +92,70 @@ const AccueilGestion = () => {
               // Fin
             }
         })();
-
-       
-
-
     }, [provider, magic]);
     //  Fin
 
-    if (typeof window !== 'undefined') {
-        localStorage.setItem('acteurOfDepot',acteur);
 
-        const actor = localStorage.getItem('acteurOfDepot');
+     // Fonction de demande pour être distributeur au niveau de la base de données
+     const requestDistributer = async () => {
+        setIsLoggingIn(true);
+        
+        try {
+            // Obtenir le token en cours
+            const token = localStorage.getItem('tokenEnCours');
+            /**
+             * Réponse de la requête KYC.
+             * @type {Response}
+             */
+            const response = await fetch(`${API_URL}/api/distributer/add-request-distributer`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+            });
+  
+            /**
+             * Données de la réponse de la requête .
+             * @type {object}
+             */
+            const data = await response.json();
+  
+            /* Verifier s'il y a un messsage d'erreur, on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message==200) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Votre demande a été envoyé avec succès.</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+  
+                // Actualiser après l'affichage
+                setTimeout(() => {
+                    window.location.reload();
+                }, 7000);
+                // Fin
+            } else {
+                setMessageError(data.message);
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>`,
+                    showConfirmButton: false,
+                    timer: 10000
+                });
+            }
+            // Fin condition
+        } catch (error) {
+            console.error('Erreur =>', error);
+        }
+    };
 
-        console.log("Acteur=>",actor)
-    }
+   
 
 
   return (
@@ -149,15 +203,14 @@ const AccueilGestion = () => {
                                             </div>
                                             </div>
                                             <div className='btn-box'>
-                                                <a href='/#'>
                                                     <Button
                                                         block
                                                         color="primary"
                                                         type="button"
+                                                        onClick={handleShowForm}
                                                     >
-                                                        Voir plus
+                                                        Demander d'être distributeur
                                                     </Button>
-                                                </a>
                                             {/* Fin */}
                                             </div>
                                         </div>
@@ -197,9 +250,31 @@ const AccueilGestion = () => {
                 </div>
             </div>
         ) : ('')}
-
-       
       </div>
+
+      {/* ********************************************************************************** */}
+                {/* MODAL D'ACCEPTATION OU REFUS DE LA DEMANDE*/}
+            {/* ********************************************************************************** */}
+            <Modal show={showForm} className="mt-15" onHide={handleCloseForm}>
+                <Modal.Header closeButton id="bgcolor">
+                    <Modal.Title className="" >Distributeur</Modal.Title>                
+                </Modal.Header>
+                    <Modal.Body>
+                        <div className='form-group my-3 text-center'>
+                            Voulez-vous vraiment faire une demande pour être distributeur ?
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button className="text-white" color="danger" onClick={handleCloseForm}>
+                            Non
+                        </Button>
+                        <Button className='px-3' onClick={requestDistributer}  color="success" disabled={isLoggingIn}>
+                            Oui
+                        </Button>
+                    </Modal.Footer>
+            </Modal>
+            {/* *****************************************FIN****************************************** */}
+
 
     </>
   );

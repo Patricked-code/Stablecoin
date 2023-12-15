@@ -347,7 +347,7 @@ const [serviceD, setServiceD] = useState([]);
       body.append("regulator", regulator);
       body.append("startDate", startDate);
       body.append("site", site);
-      body.append("logo", logo);
+      // body.append("logo", logo);
       body.append("userId", currentUser?.id);
       body.append("email", userMetadata.email);
 
@@ -1080,7 +1080,7 @@ const [serviceD, setServiceD] = useState([]);
                 onChange={(event)=>setStartDate(event.target.value)}
               />
             </div>
-            <div className="form-group col-lg-6 col-md-6">
+            {/* <div className="form-group col-lg-6 col-md-6">
               <label
                   htmlFor="picture"
               >
@@ -1095,7 +1095,7 @@ const [serviceD, setServiceD] = useState([]);
                   onChange={uploadToClientLogo}
 
               />
-            </div>
+            </div> */}
             {/* Partie service choix multiple */}
             <label
                 htmlFor="Q1"

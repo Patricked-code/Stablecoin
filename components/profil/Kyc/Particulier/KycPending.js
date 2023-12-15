@@ -302,6 +302,8 @@ const KycPendingParticular = () => {
     }, []);
     // FIN
 
+
+    
   return (
     <>
 
@@ -346,7 +348,7 @@ const KycPendingParticular = () => {
                                             <div className='cryptocurrency-slides'>
                                                 <div className='single-cryptocurrency-box'>
                                                     <div className='title text-center '>
-                                                        <p className=" py-0 "> Questionnaires </p>
+                                                        <p className=" py-0 "> Questionnaires AML</p>
                                                         <p className=" py-0 ">{kycForParticularUser?.validQuiz==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
                                                     </div>
                                                             
@@ -372,7 +374,7 @@ const KycPendingParticular = () => {
                                             <div className='cryptocurrency-slides'>
                                                 <div className='single-cryptocurrency-box'>
                                                     <div className='title text-center '>
-                                                        <p className=" py-0 "> Fatca </p>
+                                                        <p className=" py-0 ">Questionnaire Fatca </p>
                                                         <p className=" py-0 ">{kycForParticularUser?.validQuizFatca==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
                                                     </div>
                                                             
@@ -398,7 +400,7 @@ const KycPendingParticular = () => {
                                             <div className='cryptocurrency-slides'>
                                                 <div className='single-cryptocurrency-box'>
                                                     <div className='title text-center '>
-                                                        <p className=" py-0 "> Identité </p>
+                                                        <p className=" py-0 "> Justicatif d'identité </p>
                                                         <p className=" py-0 ">{kycForParticularUser?.validIdentityOne==1 && kycForParticularUser?.validIdentity==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
                                                     </div>
                                                             
@@ -424,7 +426,7 @@ const KycPendingParticular = () => {
                                             <div className='cryptocurrency-slides'>
                                                 <div className='single-cryptocurrency-box'>
                                                     <div className='title text-center '>
-                                                        <p className=" py-0 "> Domicile </p>
+                                                        <p className=" py-0 "> Justificatif de domicile </p>
                                                         <p className=" py-0 ">{kycForParticularUser?.validResidence==1 && kycForParticularUser?.validPhotoWithDocument==1 ? ( <Icon icon="bx:chevron-down-circle" width={30} color="#208454" /> ) : ( <Icon icon="bx:x-circle" width={30} color="#dc3545" />)}</p>
                                                     </div>
                                                             
@@ -832,6 +834,12 @@ const KycPendingParticular = () => {
                                                 <b> Date de naissance :</b><br/>
                                                 {currentUser?.birthday? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(currentUser.birthday) }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
+
+                                            <div className='col-lg-6 col-md-6'>
+                                                <b> Date de naissance :</b><br/>
+                                                <img src={`${API_URL}/${currentUser?.picture}`} width={150} className="rounded-circle "  alt='image' />
+                                                
+                                            </div>
                                         </div>
 
                                         <div className='py-10 my-5'>
@@ -850,7 +858,7 @@ const KycPendingParticular = () => {
                                             </div>
 
                                             <div className='col-lg-6 col-md-6 '>
-                                                <b> Date de validité :</b><br/>
+                                                <b> Date d'expiration :</b><br/>
                                                 {oneKycForParticular?.validityDate? (<p className='mt-0'><Icon icon="bx:check-double" color="#208454" />{formatDate(oneKycForParticular.validityDate) }</p>): (<p className='my-2'><Icon icon="bx:x" className='colorRed' />Aucune réponse</p>)}
                                             </div>
                                         </div>
