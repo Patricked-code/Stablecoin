@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import SidebarWealthtech from '../../../../../components/admin/Sidebar/Sidebarwti';
-import AccueilDistributeur from '../../../../../components/admin/Wealthtech/Stablecoin/Distributeur/accueilDistributeur';
-import ActionMintBurn from '../../../../../components/admin/Wealthtech/Stablecoin/MintBurn/ActionMintBurn';
+import AccueilDistributeur from '../../../../../components/admin/Wealthtech/Stablecoin/Distributeur/AccueilDistributeur';
 
 
 
