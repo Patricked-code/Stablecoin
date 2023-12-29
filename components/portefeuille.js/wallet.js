@@ -113,7 +113,6 @@ const [codeOtherUser, setCodeOtherUser] = useState();
       if (!!magic) {
           const pt = new ethers.providers.Web3Provider(magic.rpcProvider);
           setProvider(pt);
-          console.log("Bon Provider=>>",pt)
       }
   }, [magic]);
 
@@ -1703,7 +1702,7 @@ const value = ethers.utils.parseUnits("10", decimalStablecoin);
       
 
 
-       {/* ********************************************************************************** */}
+            { /* ********************************************************************************** */}
                 {/* MODAL DE L'ADRESSE PUBLIC'*/}
             {/* ********************************************************************************** */}
             <Modal show={show} className="mt-15" onHide={handleClose}>

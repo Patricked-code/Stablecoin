@@ -86,11 +86,11 @@ const VerifyDocumentsRetrait = () => {
       // Calcule des frais de transaction
       useEffect(() => {
         const getInfos = async () => {
-        const frais = montantRetirer*infosDistributer?.percentage/100
+        const frais = montantRetirer*infosDistributer?.percentageWithdrawal/100
         const montantRetirerAvecFrais =  parseFloat(montantRetirer) + frais 
         setMontantRetirerAvecFrais(montantRetirerAvecFrais)
-        const commissionInstitution = frais*infosDistributer?.percentageInstitution/100
-        const commissionWti = frais*infosDistributer?.percentageWealthtech/100
+        const commissionInstitution = frais*infosDistributer?.percentageWithdrawalInstitution/100
+        const commissionWti = frais*infosDistributer?.percentageWithdrawalWealthtech/100
         
        
         // setFees(frais)
@@ -412,7 +412,7 @@ const dumpVariables = () =>{
     const token = localStorage.getItem('tokenEnCours');
     const getInfosDistributer = async () => {
     try {
-        const result = await fetch(`${API_URL}/api/distributer/find-request-distributer-withdrawal-of-user`, {
+        const result = await fetch(`${API_URL}/api/distributer/find-request-distributer-of-user`, {
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`
@@ -484,7 +484,7 @@ const dumpVariables = () =>{
           showConfirmButton: false,
           timer: 5000,
         });
-        throw new Error("L'exécuteur n'a pas suffisamment de DEV pour couvrir les frais de gas.");
+        throw new Error("L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.");
       }
   
       // Check if addressBurn has an amount greater than or equal to montantRetirerAvecFrais

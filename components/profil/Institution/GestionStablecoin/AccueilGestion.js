@@ -34,6 +34,9 @@ const AccueilGestion = () => {
     const [provider, setProvider] = useState(null);
     const [isLoggingIn, setIsLoggingIn] = useState(null);
 
+    const [infosDistributer, setInfosDistributer] = useState()
+    const [contractSigned, setContractSigned] = useState()
+    const [uploadStatus, setUploadStatus] = useState(null);
     
     /**
      * État de contrôle pour afficher ou masquer la modal du formulaire de réponse à la demande d'accès.
@@ -156,6 +159,105 @@ const AccueilGestion = () => {
     };
 
    
+  // FONCTION POUR RECUPERER LES INFOS DE COMMISION DE DEPOT DE L'INSTITUTION EN FONCTION DE L'UTILISATEUR CONNECTE
+  useEffect(() => {
+    // Obtenir le token en cours
+    const token = localStorage.getItem('tokenEnCours');
+    const getInfosDistributer = async () => {
+    try {
+        const result = await fetch(`${API_URL}/api/distributer/find-request-distributer-of-user`, {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+
+        },
+        });
+
+        if (!result.ok) {
+        throw new Error('Failed to fetch  data');
+        }
+        const data = await result.json();
+        setInfosDistributer(data);
+    } catch (error) {
+        // Handle errors appropriately, e.g., set an error state.
+        console.error('Error fetching  data:', error);
+    }
+    };
+
+    getInfosDistributer();
+    
+  }, []);
+  // FIN
+
+
+    const handleFileChange = (event) => {
+        setContractSigned(event.target.files[0]);
+    };
+
+    // FONCTION POUR UPLOADER LE CONTRAT
+    const handleUpdateContract = async (event) => {
+        event.preventDefault();
+        // setIsLoggingIn(true);
+
+        if (!contractSigned) {
+        setUploadStatus('Vous devez sélectionner un fichier.');
+        return;
+        }
+
+        const formData = new FormData();
+        formData.append('contractSigned', contractSigned);
+
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
+
+        try {
+        const response = await fetch(`${API_URL}/api/distributer/send-contract-signed/${infosDistributer?.id}`, {
+            method: 'PUT',
+            body: formData,
+            headers: {
+                // 'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const responseData = await response.json();
+
+        if (response.ok) {
+            setUploadStatus(responseData.message);
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p>Le contrat a été envoyé avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 5000
+            })
+            setTimeout(() => {
+                window.location.reload()
+            }, 5000)
+        } else {
+            console.error('Error updating:', responseData.message);
+            setIsLoggingIn(false);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p>Une erreur s'est produite lors de l'envoie du contrat</p>` ,
+                showConfirmButton: false,
+                timer: 6000
+            })
+        }
+        } catch (error) {
+            console.error('Error updating:', error);
+            setIsLoggingIn(false);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p>Une erreur s'est produite lors de l'envoie du contrat</p>` ,
+                showConfirmButton: false,
+                timer: 6000
+            })
+        }
+    };
+    //Fin
 
 
   return (
@@ -164,7 +266,7 @@ const AccueilGestion = () => {
       <div className='' >
         <div className=' mx-15'>
             <div className='py-10'>
-                <h1 className='text-center'>Gestion de satblecoin</h1>
+                <h1 className='text-center'>Gestion de stablecoin</h1>
             </div>
         </div>
 
@@ -187,16 +289,14 @@ const AccueilGestion = () => {
         {currentUser?.codeTypeProfil==="insti" ? (
             <div className='cryptocurrency-search-box'>
                 <div className='row'>
-
+                    <div className='col-lg-3 col-md-3'></div>
+                    {!infosDistributer? (
                         <div className='col-lg-6 col-md-6'>
                             <div className='currency-selection text-center'>
                                 <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
                                     <div className='cryptocurrency-slides'>
                                         <div className='single-cryptocurrency-box'>
                                             <div className='d-flex align-items-center'>
-                                            {/* <div className='bestseller-coin-image'>
-                                                <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
-                                            </div> */}
                                             <div className='title'>
                                                 <h3>Demande de gestion de stablecoin</h3>
 
@@ -218,25 +318,80 @@ const AccueilGestion = () => {
                                 </div>
                             </div>
                         </div>
-                                
+                    ) : infosDistributer?.allow===0 && !infosDistributer?.contractUnsigned? (
                         <div className='col-lg-6 col-md-6'>
                             <div className='currency-selection text-center'>
+                                <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bgColorblue">
+                                    <div className='cryptocurrency-slides py-5 text-white'>
+                                        Vous avez une demande d'être distributeur en cours de traitement.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ) : infosDistributer?.allow===0 && infosDistributer?.contractUnsigned ? (
+                        <div className='col-lg-6 col-md-6'>
+                            <div className='currency-selection '>
                                 <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                <div className='cryptocurrency-slides'>
+                                    <div className='cryptocurrency-slides'>
                                         <div className='single-cryptocurrency-box'>
                                             <div className='d-flex align-items-center'>
                                             <div className='title'>
-                                                <h3>Mon contrat</h3>
+                                                <h3>Le contrat à signer</h3>
                                             </div>
                                             </div>
                                             <div className='btn-box'>
-                                            <a href='/#'>
+                                            <a 
+                                                href={`${API_URL}/${infosDistributer?.contractUnsigned}`} 
+                                                download
+                                                target="_blank"
+                                            >
                                                 <Button
                                                     block
                                                     color="primary"
                                                     type="button"
                                                 >
-                                                    Vois plus
+                                                    Télécharger 
+                                                </Button>
+                                            </a>
+                                            {/* Fin */}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className='title mx-3'>
+                                        Envoyer le contrat signé
+                                    </div>
+                                    <form onSubmit={handleUpdateContract} className="mb-3 mx-3">
+                                        <input className='my-3' type="file" onChange={handleFileChange} accept=".pdf" />
+                                        <Button block type='submit' className='mb-3'  color="success" disabled={isLoggingIn}>
+                                            Envoyer
+                                        </Button><br/>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    ) : infosDistributer?.allow===1 && infosDistributer?.contractSigned && infosDistributer?.contractValid==1 ? (
+                        <div className='col-lg-6 col-md-6'>
+                            <div className='currency-selection '>
+                                <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                    <div className='cryptocurrency-slides'>
+                                        <div className='single-cryptocurrency-box'>
+                                            <div className='d-flex align-items-center'>
+                                            <div className='title'>
+                                                <h3>Télécharger le contrat final</h3>
+                                            </div>
+                                            </div>
+                                            <div className='btn-box'>
+                                            <a 
+                                                href={`${API_URL}/${infosDistributer?.contractSigned}`} 
+                                                download
+                                                target="_blank"
+                                            >
+                                                <Button
+                                                    block
+                                                    color="primary"
+                                                    type="button"
+                                                >
+                                                    Télécharger 
                                                 </Button>
                                             </a>
                                             {/* Fin */}
@@ -246,7 +401,20 @@ const AccueilGestion = () => {
                                 </div>
                             </div>
                         </div>
-                    
+                    ): infosDistributer?.allow===2 ? (
+                        <div className='col-lg-6 col-md-6'>
+                            <div className='currency-selection text-center'>
+                                <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bgColorRed">
+                                    <div className='cryptocurrency-slides py-5 text-white'>
+                                        Désolé, votre demande d'être distributeur à rejeté par Wealthtech Innvotions.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ):("")}          
+                        
+
+                    <div className='col-lg-3 col-md-3'></div>
                 </div>
             </div>
         ) : ('')}

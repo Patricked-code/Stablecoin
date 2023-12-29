@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Modal } from "react-bootstrap";
+import {Button,} from "reactstrap";
 import React from "react";
-import axios from 'axios';
 import Link from 'next/link';
 import moment from 'moment';
 import { Icon } from '@iconify/react';
@@ -15,33 +15,12 @@ import { ethers } from "ethers";
 import Loading from "../../../components/loading";
 import Router from "next/router";
 import Swal from 'sweetalert2';
-import Web3 from "web3";
 // FIN
 
 // Importer ABI de E-WARI
 import ABI_TOKEN_EWARI from "../../../components/Contrats/Abi/AbiStablecoin.json";
-import ABI_FACTORY_ESCROW from "../../../components/Contrats/Abi/AbiFactoryEscrow.json";
-import ABI_ESCROW_STABLECOIN from "../../../components/Contrats/Abi/AbiFactoryEscrow.json";
+import ABI_ESCROW_STABLECOIN from "../../../components/Contrats/Abi/AbiEscrowStablecoin.json";
 
-
-
-// MODALS 
-// reactstrap components
-import {
-    Button,
-    Card,
-    CardHeader,
-    CardBody,
-    FormGroup,
-    Form,
-    Input,
-    InputGroupAddon,
-    InputGroupText,
-    InputGroup,
-    // Modal,
-    // Row,
-    // Col,
-  } from "reactstrap";
 
 // FIN
 
@@ -50,7 +29,6 @@ const PaiementPending = () => {
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
     // Pour les smart contrats
-    const ADDRESS_CONTRAT_FACTORY_ESCROW = process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_FACTORY_ESCROW
     const ADDRESS_CONTRAT_EWARI = process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
     const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY
     const [currentUser, setCurrentUser] = useState();
@@ -68,31 +46,29 @@ const PaiementPending = () => {
     const [currentSenderAddress, setCurrentSenderAddress] = useState();
     const [currentAmount, setCurrentAmount] = useState();
     const [currentSenderId, setCurrentSenderId] = useState();
-    const [contractFactoryEscrow, setContractFactoryEscrow] = useState()
+    const [contractEscrow, setContractEscrow] = useState()
+    
+    // Autre user
+    const [infosOtherUser, setInfosOtherUser] = useState()
+
     
     
 
     //***************************************************************** *
         // LES STATES DU STABLECOIN
     // ******************************************************************
-    const [contractTokenEwari, setContractTokenEwari] = useState();
-
+    const [contractStablecoin, setContractStablecoin] = useState();
+    const [signer, setSigner] = useState();
+    const [walletRelayer, setWalletRelayer] = useState();
     
+    const [nameStablecoin, setNameStablecoin] = useState();
+    const [symbolStablecoin, setSymbolStablecoin] = useState();
+    const [balanceStablecoin, setBalanceStablecoin] = useState();
+    const [decimalStablecoin, setDecimalStablecoin] = useState();
 
-    const [currentRole, setCurrentRole] = useState();
-    const [currentNameRole, setCurrentNameRole] = useState();
+    // States des données de l'utilisation de stablecoin comme moyen de paiement
+    const [dataRequestUseStablecoinOfUser, setDataRequestUseStablecoinOfUser] = useState()
 
-    const [verifyAddress, setVerifyAddress] = useState();
-    const [addressBcOtherUser, setAddressBcOtherUser] = useState();
-    const [addressBcOtherUserRevoke, setAddressBcOtherUserRevoke] = useState();
-    const [escrowContractAddress, setEscrowContractAddress] = useState();
-    
-    
-    
-
-    // fin
-
-    // ***********************FIN*******************************************
 
 
 
@@ -118,6 +94,7 @@ const PaiementPending = () => {
             if (!!magic && !!provider) {
                 const userMetadatas = await magic.user.getMetadata();
                 const signer = provider.getSigner();
+                setSigner(signer)
                 const network = await provider.getNetwork();
                 const userAddress = await signer.getAddress();
                 setMagicCurrentAddress(userAddress)
@@ -130,140 +107,136 @@ const PaiementPending = () => {
                  * @type {string}
                  */
                  const walletRelay = new ethers.Wallet(PRIVATE_KEY, provider);
-                 const contract_factoryEscrow = new ethers.Contract(ADDRESS_CONTRAT_FACTORY_ESCROW, ABI_FACTORY_ESCROW.abi, signer);
-                 setContractFactoryEscrow(contract_factoryEscrow)
+                 setWalletRelayer(walletRelay)
 
-                 console.log("contract_factoryEscrow=>",contract_factoryEscrow)
-                 console.log("currentSenderAddress=>",currentSenderAddress)
-                 try {
-                    // Code qui provoque l'erreur
-                    const escrow_contractAddress = await contract_factoryEscrow.getEscrowContractByBeneficiary("0x2eb9B095202f515388973c78d8308C478f8AA6C2");
-                    // const escrow_contractAddress = await contract_factoryEscrow.getEscrowContracts();
-                    
-                    setEscrowContractAddress(escrow_contractAddress)
-                    console.log("escrow_contractAddress=>",escrow_contractAddress)
-                  } catch (error) {
-                    if (error.message.includes("Aucun contrat Escrow trouve pour ce beneficiaire")) {
-                      // Afficher un message personnalisé
-                      console.error("Aucun contrat Escrow trouvé pour ce bénéficiaire");
-                    } else {
-                      // Gérer d'autres erreurs ici
-                      console.error("Une erreur inattendue s'est produite:", error.message);
-                    }
-                  }
-                  
-                //  try {
-                    // const escrow_contractAddress = await contract_factoryEscrow.getEscrowContractByBeneficiary("0x2eb9B095202f515388973c78d8308C478f8AA6C2");
-                    // setEscrowContractAddress(escrow_contractAddress)
-                    // console.log("escrow_contractAddress=>",escrow_contractAddress)
-                    // return escrow_contractAddress;
-    
-                // } catch (error) {
-                //     console.error('Error:', error);
-                //     // throw new Error('Aucun contrat Escrow trouvé pour ce bénéficiaire');
-                // }
-                    
+                 if (currentSenderAddress) {
+                    const contractEscrow = new ethers.Contract(currentSenderAddress, ABI_ESCROW_STABLECOIN?.abi, walletRelay);
+                    setContractEscrow(contractEscrow)
+                 }
+                 
+
 
                 // *************************************************************************
                     // INTERACTION AVEC LE SMART CONTRAT DE STABLECOIN
                 // *************************************************************************
 
-                const contractStablecoin = new ethers.Contract(ADDRESS_CONTRAT_EWARI,ABI_TOKEN_EWARI.abi,signer);
-                setContractTokenEwari(contractStablecoin);
-                    
+                const contractStablecoin = new ethers.Contract(ADDRESS_CONTRAT_EWARI,ABI_TOKEN_EWARI.abi,walletRelay);
+                setContractStablecoin(contractStablecoin);
+                
+                //   recuperation des infos de stablecoin
+                const nameStablecoin = await contractStablecoin.name()
+                const symbolStablecoin = await contractStablecoin.symbol()
+                const decimalStablecoin = await contractStablecoin.decimals()
+                const balanceStablecoin = await contractStablecoin.balanceOf(userAddress)
+                // Fin 
 
-               
-
-
-             
+                // Stocker les infos de stablecoin dans leur state
+                setNameStablecoin(nameStablecoin)
+                setSymbolStablecoin(symbolStablecoin)
+                setDecimalStablecoin(decimalStablecoin)
+                setBalanceStablecoin(balanceStablecoin/10**decimalStablecoin)
             }
         }
         // Appel de la fonction asynchrone pour obtenir les données lorsqu'il y a des changements dans `provider` ou `magic`.
         fetchData();;
 
-    }, [provider, magic]);
+    }, [provider, magic, currentSenderAddress]);
     //  Fin
-
-    // useEffect(() => {
-    //     const fetchDataEscrowContractAddress = async () => {
-    //     //  Obtenir l'adresse du contrat d'escrow de l'utilisateur
-    //     console.log("contractFactoryEscrow=>",contractFactoryEscrow)
-    //     // if (currentSenderAddress) {
-    //         try {
-    //             const escrow_contractAddress = await contractFactoryEscrow.getEscrowContractByBeneficiary("0x2eb9B095202f515388973c78d8308C478f8AA6C2");
-    //             setEscrowContractAddress(escrow_contractAddress)
-    //             console.log("escrow_contractAddress=>",escrow_contractAddress)
-    //             return escrow_contractAddress;
-
-    //         } catch (error) {
-    //             console.error('Error:', error);
-    //             // throw new Error('Aucun contrat Escrow trouvé pour ce bénéficiaire');
-    //         }
-    //     // } 
-    //     };
-    //     // Appel de la fonction asynchrone pour obtenir les données lorsqu'il y a des changements dans `provider` ou `magic`.
-    //     fetchDataEscrowContractAddress();
-    // },[])
-
-
-
-    useEffect(() => {
-        const fetchData = async () => {
     
-        // Obtenir un utilisateur en fonction de son email 
-        const getUser = async () => {
-            // Obtenir le token en cours
+
+    // Obtenir l'utilisateur connecté 
+    useEffect(async () => {
+        const getUser= async () => {
             const token = localStorage.getItem('tokenEnCours');
-        // const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
-            const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
-            headers: {
-            'Content-Type': 'application/json',
-            Authorization:  `Bearer ${token}`
-    
-            },
-        })
-            .then((result) => result.json())
-            .then((user) => {
-            setCurrentUser(user)
-    
-            }) 
+
+            try {
+                
+                const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!result.ok) {
+                    throw new Error('Failed to fetch request data');
+                }
+
+                const data = await result.json();
+                setCurrentUser(data);
+
+            } catch (error) {
+                // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
+                console.error('Erreur lors de la récupération des demandes:', error);
+            }
         };
+
         await getUser();
-        // Fin
+    }, []);
+    // Fin
 
-
-   
-    
-    
-        // Obtenir les données de la demande de paiement en fonction de l'utilisateur connecté 
-        if (currentUser?.id) {
-        const getPaymentPendingOfUser = async () => {
-            
-            // Obtenir le token en cours
+    // Obtenir les données de la demande de paiement en fonction de l'utilisateur connecté 
+    useEffect(async () => {
+        const getPaymentPendingOfUser= async (_currentUserId) => {
             const token = localStorage.getItem('tokenEnCours');
-            const result = await fetch(`${API_URL}/api/payment-request/find-all-payment-request-for-receiver?receiverId=${currentUser.id}`, {
-                headers: {
-                'Content-Type': 'application/json',
-                Authorization:  `Bearer ${token}`
-    
-                },
-            })
-                .then((result) => result.json())
-                .then((data) => {
+
+            try {
+                
+                const result = await fetch(`${API_URL}/api/payment-request/find-all-payment-request-for-receiver?receiverId=${_currentUserId}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!result.ok) {
+                    throw new Error('Failed to fetch request data');
+                }
+
+                const data = await result.json();
                 setDataPaymentPending(data)
                 setPaymentPendingLength(data?.length)
-                }) 
-            };
-            await getPaymentPendingOfUser();
+
+            } catch (error) {
+                // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
+                console.error('Erreur lors de la récupération des demandes:', error);
+            }
+        };
+        if (currentUser?.id) {
+            await getPaymentPendingOfUser(currentUser?.id);
         }
-        // Fin
-    }
-    // Appel de la fonction asynchrone pour obtenir les données lorsqu'il y a des changements dans `provider` ou `magic`.
-    fetchData();
-    
-    }, [currentUser, dataPaymentPending]);
+    }, [currentUser?.id]);
+    // Fin
 
+    // Recupération des données de l'utilisation de stablecoin comme moyen de paiement de l'utilisateur connecté
+    useEffect(async () => {
+        const getDataRequestUseStablecoinOfUser = async () => {
+            const token = localStorage.getItem('tokenEnCours');
 
+            try {
+                
+                const result = await fetch(`${API_URL}/api/payment-request/find-request-use-stablecoin-of-user`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!result.ok) {
+                    throw new Error('Failed to fetch request data');
+                }
+
+                const data = await result.json();
+                setDataRequestUseStablecoinOfUser(data);
+            } catch (error) {
+                // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
+                console.error('Erreur lors de la récupération des demandes:', error);
+            }
+        };
+
+        await getDataRequestUseStablecoinOfUser();
+    }, []);
+    // Fin
 
     
     // Modal pour révoquer un rôle
@@ -279,234 +252,155 @@ const PaiementPending = () => {
 
 
 
-    // FONCTION D'ATTRIBUTION DE ROLE (grantRole)
-    const grantRoleTransaction = async() => {
-        setIsLoggingIn(true)
-        
-        const data ={
-            "byteRole":currentRole,
-            "address":addressBcOtherUser,
-        }
-
-        try {
-            if(magicCurrentAddress){
-
-                await contractTokenEwari.grantRole(data.byteRole, data.address).then((transferResult) => {
-                    // PARTIE SWITCH ALERT;
-                    let timerInterval
-                    Swal.fire({
-                        title: 'Veuillez patienter svp',
-                        html: `<p>L'attribution du rôle est en cours... </p>`,
-                        timer: 10000,
-                        timerProgressBar: true,
-                        didOpen: () => {
-                        Swal.showLoading()
-                        timerInterval = setInterval(() => {
-                        }, 1)
-                        },
-                        
-                        willClose: () => {
-                        clearInterval(timerInterval)
-                        }
-                        
-                    }).then((result) => {
-                        
-                        if (result.dismiss === Swal.DismissReason.timer) {
-                        //   Affiche après le rechargement
-                        Swal.fire({
-                            position: 'top-center',
-                            icon: 'success',
-                            title: `Succès`,
-                            html:`<p> Le rôle a été attribué avec succès. Ci-dessous le numéro de l'ajout: <br/> ${transferResult.hash} </p>`,
-                            showConfirmButton: false,
-                            timer: 10000
-                        })
-                        // Fin
-                        }
-                        })
-                })
-                // FIN PARTIE SWITCH ALERT
-
-                    // Actualiser après l'affichage 
-                    setTimeout(() => {
-                    window.location.reload()
-                    }, 15000)
-                    // Fin
-                    error => {
-                        console.log(error);
-                    }
-            }else{
-                console.log("Votre adresse est introuvable")
-            }
-        } catch (error) {
-            console.log("Erreur =>",error)
-            setIsLoggingIn(false)
-        }
-    }
-    // FIN 
+   
 
 
-// ************************************************************************
-// Functions de transfert de LYSFC avec l'adresse Blockchain
-const transferKorre = async () => {
-    setIsLoggingIn(true)
-     
-  try {
-    const tosting = String(currentAmount)
-    const mountWei = ethers.utils.parseUnits(tosting, 10);
-    await contractTokenEwari.transfer(currentSenderAddress, mountWei).then((transferResult) => {
-     
-
-      // PARTIE SWITCH ALERT
-      let timerInterval
-      Swal.fire({
-        title: 'Veuillez patienter svp',
-        html: '<p>Votre transaction est en cours...</p>',
-        timer: 20000,
-        timerProgressBar: true,
-        didOpen: () => {
-          Swal.showLoading()
-          timerInterval = setInterval(() => {
-          }, 1)
-        },
-        willClose: () => {
-          clearInterval(timerInterval)
-        }
-      }).then((result) => {
-        if (result.dismiss === Swal.DismissReason.timer) {
-            console.log("transferResult.blockHash=>",transferResult.blockHash)
-            if (transferResult.hash) {
-                //   Affiche après le rechargement
-              Swal.fire({
-                  position: 'top-center',
-                  icon: 'success',
-                  title: `Succès`,
-                  html:`<p> Nous vous confirmons que votre virement a été effectué avec succès. <br/>Un mail du détail du virement vous a été envoyé.</p>`,
-                  showConfirmButton: false,
-                  timer: 20000
-              })
-              // . ci-dessous le se trouve hash : <br/>${transferResult.hash}
-              // Fin
-
-              // Appel de la fonction qui permettra de modifier Valid en true dans la DB
-              updateValidInTrue()
-              // Fin
-            }else{
-              setIsLoggingIn(false)
-
-              Swal.fire({
-                  position: 'top-center',
-                  icon: 'error',
-                  title: `Erreur`,
-                  html:`<p> Une erreur s'est produite.</p>`,
-                  showConfirmButton: false,
-                  timer: 20000
-              })
-            }
-          
-
-          
-        }
-      })
-      // FIN PARTIE SWITCH ALERT
-  })
-    
-  } catch (error) {
-    setIsLoggingIn(false)
-      console.log("error=>",error)
-    throw error;
-  }
-}
 
 // ***************************************************************
+    // Transfert de stablecoin vers le smart contrat d'escrow
+// ****************************************************************
+async function transferToEscrow() {
+    setIsLoggingIn(true)
 
-
-
-
-
-
-
-
-
-
-    // Functions de transfert de LYSFC avec l'adresse Blockchain
-  const transferKorreNo = async () => {
-      setIsLoggingIn(true)
-       
     try {
-        console.log("AAAAAAAAAAAAAAAAAA")
-      const tosting = String(currentAmount)
-      const mountWei = ethers.utils.parseUnits(tosting, 10);
-      await contractTokenEwari.transfer(currentSenderAddress, mountWei).then((transferResult) => {
-        console.log("AAAAAAAAAAAAAAAAAA 22")
-       
+      // Vérifier le solde de magicCurrentAddress
+      const magicCurrentBalance = await contractStablecoin.balanceOf(magicCurrentAddress);
+  
+      // Convertir currentAmount en Wei
+      const amountWei = ethers.utils.parseUnits(String(currentAmount), decimalStablecoin);
+  
+      // Vérifier si magicCurrentAddress a des fonds suffisants
+      if (magicCurrentBalance.gte(amountWei)) {
 
-        // PARTIE SWITCH ALERT
+        const dataForm = {
+          spenderAddress: currentSenderAddress,
+          ownerAddress: magicCurrentAddress,
+          amount: amountWei,
+        };
         
-         
-              console.log("transferResult.blockHash=>",transferResult.blockHash)
-              if (transferResult.hash) {
-                  //   Affiche après le rechargement
-                Swal.fire({
-                    position: 'top-center',
-                    icon: 'success',
-                    title: `Succès`,
-                    html:`<p> Nous vous confirmons que votre virement a été effectué avec succès. <br/>Un mail du détail du virement vous a été envoyé.</p>`,
-                    showConfirmButton: false,
-                    timer: 20000
-                })
-                // . ci-dessous le se trouve hash : <br/>${transferResult.hash}
-                // Fin
-                // Appel de la fonction qui permettra de modifier Valid en true dans la DB
-                updateValidInTrue()
-                // Fin
-                
-                
-                // Actualiser après l'affichage 
-                setTimeout(() => {
-                    window.location.reload()
-                }, 20000)
-                // Fin
-              }else{
-                setIsLoggingIn(false)
+        // Estimer le coût en gaz pour l'approbation
+        const approveEstimateGas = await contractStablecoin.estimateGas.approveFrom(
+          dataForm?.ownerAddress,
+          dataForm?.spenderAddress,
+          dataForm?.amount
+        );
+  
+        // Obtenir le solde de l'exécutant
+        const executorBalance = await signer.getBalance();
+  
+        // Vérifier si l'exécutant a un solde Ether suffisant pour le gaz d'approbation
+        if (executorBalance.gte(approveEstimateGas)) {
+          // Transaction d'approbation
+          const approveTx = await contractStablecoin.approveFrom(
+            dataForm?.ownerAddress,
+            dataForm?.spenderAddress,
+            dataForm?.amount
+          );
+          await approveTx.wait();
+  
+          // Estimer le coût en gaz pour le dépôt
+          const asyncTransferEstimateGas = await contractEscrow.estimateGas.asyncTransfer(
+            dataForm?.ownerAddress,
+            dataForm?.amount,
+          );
+        
+        // return
+          // Vérifier si l'exécutant a un solde Ether suffisant pour le gaz de dépôt
+          if (executorBalance.gte(asyncTransferEstimateGas)) {
+            // Transaction de dépôt
+            const asyncTransferTx = await contractEscrow.asyncTransfer(dataForm?.ownerAddress, dataForm?.amount);
+            await asyncTransferTx.wait();
 
+            // Vérifier si l'exécutant a un solde gas suffisant pour le gaz d'apprabation de retrait
+            const approveWithdrawalEstimateGas = await contractEscrow.estimateGas.approveWithdrawal(dataForm?.ownerAddress);
+            const executorBalanceAfterTransfer = await signer.getBalance();
+            if (executorBalanceAfterTransfer.gte(approveWithdrawalEstimateGas)) {
+                // Fonction d'approbation de retrait
+                const approveWithdrawalTx = await contractEscrow.approveWithdrawal(dataForm?.ownerAddress);
+                await approveWithdrawalTx.wait();
+
+                transferAmount(asyncTransferTx.hash) //Appele de la fonction de confirmation de la transaction dans la base de donnée
+            } else {
+                setIsLoggingIn(false);
                 Swal.fire({
-                    position: 'top-center',
+                    position: 'center',
                     icon: 'error',
-                    title: `Erreur`,
-                    html:`<p> Une erreur s'est produite.</p>`,
+                    html: `<p>Solde insuffisant pour couvrir les frais de gaz d'approbation du retrait.</p>`,
                     showConfirmButton: false,
-                    timer: 20000
-                })
-              }
-            
-
-            
-        })
-        // FIN PARTIE SWITCH ALERT
-      
+                    timer: 5000
+                });
+                console.error("Solde insuffisant pour couvrir les frais de gaz d'approveWithdrawal.");
+            }
+          } else {
+            setIsLoggingIn(false)
+            Swal.fire({
+              position: 'center',
+              icon: 'error',
+              html: `<p> Solde insuffisant pour couvrir les frais de gaz d'async transfer.</p>`,
+              showConfirmButton: false,
+              timer: 5000
+            });
+            console.error("Solde insuffisant pour couvrir les frais de gaz d'asyncTransfer.");
+          }
+        } else {
+            setIsLoggingIn(false)
+            Swal.fire({
+              position: 'center',
+              icon: 'error',
+              html: `<p> Solde insuffisant pour couvrir les frais de gaz d'approbation.</p>`,
+              showConfirmButton: false,
+              timer: 5000
+            });
+            console.error("Solde insuffisant pour couvrir les frais de gaz d'approbation.");
+        }
+      } else {
+        setIsLoggingIn(false)
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          html: `<p> Fonds insuffisants sur votre compte. <br/> Votre solde est: ${balanceStablecoin}</p>`,
+          showConfirmButton: false,
+          timer: 5000
+        });
+        console.error("Fonds insuffisants sur votre compte.");
+      }
     } catch (error) {
-      setIsLoggingIn(false)
-        console.log("error=>",error)
-      throw error;
+        setIsLoggingIn(false)
+        console.error("Erreur lors de l'exécution de la transaction :", error);
     }
-  }
+}
+  
+  
+  
 
 
-   // FONCTION QUI METTRE VALID DE LA TABLE EN TRUE
-   const updateValidInTrue= async() =>{
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+   // FONCTION POUR CONFIRMER LE PAIEMENT DANS LA BASE DE DONNEE
+   const transferAmount= async(_hash) =>{
     setIsLoggingIn(true)
     
     const dataa = {
       amount:currentAmount,
-      senderId:currentSenderId
-       
+      senderId:currentSenderId,
     }
     
     // Obtenir le token en cours
     const token = localStorage.getItem('tokenEnCours');
 
-    const result = await fetch(`${API_URL}/api/payment-request/update-payment-valid-in-true/${idPaymentPending}`, {
+    const result = await fetch(`${API_URL}/api/payment-request/transfer-amount/${idPaymentPending}`, {
           method:"PUT",
           body: JSON.stringify(dataa),
           headers: {
@@ -517,14 +411,14 @@ const transferKorre = async () => {
       .then(res=>{
       const data =  res.json();
         if (res.status==200) {
+            addHistorical(_hash) //Appel de la fonction d'ajout des infos de transaction dans la table de l'historique
           //  Actualiser après l'affichage 
-          setTimeout(() => {
-            window.location.reload()
-          }, 20000) 
+        //   setTimeout(() => {
+        //     window.location.reload()
+        //   }, 20000) 
           // Fin
         }else{
           setIsLoggingIn(false)
-          console.log("La demande de paiement a échouée")
       }
     })
     .catch(error => {
@@ -538,10 +432,10 @@ const transferKorre = async () => {
     // FIN
 
     // FONCTION QUI METTRE VALID DE LA TABLE EN False
-   const updateValidInFalse= async() =>{
+   const cancelPayment= async() =>{
     setIsLoggingIn(true)
     
-    const dataa = {
+    const dataForm = {
       amount:currentAmount,
       senderId:currentSenderId
        
@@ -549,9 +443,9 @@ const transferKorre = async () => {
     // Obtenir le token en cours
     const token = localStorage.getItem('tokenEnCours');
 
-    const result = await fetch(`${API_URL}/api/payment-request/update-payment-valid-in-false/${idPaymentPending}`, {
+    const result = await fetch(`${API_URL}/api/payment-request/cancel-payment/${idPaymentPending}`, {
           method:"PUT",
-          body: JSON.stringify(dataa),
+          body: JSON.stringify(dataForm),
           headers: {
               'Content-Type': 'application/json',
               Authorization:  `Bearer ${token}`
@@ -559,12 +453,11 @@ const transferKorre = async () => {
       })
       .then(res=>{
       const data =  res.json();
-      console.log("data 1=>",res)
         if (res.status==200) {
           Swal.fire({
             position: 'center',
             icon: 'success',
-            html: "<p> La demande de paiement a été annulée avec succès.<br/> Nous vous avons transmis un email de confirmation en ce sens.</p>" ,
+            html: "<p> La demande de paiement a été rejeté avec succès.<br/> Nous vous avons transmis un email de confirmation en ce sens.</p>" ,
             showConfirmButton: false,
             timer: 10000
           })
@@ -596,16 +489,157 @@ const transferKorre = async () => {
     }
     // FIN
 
+
+    // Fonction d'enregistrement des données du transfert dans l'historique
+    const addHistorical = async (_hash) => {
+        setIsLoggingIn(true);
+
+        try {
+            
+            const dataBody = {
+                typeTransaction: "Async transfert",
+                activeName: nameStablecoin,
+                activeSymbol: symbolStablecoin,
+                emailSender: currentUser?.email,
+                emailReceiver: infosOtherUser?.email,
+                senderAddress: magicCurrentAddress,
+                receiverAddress: infosOtherUser?.address,
+                amount: currentAmount,
+                hash: _hash
+            }
+
+            // Obtenir le token en cours
+            const token = localStorage.getItem('tokenEnCours');
+            
+            const response = await fetch(`${API_URL}/api/historical/add-historical`, {
+                method: 'POST',
+                body: JSON.stringify(dataBody),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+            });
+
+            /**
+             * Données de la réponse de la requête .
+             * @type {object}
+             */
+            const data = await response.json();
+
+            /* Verifier s'il y a un messsage d'erreur, on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message==200) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Votre transfert s'est effectué avec succès.</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+
+                // Actualiser après l'affichage
+                setTimeout(() => {
+                    window.location.reload();
+                }, 7000);
+                // Fin
+            } else {
+                setMessageError(data.message);
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>`,
+                    showConfirmButton: false,
+                    timer: 10000
+                });
+            }
+            // Fin condition
+        } catch (error) {
+            console.error('Erreur =>', error);
+        }
+    };
+
+
+    // FONCTION POUR RECUPERER LES INFOS D'UN AUTRE UTILISATEUR EN FONCTION DE SON ID
+    useEffect(() => {
+        const getInfosOtherUser = async (_userId) => {
+        try {
+            const result = await fetch(`${API_URL}/api/user/find-one-user-by-id/${_userId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            });
+    
+            if (!result.ok) {
+            throw new Error('Failed to fetch user data');
+            }
+    
+            const user = await result.json();
+            setInfosOtherUser(user);
+            console.log("user oth=>", user)
+        } catch (error) {
+            // Handle errors appropriately, e.g., set an error state.
+            console.error('Error fetching user data:', error);
+        }
+        };
+    
+        if (currentSenderId) {
+        getInfosOtherUser(currentSenderId);
+        }
+    }, [currentSenderId]);
+    // FIN
+
+
+    /**
+     * Affiche un contenu limité en fonction du nombre de mots ou de caractères spécifié.
+     *
+     * @param {string} content - Le contenu à afficher.
+     * @param {number} limit - Le nombre limite de mots ou de caractères.
+     * @param {string} unit - L'unité de la limite ('words' pour mots, 'characters' pour caractères).
+     * @returns {string} Le contenu limité avec des points de suspension si nécessaire.
+     * @throws {Error} Si l'unité spécifiée n'est ni 'words' ni 'characters'.
+     */
+    function displayLimitedContent(content, limit, unit) {
+        // Vérifier si le paramètre 'unit' est spécifié et valide
+        if (unit !== 'words' && unit !== 'characters') {
+            throw new Error("L'unité doit être 'words' ou 'characters'.");
+        }
+
+        if (unit === 'words') {
+            // Séparer le contenu en mots
+            const words = content.split(' ');
+
+            // Vérifier si le nombre de mots est inférieur ou égal à la limite
+            if (words.length <= limit) {
+                return content; // Pas besoin de points de suspension
+            } else {
+                // Sélectionner les premiers 'limit' mots et les rejoindre
+                const limitedContent = words.slice(0, limit).join(' ');
+
+                return `${limitedContent}...`;
+            }
+        } else if (unit === 'characters') {
+            // Vérifier si la longueur du contenu est inférieure ou égale à la limite
+            if (content.length <= limit) {
+                return content; // Pas besoin de points de suspension
+            } else {
+                // Sélectionner les premiers 'limit' caractères
+                const limitedContent = content.slice(0, limit);
+
+                return `${limitedContent}...`;
+            }
+        }
+    }
      
-// FONCTION POUR FORMATER LA DATE
-const formatDate = (_updatedAt) =>{
-    const maDate = moment(_updatedAt).format('DD/MM/YYYY à HH:mm');
-    return  maDate
-}
-//  FIN
+    // FONCTION POUR FORMATER LA DATE
+    const formatDate = (_updatedAt) =>{
+        const maDate = moment(_updatedAt).format('DD/MM/YYYY à HH:mm');
+        return  maDate
+    }
+    //  FIN
 
     
-
 
 
 
@@ -654,30 +688,34 @@ const formatDate = (_updatedAt) =>{
                                                                 }}
                                                             >
                                                             <Table.Header>
-                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">commerçant/entreprise </p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Commerçant</p></Table.Column>
                                                                 <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
                                                                 <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Objet</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
                                                                 <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
                                                                 <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
                                                             </Table.Header>
                                                                 <Table.Body>
                                                                     {dataPaymentPending?.map(
                                                                         (
-                                                                        {id, objet, amount,senderEmail, senderAddress, nameEntreprise, senderId, createdAt},
+                                                                        {id, objet, amount,senderEmail, senderAddress, nameEntreprise, senderId, createdAt, valid},
                                                                         index
                                                                         ) => (
                                                                             <Table.Row key={index}>
                                                                                 {/* Default Admin */}
-                                                                                <Table.Cell ><p className=" py-0 ">{nameEntreprise}</p></Table.Cell>
-                                                                                <Table.Cell ><p className=" py-0 ">{amount} KOREE</p></Table.Cell>
-                                                                                <Table.Cell ><p className=" py-0 ">{objet}</p></Table.Cell>
-                                                                                <Table.Cell ><p className=" py-0 ">{formatDate(createdAt)}</p></Table.Cell>
+                                                                                <Table.Cell ><small className=" py-0 ">{displayLimitedContent(nameEntreprise,30,"characters")}</small></Table.Cell>
+                                                                                <Table.Cell ><small className=" py-0 ">{amount}</small></Table.Cell>
+                                                                                <Table.Cell ><small className=" py-0 ">{displayLimitedContent(objet,15,"characters")}</small></Table.Cell>
+                                                                                <Table.Cell ><small className=" py-0 ">{valid == 1?(<i className='colorGreen'>Payé</i>):valid == 2 ? (<i className='colorBlue'>Remboursé</i>) :valid == 3? (<i className='colorRed'>Rejeté </i>) :<i>En cours</i>}</small></Table.Cell>
+
+                                                                                <Table.Cell ><small className=" py-0 ">{formatDate(createdAt)}</small></Table.Cell>
                                                                             
                                                                                 <Table.Cell>
                                                                                     <div className="d-flex py-0 ">
                                                                                         <p className="text-center">
+
                                                                                         
-                                                                                            <Button type='button'  onClick={()=>setCurrentSenderAddress(senderAddress)}  color='success' className=''>
+                                                                                            <button  onClick={()=>setCurrentSenderAddress(senderAddress)} disabled={valid === 1 || valid === 3}  className={`py-0 mx-2 btn ${valid === 1 || valid === 3 ? 'btn-secondary' : 'btn-success'} d`}>
                                                                                             {/* onClick={()=>setIdForSender(senderId)} */}
                                                                                             
                                                                                                 <div onClick={()=>setIdPaymentPending(id)}>
@@ -686,24 +724,34 @@ const formatDate = (_updatedAt) =>{
                                                                                                             <div onClick={()=>setCurrentEntreprise(nameEntreprise)}>
                                                                                                                 <div onClick={()=>setCurrentSenderEmail(senderEmail)}>
                                                                                                                     <div onClick={handleShowPayer}>
-                                                                                                                        Valider <Icon icon="bx:chevron-down-circle"   width="30"/> 
+                                                                                                                        Valider 
                                                                                                                     </div>
                                                                                                                 </div>
                                                                                                             </div>
                                                                                                         </div>
                                                                                                     </div>
                                                                                                 </div>
-                                                                                            </Button>
+                                                                                            </button>
 
-                                                                                            <Button  onClick={()=>setCurrentAmount(amount)}color='danger' className='text-center mx-3 bg-red'>
+                                                                                            <button  onClick={()=>setCurrentAmount(amount)} disabled={valid === 1 || valid === 3}  className={`py-0 mx-2 btn ${valid === 1 || valid === 3 ? 'btn-secondary' : 'btn-danger'}`}>
                                                                                                 <div onClick={()=>setIdPaymentPending(id)}>
                                                                                                     <div onClick={()=>setCurrentSenderId(senderId)}>
                                                                                                         <div onClick={handleDeleteShow}>
-                                                                                                            Annuler <Icon icon="bx:trash"  width="30"/> 
+                                                                                                            Rejeter
                                                                                                         </div>
                                                                                                     </div>
                                                                                                 </div>
-                                                                                            </Button>
+                                                                                            </button>
+
+                                                                                            {/* <small  onClick={()=>setCurrentAmount(amount)} className='py-0 px-0 mx-2 btn btn-primary'>
+                                                                                                <div onClick={()=>setIdPaymentPending(id)}>
+                                                                                                    <div onClick={()=>setCurrentSenderId(senderId)}>
+                                                                                                        <div>
+                                                                                                            Rembourser
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </small> */}
                                                                                         </p>
                                                                                     </div>
                                                                                 </Table.Cell>
@@ -768,8 +816,8 @@ const formatDate = (_updatedAt) =>{
                     <Button className="text-white" color="danger" onClick={handleDeleteClose}>
                         Fermer
                     </Button>
-                    <Button  type='button' onClick={updateValidInFalse}  color="primary" disabled={isLoggingIn}>
-                        Annuler
+                    <Button  type='button' onClick={cancelPayment}  color="primary" disabled={isLoggingIn}>
+                        Rejeter
                     </Button>
                     </Modal.Footer>
                 {/* </Form> */}
@@ -784,14 +832,14 @@ const formatDate = (_updatedAt) =>{
         {/* ********************************************************************************** */}
         <Modal show={showPayer} className="mt-15" onHide={handleClosePayer}>
             <Modal.Header closeButton className='bgColorGreen'>
-                <Modal.Title className="text-white" >Validation de paiement= {currentSenderAddress} <br/>{escrowContractAddress}</Modal.Title>                
+                <Modal.Title className="text-white" >Validation de paiement</Modal.Title>                
             </Modal.Header>
             {/* <Form role="form" onSubmit={hant}> */}
                 <Modal.Body>
                     <div className="input-group flex-nowrap">
                         <div className='col-lg-12 col-md-12 row justify-content-between'>
                             <div className='input-group-alternative my-3 '>
-                                Voulez-vous confirmer le paiement de {currentAmount} KOREE à l'adresse de {currentnameEntreprise}
+                                Voulez-vous confirmer le paiement de {currentAmount} {symbolStablecoin} à l'adresse de {currentnameEntreprise}
                             </div>
                         </div>
                     </div>
@@ -800,8 +848,10 @@ const formatDate = (_updatedAt) =>{
                     <Button className="text-white" color="danger" onClick={handleClosePayer}>
                         Fermer
                     </Button>
-                    <Button  type='button'  color="success" onClick={transferKorre} disabled={isLoggingIn}>
+                    <Button  type='button'  color="success" onClick={transferToEscrow} disabled={isLoggingIn}>
                         Payer
+                        {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
+
                     </Button>
                 </Modal.Footer>
             {/* </Form> */}

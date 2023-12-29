@@ -344,9 +344,11 @@ const OuvertureBoutik = () => {
                                             >
                                                 <div className='cryptocurrency-search-box'>
                                                     {dataRequestUseStablecoin?.allow==0? (
-                                                        <div className='colorRed text-center'>Votre demande est en cours de traitement</div>
+                                                        <div className='colorBlue text-center'>Votre demande est en cours de traitement</div>
                                                     ):dataRequestUseStablecoin?.allow==1? (
                                                         <div className='colorGreen text-center'>Félicitations, votre demande a été acceptée</div>
+                                                    ):dataRequestUseStablecoin?.allow===2? (
+                                                        <div className='colorRed text-center'>Desolé, votre demande a été rejetée</div>
                                                     ):(
                                                         <form onSubmit={requestUseStablecoin}>
                                                             <div className="form-group my-6 ">
@@ -391,9 +393,11 @@ const OuvertureBoutik = () => {
                                             >
                                                 <div className='cryptocurrency-search-box'>
                                                 {dataRequestUseStablecoinEshop?.allow==0? (
-                                                        <div className='colorRed text-center'>Votre demande est en cours de traitement</div>
+                                                        <div className='colorBlue text-center'>Votre demande est en cours de traitement</div>
                                                     ):dataRequestUseStablecoinEshop?.allow==1? (
                                                         <div className='colorGreen text-center'>Félicitations, votre demande a été acceptée</div>
+                                                    ):dataRequestUseStablecoinEshop?.allow==2? (
+                                                        <div className='colorRed text-center'>Desolé, votre demande a été rejetée</div>
                                                     ):(
                                                         <form onSubmit={requestUseStablecoinOnEshop}>
                                                             <div className="form-group my-6 ">

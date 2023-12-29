@@ -84,7 +84,7 @@ const Compte = () => {
                                                 color="primary"
                                                 type="button"
                                             >
-                                                Vois plus
+                                                Voir plus
                                             </Button>
                                         </Link>
                                     {/* Fin */}

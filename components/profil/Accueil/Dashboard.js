@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Modal } from "react-bootstrap";
+import ABI_TOKEN_EWARI from "../../../components/Contrats/Abi/AbiStablecoin.json";
+
 
 import React from "react";
 import axios from 'axios';
@@ -46,6 +48,15 @@ import {
 const Dashboard = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+    const ADDRESS_CONTRAT_EWARI =process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
+    const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY
+    // New
+    const [userMetadata, setUserMetadata] = useState("...");
+    const [magicCurrentAddress, setMagicCurrentAddress] = useState();
+    const [provider, setProvider] = useState(null);
+    const [signer, setSigner] = useState();
+    const [isLoggingIn, setIsLoggingIn] = useState(false);
+    // Fin
 
     const [successCopy, setSuccessCopy] = useState();
 
@@ -101,7 +112,6 @@ const [deleteIdAccountMobile, setDeleteIdAccountMobile] = useState()
 
 
 
-const [isLoggingIn, setIsLoggingIn] = useState(false);
 
 // Pays
 const [allCountry, setAllCountry] = useState("");
@@ -165,12 +175,10 @@ const [montantAchat, setMontantAchat] = useState(0)
 
   // PARTIE MAGIC
     // TOKEN
-    const [currentAdresse, setCurrentAdresse] = useState("...");
     const [balance, setBalance] = useState(0);
     const [symbol, setSymbol] = useState(null);
 
     const [cfaContract, setCfaContract] = useState();
-    const [userMetadata, setUserMetadata] = useState();
 
 
 
@@ -181,7 +189,6 @@ const [montantAchat, setMontantAchat] = useState(0)
     //   FORM
     const [montantSaisi, setMontantSaisi] = useState();
 
-    const [provider, setProvider] = useState(null);
     const [tokenCurrent, setTokenCurrent] = useState();
 
     // State des infos user
@@ -205,492 +212,127 @@ const [montantAchat, setMontantAchat] = useState(0)
     // Pour afficher les informations venant de la base dedonnée
     // const [userData, setUserData] = useState();
 
-    //   const contractAdress = "0x6C8a01097195A19EbBeFf5602555a946AEC768cf";
-    let priv_key = "58daac6cd25ffc439211c40ffc0b4600e95dbe89486e037259e4295563c117ce";
-    let Rpcprovider = "https://rpc.testnet.moonbeam.network";
 
-    let adresseEcfa = "0x762a7A1C4948c6ac617B635c1B44Bf434BD3284a";
-    const AbiEcfa = [
-        {
-            "inputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "constructor"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "tokenOwner",
-                    "type": "address"
-                },
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "spender",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "tokens",
-                    "type": "uint256"
-                }
-            ],
-            "name": "Approval",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "to",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "value",
-                    "type": "uint256"
-                }
-            ],
-            "name": "Burn",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "from",
-                    "type": "address"
-                },
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "to",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "tokens",
-                    "type": "uint256"
-                }
-            ],
-            "name": "Transfer",
-            "type": "event"
-        },
-        {
-            "constant": true,
-            "inputs": [],
-            "name": "_totalSupply",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "tokenOwner",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address",
-                    "name": "spender",
-                    "type": "address"
-                }
-            ],
-            "name": "allowance",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "remaining",
-                    "type": "uint256"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": false,
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "spender",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "tokens",
-                    "type": "uint256"
-                }
-            ],
-            "name": "approve",
-            "outputs": [
-                {
-                    "internalType": "bool",
-                    "name": "success",
-                    "type": "bool"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "tokenOwner",
-                    "type": "address"
-                }
-            ],
-            "name": "balanceOf",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "balance",
-                    "type": "uint256"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": false,
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "_value",
-                    "type": "uint256"
-                }
-            ],
-            "name": "burn",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [],
-            "name": "decimals",
-            "outputs": [
-                {
-                    "internalType": "uint8",
-                    "name": "",
-                    "type": "uint8"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": false,
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "amount",
-                    "type": "uint256"
-                }
-            ],
-            "name": "mint",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [],
-            "name": "name",
-            "outputs": [
-                {
-                    "internalType": "string",
-                    "name": "",
-                    "type": "string"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "a",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "b",
-                    "type": "uint256"
-                }
-            ],
-            "name": "safeAdd",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "c",
-                    "type": "uint256"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "a",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "b",
-                    "type": "uint256"
-                }
-            ],
-            "name": "safeDiv",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "c",
-                    "type": "uint256"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "a",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "b",
-                    "type": "uint256"
-                }
-            ],
-            "name": "safeMul",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "c",
-                    "type": "uint256"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "a",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "b",
-                    "type": "uint256"
-                }
-            ],
-            "name": "safeSub",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "c",
-                    "type": "uint256"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [],
-            "name": "symbol",
-            "outputs": [
-                {
-                    "internalType": "string",
-                    "name": "",
-                    "type": "string"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [],
-            "name": "totalSupply",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": false,
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "to",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "tokens",
-                    "type": "uint256"
-                }
-            ],
-            "name": "transfer",
-            "outputs": [
-                {
-                    "internalType": "bool",
-                    "name": "success",
-                    "type": "bool"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "constant": false,
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "from",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address",
-                    "name": "to",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "tokens",
-                    "type": "uint256"
-                }
-            ],
-            "name": "transferFrom",
-            "outputs": [
-                {
-                    "internalType": "bool",
-                    "name": "success",
-                    "type": "bool"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        }
-    ]
+    // **************************NEW***************************************
+
+    //***************************************************************** *
+        // LES STATES DU STABLECOIN
+    // ******************************************************************
+    // const [magicCurrentAddress, setMagicCurrentAddress] = useState("...");
+    const [contractStablecoin, setContractStablecoin] = useState();
+    const [nameStablecoin, setNameStablecoin] = useState();
+    const [symbolStablecoin, setSymbolStablecoin] = useState();
+    const [balanceStablecoin, setBalanceStablecoin] = useState();
+    const [decimalStablecoin, setDecimalStablecoin] = useState();
+
+    const [infoSubscriptionOfUser, setInfoSubscriptionOfUser] = useState()
+   
 
 
-     useEffect(() => {
-
-        if (!!magic) {
-            const pt = new ethers.providers.Web3Provider(magic.rpcProvider);
-            setProvider(pt);
-        }
-    }, [magic]);
-
-
+    /**
+     * Hook d'effet pour initialiser le fournisseur Web3 en fonction de l'instance Magic.
+     * @function
+     * @returns {void}
+     * @param {Object} magic - Instance de Magic.
+     * @param {Function} setProvider - Fonction pour mettre à jour l'état du fournisseur Web3.
+     */
     useEffect(() => {
-       (async () => {
-            if (!!magic && !!provider) {
-                // RECUPERATION DES INFORMATIONS QUI CONCERNENT MAGIC
-                const userMetadata = await magic.user.getMetadata();
-                const signer = provider.getSigner();
-                const network = await provider.getNetwork();
-                const userAddress = await signer.getAddress();
-                setCurrentAdresse(userAddress);
-                //const userBalance = ethers.utils.formatEther(await provider.getBalance(userAddress))
-
-                const web3 = new Web3(magic.rpcProvider)
-                const contract = new web3.eth.Contract(AbiEcfa, adresseEcfa)
-                const balanceECFA = await contract.methods.balanceOf(userAddress).call()
-                const symbole = await contract.methods.symbol().call()
-                setSymbol(symbole)
-                setBalance(balanceECFA / 10 ** 2)
-
-                // FIN
-
-                const currentTypeProfil = localStorage.getItem('currentTypeProfil'); //Pour recuperer le code du type de profil dans la variable local
-               
-
+        /**
+         * Fonction pour initialiser le fournisseur Web3 en fonction de l'instance Magic.
+         * @returns {void}
+         */
+        const initializeWeb3Provider = () => {
+        if (!!magic) {
+            // Créer une instance du fournisseur Web3 à partir du fournisseur RPC de Magic.
+            const web3Provider = new ethers.providers.Web3Provider(magic.rpcProvider);
+    
+            // Mettre à jour l'état du fournisseur Web3.
+            setProvider(web3Provider);
         }
+        };
+    
+        // Appeler la fonction d'initialisation lorsque l'instance Magic change.
+        initializeWeb3Provider();
+    }, [magic]);
+    
+    /**
+     * Hook d'effet pour récupérer les informations liées à l'instance Magic et au fournisseur Web3.
+     * @function
+     * @returns {void}
+     * @param {Object} magic - Instance de Magic.
+     * @param {Object} provider - Fournisseur Web3.
+     */
+    useEffect(() => {
+        /**
+         * Fonction asynchrone pour récupérer les informations liées à Magic et au fournisseur Web3.
+         * @returns {void}
+         */
+        const getMagicAndWeb3Info = async () => {
+        if (!!magic && !!provider) {
+            // Récupérer les métadonnées de l'utilisateur Magic.
+            const userMetadatas = await magic.user.getMetadata();
+            setUserMetadata(userMetadatas);
+    
+            // Obtenir le signer du fournisseur Web3.
+            const signer = provider.getSigner();
+            setSigner(signer);
+    
+            // Obtenir le réseau actuel à partir du fournisseur Web3.
+            const network = await provider.getNetwork();
+    
+            // Obtenir l'adresse actuelle de l'utilisateur à partir du signer.
+            const userAddress = await signer.getAddress();
+            setMagicCurrentAddress(userAddress);
+    
+            // *************************************************************************
+            // INTERACTION AVEC LE SMART CONTRAT DE STABLECOIN
+            // *************************************************************************
+            // Créer un portefeuille Web3 avec la clé privée.
+            const walletRelay = new ethers.Wallet(PRIVATE_KEY, provider);
+    
+            
+            // Créer une instance du contrat de stablecoin avec adresse magic.
+            const contractStablecoinAddMagic = new ethers.Contract(
+                ADDRESS_CONTRAT_EWARI,
+                ABI_TOKEN_EWARI.abi,
+                signer
+            );
 
-        })();
+            // Obtenir le nombre de jour restant d'un abonnement
+            // setRemainingDays(remainingDays)
+            // const expiryDate = await contractStablecoinAddMagic.getSubscriptionExpiry();
+            // const remainingDays = await contractStablecoinAddMagic.getRemainingDays();
+            // console.log("Date d'expiration de l'abonnement:", expiryDate);
+            // console.log("Jours restants:", remainingDays);
+
+
+
+            // Créer une instance du contrat de stablecoin.
+            const contractStablecoin = new ethers.Contract(
+            ADDRESS_CONTRAT_EWARI,
+            ABI_TOKEN_EWARI.abi,
+            walletRelay
+            );
+            setContractStablecoin(contractStablecoin);
+    
+            // Récupérer les informations de stablecoin.
+            const nameStablecoin = await contractStablecoin.name();
+            const symbolStablecoin = await contractStablecoin.symbol();
+            const decimalStablecoin = await contractStablecoin.decimals();
+            const balanceStablecoin = await contractStablecoin.balanceOf(userAddress);
+    
+            // Stocker les informations de stablecoin dans leur state.
+            setNameStablecoin(nameStablecoin);
+            setSymbolStablecoin(symbolStablecoin);
+            setDecimalStablecoin(decimalStablecoin);
+            setBalanceStablecoin(formatNumber(balanceStablecoin / 10 ** decimalStablecoin));
+        }
+        };
+    
+        // Appeler la fonction pour récupérer les informations lorsque le fournisseur Web3 ou Magic changent.
+        getMagicAndWeb3Info();
     }, [provider, magic]);
-
-
-    // hooks
-    useEffect(async () => {
-        const magicIsLoggedin = await magic.user.isLoggedIn();
-        if (magicIsLoggedin) {
-        // const userMetadata = magic.user.getMetadata();
-        magic.user.getMetadata().then(setUserMetadata);
-        const provider = new ethers.providers.Web3Provider(magic.rpcProvider); //MODIFIER 
-        const signer = provider.getSigner();
-        const userAdress = await signer.getAddress();
-        setCurrentAdresse(userAdress)
-
-        //   LES COMPOSANT E-WARI
-        const contract = new ethers.Contract(
-            adresseEcfa,
-            AbiEcfa,
-            signer
-        );
-        setCfaContract(contract);
-        //   FIN
-        
-
-        } else {
-        // Router.push("/");
-        }
-    }, []);
+    
 
 
 
@@ -832,7 +474,7 @@ const [montantAchat, setMontantAchat] = useState(0)
             //   MINTER
             await contract.mint(numberOfTokens);
             //execution du transfert
-            await contract.transfer(currentAdresse, numberOfTokens).then((transferResult) => {
+            await contract.transfer(magicCurrentAddress, numberOfTokens).then((transferResult) => {
                 getJetonDev()
                 console.dir(transferResult)
 
@@ -945,33 +587,105 @@ const [montantAchat, setMontantAchat] = useState(0)
         };
         await getUser();
         // Fin
+       
+    })();
     
-    
-        // Obtenir les données de la demande de paiement en fonction de l'utilisateur connecté 
+    }, [currentUser]);
+
+
+    // FONCTION POUR RECUPERER LES INFOSD'ABONNEMENT EN FONCTION DE L'UTILISATEUR CONNECTE
+    useEffect(() => {
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
+        const getSubsriptionOfUser = async () => {
+        try {
+            const result = await fetch(`${API_URL}/api/subscription/find-subscription-of-user`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+  
+            },
+            });
+  
+            if (!result.ok) {
+            throw new Error('Failed to fetch user data');
+            }
+            const data = await result.json();
+            setInfoSubscriptionOfUser(data);
+        } catch (error) {
+            // Handle errors appropriately, e.g., set an error state.
+            console.error('Error fetching user data:', error);
+        }
+        };
+  
+        getSubsriptionOfUser();
+        
+      }, []);
+      // FIN
+
+
+
+    // Fonction pour calculer le nombre de jours restants
+    const calculateRemainingDays = (startDate, subscriptionDays) => {
+      const ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000; // Nombre de millisecondes dans une journée
+      const currentDate = new Date();
+      const startSubscriptionDate = new Date(startDate);
+      const expirationDate = new Date(startSubscriptionDate.getTime() + subscriptionDays * ONE_DAY_IN_MILLISECONDS);
+  
+      // Calcul du nombre de jours restants
+      const remainingDays = Math.ceil((expirationDate - currentDate) / ONE_DAY_IN_MILLISECONDS);
+  
+      return remainingDays > 0 ? remainingDays : 0;
+    };
+  
+    // Utilisation de la fonction pour obtenir le nombre de jours restants
+    const daysRemaining = infoSubscriptionOfUser
+      ? calculateRemainingDays(infoSubscriptionOfUser?.updatedAt, infoSubscriptionOfUser?.subscriptionDays)
+      : 0;
+  
+
+    /**
+     * Effectue une requête pour obtenir les données de la demande de paiement en fonction de l'utilisateur connecté.
+     * Les données récupérées comprennent les demandes en attente de validation (champ 'valid' égal à null).
+     * Met à jour les états avec les données récupérées et la longueur des demandes en attente.
+     * @function
+     * @returns {void}
+     */
+    useEffect(() => {
+        /**
+         * Fonction asynchrone pour effectuer la requête et mettre à jour les états.
+         * @async
+         * @function
+         * @returns {Promise<void>}
+         */
+        const fetchData = async () => {
         if (currentUser?.id) {
-        const getPaymentPendingOfUser = async () => {
-            
             // Obtenir le token en cours
             const token = localStorage.getItem('tokenEnCours');
             const result = await fetch(`${API_URL}/api/payment-request/find-all-payment-request-for-receiver?receiverId=${currentUser.id}`, {
-                headers: {
+            headers: {
                 'Content-Type': 'application/json',
                 Authorization:  `Bearer ${token}`
-    
-                },
+            },
             })
-                .then((result) => result.json())
-                .then((data) => {
-                setDataPaymentPending(data)
-                setPaymentPendingLength(data?.length)
-                }) 
-            };
-            await getPaymentPendingOfUser();
-        }
-        // Fin
-    })();
+            .then((result) => result.json())
+            .then((data) => {
+                // Filtrer les éléments où le champ 'valid' est égal à null
+                const pendingRequests = data.filter(item => item.valid === null);
     
-    }, [currentUser, dataPaymentPending]);
+                // Obtenir la longueur des éléments filtrés
+                const pendingRequestsLength = pendingRequests.length;
+    
+                // Mettre à jour les états
+                setDataPaymentPending(data);
+                setPaymentPendingLength(pendingRequestsLength);
+            }) 
+        }
+        };
+    
+        fetchData(); // Appel de la fonction lors du montage du composant
+    }, [currentUser]); // Dépendance currentUser, assurez-vous d'ajuster si nécessaire
+  
 
 
 
@@ -1350,14 +1064,14 @@ const [montantAchat, setMontantAchat] = useState(0)
         // Estimatic the gas limit
         var limit = web3.eth.estimateGas({
         from: signer.address, 
-        to: currentAdresse,
+        to: magicCurrentAddress,
         value: web3.utils.toWei("0.001")
         }).then(console.log);
         
         // Creating the transaction object
         const tx = {
         from: signer.address,
-        to: currentAdresse,
+        to: magicCurrentAddress,
         value: web3.utils.numberToHex(web3.utils.toWei('0.001')),
         gas: web3.utils.toHex(limit),
         nonce: web3.eth.getTransactionCount(signer.address),
@@ -1387,17 +1101,17 @@ const [montantAchat, setMontantAchat] = useState(0)
     //  FONCTION D'AJOUT D'UN NOUVEAU TOKEN SUR METAMASK
     function watchToken() {
             
-            ethereum.request({
-                method: 'wallet_watchAsset',
-                params: {
+        ethereum.request({
+            method: 'wallet_watchAsset',
+            params: {
                 type: 'ERC20',
                 options: {
-                    address: String("0x762a7A1C4948c6ac617B635c1B44Bf434BD3284a"),
-                    symbol: String("ECFA"),
-                    decimals: String(2),
+                    address: String(ADDRESS_CONTRAT_EWARI),
+                    symbol: String(symbolStablecoin),
+                    decimals: String(decimalStablecoin),
                 },
-                },
-            })
+            },
+        })
         
     }
     // FIN
@@ -1442,8 +1156,8 @@ const [montantAchat, setMontantAchat] = useState(0)
 
     // FONCTION POUR COPIER L'ADRESSE PUBLIC'
     const copyToClipboard = () => {
-        console.log("currentAdresse=>",currentAdresse)
-        copy(currentAdresse);
+        console.log("magicCurrentAddress=>",magicCurrentAddress)
+        copy(magicCurrentAddress);
         setSuccessCopy("L'adresse copiée avec succès !");
 
         setTimeout(() => {
@@ -1472,7 +1186,25 @@ const [montantAchat, setMontantAchat] = useState(0)
     }, []);
     // FIN
 
+    /**
+     * Formate un nombre en tronquant à deux décimales et en ajoutant un séparateur de milliers (espace).
+     * @param {number} number - Le nombre à formater.
+     * @returns {string} - Le nombre formaté en tant que chaîne de caractères.
+     * @throws {Error} - Si la fonction est appelée avec autre chose qu'un nombre.
+     */
+    function formatNumber(number) {
+        if (typeof number !== 'number') {
+            throw new Error('La fonction doit être appelée avec un nombre.');
+        }
 
+        // Tronquer le nombre à deux décimales
+        const truncatedNumber = Math.floor(number * 100) / 100;
+
+        // Ajouter un séparateur de milliers (espace)
+        const formattedNumber = truncatedNumber.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
+        return formattedNumber;
+    }
 
 
 
@@ -1505,7 +1237,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                             color="primary"
                             onClick={copyToClipboard}
                         >
-                            {currentAdresse}
+                            {magicCurrentAddress}
                         </Button>
                         {/* </div> */}
                         <p className="colorGreen gr-text-8 pt-3 pb-0 text-center ">{successCopy} </p>
@@ -1561,20 +1293,21 @@ const [montantAchat, setMontantAchat] = useState(0)
                                         <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
                                     </div>
                                     <div className='title'>
-                                        <h3>Stablecoin E-WARI</h3>
-                                        <p>Mon solde : {balance} E-WARI</p>
+                                        <h3>{nameStablecoin}</h3>
+                                        <p>Mon solde : {balanceStablecoin} {symbolStablecoin}</p>
                                     </div>
                                     </div>
-                                    <div className='btn-box'>
+                                    <Link href="/profil/wallet">
                                     <Button
                                         block
                                         color="success"
                                         type="button"
                                     >
-                                        Voir plus
+                                        
+                                            Voir plus
+                                        
                                     </Button>
-                                    {/* Fin */}
-                                    </div>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -1591,24 +1324,22 @@ const [montantAchat, setMontantAchat] = useState(0)
                                     <div className='bestseller-coin-image'>
                                         <img src="/images/ecfa/icons/icon1.jpg" className="rounded-circle"  alt='image' />
                                     </div>
+                                    <div className='title text-center'>
                                     <h3>
                                         <p className='rounded-circle bgColorblue text-white'><i>{paymentPendingLength?(paymentPendingLength):("0")}</i></p>
                                         Paiements en attente
                                     </h3>
+                                    </div>
                                     </div><br/>
-                                    <div className='btn-box mt-3'>
-                                        <a className='nav-link' href='/profil/paiements/paiements-attente'>
-                                            <Button
+                                    <a className='nav-link' href='/profil/paiements/paiements-attente'>
+                                        <Button
                                             block
                                             color="success"
                                             type="button"
-                                            >
-                                                Voir plus
-                                            </Button>
-                                        </a>
-                                    
-                                    {/* Fin */}
-                                    </div>
+                                        >
+                                            Voir plus
+                                        </Button>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -1626,7 +1357,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                                     {/* Si le profil est : Sécurité */}
                                     {questionnaireForUser?.typeProfile==="Sécurité" ? (
                                         <div className='d-flex align-items-center'>
-                                            <div className='bestseller-coin-image mx-3 my-3'>
+                                            <div className='bestseller-coin-image mx-3'>
                                                 <img src="/images/ecfa/opcvm/profil1.jpg" className="rounded-circle"  alt='image' />
                                             </div>
                                             <div className='title'>
@@ -1639,8 +1370,8 @@ const [montantAchat, setMontantAchat] = useState(0)
                                     {/* Si le profil est : Conservateur */}
                                     {questionnaireForUser?.typeProfile==="Conservateur" ? (
                                         <div className='d-flex align-items-center'>
-                                            <div className='bestseller-coin-image mx-3 my-3'>
-                                                <img src="/images/ecfa/opcvm/profil2.jpg" className="rounded-circle"  alt='image' />
+                                            <div className='bestseller-coin-image mx-3 py-0'>
+                                                <img src="/images/ecfa/opcvm/profil2.jpg" className="rounded-circle"   alt='image' />
                                             </div>
                                             <div className='title'>
                                                 <h3>{questionnaireForUser?.typeProfile}</h3>
@@ -1652,7 +1383,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                                     {/* Si le profil est : Equilibré */}
                                     {questionnaireForUser?.typeProfile==="Equilibré" ? (
                                         <div className='d-flex align-items-center'>
-                                            <div className='bestseller-coin-image mx-3 my-3'>
+                                            <div className='bestseller-coin-image mx-3'>
                                                 <img src="/images/ecfa/opcvm/profil3.jpg" className="rounded-circle"  alt='image' />
                                             </div>
                                             <div className='title'>
@@ -1665,7 +1396,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                                     {/* Si le profil est : Croissance équilibrée */}
                                     {questionnaireForUser?.typeProfile==="Croissance équilibrée" ? (
                                         <div className='d-flex align-items-center'>
-                                            <div className='bestseller-coin-image mx-3 my-3'>
+                                            <div className='bestseller-coin-image mx-3'>
                                                 <img src="/images/ecfa/opcvm/profil4.jpg" className="rounded-circle"  alt='image' />
                                             </div>
                                             <div className='title'>
@@ -1678,7 +1409,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                                     {/* Si le profil est : Croissance */}
                                     {questionnaireForUser?.typeProfile==="Croissance" ? (
                                         <div className='d-flex align-items-center'>
-                                            <div className='bestseller-coin-image mx-3 my-3'>
+                                            <div className='bestseller-coin-image mx-3'>
                                                 <img src="/images/ecfa/opcvm/profil5.jpg" className="rounded-circle"  alt='image' />
                                             </div>
                                             <div className='title'>
@@ -1687,18 +1418,15 @@ const [montantAchat, setMontantAchat] = useState(0)
                                             </div>
                                         </div>
                                     ):("")}
-                                    <div className='btn-box'>
-                                        <a className='nav-link' href='/profil/opcvm/type-profil'>
-                                            <Button
-                                                block
-                                                color="success"
-                                                type="button"
-                                            >
-                                                Voir mon profil investisseur
-                                            </Button>
-                                        </a>
-                                    {/* Fin */}
-                                    </div>
+                                    <a className='nav-link' href='/profil/opcvm/type-profil'>
+                                        <Button
+                                            block
+                                            color="success"
+                                            type="button"
+                                        >
+                                            Voir mon profil investisseur
+                                        </Button>
+                                    </a>
                                 </div>
                                 //  Sinon si l'utilisateur n'a pas encore repondu à toutes les questions
                                 ): (<div className='single-cryptocurrency-box'>
@@ -1711,18 +1439,16 @@ const [montantAchat, setMontantAchat] = useState(0)
                                     <p>Activer mon profil d'investisseur</p>
                                 </div>
                                 </div>
-                                <div className='btn-box'>
-                                    <a className='nav-link' href='/profil/kyc/opcvm/questionnaire-one'>
-                                        <Button
-                                            block
-                                            color="success"
-                                            type="button"
-                                        >
-                                            Activer maintenant
-                                        </Button>
-                                    </a>
+                                <a className='nav-link' href='/profil/kyc/opcvm/questionnaire-one'>
+                                    <Button
+                                        block
+                                        color="success"
+                                        type="button"
+                                    >
+                                        Activer maintenant
+                                    </Button>
+                                </a>
                                 {/* Fin */}
-                                </div>
                             </div>)}
                             </div>
                         </div>
@@ -1740,23 +1466,26 @@ const [montantAchat, setMontantAchat] = useState(0)
                                     <div className='bestseller-coin-image'>
                                         <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
                                     </div>
-                                    <div className='title pb-5'>
+                                    <div className='title'>
                                         <h3>Abonnements</h3>
-                                        <p>Je fais mon abonnement</p>
+                                        {daysRemaining ==0 ?
+                                            <p>Je fais mon abonnement </p>
+                                        :
+                                            <p> Vous avez un abonnement de <b>{infoSubscriptionOfUser?.subscriptionDays} jours </b> en cours.<br/> Il vous reste <b>{daysRemaining} jours </b></p>
+                                        }
                                     </div>
-                                    </div><br/>
-                                    <div className='btn-box pt-3'>
-                                    <a className='nav-link' href='/profil/abonnement'>
+                                    </div>
                                         <Button
                                             block
                                             color="success"
                                             type="button"
+                                            disabled={daysRemaining!==0}
                                         >
-                                            Voir plus
+                                            <a className='nav-link' href='/profil/abonnement'>
+                                                Voir plus
+                                            </a>
+
                                         </Button>
-                                    </a>
-                                    {/* Fin */}
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2069,7 +1798,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                 <Form role="form" onSubmit={addAccountBank}>
                     <Modal.Body>
                         <div className="input-group flex-nowrap">
-                        {/* <p className="gr-text-8 pt-3 pb-0 text-center text-green">{currentAdresse} </p> */}
+                        {/* <p className="gr-text-8 pt-3 pb-0 text-center text-green">{magicCurrentAddress} </p> */}
                         
                         <div className='col-lg-12 col-md-12 row justify-content-between'>
                             <div className='input-group-alternative my-3 col-lg-6 col-md-6'>

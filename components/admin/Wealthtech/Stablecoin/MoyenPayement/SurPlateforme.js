@@ -40,6 +40,7 @@ const SurPlateforme = () => {
     
     // States du formulaire d'acceptation par partie
     const [requestId, setRequestId] = useState();
+    const [dataOnrequestUseStablecoin, setDataOneRequestUseStablecoin] = useState();
     const [addressEscrow, setAddressEscrow] = useState();
     
     
@@ -274,7 +275,7 @@ const SurPlateforme = () => {
             /* Verifier s'il y a un messsage d'erreur, on l'affiche dans SWAL 
             * sinon on affiche le message de succès
             */
-            if (!data.message) {
+            if (data.message==200) {
                 Swal.fire({
                     position: 'center',
                     icon: 'success',
@@ -328,8 +329,40 @@ const SurPlateforme = () => {
         }
         };
     
+        if (dataOnrequestUseStablecoin?.userId) {
+        getUserById(dataOnrequestUseStablecoin?.userId);
+        }
+    }, [dataOnrequestUseStablecoin?.userId]);
+    // FIN
+
+    // FONCTION POUR RECUPERER LES INFOS DE LA DEMANDE D'UTILISATION DE STABLECOIN COMME MOYEN DE PAIEMENT
+    useEffect(() => {
+        const getDataOneRequestUseStablecoin = async (_requestId) => {
+            // Obtenir le token en cours
+            const token = localStorage.getItem('tokenEnCours');
+            try {
+                const result = await fetch(`${API_URL}/api/payment-request/find-one-request-use-stablecoin/${_requestId}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+
+                },
+                });
+        
+                if (!result.ok) {
+                throw new Error('Failed to fetch user data');
+                }
+        
+                const user = await result.json();
+                setDataOneRequestUseStablecoin(user);
+            } catch (error) {
+                // Handle errors appropriately, e.g., set an error state.
+                console.error('Error fetching user data:', error);
+            }
+        };
+    
         if (requestId) {
-        getUserById(requestId);
+        getDataOneRequestUseStablecoin(requestId);
         }
     }, [requestId]);
     // FIN
@@ -380,6 +413,68 @@ const SurPlateforme = () => {
                     return null; // Ou renvoyez une valeur appropriée en cas d'échec
                 }
             }
+        }
+    };
+
+
+    // Fonction du rejet de la demande au niveau de la base de données
+    const rejetRequest = async () => {
+        setIsLoggingIn(true);
+        
+        try {
+           
+  
+            // Obtenir le token en cours
+            const token = localStorage.getItem('tokenEnCours');
+            /**
+             * Réponse de la requête KYC.
+             * @type {Response}
+             */
+            const response = await fetch(`${API_URL}/api/payment-request/rejection-request-use-stablecoin/${requestId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+            });
+  
+            /**
+             * Données de la réponse de la requête .
+             * @type {object}
+             */
+            const data = await response.json();
+  
+            /* Verifier s'il y a un messsage d'erreur, on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message===200) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Cette demande a été rejetée avec succès.</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+  
+                // Actualiser après l'affichage
+                setTimeout(() => {
+                    window.location.reload();
+                }, 7000);
+                // Fin
+            } else {
+                setMessageError(data.message);
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>`,
+                    showConfirmButton: false,
+                    timer: 10000
+                });
+            }
+            // Fin condition
+        } catch (error) {
+            console.error('Erreur =>', error);
         }
     };
 
@@ -455,27 +550,31 @@ const SurPlateforme = () => {
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Demandeur</p></Table.Column>
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actions</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actions </p></Table.Column>
                                     </Table.Header>
                                     <Table.Body>
                                         {allDataRequestUseStablecoin?.map((data, index) => (
                                             <Table.Row key={index}>                       
                                                 <Table.Cell ><small className=" py-0 ">{data?.customerName}</small></Table.Cell>
                                                 <Table.Cell ><small className=" py-0 ">{formatDate(data?.createdAt)}</small></Table.Cell>
-                                                <Table.Cell ><small className=" py-0 ">{data?.allow == 0?(<i className=''>Pas encore acceptée</i>):data?.allow == 1?(<i className='colorGreen'>Déjà acceptée</i>):""}</small></Table.Cell>
+                                                <Table.Cell ><small className=" py-0 ">{data?.allow == 0?(<i className=''>Pas encore acceptée</i>):data?.allow == 1?(<i className='colorGreen'>Déjà acceptée</i>):data?.allow == 2?(<i className='colorRed'>Rejetée</i>):""}</small></Table.Cell>
                                                 <Table.Cell >
                                                     <div className='text-center d-flex'>
-                                                        <button onClick={()=>setRequestId(data?.id)}>
-                                                            <small className=" py-0  mx-2 btn btn-primary" onClick={handleShowForm}>Répondre</small>
+                                                        <button 
+                                                            className={`py-0 mx-2 btn ${data?.allow === 1 || data?.allow === 2? 'btn-secondary' : 'btn-primary'} d`}
+                                                            onClick={()=>setRequestId(data?.id)}
+                                                            disabled={data?.allow === 1 || data?.allow === 2}
+                                                        >
+                                                            <small className=" py-0  mx-2 " onClick={handleShowForm}>Répondre</small>
                                                         </button>
 
-                                                        {/* <button 
-                                                            className={`py-0 mx-2 btn ${data?.status === 3 ? 'btn-secondary' : 'btn-danger'} d`}
-                                                            onClick={handleShowRejection}
-                                                            disabled={data?.status === 3}
+                                                        <button 
+                                                            className={`py-0 mx-2 btn ${data?.allow === 1 || data?.allow === 2? 'btn-secondary' : 'btn-danger'} d`}
+                                                            onClick={()=>setRequestId(data?.id)}
+                                                            disabled={data?.allow === 1 || data?.allow === 2}
                                                         >
-                                                            Rejeter
-                                                        </button> */}
+                                                            <small className=" py-2  mx-3 " onClick={handleShowRejection}>Rejeter</small>
+                                                        </button>
                                                     </div>
                                                 </Table.Cell>
                                             </Table.Row >
@@ -519,6 +618,8 @@ const SurPlateforme = () => {
                         </Button>
                         <Button  onClick={createEscrowStablecoin}  color="success" disabled={isLoggingIn}>
                             Accepter
+                            {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
+
                         </Button>
                     </Modal.Footer>
             </Modal>
@@ -530,7 +631,7 @@ const SurPlateforme = () => {
             {/* ********************************************************************************** */}
             <Modal show={showRejection} className="mt-15" onHide={handleCloseRejection}>
                 <Modal.Header closeButton className="bgColorRed">
-                    <Modal.Title className="text-white" >Rejet de la demande</Modal.Title>                
+                    <Modal.Title className="text-white" >Rejet de la demande </Modal.Title>                
                 </Modal.Header>
                     <Modal.Body>
                         <div className='form-group my-3'>
@@ -541,7 +642,7 @@ const SurPlateforme = () => {
                         <Button className="text-white" color="primary" onClick={handleCloseRejection}>
                             Fermer
                         </Button>
-                        <Button   color="danger" disabled={isLoggingIn}>
+                        <Button onClick={rejetRequest}  color="danger" disabled={isLoggingIn}>
                             Rejeter
                         </Button>
                     </Modal.Footer>

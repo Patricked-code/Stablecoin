@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react';
 import React from "react";
+import moment from 'moment';
+// import Link from "../../Link";
+import Link from 'next/link';
+import { Icon } from '@iconify/react';
+import copy from "copy-to-clipboard"; 
+import Swal from 'sweetalert2'
 
 
 // Pour Magic
@@ -37,12 +43,15 @@ import {
 const CHistoriqueStablecoin = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
-
+    const HASH_TX = process.env.NEXT_PUBLIC_HASH_TX
+    const ADDRESS_TX = process.env.NEXT_PUBLIC_ADDRESS_TX
 
     const [currentUser, setCurrentUser] = useState();
     const [provider, setProvider] = useState(null);
 
-
+    const [dataAllHistoricalByUserEmail, setDataAllHistoricalByUserEmail] = useState();
+    const [copyAddress, setCopyAddress] = useState()
+    const [successCopy, setSuccessCopy] = useState()
     
 
 
@@ -64,34 +73,138 @@ const CHistoriqueStablecoin = () => {
               const userAddress = await signer.getAddress();
               //const userBalance = ethers.utils.formatEther(await provider.getBalance(userAddress))
               // FIN
-
-              // Obtenir l'utilisateur connecté 
-              const token = localStorage.getItem('tokenEnCours')
-
-                const getUser = async () => {
-                  const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
-                      headers: {
-                      'Content-Type': 'application/json',
-                      Authorization:  `Bearer ${token}`,
-
-                      },
-                })
-                  .then((result) => result.json())
-                  .then((user) => {
-                    setCurrentUser(user)
-                  }) 
-              };
-              await getUser();
-              // Fin
+              
             }
         })();
-
-       
-
-
     }, [provider, magic]);
     //  Fin
 
+
+    /**
+     * Hook d'effet pour récupérer et définir les informations de l'utilisateur connecté.
+     * @returns {void}
+     */
+     useEffect(async () => {
+        const token = localStorage.getItem('tokenEnCours');
+        
+        /**
+         * Fonction pour obtenir l'utilisateur connecté et mettre à jour l'état.
+         * @returns {void}
+         */
+        const getUserSignIn = async () => {
+            const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            .then((result) => result.json())
+            .then((data) => {
+                setCurrentUser(data);
+            });
+        };
+
+        await getUserSignIn();
+    }, []);
+    // FIN
+
+
+    // FONCTION POUR RECUPERER LES TARIFS DES ABONNEMENTS 
+    useEffect(() => {
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
+        const getAllHistoricalByUserEmail = async () => {
+        try {
+            const result = await fetch(`${API_URL}/api/historical/find-all-historical-by-user-email?email=${currentUser?.email}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+  
+            },
+            });
+  
+            if (!result.ok) {
+            throw new Error('Failed to fetch user data');
+            }
+            const data = await result.json();
+            setDataAllHistoricalByUserEmail(data);
+        } catch (error) {
+            // Handle errors appropriately, e.g., set an error state.
+            console.error('Error fetching user data:', error);
+        }
+        };
+  
+        getAllHistoricalByUserEmail();
+        
+    }, [currentUser?.id]);
+    // FIN
+
+
+       /**
+     * Affiche un contenu limité en fonction du nombre de mots ou de caractères spécifié.
+     *
+     * @param {string} content - Le contenu à afficher.
+     * @param {number} limit - Le nombre limite de mots ou de caractères.
+     * @param {string} unit - L'unité de la limite ('words' pour mots, 'characters' pour caractères).
+     * @returns {string} Le contenu limité avec des points de suspension si nécessaire.
+     * @throws {Error} Si l'unité spécifiée n'est ni 'words' ni 'characters'.
+     */
+    function displayLimitedContent(content, limit, unit) {
+        // Vérifier si le paramètre 'unit' est spécifié et valide
+        if (unit !== 'words' && unit !== 'characters') {
+            throw new Error("L'unité doit être 'words' ou 'characters'.");
+        }
+
+        if (unit === 'words') {
+            // Séparer le contenu en mots
+            const words = content.split(' ');
+
+            // Vérifier si le nombre de mots est inférieur ou égal à la limite
+            if (words.length <= limit) {
+                return content; // Pas besoin de points de suspension
+            } else {
+                // Sélectionner les premiers 'limit' mots et les rejoindre
+                const limitedContent = words.slice(0, limit).join(' ');
+
+                return `${limitedContent}...`;
+            }
+        } else if (unit === 'characters') {
+            // Vérifier si la longueur du contenu est inférieure ou égale à la limite
+            if (content.length <= limit) {
+                return content; // Pas besoin de points de suspension
+            } else {
+                // Sélectionner les premiers 'limit' caractères
+                const limitedContent = content.slice(0, limit);
+
+                return `${limitedContent}...`;
+            }
+        }
+    }
+
+    // FONCTION POUR FORMATER LA DATE
+    const formatDate = (_updatedAt) =>{
+        // const maDate = moment(_updatedAt).format('DD/MM/YYYY');
+        const maDate = moment(_updatedAt).format('DD/MM/YYYY à HH:mm');
+        return  maDate
+    }
+    //  FIN
+
+    // FONCTION POUR COPIER UNE ADRESSE PUBLIC 
+    const copyToClipboard = () => {
+        copy(copyAddress);
+        setSuccessCopy("Adresse copiée avec succès !");
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            html: `<p> Adresse copiée avec succès</p>`,
+            showConfirmButton: false,
+            timer: 1000
+        });
+        // setTimeout(() => {
+        //     setSuccessCopy("");
+        // }, 1000)
+    }
+    // FIN
 
     return (
         <>
@@ -131,50 +244,22 @@ const CHistoriqueStablecoin = () => {
                             >
                                 <Table.Header>
                                     {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom & prenom </p></Table.Column> */}
-                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">type<br/>Actif</p></Table.Column>
-                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Expéditeur<br/>Récepteur<br/></p></Table.Column>
-                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Adresse expéditeur<br/>Adresse recepteur<br/>Hash de transaction</p></Table.Column>
+                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">type </p></Table.Column>
+                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actif</p></Table.Column>
+                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Hash de transaction</p></Table.Column>
+                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Adresse expéditeur<br/>Adresse recepteur</p></Table.Column>
                                     <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant<br/>Date</p></Table.Column>
                                 </Table.Header>
                                 <Table.Body>
-                                    {/* {allKycForParticular?.map((data) => ( */}
-                                        <Table.Row >                       
-                                            <Table.Cell ><small className=" py-0 ">Transfert<br/>KOREE</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>Konaté Ali</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 "><br/>1 000 000<br/>22/09/2023</small></Table.Cell>
+                                    {dataAllHistoricalByUserEmail?.map((data) => (
+                                        <Table.Row key={data?.id}>                       
+                                            <Table.Cell ><small className=" py-0 ">{data?.typeTransaction}</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">{data?.activeSymbol}</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 d-flex">{displayLimitedContent(data?.hash, 20, "characters")}<a className="nav-logo aNoDecor " target="_blank"  href={`${HASH_TX}/${data?.hash}`}>Détails</a></small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">{displayLimitedContent(data?.senderAddress,20,'characters')} <button onClick={()=>setCopyAddress(data?.senderAddress)}><Icon onClick={copyToClipboard} icon="bx:copy"  width="15" /></button><br/>{displayLimitedContent(data?.receiverAddress,20,"characters")}<button onClick={()=>setCopyAddress(data?.receiverAddress)}><Icon onClick={copyToClipboard} icon="bx:copy"  width="15" /></button><br/><i className="colorGreen"></i></small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">{data?.amount}<br/>{formatDate(data?.createdAt)}</small></Table.Cell>
                                         </Table.Row >
-
-                                        <Table.Row >                       
-                                            <Table.Cell ><small className=" py-0 ">Mint<br/>KOREE</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>Konaté Ali</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">1 000 000<br/>22/09/2023</small></Table.Cell>
-                                        </Table.Row >
-
-                                        <Table.Row >                       
-                                            <Table.Cell ><small className=" py-0 ">Burn<br/>KOREE</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>Konaté Ali</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">1 000 000<br/>22/09/2023</small></Table.Cell>
-                                        </Table.Row >
-
-                                        <Table.Row >                       
-                                            <Table.Cell ><small className=" py-0 ">GrantRol<br/>KOREE</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>Konaté Ali</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Aucun <br/>22/09/2023</small></Table.Cell>
-                                        </Table.Row >
-
-                                        <Table.Row >                       
-                                            <Table.Cell ><small className=" py-0 ">RevokeRol<br/>KOREE</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>Konaté Ali</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">Aucun<br/>22/09/2023</small></Table.Cell>
-                                        </Table.Row >
-
-                                        
-                                    {/* ))} */}
+                                    ))} 
                                 </Table.Body>
                                 <Table.Pagination
                                     shadow

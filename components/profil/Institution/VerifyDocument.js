@@ -420,7 +420,7 @@ const handleTransfertShow = () => setShowTransfert(true);
     const token = localStorage.getItem('tokenEnCours');
     const getInfosDistributer = async () => {
     try {
-        const result = await fetch(`${API_URL}/api/distributer/find-request-distributer-deposit-of-user`, {
+        const result = await fetch(`${API_URL}/api/distributer/find-request-distributer-of-user`, {
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`
@@ -505,11 +505,11 @@ const handleTransfertShow = () => setShowTransfert(true);
         Swal.fire({
           position: 'center',
           icon: 'error',
-          html: `<p> L'expéditeur n'a pas suffisamment de DEV pour couvrir les frais de gas.</p>`,
+          html: `<p> L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.</p>`,
           showConfirmButton: false,
           timer: 5000
         });
-        throw new Error("L'expéditeur n'a pas suffisamment de DEV pour couvrir les frais de gas.");
+        throw new Error("L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.");
 
       }
 

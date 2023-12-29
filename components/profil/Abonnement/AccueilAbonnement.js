@@ -15,6 +15,7 @@ const CAccueilAbonnement = () => {
     const API_URL =process.env.NEXT_PUBLIC_URL_API
     const ADDRESS_CONTRAT_EWARI = process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
     const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY
+    const  ADDRESS_COMMISSION = process.env.NEXT_PUBLIC_ADDRESS_COMMISSION
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
@@ -23,11 +24,12 @@ const CAccueilAbonnement = () => {
     const [provider, setProvider] = useState(null);
 
     //State du formulaire
-    const [period, setPeriod] = useState('');
-    const [addressCommission, setAddressCommission] = useState('0x88e036DCf477F016a605049e04952bb7BD828BD0');
-    const [fee, setFee] = useState(); 
     const [selectedOption, setSelectedOption] = useState('');
     const [infoSubsriptionOfUser, setInfoSubsriptionOfUser] = useState()
+
+    // states des tarification d'abonnement
+    const [dataAllRateSubsription, setDataAllRateSubsription] = useState()
+    const [dataOneRateSubsription, setDataOneRateSubsription] = useState()
 
     //***************************************************************** *
      // LES STATES DU STABLECOIN
@@ -121,32 +123,14 @@ const CAccueilAbonnement = () => {
 
 
     const handleOptionChange = (event) => {
-        const selectedValue = event.target.value;
-        setSelectedOption(selectedValue);
-    
-        // Attribution des points en fonction de la sélection
-        switch (selectedValue) {
-          case "30":
-            setFee(10);
-            break; 
-          case '90':
-            setFee(35);
-            break;
-          case '180':
-            setFee(50);
-            break;
-          case '365':
-            setFee(80);
-            break;
-          default:
-            setFee(""); // Aucune sélection
-        }
-      };
+      const selectedValue = event.target.value;
+      setSelectedOption(selectedValue);
+    };
       
       
       
     // Fonction d'enregistrement des données d'abonnement
-    const addSubscription = async (_magicCurrentAddress, _addressCommission, _fee, _selectedOption) => {
+    const addSubscription = async (_magicCurrentAddress, _addressCommission, _subscriptionCost, _subscriptionDays,_hash) => {
       setIsLoggingIn(true);
 
       try {
@@ -154,8 +138,9 @@ const CAccueilAbonnement = () => {
           const dataBody = {
             addressSubscriber: _magicCurrentAddress,
             addressCommission:_addressCommission,
-            subscriptionCost: _fee,
-            subscriptionDays: _selectedOption
+            subscriptionCost: _subscriptionCost,
+            subscriptionDays: _subscriptionDays,
+            hash: _hash
           }
 
           // Obtenir le token en cours
@@ -169,7 +154,6 @@ const CAccueilAbonnement = () => {
                   Authorization: `Bearer ${token}`
               },
           });
-
           /**
            * Données de la réponse de la requête .
            * @type {object}
@@ -183,7 +167,7 @@ const CAccueilAbonnement = () => {
               Swal.fire({
                   position: 'center',
                   icon: 'success',
-                  html: `<p> Le dépôt s'est effectué avec succès.</p>`,
+                  html: `<p>L'abonnement s'est effectué avec succès.</p>`,
                   showConfirmButton: false,
                   timer: 5000
               });
@@ -192,6 +176,8 @@ const CAccueilAbonnement = () => {
               setTimeout(() => {
                   window.location.reload();
               }, 7000);
+              Router.push("/profil/dashboard/"); 
+
               // Fin
           } else {
               setMessageError(data.message);
@@ -211,21 +197,22 @@ const CAccueilAbonnement = () => {
     };
 
     // Fonction d'enregistrement des données d'abonnement
-    const resubscription = async (_magicCurrentAddress, _addressCommission, _fee, _selectedOption) => {
+    const resubscription = async (_magicCurrentAddress, _addressCommission, _subscriptionCost, _subscriptionDays,_hash) => {
       setIsLoggingIn(true);
       try {
           
           const dataBody = {
             addressSubscriber: _magicCurrentAddress,
             addressCommission:_addressCommission,
-            subscriptionCost: _fee,
-            subscriptionDays: _selectedOption
+            subscriptionCost: _subscriptionCost,
+            subscriptionDays: _subscriptionDays,
+            hash: _hash
           }
 
           // Obtenir le token en cours
           const token = localStorage.getItem('tokenEnCours');
           
-          const response = await fetch(`${API_URL}/api/subscription/update-subscription`, {
+          const response = await fetch(`${API_URL}/api/subscription/update-subscription/${infoSubsriptionOfUser?.id}`, {
               method: 'PUT',
               body: JSON.stringify(dataBody),
               headers: {
@@ -247,7 +234,7 @@ const CAccueilAbonnement = () => {
               Swal.fire({
                   position: 'center',
                   icon: 'success',
-                  html: `<p> Le dépôt s'est effectué avec succès.</p>`,
+                  html: `<p> Le réabonnement s'est effectué avec succès.</p>`,
                   showConfirmButton: false,
                   timer: 5000
               });
@@ -256,6 +243,9 @@ const CAccueilAbonnement = () => {
               setTimeout(() => {
                   window.location.reload();
               }, 7000);
+              Router.push("/profil/dashboard/"); 
+
+
               // Fin
           } else {
               setMessageError(data.message);
@@ -304,48 +294,128 @@ const CAccueilAbonnement = () => {
     }, []);
     // FIN
 
+    // FONCTION POUR RECUPERER LES TARIFS DES ABONNEMENTS 
+    useEffect(() => {
+      // Obtenir le token en cours
+      const token = localStorage.getItem('tokenEnCours');
+      const getAllRateSubsription = async () => {
+      try {
+          const result = await fetch(`${API_URL}/api/subscription/find-all-rate-subscription`, {
+          headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+
+          },
+          });
+
+          if (!result.ok) {
+          throw new Error('Failed to fetch user data');
+          }
+          const data = await result.json();
+          setDataAllRateSubsription(data);
+      } catch (error) {
+          // Handle errors appropriately, e.g., set an error state.
+          console.error('Error fetching user data:', error);
+      }
+      };
+
+      getAllRateSubsription();
+      
+    }, []);
+    // FIN
+
+    // FONCTION POUR RECUPERER UNE SEULE LIGNE DE TARIFS DES ABONNEMENTS 
+    useEffect(() => {
+      // Obtenir le token en cours
+      const token = localStorage.getItem('tokenEnCours');
+      
+      const getOneRateSubsription = async (_selectedOption) => {
+      try {
+          const result = await fetch(`${API_URL}/api/subscription/find-one-rate-subscription/${_selectedOption}`, {
+          headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+
+          },
+          });
+
+          if (!result.ok) {
+          throw new Error('Failed to fetch user data');
+          }
+          const data = await result.json();
+          setDataOneRateSubsription(data);
+      } catch (error) {
+          // Handle errors appropriately, e.g., set an error state.
+          console.error('Error fetching user data:', error);
+      }
+      };
+
+      if (selectedOption) {
+        getOneRateSubsription(selectedOption);
+      }
+      
+    }, [selectedOption]);
+    // FIN
+
     // La fonction d'abonnement du smart contrat
     const subscribe = async () => {
       setIsLoggingIn(true)
       
        // Parser le montant d'abonnement
-       const tostingA = String(fee);
+       const tostingA = String(dataOneRateSubsription?.subscriptionCost);
        const feeWei = ethers.utils.parseUnits(tostingA, decimalStablecoin);
-       
-      //  convertir le nombre de jour en entiter
-       let entierConverti = selectedOption ? parseInt(selectedOption, 10) : null;
       
        const dataForm ={
         addressSubscriber: magicCurrentAddress,
-        addressCommission: addressCommission,
+        addressCommission: ADDRESS_COMMISSION,
         subscriptionCost: feeWei,
-        subscriptionDays: entierConverti
+        subscriptionDays: dataOneRateSubsription?.subscriptionDays
       }
       try {
-        // Vérifie si l'exécuteur a suffisamment de frais de gas
-        // const gasEstimate = await contractStablecoin.estimateGas.subscribe(
-        //   dataForm?.addressSubscriber,
-        //   dataForm?.addressCommission,
-        //   dataForm?.subscriptionCost,
-        //   dataForm?.subscriptionDays
-        // );
 
-        // const gasPrice = await wallet.provider.getGasPrice();
-        // const gasCost = gasEstimate.mul(gasPrice);
 
-        // const senderBalance = await wallet.getBalance();
+        // Vérifie si l'abonné a suffisamment de jetons pour payer le coût d'abonnement
+      const subscriberTokenBalance = await contractStablecoin.balanceOf(dataForm?.addressSubscriber);
+      if (subscriberTokenBalance.lt(dataForm?.subscriptionCost)) {
+        setIsLoggingIn(false);
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          html: "Votre solde est insuffisant pour couvrir le coût d'abonnement.",
+          showConfirmButton: false,
+          timer: 5000,
+        });
+        throw new Error("Solde insuffisant pour l'abonnement.");
+      }
 
-        // if (gasCost.gt(senderBalance)) {
-        //   setIsLoggingIn(false)
-        //   Swal.fire({
-        //     position: 'center',
-        //     icon: 'error',
-        //     title: "L'exécuteur n'a pas suffisamment de frais de gas.",
-        //     showConfirmButton: false,
-        //     timer: 5000,
-        //   });
-        //   throw new Error("L'exécuteur n'a pas suffisamment de frais de gas.");
-        // }
+
+
+
+      // Vérifie si l'exécuteur a suffisamment de frais de gas
+      const gasEstimate = await contractStablecoin.estimateGas.subscribe(
+        dataForm?.addressSubscriber,
+        dataForm?.addressCommission,
+        dataForm?.subscriptionCost,
+        dataForm?.subscriptionDays
+      );
+      const gasCost = gasEstimate.mul(await signer.getGasPrice());
+      const senderBalance = await signer.getBalance();
+  
+      if (gasCost.gt(senderBalance)) {
+      setIsLoggingIn(false);
+
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          html: "L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.",
+          showConfirmButton: false,
+          timer: 5000,
+        });
+        throw new Error("L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.");
+      }
+
+      
+
 
         // Exécute la fonction subscribe
         const subscribeTx = await contractStablecoin.subscribe(
@@ -356,38 +426,28 @@ const CAccueilAbonnement = () => {
         );
         await subscribeTx.wait();
         
-
         // Appel de la fonction de la mise à jour des finfos d'abonnement ou de réabonnement dans la base de données
         if (infoSubsriptionOfUser?.userId || !infoSubsriptionOfUser?.userId==undefined) {
-          resubscription(magicCurrentAddress, addressCommission, fee, selectedOption)
+          resubscription(magicCurrentAddress, ADDRESS_COMMISSION, dataOneRateSubsription?.subscriptionCost, dataForm?.subscriptionDays, subscribeTx?.hash)
           
         } else {
-          addSubscription(magicCurrentAddress, addressCommission, fee, selectedOption)
+          addSubscription(magicCurrentAddress, ADDRESS_COMMISSION, dataOneRateSubsription?.subscriptionCost, dataForm?.subscriptionDays, subscribeTx?.hash)
 
         }
         
-        // Affiche une notification de succès avec Swal
-        Swal.fire({
-          position: 'center',
-          icon: 'success',
-          title: 'Abonnement réussi!',
-          showConfirmButton: false,
-          timer: 5000,
-        });
-
         // Vous pouvez effectuer des actions supplémentaires ici
 
         return subscribeTx; // Vous pouvez également retourner le résultat si nécessaire
       } catch (error) {
         // Affiche une notification d'erreur avec Swal
         setIsLoggingIn(false)
-        Swal.fire({
-          position: 'center',
-          icon: 'error',
-          title: 'Une erreur s\'est produite lors de l\'abonnement.',
-          showConfirmButton: false,
-          timer: 5000,
-        });
+        // Swal.fire({
+        //   position: 'center',
+        //   icon: 'error',
+        //   html: 'Une erreur s\'est produite lors de l\'abonnement.',
+        //   showConfirmButton: false,
+        //   timer: 5000,
+        // });
 
         console.error("Erreur:", error.message);
       }
@@ -402,7 +462,7 @@ const CAccueilAbonnement = () => {
       
         <div className='mt-15' >
             <div className='py-10'>
-                <h1 className='text-center'>Abonnement</h1>
+                <h3 className='text-center'>Abonnement</h3>
             </div>
 
             {/* Les images de fond */}
@@ -427,78 +487,31 @@ const CAccueilAbonnement = () => {
                
                 {/* FORM  */}
                 <form onSubmit={handleSubmit}>
-                  <div className='form-group'>
-                  <div className='input-group flex-nowrap'>
-
-                    <label>
-                      <input
-                        type="radio"
-                        value="30"
-                        className='mx-3 '
-                        checked={selectedOption === "30"}
-                        onChange={handleOptionChange}
-                      />
-                      {/* 10000 35000 50000 80000 */}
-                          1 Mois
-                    </label>
-                        <span  className="mx-5 colorGreen" >10 {symbolStablecoin}</span>
+                  <p>Veuillez choisir un abonnement</p>
+                  {dataAllRateSubsription?.map((data) => (
+                    <div className='form-group ' key={data?.id}>
+                      <div className='input-group flex-nowrap'>
+                        
+                        <label>
+                          <input
+                            type="radio"
+                            value={data?.id}
+                            className='mx-3'
+                            checked={data?.id == selectedOption}
+                            onChange={(e) => handleOptionChange(e)}
+                          />
+                          {data?.subscriptionMonth} Mois
+                        </label>
+                        <span className="mx-5 colorGreen">{data?.subscriptionCost} {symbolStablecoin}</span>
+                      </div>
                     </div>
-                  </div>
-                  <div className='form-group'>
-                  <div className='input-group flex-nowrap'>
-
-                    <label>
-                      <input
-                        type="radio"
-                        value="90"
-                        className='mx-3'
-                        checked={selectedOption === "90"}
-                        onChange={handleOptionChange}
-                      />
-                        3 Mois
-                    </label>
-                        <span  className="mx-5 colorGreen" >35 {symbolStablecoin}</span>
-                    </div>
-                  </div>
-                  <div className='form-group'>
-                  <div className='input-group flex-nowrap'>
-
-                    <label>
-                        <input
-                        type="radio"
-                        value="180"
-                        className='mx-3'
-                        checked={selectedOption === "180"}
-                        onChange={handleOptionChange}
-                        />
-                          6 Mois
-                    </label>
-                        <span  className="mx-5 colorGreen" >50 {symbolStablecoin}</span>
-                    </div>
-                  </div>
-                  <div className='form-group'>
-                  <div className='input-group flex-nowrap'>
-
-                    <label>
-                        <input
-                        type="radio"
-                        value="365"
-                        className='mx-3 '
-                        checked={selectedOption === "365"}
-                        onChange={handleOptionChange}
-                        />
-                        1 An
-                    </label>
-                    <span  className="mx-5 px-3 colorGreen" >80 {symbolStablecoin}</span>
-                    </div>
-                  </div>
-
+                  ))}
                   {/* Les boutons */}
-                  <div className="form-group  mt-3 col-lg-12 col-md-12">
-                      <button className="btn btn-primary" onClick={subscribe} disabled={isLoggingIn}> 
-                        Abonner 
-                        {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg"></i>) : ("")}
-                      </button>
+                  <div className="form-group mt-3 col-lg-12 col-md-12">
+                    <button className="btn btn-primary" onClick={subscribe} disabled={!selectedOption || isLoggingIn}>
+                      Abonner 
+                      {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg"></i>) : ("")}
+                    </button>
                   </div>
                 </form>
               </div>

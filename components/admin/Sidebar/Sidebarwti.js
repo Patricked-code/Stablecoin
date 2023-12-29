@@ -116,7 +116,6 @@ const [provider, setProvider] = useState(null);
       .then((result) => result.json())
       .then((user) => {
       
-      console.log('Auth', user)
       // On verifie si l'utilisateur est deconnecté du site
         if (user?.message==="Accès non autorisé") {
           logout() //Appel de la fonction de déconnexion à magic

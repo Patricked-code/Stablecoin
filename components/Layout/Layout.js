@@ -177,9 +177,11 @@ const Layout = ({ children }) => {
 
       pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement"||
       pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement/sur-plateforme"||
-      pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement/sur-ecommerces"
+      pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement/sur-ecommerces"||
 
-
+      pathname === "/admin/wealthtech/stablecoin/distributeur"||
+      pathname === "/admin/wealthtech/stablecoin/portefeuille/conversion"||
+      pathname === "/admin/wealthtech/stablecoin/abonnement/tarifs"
 
 
 
@@ -334,7 +336,12 @@ const Layout = ({ children }) => {
       pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement/sur-plateforme"||
       pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement/sur-ecommerces"||
 
+      pathname === "/admin/wealthtech/stablecoin/distributeur"||
+      pathname === "/admin/wealthtech/stablecoin/portefeuille/conversion"||
+      pathname === "/admin/wealthtech/stablecoin/abonnement/tarifs"||
+      
 
+      
 
 
 

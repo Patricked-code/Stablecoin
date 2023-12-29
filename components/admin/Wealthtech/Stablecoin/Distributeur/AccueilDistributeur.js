@@ -19,9 +19,10 @@ import ABI_ESCROW_STABLECOIN from "../../../../../components/Contrats/Abi/AbiFac
 
 
 
-const SurEcommerces = () => {
+const AccueilDistributeur = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+    const ADDRESS_COMMISSION =process.env.NEXT_PUBLIC_ADDRESS_COMMISSION
 
     // Pour les smart contrats
     const ADDRESS_CONTRAT_FACTORY_ESCROW = process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_FACTORY_ESCROW
@@ -33,17 +34,28 @@ const SurEcommerces = () => {
     const [userById, setUserById] = useState();
     const [provider, setProvider] = useState(null);
     const [messageError, setMessageError] = useState();
-    const [allDataRequestUseStablecoinEshop, setAllDataRequestUseStablecoinEshop] = useState();
 
     
     const [contractFactoryEscrow, setContractFactoryEscrow] = useState();
     
     // States du formulaire d'acceptation par partie
-    const [requestId, setRequestId] = useState();
-    const [resetTime, setResetTime] = useState()
-    const [limit, setLimit] = useState()
-    const [addressEscrow, setAddressEscrow] = useState()
+    const [addressEscrow, setAddressEscrow] = useState();
     
+    // state du distributeur
+    const [requestId, setRequestId] = useState();
+    const [allDataDistributeur, setAllDataDistributeur] = useState();
+    const [contractUnsigned, setContractUnsigned] = useState()
+    const [uploadStatus, setUploadStatus] = useState(null);
+
+    // States pour uploader le contrat non signé
+    const [infosDistributer, setInfosDistributer] = useState()
+    const [contractSigned, setContractSigned] = useState()
+
+
+    const [percentage, setPercentage] = useState()
+    const [percentageInstitution, setPercentageInstitution] = useState()
+    const [percentageWithdrawal, setPercentageWithdrawal] = useState()
+    const [percentageWithdrawalInstitution, setPercentageWithdrawalInstitution] = useState()
 
     /**
      * État de contrôle pour afficher ou masquer la modal du formulaire de réponse à la demande d'accès.
@@ -88,7 +100,165 @@ const SurEcommerces = () => {
 
 
 
+    /**
+      * État de contrôle pour afficher ou masquer la modal du contrat.
+      * @type {boolean}
+      */
+     const [showChangeContract, setShowChangeContract] = useState(false);
+ 
+     /**
+      * Fonction pour fermer du contrat.
+      * @function
+      * @returns {void}
+      */
+     const handleCloseChangeContract = () => setShowChangeContract(false);
+ 
+     /**
+      * Fonction pour afficher du changement de photo.
+      * @function
+      * @returns {void}
+      */
+     const handleShowChangeContract = () => setShowChangeContract(true);
+ 
 
+    const handleFileChange = (event) => {
+        setContractUnsigned(event.target.files[0]);
+    };
+
+    // FONCTION POUR UPLOADER LE CONTRAT NON SIGNE
+    const handleUpdateContract = async (event) => {
+        event.preventDefault();
+        // setIsLoggingIn(true);
+
+        if (!contractUnsigned) {
+        setUploadStatus('Vous devez sélectionner un fichier.');
+        return;
+        }
+
+        const formData = new FormData();
+        formData.append('contractUnsigned', contractUnsigned);
+
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
+
+        try {
+        const response = await fetch(`${API_URL}/api/distributer/send-contract-unsigned/${requestId}`, {
+            method: 'PUT',
+            body: formData,
+            headers: {
+                // 'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const responseData = await response.json();
+
+        if (response.ok) {
+            setUploadStatus(responseData.message);
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p>Le contrat a été envoyé avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 5000
+            })
+            setTimeout(() => {
+                window.location.reload()
+            }, 5000)
+        } else {
+            console.error('Error updating:', responseData.message);
+            setIsLoggingIn(false);
+              Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  html: `<p>Une erreur s'est produite lors de l'envoie du contrat</p>` ,
+                  showConfirmButton: false,
+                  timer: 6000
+              })
+        }
+        } catch (error) {
+            console.error('Error updating:', error);
+            setIsLoggingIn(false);
+              Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  html: `<p>Une erreur s'est produite lors de l'envoie du contrat</p>` ,
+                  showConfirmButton: false,
+                  timer: 6000
+              })
+        }
+    };
+    //Fin
+
+
+    const handleFileChangeContractSigned = (event) => {
+        setContractSigned(event.target.files[0]);
+    };
+
+    // FONCTION POUR UPLOADER LE CONTRAT SIGNE
+    const handleUpdateContractSigner = async () => {
+        // event.preventDefault();
+        setIsLoggingIn(true);
+
+        if (!contractSigned) {
+        setUploadStatus('Vous devez sélectionner un fichier.');
+        return;
+        }
+        console.log('contractSigned', contractSigned)
+        const formData = new FormData();
+        formData.append('contractSigned', contractSigned);
+
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
+
+        try {
+        const response = await fetch(`${API_URL}/api/distributer/send-contract-signed/${infosDistributer?.id}`, {
+            method: 'PUT',
+            body: formData,
+            headers: {
+                // 'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const responseData = await response.json();
+
+        if (response.ok) {
+            setUploadStatus(responseData.message);
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p>Vous avez accepté cette demande avec succès.</p>` ,
+                showConfirmButton: false,
+                timer: 5000
+            })
+            // setTimeout(() => {
+            //     window.location.reload()
+            // }, 5000)
+        } else {
+            console.error('Error updating:', responseData.message);
+            setIsLoggingIn(false);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p>Une erreur s'est produite lors de l'envoie du contrat</p>` ,
+                showConfirmButton: false,
+                timer: 6000
+            })
+        }
+        } catch (error) {
+            console.error('Error updating:', error);
+            setIsLoggingIn(false);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p>Une erreur s'est produite lors de l'envoie du contrat</p>` ,
+                showConfirmButton: false,
+                timer: 6000
+            })
+        }
+    };
+    //Fin
 
     /**
      * Effet pour mettre à jour le fournisseur Ethereum lorsqu'un objet Magic est disponible.
@@ -212,12 +382,12 @@ const SurEcommerces = () => {
 
     
     useEffect(async () => {
-        const getAllDataRequestUseStablecoinEshop = async () => {
+        const getAllDataDistributeur = async () => {
             const token = localStorage.getItem('tokenEnCours');
 
             try {
                 
-                const result = await fetch(`${API_URL}/api/apikey/find-all-request-use-stablecoin-for-eshop`, {
+                const result = await fetch(`${API_URL}/api/distributer/find-all-request-distributer`, {
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`,
@@ -230,39 +400,103 @@ const SurEcommerces = () => {
 
                 
                 const data = await result.json();
-                setAllDataRequestUseStablecoinEshop(data);
+                setAllDataDistributeur(data);
             } catch (error) {
                 // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
                 console.error('Erreur lors de la récupération des demandes:', error);
             }
         };
 
-        await getAllDataRequestUseStablecoinEshop();
+        await getAllDataDistributeur();
     }, []);
 
-
-    const acceptRequest = async (_addressEscrow) => {
+    // Fonction d'acceptation de la demande au niveau de la base de données
+    const acceptRequest = async () => {
         setIsLoggingIn(true);
         
         try {
             
-            const dataBody ={
-                // rateLimit: {
-                //     limit: limit,
-                //     resetTime: resetTime,
-                // },
-                addressEscrow:_addressEscrow
-            }
            
+            console.log('contractSigned', contractSigned)
+        const formData = new FormData();
+
+        formData.append('wealthtechCommissionAddress', ADDRESS_COMMISSION);
+        formData.append('percentage', percentage);
+        formData.append('percentageInstitution', percentageInstitution);
+        formData.append('percentageWithdrawal', percentageWithdrawal);
+        formData.append('percentageWithdrawalInstitution', percentageWithdrawalInstitution);
+        formData.append('contractSigned', contractSigned);
+  
             // Obtenir le token en cours
             const token = localStorage.getItem('tokenEnCours');
             /**
              * Réponse de la requête KYC.
              * @type {Response}
              */
-            const response = await fetch(`${API_URL}/api/apikey/answer-of-request-use-stablecoin-for-eshop/${requestId}`, {
+            const response = await fetch(`${API_URL}/api/distributer/answer-request-distributer/${requestId}`, {
                 method: 'PUT',
-                body: JSON.stringify(dataBody),
+                body: formData,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+  
+            /**
+             * Données de la réponse de la requête .
+             * @type {object}
+             */
+            const data = await response.json();
+  
+            /* Verifier s'il y a un messsage d'erreur, on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message===200) {
+                // Appel de la fonction pour uploader le fichier du contrat signé par les deux parties
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Vous avez accepté cette demande avec succès.</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+  
+                // Actualiser après l'affichage
+                setTimeout(() => {
+                    window.location.reload();
+                }, 7000);
+                // Fin
+            } else {
+                setMessageError(data.message);
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>`,
+                    showConfirmButton: false,
+                    timer: 10000
+                });
+            }
+            // Fin condition
+        } catch (error) {
+            console.error('Erreur =>', error);
+        }
+    };
+
+    // Fonction du rejet de la demande au niveau de la base de données
+    const rejetRequest = async () => {
+        setIsLoggingIn(true);
+        
+        try {
+           
+  
+            // Obtenir le token en cours
+            const token = localStorage.getItem('tokenEnCours');
+            /**
+             * Réponse de la requête KYC.
+             * @type {Response}
+             */
+            const response = await fetch(`${API_URL}/api/distributer/rejection-request-distributer/${requestId}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`
@@ -282,7 +516,7 @@ const SurEcommerces = () => {
                 Swal.fire({
                     position: 'center',
                     icon: 'success',
-                    html: `<p> Vous avez accepté cette demande avec succès.</p>`,
+                    html: `<p> Cette demande a été rejeté avec succès.</p>`,
                     showConfirmButton: false,
                     timer: 5000
                 });
@@ -338,128 +572,7 @@ const SurEcommerces = () => {
     }, [requestId]);
     // FIN
 
-    // ****************************************************
-        // PARTIE DU SMART CONTRAT
-    // *****************************************************
-    
-    // Fonction pour créer un smart contrat d'escrow pour l'utilisateur
-    // Fonction pour créer un smart contrat d'escrow pour l'utilisateur
-    const createEscrowStablecoin = async () => {
-        const maxRetries = 3; // Set a maximum number of retries
-        let retryCount = 0;
-        setIsLoggingIn(true);
-
-        while (retryCount < maxRetries) {
-            try {
-                const tx = await contractFactoryEscrow.createEscrowStablecoin(userById?.address, ADDRESS_CONTRAT_EWARI);
-                const result = await tx.wait();
-
-                // Écoutez l'événement EscrowStablecoinCreated
-                const escrowCreatedEvent = result.events.find(event => event.event === "EscrowStablecoinCreated");
-                
-                // Vérifiez si l'événement a été trouvé
-                if (escrowCreatedEvent) {
-                    const escrowContractAddress = escrowCreatedEvent.args[0];
-    
-                    // Stockez l'adresse du contrat en utilisant setAddressEscrow
-                    setAddressEscrow(escrowContractAddress);
-                    acceptRequest(escrowContractAddress); // Call the function to accept the request in the database
-                    return escrowContractAddress; // Retournez l'adresse du contrat
-                } else {
-                    setIsLoggingIn(false);
-                    console.error("L'événement EscrowStablecoinCreated n'a pas été trouvé dans les logs de la transaction.");
-                    return null; // Ou renvoyez une valeur appropriée en cas d'échec
-                }
-            } catch (error) {
-                setIsLoggingIn(false);
-                console.error("Erreur =>", error);
-                retryCount++;
-    
-                if (retryCount < maxRetries) {
-                    const waitTime = Math.pow(2, retryCount) * 1000; // Exponential backoff: 2^retryCount seconds
-                    console.log(`Retrying in ${waitTime / 1000} seconds...`);
-                    await new Promise(resolve => setTimeout(resolve, waitTime));
-                } else {
-                    setIsLoggingIn(false);
-                    console.error("Nombre maximal de tentatives atteint. Impossible de finaliser la transaction.");
-                    return null; // Ou renvoyez une valeur appropriée en cas d'échec
-                }
-            }
-        }
-    };
-    
-    
-
-    const rejetRequest = async () => {
-        setIsLoggingIn(true);
-        
-        try {
-           
-  
-            // Obtenir le token en cours
-            const token = localStorage.getItem('tokenEnCours');
-            /**
-             * Réponse de la requête KYC.
-             * @type {Response}
-             */
-            const response = await fetch(`${API_URL}/api/apikey/rejection-request-use-stablecoin-for-eshop/${requestId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-            });
-  
-            /**
-             * Données de la réponse de la requête .
-             * @type {object}
-             */
-            const data = await response.json();
-  
-            /* Verifier s'il y a un messsage d'erreur, on l'affiche dans SWAL 
-            * sinon on affiche le message de succès
-            */
-            if (data.message===200) {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'success',
-                    html: `<p> Cette demande a été rejetée avec succès.</p>`,
-                    showConfirmButton: false,
-                    timer: 5000
-                });
-  
-                // Actualiser après l'affichage
-                setTimeout(() => {
-                    window.location.reload();
-                }, 7000);
-                // Fin
-            } else {
-                setMessageError(data.message);
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> ${messageError} </p>`,
-                    showConfirmButton: false,
-                    timer: 10000
-                });
-            }
-            // Fin condition
-        } catch (error) {
-            console.error('Erreur =>', error);
-        }
-    };
-
-
-
-
-
-
-
-
-
-
-
+   
 
 
     /**
@@ -500,7 +613,7 @@ const SurEcommerces = () => {
                         <div className='col-lg-10 col-md-10'>
                             <div className=' mx-15'>
                                 <div className='py-10'>
-                                    <h3 className='text-center'>Demandes d'utilisation de stablecoin sur E-commerces</h3>
+                                    <h3 className='text-center'>Demandes d'être distributeur</h3>
                                 </div>
                             </div>
 
@@ -530,35 +643,81 @@ const SurEcommerces = () => {
                                 >
                                     <Table.Header>
                                         {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom & prenom </p></Table.Column> */}
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Demandeur</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Institution</p></Table.Column>
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actions</p></Table.Column>
                                     </Table.Header>
                                     <Table.Body>
-                                        {allDataRequestUseStablecoinEshop?.map((data, index) => (
+                                        {allDataDistributeur?.map((data, index) => (
                                             <Table.Row key={index}>                       
-                                                <Table.Cell ><small className=" py-0 ">{data?.customerName}</small></Table.Cell>
+                                                <Table.Cell ><small className=" py-0 ">{data?.institution}</small></Table.Cell>
                                                 <Table.Cell ><small className=" py-0 ">{formatDate(data?.createdAt)}</small></Table.Cell>
-                                                <Table.Cell ><small className=" py-0 ">{data?.allow == 0?(<i className=''>Pas encore acceptée</i>):data?.allow == 1?(<i className='colorGreen'>Déjà acceptée</i>):data?.allow == 2?(<i className='colorRed'>Rejetée</i>):""}</small></Table.Cell>
-
+                                                <Table.Cell ><small className=" py-0 ">{data?.allow == 0?(<i className=''>Pas encore acceptée</i>):data?.allow == 1?(<i className='colorGreen'>Déjà acceptée</i>):data?.allow == 2 ? (<i className='colorRed'>Rejetée</i>) :""}</small></Table.Cell>
                                                 <Table.Cell >
                                                     <div className='text-center d-flex'>
                                                         <button 
-                                                            className={`py-0 mx-2 btn ${data?.allow === 1 || data?.allow === 2? 'btn-secondary' : 'btn-primary'} d`}
+                                                            className={`py-0 mx-2 btn ${data?.allow === 1 ? 'btn-secondary' : 'btn-primary'} d`}
+
                                                             onClick={()=>setRequestId(data?.id)}
-                                                            disabled={data?.allow === 1 || data?.allow === 2}
+                                                            disabled={data?.allow === 1}
                                                         >
-                                                            <small className=" py-0  mx-2 " onClick={handleShowForm}>Répondre</small>
+                                                            <p onClick={handleShowForm} className="text-white">Répondre</p>
                                                         </button>
 
                                                         <button 
-                                                            className={`py-0 mx-2 btn ${data?.allow === 1 || data?.allow === 2? 'btn-secondary' : 'btn-danger'} d`}
+                                                            className={`py-0 mx-2 btn ${data?.allow === 1 || data?.allow === 2 ? 'btn-secondary' : 'btn-danger'} d`}
                                                             onClick={()=>setRequestId(data?.id)}
                                                             disabled={data?.allow === 1 || data?.allow === 2}
                                                         >
-                                                            <small className=" py-2  mx-3 " onClick={handleShowRejection}>Rejeter</small>
+                                                            <p onClick={handleShowRejection} className="text-white">
+                                                                Rejeter
+                                                            </p>
+                                                            
                                                         </button>
+
+                                                        <button 
+                                                            className={`py-0 mx-2 btn ${data?.allow === 1 ? 'btn-secondary' : 'btn-success'} d`}
+                                                            onClick={()=>setRequestId(data?.id)}
+                                                            disabled={data?.allow === 1}
+                                                        >
+                                                            <p onClick={handleShowChangeContract} className="text-white">
+                                                                Contrat
+                                                            </p>
+                                                        </button>
+
+                                                        {data?.contractSigned && data?.allow===0? (
+                                                            <a 
+                                                                href={`${API_URL}/${data?.contractSigned}`} 
+                                                                download
+                                                                target="_blank"
+                                                            >
+                                                                <button
+                                                                    className={`py-0 mx-2 btn btn-primary`}
+
+                                                                    color="primary"
+                                                                    type="button"
+                                                                >
+                                                                    Contrat non signé
+                                                                </button>
+                                                            </a>
+                                                        ) : ("")}
+
+                                                        {data?.contractSigned && data?.allow===1 && data?.contractValid==1? (
+                                                            <a 
+                                                                href={`${API_URL}/${data?.contractSigned}`} 
+                                                                download
+                                                                target="_blank"
+                                                            >
+                                                                <button
+                                                                    className={`py-0 mx-2 btn btn-primary px-4`}
+                                                                    color="primary"
+                                                                    type="button"
+                                                                >
+                                                                    Contrat signé
+                                                                </button>
+                                                            </a>
+                                                        ) : ("")}
                                                     </div>
                                                 </Table.Cell>
                                             </Table.Row >
@@ -591,34 +750,66 @@ const SurEcommerces = () => {
                 <Modal.Header closeButton id="bgcolor">
                     <Modal.Title className="" >Acceptation de la demande</Modal.Title>                
                 </Modal.Header>
-                    <form>
+                <form>
                     <Modal.Body>
-                        <div className='form-group my-3'>
-                            Voulez-vous vraiment accepter cette demande ?
+                        {/* PARTIE DEPOT */}
+                        <div className='form-group mt-3'>
+                            <input
+                            type='member'
+                            className='form-control'
+                            placeholder='Le pourcentage des dépôts'
+                            defaultValue={percentage} 
+                            onChange={(event)=>setPercentage(event.target.value)}
+                            />
                         </div>
-                        {/* <div className=" mb-3">
-                            <label className="">Nombre limite de requêtes</label>
-                            <div className="input-group">
-                                <input type="number" defaultValue={limit} onChange={(e)=>setLimit(e.target.value)} placeholder="20"  className="input input-sm input-bordered form-control" />
-                            </div>
+
+                        <div className='form-group mt-3'>
+                            <input
+                            type='member'
+                            className='form-control'
+                            placeholder="Le pourcentage des dépôts de l'institution"
+                            defaultValue={percentageInstitution} 
+                            onChange={(event)=>setPercentageInstitution(event.target.value)}
+                            />
                         </div>
-                        <div className=" mb-3">
-                            <label className="" >La durée de disponibilité en heure(24h)</label>
-                            <div className="input-group">
-                                <input type="text" defaultValue={resetTime} onChange={(e)=>setResetTime(e.target.value)} placeholder="24h"  className="input input-sm input-bordered form-control" />
-                            </div>
-                        </div> */}
+
+                        {/* PARIE RETRAIT */}
+                        <div className='form-group mt-3'>
+                            <input
+                            type='member'
+                            className='form-control'
+                            placeholder='Le pourcentage des retraits'
+                            defaultValue={percentageWithdrawal} 
+                            onChange={(event)=>setPercentageWithdrawal(event.target.value)}
+                            />
+                        </div>
+
+                        <div className='form-group mt-3'>
+                            <input
+                            type='member'
+                            className='form-control'
+                            placeholder="Le pourcentage des retraits de l'institution"
+                            defaultValue={percentageWithdrawalInstitution} 
+                            onChange={(event)=>setPercentageWithdrawalInstitution(event.target.value)}
+                            />
+
+                        </div>
+
+                        <div className='form-group mt-3'>
+                            <input type="file" onChange={handleFileChangeContractSigned} accept=".pdf" />
+                        </div>
+
+
                     </Modal.Body>
                     <Modal.Footer>
                         <Button className="text-white" color="danger" onClick={handleCloseForm}>
                             Fermer
                         </Button>
-                        <Button  onClick={createEscrowStablecoin}  color="success" disabled={isLoggingIn}>
+                        <Button  onClick={acceptRequest}  color="success" disabled={isLoggingIn}>
                             Accepter
-                            {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-2"></i>) : ("")}
                         </Button>
                     </Modal.Footer>
-                    </form>
+                </form>
             </Modal>
             {/* *****************************************FIN****************************************** */}
 
@@ -646,8 +837,33 @@ const SurEcommerces = () => {
             </Modal>
             {/* *****************************************FIN****************************************** */}
 
+
+            {/* ********************************************************************************** */}
+                {/* MODAL DU CHANGEMENT DE L'AVATAR'*/}
+            {/* ********************************************************************************** */}
+            <Modal show={showChangeContract} className="mt-15" onHide={handleCloseChangeContract}>
+                <Modal.Header closeButton className="bgColorblue">
+                    <Modal.Title className="text-white" >Envoyer le contrat à l'institution</Modal.Title>                
+                </Modal.Header>
+                    <form onSubmit={handleUpdateContract}>
+                        <Modal.Body>
+                            <input type="file" onChange={handleFileChange} accept=".pdf" />
+                            
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button className="text-white" color="danger" onClick={handleCloseChangeContract}>
+                                Fermer
+                            </Button>
+                            <Button  type='submit'  color="success" disabled={isLoggingIn}>
+                                Envoyer
+                            </Button>
+                        </Modal.Footer>
+                    </form>
+            </Modal>
+            {/* *****************************************FIN****************************************** */}
+
         </>
     );
 };
 
-export default SurEcommerces;
+export default AccueilDistributeur;
