@@ -244,7 +244,7 @@ const CHistoriqueStablecoin = () => {
                             >
                                 <Table.Header>
                                     {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom & prenom </p></Table.Column> */}
-                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">type </p></Table.Column>
+                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">type</p></Table.Column>
                                     <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actif</p></Table.Column>
                                     <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Hash de transaction</p></Table.Column>
                                     <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Adresse expéditeur<br/>Adresse recepteur</p></Table.Column>
