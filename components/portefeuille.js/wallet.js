@@ -253,7 +253,6 @@ const [codeOtherUser, setCodeOtherUser] = useState();
    const searchUserWithBlockchain = () =>{
     if (addressTo) {
       const getUser = async (_addressTo) => {
-        console.log("emailOtherUser 3=>",_addressTo)
       
           const result = await fetch(`${API_URL}/api/user/find-user-by-addrBlockchain?address=${_addressTo}`, {
               headers: {

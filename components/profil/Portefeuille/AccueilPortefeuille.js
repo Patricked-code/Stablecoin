@@ -59,6 +59,8 @@ const CAccueilPortefeuille = () => {
     const [allInfosConversion, setAllInfosConversion] = useState()
     const [amountConvert, setAmountConvert] = useState()
     
+    // State de l'état d'abonnement
+    const [stateOfSubscription, setStateOfSubscription] = useState()
 
     // States de tab
     const [toggleState, setToggleState] = useState(1);
@@ -285,13 +287,28 @@ const CAccueilPortefeuille = () => {
     // Fonction d'enregistrement des données du transfert dans l'historique
     const addHistorical = async (_hash) => {
         setIsLoggingIn(true);
+        
+        let nameSender =""
+        if (currentUser?.codeTypeProfil=="part") {
+            nameSender = currentUser?.lastName + '' + currentUser?.firstName
+        } else {
+            nameSender = currentUser?.entreprise
+        }
 
+        let nameReceiver =""
+        if (infosOtherUser?.codeTypeProfil=="part") {
+            nameReceiver = infosOtherUser?.lastName + '' + infosOtherUser?.firstName
+        } else {
+            nameReceiver = infosOtherUser?.entreprise
+        }
         try {
             
             const dataBody = {
                 typeTransaction: "Transfert",
                 activeName: nameStablecoin,
                 activeSymbol: symbolStablecoin,
+                nameSender: nameSender,
+                nameReceiver: nameReceiver,
                 emailSender: currentUser?.email,
                 emailReceiver: infosOtherUser?.email,
                 senderAddress: magicCurrentAddress,
@@ -364,7 +381,7 @@ const CAccueilPortefeuille = () => {
             const amountWei = ethers.utils.parseUnits(tosting, decimalStablecoin);
             
             // Vérifier si magicCurrentAddress a suffisamment de fonds à transférer
-            const balance = await contractStabl<ecoin.balanceOf(magicCurrentAddress);
+            const balance = await contractStablecoin.balanceOf(magicCurrentAddress);
             if (balance<montantEnvoyer) {
                 // Afficher un message indiquant que magicCurrentAddress n'a pas suffisamment de fonds
                 Swal.fire({
@@ -465,6 +482,42 @@ const CAccueilPortefeuille = () => {
     }, [currencyLocal]);
     // FIN
 
+    
+    /**
+     * Effet secondaire pour mettre à jour l'état en fonction de la valeur stockée dans le localStorage.
+     *
+     * @function
+     * @name useEffect
+     * @memberof YourComponent
+     * @inner
+     * @param {function} effect - La fonction à exécuter lors de l'effet secondaire.
+     * @param {Array} dependencies - Un tableau de dépendances qui déclenche l'effet lorsqu'une de ces dépendances change.
+     * @returns {void}
+    */
+     useEffect(() => {
+      /**
+       * Recupérée l'état de l'abonnement de l'utilisation dans le localStorage.
+       * @type {string|null}
+       */
+      const stateOfRequest = localStorage.getItem('stateOfSubscription');
+      
+      /**
+       * Met à jour l'état en fonction de la valeur stockée dans le localStorage.
+       * @type {string|null}
+       */ 
+      setStateOfSubscription(stateOfRequest);
+  }, [stateOfSubscription]);
+
+  const warnOnSubscription = async () =>{
+    Swal.fire({
+        position: 'center',
+        icon: 'error',
+        html: `Désolé, vous devez vous abonnez afin de pouvoir effectué un transfert.` ,
+        showConfirmButton: false,
+        timer: 15000
+    })
+}
+
     /**
      * Formate un nombre en tronquant à deux décimales et en ajoutant un séparateur de milliers (espace).
      * @param {number} number - Le nombre à formater.
@@ -494,7 +547,7 @@ const CAccueilPortefeuille = () => {
                         <div className='  row'>
                             <div className=' col-lg-2 col-md-2' ></div>
                             <div className=' col-lg-6 col-md-6' >
-                                <h3 className='text-center'>Mon portefeuille numérique </h3>
+                                <h3 className='text-center'>Mon portefeuille numérique  </h3>
                             </div>
                             <div className=' col-lg-2 col-md-2' ></div>
                             <div className=' col-lg-2 col-md-2 text-right' >
@@ -574,7 +627,8 @@ const CAccueilPortefeuille = () => {
                                                                     <a className=" text-white aNoDecor px-3">Retrait</a> 
                                                                     </Link>
                                                                 </small>
-                                                                <small className=" py-0 mx-2 px-0 btn btn-primary" onClick={handleTransfertShow}>
+                                                                <small className=" py-0 mx-2 px-0 btn btn-primary" onClick={!stateOfSubscription || stateOfSubscription==0 ? warnOnSubscription : handleTransfertShow}>
+                                                                {/* <small className=" py-0 mx-2 px-0 btn btn-primary" onClick={ handleTransfertShow}> */}
                                                                     <a className=" text-white aNoDecor  px-3">Transfert</a> 
                                                                 </small>
                                                                 <small className=" py-0 mx-2 px-0 btn btn-secondary">

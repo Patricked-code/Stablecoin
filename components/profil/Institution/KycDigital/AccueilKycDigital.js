@@ -186,21 +186,31 @@ const CAccueilKycDigital = () => {
 
 
     // Recuperer les donnees de la demande d'accès aux kyc initiée
-    useEffect(async() => {
-        const token = localStorage.getItem('tokenEnCours')
-            const getKycRequestInitiate = async () => {
+    
+    useEffect(async () => {
+        const token = localStorage.getItem('tokenEnCours');
+    
+    
+        const getKycRequestInitiate = async () => {
             const result = await fetch(`${API_URL}/api/kyc/find-all-kyc-request-initiate-for-institution`, {
                 headers: {
-                'Content-Type': 'application/json',
-                Authorization:  `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
-            })
-                .then((result) => result.json())
-                .then((data) => {
-                    setKycRequestInitiate(data)
-                }) 
-            };
-            await getKycRequestInitiate();
+            });
+    
+            if (!result?.ok) {
+                throw new Error(`Failed to fetch data`);
+            } else {
+                // Vérifier si la réponse n'est pas vide avant de la parser en JSON
+                const text = await result.text();
+                const data = text ? JSON.parse(text) : null;
+    
+                setKycRequestInitiate(data)
+            }
+        };
+    
+        await getKycRequestInitiate();
     }, []);
     // FIN
     
@@ -376,7 +386,7 @@ const CAccueilKycDigital = () => {
                                                 className={toggleState === 1 ? "content  active-content" : "content"}
                                             >
                                                 <div className='cryptocurrency-search-box'>
-                                                    
+                                                    {!kycRequestInitiate?.length==0 ? (
                                                     <Table
                                                         aria-label="Example table with static content"
                                                         css={{
@@ -406,6 +416,9 @@ const CAccueilKycDigital = () => {
                                                             onPageChange={(page) => console.log({ page })}
                                                         /> */}
                                                     </Table>
+                                                    ): (
+                                                        <p className='colorRed'>Aucune demande initiée</p>
+                                                    )}
                                                 </div>
                                             </div>
                                             {/* Fin Kyc demandés */}
@@ -416,56 +429,60 @@ const CAccueilKycDigital = () => {
                                                 className={toggleState === 2 ? "content  active-content" : "content"}
                                             >
                                                 <div className='cryptocurrency-search-box'>
+                                                    {!kycRequestAccept?.length==0 ? (
                                                     
-                                                    <Table
-                                                        aria-label="Example table with static content"
-                                                        css={{
-                                                            height: "auto",
-                                                            minWidth: "100%",
-                                                        }}
-                                                    >
-                                                        <Table.Header>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Propriétaire</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date limite</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actions</p></Table.Column>
-                                                        </Table.Header>
-                                                        <Table.Body>
-                                                            {kycRequestAccept?.map((data, index) => (
-                                                                <Table.Row key={index}>                       
-                                                                    <Table.Cell ><small className=" py-0 ">{data?.nameOwnerKyc}</small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 ">{formatDate(data?.sendingDate)}</small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 ">{data?.deadline?formatDate(data?.deadline):"Aucune"}</small></Table.Cell>
-                                                                    <Table.Cell className="row">
-                                                                        <div className='d-flex'>
-                                                                           
-                                                                            <p className=" py-0 " onClick={()=>setKycRequestId(data?.id)}>
-                                                                                {formatDateCompared(data?.deadline) < formatDateCompared(new Date()) ? (
-                                                                                    <small className="py-0 btn btn-secondary" disabled>Voir Kyc</small>
-                                                                                ) : (
-                                                                                    <Link href="/profil/institution/kyc-digital/show-kyc" className="">
-                                                                                        <small className="py-0 btn btn-primary">Voir Kyc</small>
-                                                                                    </Link>
-                                                                                )}
-                                                                            </p>
-                                                                            <p onClick={()=>setKycRequestId(data?.id)}>
-                                                                                <small className=" py-0   btn btn-success" onClick={handleShow}>Retour</small>
-                                                                            </p>
-                                                                        </div>
-                                                                    </Table.Cell>
-                                                                </Table.Row >
+                                                        <Table
+                                                            aria-label="Example table with static content"
+                                                            css={{
+                                                                height: "auto",
+                                                                minWidth: "100%",
+                                                            }}
+                                                        >
+                                                            <Table.Header>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Propriétaire</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date limite</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actions</p></Table.Column>
+                                                            </Table.Header>
+                                                            <Table.Body>
+                                                                {kycRequestAccept?.map((data, index) => (
+                                                                    <Table.Row key={index}>                       
+                                                                        <Table.Cell ><small className=" py-0 ">{data?.nameOwnerKyc}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 ">{formatDate(data?.sendingDate)}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 ">{data?.deadline?formatDate(data?.deadline):"Aucune"}</small></Table.Cell>
+                                                                        <Table.Cell className="row">
+                                                                            <div className='d-flex'>
+                                                                            
+                                                                                <p className=" py-0 " onClick={()=>setKycRequestId(data?.id)}>
+                                                                                    {formatDateCompared(data?.deadline) < formatDateCompared(new Date()) ? (
+                                                                                        <small className="py-0 btn btn-secondary" disabled>Voir Kyc</small>
+                                                                                    ) : (
+                                                                                        <Link href="/profil/institution/kyc-digital/show-kyc" className="">
+                                                                                            <small className="py-0 btn btn-primary">Voir Kyc</small>
+                                                                                        </Link>
+                                                                                    )}
+                                                                                </p>
+                                                                                <p onClick={()=>setKycRequestId(data?.id)}>
+                                                                                    <small className=" py-0   btn btn-success" onClick={handleShow}>Retour</small>
+                                                                                </p>
+                                                                            </div>
+                                                                        </Table.Cell>
+                                                                    </Table.Row >
 
-                                                                
-                                                            ))} 
-                                                        </Table.Body>
-                                                        {/* <Table.Pagination
-                                                            shadow
-                                                            noMargin
-                                                            align="center"
-                                                            rowsPerPage={3}
-                                                            onPageChange={(page) => console.log({ page })}
-                                                        /> */}
-                                                    </Table>
+                                                                    
+                                                                ))} 
+                                                            </Table.Body>
+                                                            {/* <Table.Pagination
+                                                                shadow
+                                                                noMargin
+                                                                align="center"
+                                                                rowsPerPage={3}
+                                                                onPageChange={(page) => console.log({ page })}
+                                                            /> */}
+                                                        </Table>
+                                                    ): (
+                                                        <p className='colorRed'>Aucune demande à traiter</p>
+                                                    )}
                                                 </div>
                                             </div>
                                             {/* Fin Kyc à traiter*/}
@@ -475,52 +492,56 @@ const CAccueilKycDigital = () => {
                                                 className={toggleState === 3 ? "content  active-content" : "content"}
                                             >
                                                 <div className='cryptocurrency-search-box'>
+                                                    {!kycRequestTreaty?.length==0 ? (
                                                     
-                                                    <Table
-                                                        aria-label="Example table with static content"
-                                                        css={{
-                                                            height: "auto",
-                                                            minWidth: "100%",
-                                                        }}
-                                                    >
-                                                        <Table.Header>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Propriétaire</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date limite</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actions</p></Table.Column>
-                                                        </Table.Header>
-                                                        <Table.Body>
-                                                            {kycRequestTreaty?.map((data, index) => (
-                                                                <Table.Row key={index}>                       
-                                                                    <Table.Cell ><small className=" py-0 ">{data?.nameOwnerKyc}</small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 ">{formatDate(data?.sendingDate)}</small></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 ">{data?.deadline?formatDate(data?.deadline):"Aucune"}</small></Table.Cell>
-                                                                    <Table.Cell className="row">
-                                                                        <div className='d-flex'>
-                                                                           
-                                                                            <p className=" py-0 " onClick={()=>setKycRequestId(data?.id)}>
-                                                                                {formatDateCompared(data?.deadline) < formatDateCompared(new Date()) ? (
-                                                                                    <small className="py-0 btn btn-secondary" disabled>Voir Kyc</small>
-                                                                                ) : (
-                                                                                    <Link href="/profil/institution/kyc-digital/show-kyc" className="">
-                                                                                        <small className="py-0 btn btn-primary">Voir Kyc</small>
-                                                                                    </Link>
-                                                                                )}
-                                                                            </p>
-                                                                        </div>
-                                                                    </Table.Cell>
-                                                                </Table.Row >
-                                                                
-                                                            ))} 
-                                                        </Table.Body>
-                                                        {/* <Table.Pagination
-                                                            shadow
-                                                            noMargin
-                                                            align="center"
-                                                            rowsPerPage={3}
-                                                            onPageChange={(page) => console.log({ page })}
-                                                        /> */}
-                                                    </Table>
+                                                        <Table
+                                                            aria-label="Example table with static content"
+                                                            css={{
+                                                                height: "auto",
+                                                                minWidth: "100%",
+                                                            }}
+                                                        >
+                                                            <Table.Header>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Propriétaire</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date limite</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actions</p></Table.Column>
+                                                            </Table.Header>
+                                                            <Table.Body>
+                                                                {kycRequestTreaty?.map((data, index) => (
+                                                                    <Table.Row key={index}>                       
+                                                                        <Table.Cell ><small className=" py-0 ">{data?.nameOwnerKyc}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 ">{formatDate(data?.sendingDate)}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 ">{data?.deadline?formatDate(data?.deadline):"Aucune"}</small></Table.Cell>
+                                                                        <Table.Cell className="row">
+                                                                            <div className='d-flex'>
+                                                                            
+                                                                                <p className=" py-0 " onClick={()=>setKycRequestId(data?.id)}>
+                                                                                    {formatDateCompared(data?.deadline) < formatDateCompared(new Date()) ? (
+                                                                                        <small className="py-0 btn btn-secondary" disabled>Voir Kyc</small>
+                                                                                    ) : (
+                                                                                        <Link href="/profil/institution/kyc-digital/show-kyc" className="">
+                                                                                            <small className="py-0 btn btn-primary">Voir Kyc</small>
+                                                                                        </Link>
+                                                                                    )}
+                                                                                </p>
+                                                                            </div>
+                                                                        </Table.Cell>
+                                                                    </Table.Row >
+                                                                    
+                                                                ))} 
+                                                            </Table.Body>
+                                                            {/* <Table.Pagination
+                                                                shadow
+                                                                noMargin
+                                                                align="center"
+                                                                rowsPerPage={3}
+                                                                onPageChange={(page) => console.log({ page })}
+                                                            /> */}
+                                                        </Table>
+                                                    ): (
+                                                        <p className='colorRed'>Aucune demande finalisée</p>
+                                                    )}
                                                 </div>
                                             </div>
                                             {/* Fin Kyc finalisés*/}

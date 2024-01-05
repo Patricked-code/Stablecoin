@@ -140,6 +140,26 @@ const CHistoriqueStablecoin = () => {
     // FIN
 
 
+    /**
+     * Formate un nombre en tronquant à deux décimales et en ajoutant un séparateur de milliers (espace).
+     * @param {number} number - Le nombre à formater.
+     * @returns {string} - Le nombre formaté en tant que chaîne de caractères.
+     * @throws {Error} - Si la fonction est appelée avec autre chose qu'un nombre.
+     */
+     function formatNumber(number) {
+        if (typeof number !== 'number') {
+            throw new Error('La fonction doit être appelée avec un nombre.');
+        }
+
+        // Tronquer le nombre à deux décimales
+        const truncatedNumber = Math.floor(number * 100) / 100;
+
+        // Ajouter un séparateur de milliers (espace)
+        const formattedNumber = truncatedNumber.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
+        return formattedNumber;
+    }
+
        /**
      * Affiche un contenu limité en fonction du nombre de mots ou de caractères spécifié.
      *
@@ -235,40 +255,95 @@ const CHistoriqueStablecoin = () => {
 
                         {/* Les cards */}
                         <div className='cryptocurrency-search-box'>
-                            <Table
-                                aria-label="Example table with static content"
-                                css={{
-                                    height: "auto",
-                                    minWidth: "100%",
-                                }}
-                            >
-                                <Table.Header>
-                                    {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom & prenom </p></Table.Column> */}
-                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">type</p></Table.Column>
-                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actif</p></Table.Column>
-                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Hash de transaction</p></Table.Column>
-                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Adresse expéditeur<br/>Adresse recepteur</p></Table.Column>
-                                    <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant<br/>Date</p></Table.Column>
-                                </Table.Header>
-                                <Table.Body>
-                                    {dataAllHistoricalByUserEmail?.map((data) => (
-                                        <Table.Row key={data?.id}>                       
-                                            <Table.Cell ><small className=" py-0 ">{data?.typeTransaction}</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">{data?.activeSymbol}</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 d-flex">{displayLimitedContent(data?.hash, 20, "characters")}<a className="nav-logo aNoDecor " target="_blank"  href={`${HASH_TX}/${data?.hash}`}>Détails</a></small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">{displayLimitedContent(data?.senderAddress,20,'characters')} <button onClick={()=>setCopyAddress(data?.senderAddress)}><Icon onClick={copyToClipboard} icon="bx:copy"  width="15" /></button><br/>{displayLimitedContent(data?.receiverAddress,20,"characters")}<button onClick={()=>setCopyAddress(data?.receiverAddress)}><Icon onClick={copyToClipboard} icon="bx:copy"  width="15" /></button><br/><i className="colorGreen"></i></small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">{data?.amount}<br/>{formatDate(data?.createdAt)}</small></Table.Cell>
-                                        </Table.Row >
-                                    ))} 
-                                </Table.Body>
-                                <Table.Pagination
-                                    shadow
-                                    noMargin
-                                    align="center"
-                                    rowsPerPage={5}
-                                    onPageChange={(page) => console.log({ page })}
-                                />
-                            </Table>
+                            {!dataAllHistoricalByUserEmail?.length==0 ? (
+                                <Table
+                                    aria-label="Example table with static content"
+                                    css={{
+                                        height: "auto",
+                                        minWidth: "100%",
+                                    }}
+                                >
+                                    <Table.Header>
+                                        {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom & prenom </p></Table.Column> */}
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">type</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actif</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nom</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Hash de transaction</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Adresse</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant<br/>Date</p></Table.Column>
+                                    </Table.Header>
+                                    <Table.Body>
+                                        {dataAllHistoricalByUserEmail?.map((data,) => (
+                                            <Table.Row key={data?.id}>                       
+                                                <Table.Cell ><small className=" py-0 ">{data?.typeTransaction}</small></Table.Cell>
+                                                <Table.Cell ><small className=" py-0 ">{data?.activeSymbol}</small></Table.Cell>
+                                                <Table.Cell >
+                                                    <small className=" py-0 ">
+                                                        {currentUser?.address != data?.senderAddress ? (
+                                                            <>
+                                                                {displayLimitedContent(data?.nameSender,20,"characters")}
+                                                            </>
+                                                        ):currentUser?.address != data?.receiverAddress ? (
+                                                            <>
+                                                                {displayLimitedContent(data?.nameReceiver,20,"characters")}
+                                                            </>
+                                                        ):("")}
+                                                    </small>
+                                                </Table.Cell>
+                                                <Table.Cell ><small className=" py-0 d-flex">{displayLimitedContent(data?.hash, 20, "characters")}<a className=" aNoDecor " target="_blank"  href={`${HASH_TX}/${data?.hash}`}>Détails</a></small></Table.Cell>
+                                                <Table.Cell >
+                                                    <small className=" py-0 ">
+                                                        {currentUser?.address != data?.senderAddress ? (
+                                                            <>
+                                                                {displayLimitedContent(data?.senderAddress,20,'characters')} 
+                                                                <button onClick={()=>setCopyAddress(data?.senderAddress)}><Icon onClick={copyToClipboard} icon="bx:copy"  width="15" /></button><br/>
+                                                            
+                                                            </>
+                                                        ) :currentUser?.address != data?.receiverAddress ? (
+                                                            <>
+                                                                {displayLimitedContent(data?.receiverAddress,20,"characters")}
+
+                                                                <button onClick={()=>setCopyAddress(data?.receiverAddress)}>
+                                                                    <Icon onClick={copyToClipboard} icon="bx:copy"  width="15" />
+                                                                </button><br/><i className="colorGreen"></i>
+                                                            </>
+                                                        ):("")}
+
+                                                       
+                                                    </small>
+                                                </Table.Cell>
+                                                <Table.Cell >
+                                                    <small className=" py-0 ">
+                                                    {currentUser?.address != data?.senderAddress ? (
+                                                            <>
+                                                                <i className='colorGreen'> + {formatNumber(parseFloat(data?.amount))}</i>
+                                                            </>
+                                                        ):currentUser?.address != data?.receiverAddress ? (
+                                                            <>
+                                                                <i className='colorRed'> - {formatNumber(parseFloat(data?.amount))}</i>
+                                                            </>
+                                                    ):("")}
+                                                    
+                                                    <br/>{formatDate(data?.createdAt)}
+                                                    </small>
+                                                    {/* <small className=" py-0 ">
+                                                        {formatNumber(parseFloat(data?.amount))}<br/>{formatDate(data?.createdAt)}
+                                                    </small> */}
+                                                </Table.Cell>
+                                            </Table.Row >
+                                        ))} 
+                                    </Table.Body>
+                                    <Table.Pagination
+                                        shadow
+                                        noMargin
+                                        align="center"
+                                        rowsPerPage={5}
+                                        onPageChange={(page) => console.log({ page })}
+                                    />
+                                </Table>
+                            ) : (
+                                <p className='colorRed text-center m-3'>Aucune transaction effectuée</p>
+                            )}
                         </div>
                     </div>
                 </>

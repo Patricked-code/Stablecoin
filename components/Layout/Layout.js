@@ -97,6 +97,8 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/resultat-kyc"||
       pathname === "/profil/wallet"||
       pathname === "/profil/paiements/paiements-attente"||
+      pathname === "/profil/paiements/paiements-ecommerce-attente"||
+
 
       // POUR LES HISTORIQUES
       pathname === "/profil/historique"||
@@ -181,7 +183,8 @@ const Layout = ({ children }) => {
 
       pathname === "/admin/wealthtech/stablecoin/distributeur"||
       pathname === "/admin/wealthtech/stablecoin/portefeuille/conversion"||
-      pathname === "/admin/wealthtech/stablecoin/abonnement/tarifs"
+      pathname === "/admin/wealthtech/stablecoin/abonnement/tarifs"||
+      pathname === "/admin/wealthtech/stablecoin/abonnement/liste-abonnes"
 
 
 
@@ -261,7 +264,8 @@ const Layout = ({ children }) => {
       // pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/wallet"||
       pathname === "/profil/paiements/paiements-attente"||
-
+      pathname === "/profil/paiements/paiements-ecommerce-attente"||
+      
       // POUR LES HISTORIQUES
       pathname === "/profil/historique"||
       pathname === "/profil/historique/stablecoin"||
@@ -339,6 +343,7 @@ const Layout = ({ children }) => {
       pathname === "/admin/wealthtech/stablecoin/distributeur"||
       pathname === "/admin/wealthtech/stablecoin/portefeuille/conversion"||
       pathname === "/admin/wealthtech/stablecoin/abonnement/tarifs"||
+      pathname === "/admin/wealthtech/stablecoin/abonnement/liste-abonnes"||
       
 
       

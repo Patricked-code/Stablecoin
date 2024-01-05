@@ -171,6 +171,10 @@ const ValidEntreprise = () => {
     const [isOpen3, setIsOpen3] = useState(false);
     const [isOpen4, setIsOpen4] = useState(false);
 
+    //State de la demande d'accès au kyc de l'utilisateur
+    const [kycRequestOfUser, setKycRequestOfUser] = useState();
+
+
     // La fonction toggleAccordion Pour la partie questionnaire
     const toggleAccordion = (accordionNumber) => {
         switch (accordionNumber) {
@@ -1464,6 +1468,56 @@ const validKycIdentity= async (event) => {
     // FIN 
 
 
+    /**
+         * Hook d'effet pour récupérer les données des demandes d'accès de l'utilisateur connecté.
+         * Les données sont stockées dans l'état `kycRequestOfUser`.
+         *
+         * @async
+         * @function
+         * @returns {void}
+    */
+     useEffect(async () => {
+        /**
+         * Fonction pour obtenir les demandes d'accès de l'utilisateur connecté.
+         *
+         * @async
+         * @returns {void}
+         */
+        const getKycRequestOfUser = async () => {
+            const token = localStorage.getItem('tokenEnCours');
+
+            try {
+                /**
+                 * Résultat de la requête pour récupérer les demandes d'accès de l'utilisateur connecté.
+                 * @type {Response}
+                 */
+                const result = await fetch(`${API_URL}/api/kyc/find-all-kyc-request-of-kyc-owner`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!result.ok) {
+                    throw new Error('Failed to fetch KYC request data');
+                }
+
+                /**
+                 * Données des demandes d'accès de l'utilisateur connecté.
+                 * @type {object[]}
+                 */
+                const data = await result.json();
+                setKycRequestOfUser(data);
+            } catch (error) {
+                // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
+                console.error('Erreur lors de la récupération des demandes d\'accès KYC:', error);
+            }
+        };
+
+        // Appel de la fonction pour récupérer les demandes d'accès de l'utilisateur connecté.
+        await getKycRequestOfUser();
+    }, []);
+
     const refreshPage = () =>{
         Swal.fire({
             position: 'center',
@@ -1510,11 +1564,41 @@ const validKycIdentity= async (event) => {
                     <h1 className='text-center'>Votre Kyc</h1>
                 </div>
             </div>
-            <p className='text-center'>
-                <Link to='/profil/kyc/entreprise/kyc-demandes' >
-                    Demandes d'accès au kyc en attente <i className='rounded-circle bgColorBlue text-white p-2'>2</i>
-                </Link>
-            </p>
+
+            <div className='row'>
+                <div className='col-lg-3 col-md-3'></div>
+
+                <div className='col-lg-6 col-md-6'>
+                    <div className='currency-selection text-center'>
+                        <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className='cryptocurrency-slides'>
+                                <div className='single-cryptocurrency-box'>
+                                    <div className='title text-center '>
+                                        <p className=" py-0 "> Demandes d'accès au kyc en attente</p>
+                                        <p className=" py-0 colorBlue">{!kycRequestOfUser?.length? 0 : kycRequestOfUser?.length}</p>
+                                    </div>
+                                                            
+                                    <div className='btn-box '>
+                                        <Link to='/profil/kyc/particulier/kyc-demandes' >
+                                            <Button
+                                                block
+                                                color="primary"
+                                                type="button"
+                                                onClick={()=>setIdKycForParticular(kycForParticularUser?.id)}
+                                            >
+                                                Voir les demandes
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className='col-lg-3 col-md-3'></div>
+            </div>
+
+
             {/* Les images de fond */}
             <div className='shape1'>
             {/* <img src='/images/shape/shape1.png' alt='image' /> */}

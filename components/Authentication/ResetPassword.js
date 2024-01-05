@@ -9,19 +9,29 @@ import Swal from 'sweetalert2';
 
 
 
-
+/**
+ * Composant React représentant la réinitialisation du mot de passe.
+ * @function
+ * @component
+ * @name ResetPassword
+ */
 const ResetPassword = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [showForm, setShowForm] = useState(false);
 
   const API_URL =process.env.NEXT_PUBLIC_URL_API
 
   
-  // FONCTION DE LA DECONNEXION
+   /**
+   * Fonction pour gérer la déconnexion de l'utilisateur.
+   * @function
+   * @async
+   * @name logaout
+   * @returns {void}
+   */
   const logaout = useCallback(() => {
     try {
     magic.user.logout().then(() => {
@@ -34,8 +44,12 @@ const ResetPassword = () => {
   // FIN
 
   /**
-   * Perform login action via Magic's passwordless flow. Upon successuful
-   * completion of the login flow, a user is redirected to the homepage.
+   * Fonction pour envoyer le lien de réinitialisation du mot de passe.
+   * @function
+   * @async
+   * @name sendPasswordResetLink
+   * @param {object} event - Événement de soumission du formulaire.
+   * @returns {void}
    */
    const sendPasswordResetLink = useCallback(async (event) => {
     event.preventDefault();

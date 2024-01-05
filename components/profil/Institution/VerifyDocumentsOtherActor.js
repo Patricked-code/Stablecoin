@@ -359,10 +359,25 @@ const VerifyDocumentsOtherActor = () => {
     // Fonction d'enregistrement de dépôt cash
     const addDepositCash = async (_amount, _wealthtechCommission, _amountMint, _addressCustomer, _hash) => {
       setIsLoggingIn(true);
+      let nameInstitution =""
+        if (currentUser?.codeTypeProfil=="part") {
+            nameInstitution = currentUser?.lastName + '' + currentUser?.firstName
+        } else {
+            nameInstitution = currentUser?.entreprise
+        }
+
+        let nameCustomer =""
+        if (infosOtherUser?.codeTypeProfil=="part") {
+            nameCustomer = infosOtherUser?.lastName + '' + infosOtherUser?.firstName
+        } else {
+            nameCustomer = infosOtherUser?.entreprise
+        }
   
       try {
           
           const dataBody = {
+            nameCustomer: nameCustomer,
+            nameInstitution: nameInstitution,
             addressCustomer: _addressCustomer,
             addressInstitution: magicCurrentAddress,
             amount: _amount,

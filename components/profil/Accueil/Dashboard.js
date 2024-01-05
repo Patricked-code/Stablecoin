@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Modal } from "react-bootstrap";
 import ABI_TOKEN_EWARI from "../../../components/Contrats/Abi/AbiStablecoin.json";
+import ABI_ESCROW_STABLECOIN from "../../../components/Contrats/Abi/AbiEscrowStablecoin.json";
 
 
 import React from "react";
@@ -224,9 +225,15 @@ const [montantAchat, setMontantAchat] = useState(0)
     const [symbolStablecoin, setSymbolStablecoin] = useState();
     const [balanceStablecoin, setBalanceStablecoin] = useState();
     const [decimalStablecoin, setDecimalStablecoin] = useState();
-
-    const [infoSubscriptionOfUser, setInfoSubscriptionOfUser] = useState()
    
+    // States d'escrow
+    const [contractEscrow, setContractEscrow] = useState()
+    const [balanceEscrow, setBalanceEscrow] = useState()
+    const [dataRequestUseStablecoinForUser, setDataRequestUseStablecoinForUser] = useState()
+
+    // State d'abonnement
+    const [infoSubscriptionOfUser, setInfoSubscriptionOfUser] = useState()
+
 
 
     /**
@@ -326,17 +333,37 @@ const [montantAchat, setMontantAchat] = useState(0)
             setSymbolStablecoin(symbolStablecoin);
             setDecimalStablecoin(decimalStablecoin);
             setBalanceStablecoin(formatNumber(balanceStablecoin / 10 ** decimalStablecoin));
+            
+            // Stoquer le symbol de stablecoin dans une variable local
+            localStorage.setItem('SymbolStablecoin', symbolStablecoin);
+
+
+            
+                /**
+                 * Smart contrat d'escrow.
+                 * @type {string}
+                 */
+                 if (dataRequestUseStablecoinForUser?.addressEscrow) {
+                    const contractEscrow = new ethers.Contract(dataRequestUseStablecoinForUser?.addressEscrow, ABI_ESCROW_STABLECOIN?.abi, walletRelay);
+                    setContractEscrow(contractEscrow)
+                    
+
+                    // Balance de l'escrow en utilisant la fonction balanceOf de stablecoin pour l'utilisateur connecté
+                    const balanceEscrow = await contractEscrow.getTotalApprovedAmount()
+                    setBalanceEscrow(formatNumber(balanceEscrow/10**decimalStablecoin))
+                 }
+
         }
         };
     
         // Appeler la fonction pour récupérer les informations lorsque le fournisseur Web3 ou Magic changent.
         getMagicAndWeb3Info();
-    }, [provider, magic]);
+    }, [provider, magic, dataRequestUseStablecoinForUser?.addressEscrow]);
     
 
 
 
-    // Obtenir un utilisateur en fonction de son email 
+    // Obtenir l'utilisateur connecté 
     useEffect(async () => {
         const token = localStorage.getItem('tokenEnCours')
 
@@ -642,7 +669,27 @@ const [montantAchat, setMontantAchat] = useState(0)
     const daysRemaining = infoSubscriptionOfUser
       ? calculateRemainingDays(infoSubscriptionOfUser?.updatedAt, infoSubscriptionOfUser?.subscriptionDays)
       : 0;
-  
+    
+    /**
+     * Effet secondaire pour mettre à jour l'état en fonction de la valeur stockée dans le localStorage.
+     *
+     * @function
+     * @name useEffect
+     * @memberof YourComponent
+     * @inner
+     * @param {function} effect - La fonction à exécuter lors de l'effet secondaire.
+     * @param {Array} dependencies - Un tableau de dépendances qui déclenche l'effet lorsqu'une de ces dépendances change.
+     * @returns {void}
+    */
+    useEffect(() => {
+        /**
+         * Stockée l'état de l'abonnement de l'utilisation dans le localStorage.
+         * @type {string|null}
+         */
+        localStorage.setItem('stateOfSubscription', daysRemaining);
+        
+    }, [daysRemaining]);
+
 
     /**
      * Effectue une requête pour obtenir les données de la demande de paiement en fonction de l'utilisateur connecté.
@@ -1156,7 +1203,6 @@ const [montantAchat, setMontantAchat] = useState(0)
 
     // FONCTION POUR COPIER L'ADRESSE PUBLIC'
     const copyToClipboard = () => {
-        console.log("magicCurrentAddress=>",magicCurrentAddress)
         copy(magicCurrentAddress);
         setSuccessCopy("L'adresse copiée avec succès !");
 
@@ -1185,6 +1231,38 @@ const [montantAchat, setMontantAchat] = useState(0)
             await getQuestionnaireForUser();
     }, []);
     // FIN
+
+
+    // Recupérer les données de concernant l'escrow de l'utilisateur connecté
+    useEffect(async () => {
+        const getDataRequestUseStablecoinForUser= async () => {
+            const token = localStorage.getItem('tokenEnCours');
+
+            try {
+                
+                const result = await fetch(`${API_URL}/api/payment-request/find-request-use-stablecoin-of-user`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!result.ok) {
+                    throw new Error('Failed to fetch request data');
+                }
+
+                const data = await result.json();
+                setDataRequestUseStablecoinForUser(data);
+
+            } catch (error) {
+                // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
+                console.error('Erreur lors de la récupération des demandes:', error);
+            }
+        };
+
+        await getDataRequestUseStablecoinForUser();
+    }, []);
+    // Fin
 
     /**
      * Formate un nombre en tronquant à deux décimales et en ajoutant un séparateur de milliers (espace).
@@ -1297,7 +1375,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                                         <p>Mon solde : {balanceStablecoin} {symbolStablecoin}</p>
                                     </div>
                                     </div>
-                                    <Link href="/profil/wallet">
+                                    <a className='nav-link' href="/profil/wallet">
                                     <Button
                                         block
                                         color="success"
@@ -1307,12 +1385,46 @@ const [montantAchat, setMontantAchat] = useState(0)
                                             Voir plus
                                         
                                     </Button>
-                                    </Link>
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                {/* Recette de vente en ligne */}
+                {userDataSession?.codeTypeProfil=="entCom"? (
+                    <div className='col-lg-6 col-md-6'>
+                        <div className='currency-selection text-center'>
+                            <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                <div className='cryptocurrency-slides'>
+                                    <div className='single-cryptocurrency-box'>
+                                        <div className='d-flex align-items-center'>
+                                        <div className='bestseller-coin-image'>
+                                            <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
+                                        </div>
+                                        <div className='title'>
+                                            <h3>Recette de la vente sur la plateforme</h3>
+                                            <p>Mon solde : <b className='colorRed'>{balanceEscrow}</b> {symbolStablecoin}</p>
+                                        </div>
+                                        </div>
+                                        <a className='nav-link' href="/profil/entreprise/actions/boutique">
+                                        <Button
+                                            block
+                                            color="success"
+                                            type="button"
+                                        >
+                                            
+                                                Voir plus
+                                            
+                                        </Button>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ) : ("")}
                 
                 {/* Paiement en cours */}
                 <div className='col-lg-6 col-md-6'>
@@ -1326,7 +1438,40 @@ const [montantAchat, setMontantAchat] = useState(0)
                                     </div>
                                     <div className='title text-center'>
                                     <h3>
-                                        <p className='rounded-circle bgColorblue text-white'><i>{paymentPendingLength?(paymentPendingLength):("0")}</i></p>
+                                        <p className='rounded-circle colorBlue'><b>{paymentPendingLength?(paymentPendingLength):("0")}</b></p>
+
+                                        Paiements E-commerce en attente
+                                    </h3>
+                                    </div>
+                                    </div><br/>
+                                    <a className='nav-link' href='/profil/paiements/paiements-ecommerce-attente'>
+                                        <Button
+                                            block
+                                            color="success"
+                                            type="button"
+                                        >
+                                            Voir plus
+                                        </Button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Paiement en cours */}
+                <div className='col-lg-6 col-md-6'>
+                    <div className='currency-selection text-center'>
+                        <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className='cryptocurrency-slides'>
+                                <div className='single-cryptocurrency-box'>
+                                    <div className='d-flex align-items-center mb-3'>
+                                    <div className='bestseller-coin-image'>
+                                        <img src="/images/ecfa/icons/icon1.jpg" className="rounded-circle"  alt='image' />
+                                    </div>
+                                    <div className='title text-center'>
+                                    <h3>
+                                        <p className='rounded-circle  colorBlue'><b>{paymentPendingLength?(paymentPendingLength):("0")}</b></p>
                                         Paiements en attente
                                     </h3>
                                     </div>

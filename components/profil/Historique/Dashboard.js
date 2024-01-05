@@ -190,7 +190,7 @@ const CDashbaordHistorique = () => {
                                         <div className='single-cryptocurrency-box'>
                                             <div className='d-flex align-items-center'>
                                             <div className='title'>
-                                                <h3>Des transactions bancaire</h3>
+                                                <h3>Des transactions cash</h3>
                                             </div>
                                             </div>
                                             <div className='btn-box'>

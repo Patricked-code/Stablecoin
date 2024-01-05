@@ -9,7 +9,12 @@ import Swal from 'sweetalert2';
 
 
 
-
+/**
+ * Composant React représentant le lien de réinitialisation de mot de passe.
+ * @function
+ * @component
+ * @name CLinkResetPassword
+ */
 const CLinkResetPassword = () => {
   const [email, setEmail] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -17,7 +22,13 @@ const CLinkResetPassword = () => {
   const API_URL =process.env.NEXT_PUBLIC_URL_API
 
   
-  // FONCTION DE LA DECONNEXION
+  /**
+   * Fonction pour gérer la déconnexion de l'utilisateur.
+   * @function
+   * @async
+   * @name logaout
+   * @returns {void}
+   */
   const logaout = useCallback(() => {
     try {
     magic.user.logout().then(() => {
@@ -29,9 +40,12 @@ const CLinkResetPassword = () => {
   }, [Router]);
   // FIN
 
-  /**
-   * Perform login action via Magic's passwordless flow. Upon successuful
-   * completion of the login flow, a user is redirected to the homepage.
+   /**
+   * Fonction pour envoyer le lien de réinitialisation du mot de passe.
+   * @function
+   * @async
+   * @name sendPasswordResetLink
+   * @returns {void}
    */
   const sendPasswordResetLink = useCallback(async () => {
     setIsLoggingIn(true);

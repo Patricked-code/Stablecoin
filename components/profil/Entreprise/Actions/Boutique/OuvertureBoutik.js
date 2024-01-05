@@ -208,10 +208,10 @@ const OuvertureBoutik = () => {
     // FIN
 
              
-   /**
+    /**
      * Hook d'effet pour récupérer et définir la demande d'utilisation de stablecoin de l'utilisateur connecté.
      * @returns {void}
-     */
+    */
     useEffect(async () => {
         const token = localStorage.getItem('tokenEnCours');
     
@@ -228,7 +228,7 @@ const OuvertureBoutik = () => {
             });
     
             if (!result.ok) {
-                throw new Error('Failed to fetch KYC data');
+                throw new Error('Failed to fetch data');
             } else {
                 // Vérifier si la réponse n'est pas vide avant de la parser en JSON
                 const text = await result.text();
@@ -240,7 +240,6 @@ const OuvertureBoutik = () => {
     
         await getDataRequestUseStablecoin();
     }, []);
-    
     // FIN
 
 

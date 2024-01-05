@@ -1,3 +1,10 @@
+/**
+ * Composant React représentant le formulaire de la première édition.
+ * @function
+ * @component
+ * @name FirstEdition
+ */
+
 import React from 'react';
 import Link from 'next/link';
 
@@ -102,7 +109,12 @@ const [serviceD, setServiceD] = useState([]);
 
 
   
-
+  /**
+   * Effet secondaire pour initialiser le fournisseur Ethereum avec Magic.
+   * @function
+   * @effect
+   * @name useEffectInitMagicProvider
+   */
   useEffect(() => {
 
     if (!!magic) {
@@ -111,7 +123,12 @@ const [serviceD, setServiceD] = useState([]);
     }
   }, [magic]);
 
-  // RECUPERATION DES INFORMATIONS QUI CONCERNENT MAGIC
+  /**
+   * Effet secondaire pour récupérer les informations liées à Magic.
+   * @function
+   * @effect
+   * @name useEffectGetMagicInfo
+   */
   useEffect(() => {
     (async () => {
           if (!!magic && !!provider) {
@@ -143,7 +160,12 @@ const [serviceD, setServiceD] = useState([]);
       })();
   }, [provider, magic]);
 
-  // FONCTION DE LA DECONNEXION
+  /**
+   * Fonction pour gérer la déconnexion de l'utilisateur.
+   * @function
+   * @async
+   * @returns {void}
+   */
   const logaout = useCallback(() => {
     try {
     magic.user.logout().then(() => {
@@ -160,9 +182,14 @@ const [serviceD, setServiceD] = useState([]);
   }, [Router]);
   // FIN
 
-  // Fonction de mise à jour des informations du profil particulier
+  /**
+   * Fonction pour mettre à jour les informations du profil particulier.
+   * @function
+   * @async
+   * @name EditProfilParticulier
+   * @returns {void}
+   */
   const EditProfilParticulier= useCallback(async () => {
-    console.log("currentUser?.id=>",currentUser?.id)
     setIsLoggingIn(true);
     /* Vérifier si l'utilisateur a choisi un pays et le sexe 
     *sinon il reçoit une alerte pour choisir
@@ -239,7 +266,13 @@ const [serviceD, setServiceD] = useState([]);
   }, [firstName,lastName,mobile,codeCountry,currentAddress,city,birthday,sex,addressPostal,cityOfBirth,nationality,nativeCountry]);
   // Fin
 
-  // Fonction de mise à jour des informations du profil Institution et société financière
+  /**
+   * Fonction pour mettre à jour les informations du profil d'institution ou d'entreprise financière.
+   * @function
+   * @async
+   * @name EditProfilInstitution
+   * @returns {void}
+   */
   const EditProfilInstitution  = useCallback(async () => {
     setIsLoggingIn(true);
     /* Vérifier si l'utilisateur a choisi un pays, forme juridique, secteur, employés, type  
@@ -315,7 +348,13 @@ const [serviceD, setServiceD] = useState([]);
   // Fin
 
 
-  // Fonction de mise à jour des informations du profil de la société de gestion OPCVM
+ /**
+   * Fonction pour mettre à jour les informations du profil de la société de gestion OPCVM.
+   * @function
+   * @async
+   * @name EditProfilGestion
+   * @returns {void}
+   */
   const EditProfilGestion  = async () => {
     
     setIsLoggingIn(true);
@@ -406,14 +445,19 @@ const [serviceD, setServiceD] = useState([]);
     }
   
   }
-  // , [serviceA,serviceB,serviceC,serviceC,serviceD,entreprise,mobile,currentAddress,approvalNumber,regulator,startDate,site,currentUser,userMetadata]);
   // Fin
 
 
   // FONCTION POUR UPLOADER LE FICHIER DU LOGO
     // const [image, setImage] = useState(null);
     const [createObjectURL, setCreateObjectURL] = useState(null);
-
+    /**
+     * Fonction pour gérer le téléchargement du fichier du logo.
+     * @function
+     * @name uploadToClientLogo
+     * @param {Object} event - L'objet d'événement.
+     * @returns {void}
+     */
     const uploadToClientLogo = (event) => {
         if (event.target.files && event.target.files[0]) {
         const i = event.target.files[0];
@@ -422,9 +466,14 @@ const [serviceD, setServiceD] = useState([]);
         }
     };
 
-  // Fonction de mise à jour des informations du profil Entreprise / Commerçant
+  /**
+   * Fonction pour mettre à jour les informations du profil d'une entreprise ou d'un commerçant.
+   * @function
+   * @async
+   * @name EditProfilEntreprise
+   * @returns {void}
+   */
   const EditProfilEntreprise  = useCallback(async () => {
-    // setIsLoggingIn(true);
     /* Vérifier si l'utilisateur a choisi un pays, forme juridique, secteur, employés, type  
     *sinon il reçoit une alerte pour choisir
     */
@@ -525,8 +574,13 @@ const [serviceD, setServiceD] = useState([]);
   // Fin
   
   
-
-  // Les handles de service
+  /**
+   * Fonction pour gérer les options de service pour les cases à cocher.
+   * @function
+   * @name handleOptionServiceA
+   * @param {Object} event - L'objet d'événement.
+   * @returns {void}
+   */
   const handleOptionServiceA = (event) => {
     const value = event.target.value;
     const isChecked = event.target.checked;
@@ -538,6 +592,13 @@ const [serviceD, setServiceD] = useState([]);
     }
   };
 
+  /**
+   * Fonction pour gérer les options de service pour les cases à cocher.
+   * @function
+   * @name handleOptionServiceB
+   * @param {Object} event - L'objet d'événement.
+   * @returns {void}
+   */
   const handleOptionServiceB = (event) => {
     const value = event.target.value;
     const isChecked = event.target.checked;
@@ -549,6 +610,13 @@ const [serviceD, setServiceD] = useState([]);
     }
   };
 
+  /**
+   * Fonction pour gérer les options de service pour les cases à cocher.
+   * @function
+   * @name handleOptionServiceC
+   * @param {Object} event - L'objet d'événement.
+   * @returns {void}
+   */
   const handleOptionServiceC = (event) => {
     const value = event.target.value;
     const isChecked = event.target.checked;
@@ -560,6 +628,13 @@ const [serviceD, setServiceD] = useState([]);
     }
   };
 
+  /**
+   * Fonction pour gérer les options de service pour les cases à cocher.
+   * @function
+   * @name handleOptionServiceD
+   * @param {Object} event - L'objet d'événement.
+   * @returns {void}
+   */
   const handleOptionServiceD = (event) => {
     const value = event.target.value;
     const isChecked = event.target.checked;
@@ -570,10 +645,15 @@ const [serviceD, setServiceD] = useState([]);
         setServiceD("");
     }
   };
-// Fin
+  // Fin
 
 
-  // RECUPERER TOUS LES PAYS
+  /**
+   * Effet secondaire pour récupérer tous les pays.
+   * @function
+   * @effect
+   * @name useEffectGetAllCountries
+   */
   useEffect(async() => {
     const getAllCountries = async () => {
     const resCountry = await fetch(`${API_URL}/api/country/find-all`, {
@@ -590,7 +670,12 @@ const [serviceD, setServiceD] = useState([]);
   }, []);
   // FIN
 
-  // RECUPERER TOUTES LES NATIONALITES
+   /**
+   * Effet secondaire pour récupérer toutes les nationalités.
+   * @function
+   * @effect
+   * @name useEffectGetAllNationality
+   */
   useEffect(async() => {
     const getAllNationality = async () => {
     const resCountry = await fetch(`${API_URL}/api/country/find-all-nationnality`, {
@@ -1245,7 +1330,15 @@ const [serviceD, setServiceD] = useState([]);
             {/* *****************LES SPECIALITES*********************************** */}
             {occupationType==="Profession libérale" || occupationType==="Commerçant / Activité informelle" || occupationType==="Entité légalement constituée" || occupationType==="Entité en cours de création"? (
               <>
-
+                <div className='form-group col-lg-6 col-md-6'>
+                    <input
+                      type='text'
+                      className='form-control'
+                      placeholder="Nom de l'entreprise"
+                      defaultValue={entreprise} 
+                      onChange={(event)=>setEntreprise(event.target.value)}
+                    />
+                </div>
               
             {/* SPECIALITE PROFESSION LIBERALE */}
             {occupationType==="Profession libérale"? (
@@ -1396,33 +1489,33 @@ const [serviceD, setServiceD] = useState([]);
               <>
               
 
-            {/* 1ère PARTIE POUR Groupement / ONG/ ASSOCIATION*/}
-            {speciality==="Groupement ou ONG ou Association" && occupationType==="Entité légalement constituée"? (
-              <>
-                <div className="form-group mb-6 col-lg-6 col-md-6">
-                  <select 
-                    className="form-control"
-                    id="subSpecialty"
-                    required
-                    defaultValue={subSpecialty} 
-                    onChange={(event)=>setSubSpecialty(event.target.value)}
-                  >
-                    <option defaultValue="">Type de groupement / ONG/ ASSOCIATION</option>
-                      <optgroup className='single-cryptocurrency-box'>
-                        <option  value="ONG">ONG</option>
-                        <option  value="Association">Association</option>
-                        <option  value="GVC">GVC</option>
-                        <option  value="GIE">GIE</option>
-                      </optgroup>
-                  </select>
-                </div>
-              
-              </>
-            ) : ('')}
+                {/* 1ère PARTIE POUR Groupement / ONG/ ASSOCIATION*/}
+                {speciality==="Groupement ou ONG ou Association" && occupationType==="Entité légalement constituée"? (
+                  <>
+                    <div className="form-group mb-6 col-lg-6 col-md-6">
+                      <select 
+                        className="form-control"
+                        id="subSpecialty"
+                        required
+                        defaultValue={subSpecialty} 
+                        onChange={(event)=>setSubSpecialty(event.target.value)}
+                      >
+                        <option defaultValue="">Type de groupement / ONG/ ASSOCIATION</option>
+                          <optgroup className='single-cryptocurrency-box'>
+                            <option  value="ONG">ONG</option>
+                            <option  value="Association">Association</option>
+                            <option  value="GVC">GVC</option>
+                            <option  value="GIE">GIE</option>
+                          </optgroup>
+                      </select>
+                    </div>
+                  
+                  </>
+                ) : ('')}
 
 
-            {/* 2è PARTIE Société */}
-            {speciality==="Société" && occupationType==="Entité légalement constituée"? (
+                {/* 2è PARTIE Société */}
+                {speciality==="Société" && occupationType==="Entité légalement constituée"? (
               <>
             
             <div className="form-group mb-6 col-lg-6 col-md-6">
@@ -1636,7 +1729,7 @@ const [serviceD, setServiceD] = useState([]);
                
               {speciality==="Société coopérative" || speciality==="Entreprise individuelle" || speciality==="Groupement ou ONG ou Association" || speciality==="Société"? (
                 <>
-                  <div className='form-group col-lg-6 col-md-6'>
+                  {/* <div className='form-group col-lg-6 col-md-6'>
                     <input
                       type='text'
                       className='form-control'
@@ -1644,7 +1737,7 @@ const [serviceD, setServiceD] = useState([]);
                       defaultValue={entreprise} 
                       onChange={(event)=>setEntreprise(event.target.value)}
                     />
-                  </div>
+                  </div> */}
                   <div className='form-group col-lg-6 col-md-6'>
                     <input
                       type='text'
@@ -1900,7 +1993,7 @@ const [serviceD, setServiceD] = useState([]);
               />
             </div>
             
-            <div className='form-group mt-3'>
+            <div className='form-group mt-3 col-lg-6 col-md-6'>
               <select 
               className='form-control'
               placeholder="Nationalité du representant légal"
@@ -1925,69 +2018,6 @@ const [serviceD, setServiceD] = useState([]);
               </>
             ) : ("")}
 
-           
-
-
-
-
-
-
-
-
-
-
-            
-            
-            
-              {/* *********************FIN***************************** */}
-                
-              
-             
-
-              {/* <div className="form-group mb-6 col-lg-6 col-md-6">
-              <select 
-                className="form-control"
-                id="legal"
-                required
-                defaultValue={legal} 
-                onChange={(event)=>setLegal(event.target.value)}
-              >
-                <option defaultValue="">Statut ou forme juridique</option>
-                  <optgroup className='single-cryptocurrency-box'>
-                   
-                    <option  value="Personne Physique">Auto-entreprise</option>
-                    <option  value="Administration publique">Administration publique</option>
-                    <option  value="Activité informelle (pas d’immatriculation au RCCM, ou en cours)">Activité informelle (pas d’immatriculation au RCCM, ou en cours)</option>
-                    <option  value="Entreprise ou établissement public">Entreprise ou établissement public</option>
-                    <option  value="Entreprise individuelle, EIRL, EURL">Entreprise individuelle, EIRL, EURL</option>
-                    <option  value="SA">SA</option>
-                    <option  value="SAS">SAS</option>
-                    <option  value="SARL">SARL</option>
-                    <option  value="SCOP">SCOP</option>
-                    <option  value="other">Autre statut, précisez</option>
-                  </optgroup>
-              </select>
-            </div> */}
-
-            
-
-            
-
-            {/* <div className="form-group mb-6 col-lg-6 col-md-6">
-              <select 
-                className="form-control"
-                id="type"
-                required
-                defaultValue={userType} 
-                onChange={(event)=>setUserType(event.target.value)}
-              >
-                <option defaultValue="">Type d'entreprise</option>
-                  <optgroup className='single-cryptocurrency-box'>
-                    <option  value="Personne Physique">Personne Physique</option>
-                    <option  value="Personne Morale">Personne Morale</option>
-                  </optgroup>
-              </select>
-            </div> */}
               {occupationType==="Profession libérale" || occupationType==="Commerçant / Activité informelle" || occupationType==="Entité légalement constituée" || occupationType==="Entité en cours de création"? (
                 <button className="btn btn-primary mx-3" type='button' onClick={EditProfilEntreprise} disabled={isLoggingIn}>Envoyer</button>
               ) : ('')}

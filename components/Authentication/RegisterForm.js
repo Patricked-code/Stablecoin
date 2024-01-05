@@ -8,12 +8,16 @@ import { Row, Col, Container } from "react-bootstrap";
 import Router from 'next/router';
 import { magic } from '../../magic';
 import Swal from 'sweetalert2';
-import LoginForm from './LoginForm';
 
 
 
 
-
+/**
+ * Composant React représentant le formulaire d'inscription.
+ * @function
+ * @component
+ * @name RegisterForm
+ */
 function RegisterForm() {
   // Variable de l'url de l'api
   const API_URL =process.env.NEXT_PUBLIC_URL_API;
@@ -23,7 +27,6 @@ function RegisterForm() {
 
 
   // Pour le formulaire d'enregistrement
-  const [codeProfile, setCodeProfile] = useState("p");
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState()
@@ -33,37 +36,14 @@ function RegisterForm() {
   const [allTypeProfil, setAllTypeProfil] = useState("")
   const [infosOtherUser, setInfosOtherUser] = useState("")
 
-  
-
 
   /**
-   * Perform login action via Magic's passwordless flow. Upon successuful
-   * completion of the login flow, a user is redirected to the homepage.
+   * Fonction pour gérer la déconnexion de l'utilisateur.
+   * @function
+   * @async
+   * @name logout
+   * @returns {void}
    */
-  const loginNo = useCallback(async () => {
-    setIsLoggingIn(true);
-
-    try {
-      // Grab auth token from loginWithMagicLink
-      const didToken = await magic.auth.loginWithMagicLink({
-        email,
-        redirectURI: new URL('/callback', window.location.origin).href,
-      });
-
-    } catch {
-      setIsLoggingIn(false);
-    }
-  }, [email]);
-
-  /**
-   * Saves the value of our email input into component state.
-   */
-  // const handleInputOnChange = useCallback((event) => {
-  //   setEmail(event.target.value);
-  // }, []);
-
-
-  // FONCTION DE LA DECONNEXION
   const logout = useCallback(() => {
     try {
     magic.user.logout().then(() => {
@@ -78,8 +58,11 @@ function RegisterForm() {
 
   // ********************FONCTION DE CONNEXION***********************************
   /**
-   * Perform login action via Magic's passwordless flow. Upon successuful
-   * completion of the login flow, a user is redirected to the homepage.
+   * Fonction pour effectuer l'action de connexion via le flux sans mot de passe de Magic.
+   * @function
+   * @async
+   * @name login
+   * @returns {void}
    */
    const login = useCallback(async () => {
     setIsLoggingIn(true);
@@ -146,7 +129,14 @@ function RegisterForm() {
 
 
   // ********************FONCTION D'INSCRIPTION***********************************
-
+  /**
+   * Fonction pour gérer la soumission du formulaire d'inscription.
+   * @function
+   * @async
+   * @name handleSubmit
+   * @param {object} event - Événement de soumission du formulaire.
+   * @returns {void}
+   */
   const handleSubmit = async (event) =>{
     setIsLoggingIn(true)
       event.preventDefault();
@@ -193,54 +183,25 @@ function RegisterForm() {
             redirectURI: new URL('/callback_register', window.location.origin).href,
           }); 
           // Fin
-
-            // Swal.fire({
-            //   position: 'center',
-            //   icon: 'success',
-            //   html: "<p> Votre inscription s'est effectuée avec succès </p>" ,
-            //   showConfirmButton: false,
-            //   timer: 5000
-            // })
-
-
         }
-        //  Actualiser après l'affichage 
         
-          // Router.push("/account/activated"); 
-        // Fin
-        // })
-        // .catch(error => {
-        //   handle error
-        //   console.log(error);
-        //   setIsLoggingIn(false);
-
-
-        // });
       }else{
         setMessageError("Veuillez choisir un type de profil")
         setIsLoggingIn(false);
       }
 
       
-
-      // Swal.fire({
-      //   position: 'center',
-      //   icon: 'success',
-      //   html: "<p> Votre inscription s'est effectuée avec succès </p>" ,
-      //   showConfirmButton: false,
-      //   timer: 5000
-      // })
-      //  Actualiser après l'affichage 
-      
-        // Router.push("/auth/authentication"); 
-      // Fin
-
-      
   }
   // FIN
 
 
-  // RECUPERER TOUS LES TYPES DE PROFILE
+  /**
+   * Fonction pour récupérer tous les types de profil.
+   * @function
+   * @async
+   * @name getAllWayProfil
+   * @returns {void}
+   */
   useEffect(() => {
     const getAllWayProfil = async () => {
     const resProfil = await fetch(`${API_URL}/api/user/find-all-way-profile`, {
@@ -260,7 +221,12 @@ function RegisterForm() {
   // FIN
 
 
-  // Obtenir un utilisateur en fonction de son email 
+  /**
+   * Fonction pour rechercher un utilisateur en fonction de son email.
+   * @function
+   * @name searchUserWithEmail
+   * @returns {void}
+   */
   const searchUserWithEmail = () =>{
     if (email) {
       const getUser = async (_email) => {

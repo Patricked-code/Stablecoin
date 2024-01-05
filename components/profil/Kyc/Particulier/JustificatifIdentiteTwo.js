@@ -574,7 +574,7 @@ const [frontReceipt, setFrontReceipt] = useState(null); //Verso du justificatif
                                             htmlFor="validityDate"
                                             className="text-blackish-blue mb-2"
                                         >
-                                            Date Validité 
+                                            Date d'expiration 
                                         </label>
                                         <div className='form-group'>
                                             <input

@@ -24,7 +24,7 @@ import ABI_ESCROW_STABLECOIN from "../../../components/Contrats/Abi/AbiEscrowSta
 
 // FIN
 
-const PaiementPending = () => {
+const PaiementEboutik = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
@@ -885,4 +885,4 @@ async function transferToEscrow() {
     );
 };
 
-export default PaiementPending;
+export default PaiementEboutik;

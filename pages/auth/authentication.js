@@ -1,6 +1,13 @@
 import Link from 'next/link';
 import RegisterForm from '../../components/Authentication/RegisterForm';
 
+/**
+ * Composant React représentant la page d'authentification.
+ * @function
+ * @component
+ * @name Authentication
+ * @returns {JSX.Element} Composant de la page d'authentification.
+ */
 const Authentication = () => {
   return (
     <>
@@ -11,7 +18,6 @@ const Authentication = () => {
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover'
       }}
-      // style={{ backgroundImage: `url(/images/ecfa/logo/logo_ewari3.jpg)` }}
 
       >
         <div className='d-table'>

@@ -1,6 +1,14 @@
 import Link from 'next/link';
 import ResetPassword from '../../components/Authentication/ResetPassword';
 
+/**
+ * Composant React représentant la page reset-password.
+ * Cette page est destinée à la réinitialisation du mot de passe.
+ * @function
+ * @component
+ * @name reset-password
+ * @returns {JSX.Element} Composant de la page d'index.
+ */
 const index = () => {
   return (
     <>

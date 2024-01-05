@@ -34,29 +34,53 @@ const Conversion = () => {
     const [exchangeRate, setExchangeRate] = useState();
     const [dataAllConversion, setDataAllConversion] = useState();
     const [conversionId, setConversionId] = useState();
+    const [currency, setCurrency] = useState();
+    const [activeSymbol, setActiveSymbol] = useState();
+    const [activeName, setActiveName] = useState();
     const [exchange, setExchange] = useState();
     
-
+      
     /**
-     * État de contrôle pour afficher ou masquer la modal du formulaire de réponse à la demande d'accès.
+     * État de contrôle pour afficher ou masquer la modal du formulaire de la mise à jour du taux de conversion.
      * @type {boolean}
     */
      const [showForm, setShowForm] = useState(false);
      
     /**
-     * Fonction pour fermer la modal du formulaire.
+     * Fonction pour fermer la modal du formulaire de la mise à jour du taux de conversion.
      * @function
      * @returns {void}
    */
     const handleCloseForm = () => setShowForm(false);
 
     /**
-     * Fonction pour afficher la modal du formulaire.
+     * Fonction pour afficher la modal du formulaire de la mise à jour du taux de conversion.
      * @function
      * @returns {void}
     */
     const handleShowForm = () => setShowForm(true);
  
+    
+
+    /**
+     * État de contrôle pour afficher ou masquer la modal du formulaire de l'ajour de taux de conversion.
+     * @type {boolean}
+    */
+     const [showFormAddConversion, setShowFormAddConversion] = useState(false);
+     
+    /**
+     * Fonction pour fermer la modal du formulaire de l'ajour de taux de conversion.
+     * @function
+     * @returns {void}
+   */
+    const handleCloseFormAddConversion = () => setShowFormAddConversion(false);
+
+    /**
+     * Fonction pour afficher la modal du formulaire de l'ajour de taux de conversion.
+     * @function
+     * @returns {void}
+    */
+    const handleShowFormAddConversion = () => setShowFormAddConversion(true);
 
     /**
      * Hook d'effet pour initialiser le fournisseur Web3 en fonction de l'instance Magic.
@@ -107,6 +131,71 @@ const Conversion = () => {
     }, [provider, magic]);
     //  Fin
 
+
+    /**
+     * Fonction d'ajout des taux de conversion.
+     * @async
+     * @function
+     * @param {Event} event - Événement de formulaire.
+     * @returns {void}
+   */
+     const addConversion= async(event) =>{
+        event.preventDefault();
+        setIsLoggingIn(true)
+        
+        const dataRequest = {
+            currency:currency,
+            activeSymbol:activeSymbol,
+            activeName:activeName,
+            exchangeRate: exchangeRate,
+        }
+
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
+
+        const result = await fetch(`${API_URL}/api/conversion/add-conversion`, {
+            method:"POST",
+            body: JSON.stringify(dataRequest),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+        })
+        .then(res=>{
+            if (res.status==200) {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: "<p> Les données ont été ajouté avec succès.</p>" ,
+                showConfirmButton: false,
+                timer: 10000
+            })
+
+            //  Actualiser après l'affichage 
+            setTimeout(() => {
+                window.location.reload()
+            }, 10000) 
+            // Fin
+            }else{
+            setIsLoggingIn(false)
+
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: "<p>  Une erreur s'est produite lors de l'exécution.</p>" ,
+                showConfirmButton: false,
+                timer: 15000
+            })
+        }
+        })
+        .catch(error => {
+            setIsLoggingIn(false)
+            //handle error
+            console.log(error);
+
+        });
+    }
+    // FIN
 
 
     /**
@@ -257,8 +346,8 @@ const Conversion = () => {
                                                     <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
                                                 </Table.Header>
                                                 <Table.Body>
-                                                    {dataAllConversion?.map((data) => (
-                                                        <Table.Row >                       
+                                                    {dataAllConversion?.map((data, index) => (
+                                                        <Table.Row key={index}>                       
                                                             <Table.Cell ><small className=" py-0 ">{data?.currency}</small></Table.Cell>
                                                             <Table.Cell ><small className=" py-0 ">{data?.activeName}</small></Table.Cell>
                                                             <Table.Cell ><small className=" py-0 ">{data?.exchangeRate}</small></Table.Cell>
@@ -284,6 +373,11 @@ const Conversion = () => {
                                                     onPageChange={(page) => console.log({ page })}
                                                 /> */}
                                             </Table>
+                                            <div className='text-center'>
+                                                <button className=" py-0 my-3  mx-2 btn btn-primary text-center">
+                                                    <a className=" text-white aNoDecor px-3" onClick={handleShowFormAddConversion}>Ajouter</a> 
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -294,6 +388,86 @@ const Conversion = () => {
                 </div>
         
             </div>
+
+            {/* ********************************************************************************** */}
+                {/* MODAL DE MISE A JOUR DU TAUX D'ECHANGE*/}
+            {/* ********************************************************************************** */}
+            <Modal show={showFormAddConversion} className="mt-15" onHide={handleCloseFormAddConversion}>
+                <Modal.Header closeButton id="bgcolor">
+                    <Modal.Title className="" >Mise à jour du taux d'échange</Modal.Title>                
+                </Modal.Header>
+                <form>
+                <Modal.Body>
+                    <div className='form-group my-6 ' >
+                        <select 
+                            className="form-control"
+                            required
+                            defaultValue={currency} 
+                            onChange={(event)=>setCurrency(event.target.value)}
+                        >
+                            <option defaultValue="">Devise</option>
+                            <optgroup className='single-cryptocurrency-box'>
+                                <option  value="XOF">XOF</option>
+                                <option  value="XAF">XAF</option>
+                                <option  value="$">Dollars</option>
+                                <option  value="€">Euro</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div className="form-group my-6 ">
+                        <div className="input-group flex-nowrap mt-3">
+                            <input
+                                className="form-control gr-text-11 border  bg-white"
+                                type="text"
+                                id="activeName"
+                                placeholder="Nom de l'actif"
+                                required
+                                defaultValue={activeName} 
+                                onChange={(event)=>setActiveName(event.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div className="form-group my-6 ">
+                        <div className="input-group flex-nowrap mt-3">
+                            <input
+                                className="form-control gr-text-11 border  bg-white"
+                                type="text"
+                                id="activeSymbol"
+                                placeholder="Symbol de l'actif"
+                                defaultValue={activeSymbol} 
+                                onChange={(event)=>setActiveSymbol(event.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div className="form-group my-6 ">
+                        <div className="input-group flex-nowrap mt-3">
+                            <input
+                                className="form-control gr-text-11 border  bg-white"
+                                type="number"
+                                id="exchangeRate"
+                                placeholder="Taux de change"
+                                required
+                                step="0.01"
+                                defaultValue={exchange} 
+                                onChange={(event)=>setExchangeRate(event.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button className="text-white" color="danger" onClick={handleCloseFormAddConversion}>
+                        Fermer
+                    </Button>
+                    <Button  onClick={addConversion}  color="success" disabled={isLoggingIn}>
+                        Modifier
+                        {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-2"></i>) : ("")}
+                    </Button>
+                </Modal.Footer>
+                </form>
+            </Modal>
+            {/* *****************************************FIN****************************************** */}
+        
 
             {/* ********************************************************************************** */}
                 {/* MODAL DE MISE A JOUR DU TAUX D'ECHANGE*/}
