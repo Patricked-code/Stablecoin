@@ -21,9 +21,10 @@ import Swal from 'sweetalert2'
 const CAccueilPortefeuille = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+    const URL_API_OPCVM =process.env.NEXT_PUBLIC_URL_API_OPCVM // URL STABLECOIN
     const ADDRESS_CONTRAT_EWARI =process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
     const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY
-
+    
     
     const [currentUser, setCurrentUser] = useState();
     const [magicCurrentAddress, setMagicCurrentAddress] = useState();
@@ -57,11 +58,23 @@ const CAccueilPortefeuille = () => {
     // State de coversion
     const [currencyLocal, setCurrencyLocal] = useState()
     const [allInfosConversion, setAllInfosConversion] = useState()
+
+    // States des montant de conversion
     const [amountConvert, setAmountConvert] = useState()
+    const [amountConvertNGN, setAmountConvertNGN] = useState()
+    const [exchangeRateNGN, setExchangeRateNGN] = useState()
     
+
     // State de l'état d'abonnement
     const [stateOfSubscription, setStateOfSubscription] = useState()
 
+    // ********************STATES DU OPCVM*******************************************
+    const [allFondsOfUser, setAllFondsOfUser] = useState()
+    const [allWalletOpcvmOfUser, setAllWalletOpcvmOfUser] = useState()
+    
+    
+    
+    // **********************FIN OPCVM***********************************************
     // States de tab
     const [toggleState, setToggleState] = useState(1);
     const toggleTab = (index) => {
@@ -381,8 +394,9 @@ const CAccueilPortefeuille = () => {
             const amountWei = ethers.utils.parseUnits(tosting, decimalStablecoin);
             
             // Vérifier si magicCurrentAddress a suffisamment de fonds à transférer
-            const balance = await contractStablecoin.balanceOf(magicCurrentAddress);
-            if (balance<montantEnvoyer) {
+            // const balance = await contractStablecoin.balanceOf(magicCurrentAddress);
+            const convertAmount = parseFloat(montantEnvoyer)
+            if (balanceStablecoinNoFormat<=convertAmount) {
                 // Afficher un message indiquant que magicCurrentAddress n'a pas suffisamment de fonds
                 Swal.fire({
                     position: 'center',
@@ -401,7 +415,7 @@ const CAccueilPortefeuille = () => {
             const gasCost = gasEstimate.mul(await provider.getGasPrice());
             const senderBalance = await signer.getBalance();
 
-            if (gasCost>senderBalance) {
+            if (gasCost?._hex>senderBalance?._hex) {
                 setIsLoggingIn(false)
                 Swal.fire({
                     position: 'center',
@@ -455,20 +469,32 @@ const CAccueilPortefeuille = () => {
                 // Choix de la devise (à remplacer par votre logique)
                 // const currencyLocal = 'XOF'; // Remplacez cela par la logique de choix de votre devise
     
-                // Filtrer les données en fonction de la devise choisie
-                const filteredData = data.filter(item => item.currency === currencyLocal);
+                // Filtrer les données pour l'actif Ewari en fonction de la devise choisie
+                const filteredData = data.filter(item => item.currency === currencyLocal && item.activeSymbol === "EWRITC");
     
-                // Appliquer la logique de multiplication si la devise est trouvée
+                 // Filtrer les données pour l'actif NGN en fonction de la devise choisie
+                 const filteredDataNGN = data.filter(item => item.currency === currencyLocal && item.activeSymbol === "CRN");
+
+                // Appliquer la logique de multiplication si la devise est trouvée pour l'actif Ewari
                 if (filteredData.length > 0) {
                     const exchangeRate = filteredData[0].exchangeRate;
-                    // const balanceStablecoin = filteredData[0].balanceStablecoin;
                  
                     const result = exchangeRate * balanceStablecoinNoFormat;
                     setAmountConvert(formatNumber(result))
-                    console.log('Résultat de la multiplication :', result);
                 } else {
-                    console.log('Aucune correspondance trouvée pour la devise sélectionnée.');
+                    console.error('Aucune correspondance trouvée pour la devise sélectionnée.');
                 }
+
+                // Appliquer la logique de multiplication si la devise est trouvée pour l'actif Ewari
+                if (filteredDataNGN.length > 0) {
+                  const exchangeRate = filteredDataNGN[0].exchangeRate;
+               
+                  const result = exchangeRate * balanceStablecoinNoFormat;
+                  setAmountConvertNGN(formatNumber(result))
+                  setExchangeRateNGN(exchangeRate)
+              } else {
+                  console.error('Aucune correspondance trouvée pour la devise sélectionnée.');
+              }
     
                 setAllInfosConversion(data);
             } catch (error) {
@@ -517,6 +543,89 @@ const CAccueilPortefeuille = () => {
         timer: 15000
     })
 }
+
+
+
+
+
+
+
+  // *****************************************************************************
+    // PARTIE PORTEFEUILLE OPCVM
+  // ****************************************************************************
+  // FONCTION POUR RECUPERER TOUTES LES FONDS DE L'UTILISATEUR CONNECTE
+  useEffect(() => {
+      // Obtenir le token en cours
+      // const token = localStorage.getItem('tokenEnCours');
+      const getAllFondsOfUser = async (_userId) => {
+          try {
+              const result = await fetch(`${URL_API_OPCVM}/api/getfondbyusersignin/${_userId}`, {
+                  headers: {
+                      'Content-Type': 'application/json',
+                      // Authorization: `Bearer ${token}`
+                  },
+              });
+
+              if (!result.ok) {
+                  throw new Error('Failed to fetch data');
+              }
+
+              const data = await result.json();
+              console.log("llFondsOfUser=>1")
+              
+              setAllFondsOfUser(data.data.funds);
+              console.log("llFondsOfUser=>",allFondsOfUser)
+          } catch (error) {
+              // Handle errors appropriately, e.g., set an error state.
+              console.error('Error fetching data:', error);
+          }
+      };
+
+      if (currentUser?.id) {
+        getAllFondsOfUser(currentUser?.id);
+      }
+
+  }, [currentUser?.id]);
+  // FIN
+
+
+
+  // FONCTION POUR RECUPERER TOUTES LES FONDS DE L'UTILISATEUR CONNECTE
+  useEffect(() => {
+    // Obtenir le token en cours
+    // const token = localStorage.getItem('tokenEnCours');
+    const getAllWalletOpcvmOfUser = async (_userId) => {
+        try {
+            const result = await fetch(`${URL_API_OPCVM}/api/getportefeuillebyuser/${_userId}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Authorization: `Bearer ${token}`
+                },
+            });
+
+            if (!result.ok) {
+                throw new Error('Failed to fetch data');
+            }
+
+            const data = await result.json();
+            
+            setAllWalletOpcvmOfUser(data.data.portefeuille);
+            console.log("getportefeuillebyuser=>",allWalletOpcvmOfUser)
+        } catch (error) {
+            // Handle errors appropriately, e.g., set an error state.
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    if (currentUser?.id) {
+      getAllWalletOpcvmOfUser(currentUser?.id);
+    }
+
+}, [currentUser?.id]);
+// FIN
+
+// ********************FIN OPCVM***************************************
+
 
     /**
      * Formate un nombre en tronquant à deux décimales et en ajoutant un séparateur de milliers (espace).
@@ -669,7 +778,7 @@ const CAccueilPortefeuille = () => {
                                 {/* ***************************************************************** */}
                                 <div className=' bgColorblue my-3 px-3' onClick={()=>setShowWallet(1)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <span className='btn text-white'>Portefeuille d'investissement</span>
-                                    <p className='text-right mb-0 text-white'>1000 0000 $</p>
+                                    <p className='text-right mb-0 text-white'>{currencyLocal? (<>{formatNumber(exchangeRateNGN * 4000)} {currencyLocal}</>) :(<>{formatNumber(4000 * 1.59)} XOF</>)}</p>
                                 </div>
                                 {showWallet==1? (
                                 <>
@@ -687,7 +796,7 @@ const CAccueilPortefeuille = () => {
                                                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                                             >
                                                 <span className=''>OPCVM</span>
-                                                <p className='text-right mb-0 '>1000 0000 $</p>
+                                                <p className='text-right mb-0 '>{currencyLocal? (<>{formatNumber(exchangeRateNGN * 4000)} {currencyLocal}</>) :(<>{formatNumber(4000 * 1.59)} XOF</>)}</p>
                                                 
                                             </button>
 
@@ -722,29 +831,35 @@ const CAccueilPortefeuille = () => {
                                                         }}
                                                     >
                                                         <Table.Header>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Opcvm</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actifs</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">VL</p></Table.Column>
-                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Valeur $</p></Table.Column>
+                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nom du fonds</p></Table.Column>
+                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date <br/>ISIN </p></Table.Column>
+                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Quantité <br/> Valorisation </p></Table.Column>
+                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">VL en devise <br/> Type</p></Table.Column>
+                                                            <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Valeur en devise<br/>Valeur en {!currencyLocal ? "XOF" : currencyLocal=="$" ? "Dollars" : currencyLocal=="€" ? "Euro" :(currencyLocal) }</p></Table.Column>
+                                                            {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Valeur en Dollars</p></Table.Column> */}
                                                             <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
                                                         </Table.Header>
                                                         <Table.Body>
-                                                            {/* {allKycForParticular?.map((data) => ( */}
-                                                                <Table.Row >                       
-                                                                    <Table.Cell ><p className=" py-0 "><small>Stablecoin</small></p></Table.Cell>
-                                                                    <Table.Cell ><small className=" py-0 "><b>5 000 000 $</b></small></Table.Cell>
-                                                                    <Table.Cell ><p className=" py-0 "><b>1 000 000 000 KOREE</b> <br/><small >1 000 000 000 CFA</small></p></Table.Cell>
-                                                                    <Table.Cell ><p className=" py-0 "><b>1 000 000 000 KOREE</b> <br/><small>1 000 000 $ </small></p></Table.Cell>
+                                                            {allFondsOfUser?.map((data, index) => (
+                                                                <Table.Row key={index}>                      
+                                                                    {/* <Table.Cell ><p className=" py-0 "><small>Echiquier Major SRI G<br/>rowth Europe A - France </small></p></Table.Cell> */}
+                                                                    <Table.Cell ><p className=" py-0 "><small>{data?.nom_fond} </small></p></Table.Cell>
+                                                                    <Table.Cell ><small className=" py-0 "><b>{data?.datejour}</b> <br/>{data?.code_ISIN}</small></Table.Cell>
+                                                                    <Table.Cell ><small className=" py-0 "><b>1 000 000.00 </b> <br/> Hebdomadaire</small></Table.Cell>
+                                                                    
+                                                                    {/* <Table.Cell ><small className=" py-0 "><b>5 000 000 $</b></small></Table.Cell> */}
+                                                                    <Table.Cell ><small className=" py-0 "><b>1 000 000.00 NGN</b> <br/><small>OPCVM</small></small></Table.Cell>
+                                                                    <Table.Cell ><small className=" py-0 "><b>1 000 000 000.00 NGN</b> <br/><small>{currencyLocal? (<>{formatNumber(exchangeRateNGN * 1000000000)} {currencyLocal}</>) :(<>{formatNumber(1000000000 * 1.59)} XOF</>)} </small></small></Table.Cell>
                                                                     <Table.Cell className="row">
                                                                         <div className='text-center'>
                                                                             <small className=" py-0  mx-2 btn btn-success">
                                                                                 <Link href="/#" >
-                                                                                <a className=" text-white aNoDecor  px-4">Achat</a> 
+                                                                                <a className=" text-white aNoDecor  px-0">Achat</a> 
                                                                                 </Link>
                                                                             </small>
                                                                             <small className=" py-0 mx-2 btn btn-danger">
                                                                                 <Link href="/#" >
-                                                                                    <a className=" text-white aNoDecor px-4">Vente</a> 
+                                                                                    <a className=" text-white aNoDecor px-0">Vente</a> 
                                                                                 </Link>
                                                                             </small>
                                                                             
@@ -753,7 +868,7 @@ const CAccueilPortefeuille = () => {
                                                                 </Table.Row >
 
                                                                 
-                                                            {/* ))} */}
+                                                            ))} 
                                                         </Table.Body>
                                                         {/* <Table.Pagination
                                                             shadow

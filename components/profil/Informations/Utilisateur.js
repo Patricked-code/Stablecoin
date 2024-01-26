@@ -56,6 +56,29 @@ const InfosUtilisateur = () => {
     // State de copy
     const [successCopy, setSuccessCopy] = useState();
 
+    // State du formulaire de modification (Profil particulier)
+    const [lastName, setLastName] = useState();
+    const [firstName, setFirstName] = useState();
+    const [country, setCountry] = useState();
+    const [city, setCity] = useState();
+
+    // State du formulaire de modification (Profil entreprise/commerçant)
+    const [entreprise, setEntreprise] = useState();
+    // const [country, setCountry] = useState();
+    // const [city, setCity] = useState();
+    const [site, setSite] = useState();
+    const [sector, setSector] = useState();
+    const [mobile, setMobile] = useState();
+    const [employee, setEmployee] = useState();
+    const [user_type, setUser_type] = useState();
+    const [numberRegister, setNumberRegister] = useState();
+
+    // State du formulaire de modification (Profil institution financière)
+    const [abbreviation, setAbbreviation] = useState();
+
+    // State du formulaire de modification (Société de gestion OPCVM)
+    const [approvalNumber, setApprovalNumber] = useState(currentUser?.approvalNumber || '');
+    const [regulator, setRegulator] = useState(currentUser?.regulator || '');
     
     // Pour avatar
     const [avatar, setAvatar] = useState(null);
@@ -213,14 +236,100 @@ const InfosUtilisateur = () => {
         // FIN
  
 
-    // const [currentTypeProfil, setCurrentTypeProfil] =useState()
-    // useEffect(() => {
-    //     if (typeof window !== 'undefined') {
-    //         const currentTypeProfil = localStorage.getItem('currentTypeProfil'); //Pour recuperer le code du type de profil dans la variable local
-    //         setCurrentTypeProfil(currentTypeProfil)
-    //     }
-    // }, []);
+        // PARTIE MODIFICATION DES INFORMATIONS DU PROFIL
 
+        /**
+         * Fonction de mise à jour des informations du profil particulier.
+         * @async
+         * @function
+         * @param {Event} event - Événement de formulaire.
+         * @returns {void}
+        */
+        const updateProfileParticular= async(event) =>{
+            event.preventDefault();
+            setIsLoggingIn(true)
+            
+            let dataRequest = {}
+            if (currentUser?.codeTypeProfil === "part") {
+                dataRequest = {
+                    lastName:lastName,
+                    firstName:firstName,
+                    mobile:mobile,
+                    city:city
+                }
+            }else if(currentUser?.codeTypeProfil === "entCom" ){
+                dataRequest = {
+                    entreprise:entreprise,
+                    city:city, 
+                    site:site,
+                    mobile:mobile,
+                    employee:employee,
+                }
+            }else if(currentUser?.codeTypeProfil === "insti"){
+                dataRequest = {
+                    entreprise:entreprise,
+                    city:city,
+                    site:site,
+                    mobile:mobile,
+                }
+            }else if(currentUser?.codeTypeProfil === "socGest"){
+                dataRequest = {
+                    entreprise:entreprise,
+                    city:city,
+                    site:site,
+                    mobile:mobile,
+                }
+            }
+
+
+            // Obtenir le token en cours
+            const token = localStorage.getItem('tokenEnCours');
+
+            const result = await fetch(`${API_URL}/api/session/update-profil`, {
+                method:"PUT",
+                body: JSON.stringify(dataRequest),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`
+                }
+            })
+            .then(res=>{
+                if (res.status==200) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: "<p> Votre modification s'est effectuée avec succès.</p>" ,
+                    showConfirmButton: false,
+                    timer: 10000
+                })
+
+                //  Actualiser après l'affichage 
+                setTimeout(() => {
+                    window.location.reload()
+                }, 10000) 
+                // Fin
+                }else{
+                setIsLoggingIn(false)
+
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: "<p>  Une erreur s'est produite lors de l'exécution.</p>" ,
+                    showConfirmButton: false,
+                    timer: 15000
+                })
+                console.error("Erreur=>",res?.message);
+
+            }
+            })
+            .catch(error => {
+                setIsLoggingIn(false)
+                //handle error
+                console.log(error);
+
+            });
+        }
+        // FIN
 
     // FONCTION POUR COPIER LE CODE DU PARRAINNAGE
   const copyToClipboard = () => {
@@ -250,6 +359,12 @@ const InfosUtilisateur = () => {
     const [showQr, setShowQr] = useState(false);
     const handleCloseQr = () => setShowQr(false);
     const handleShowQr = () => setShowQr(true);
+    // Fin
+
+    // Modal de modification des informations
+    const [showFormUpdate, setShowFormUpdate] = useState(false);
+    const handleCloseFormUpdate = () => setShowFormUpdate(false);
+    const handleShowFormUpdate = () => setShowFormUpdate(true);
     // Fin
 
 
@@ -366,15 +481,14 @@ const InfosUtilisateur = () => {
                         </div>
                     </div>
                     {/* INFORMATIONS DU PROFIL PATICULIER */}
-                    {currentUser?.codeTypeProfil === "part" ? (   
-                        <div className='col-lg-8 col-md-8'>
+                     
+                    <div className='col-lg-8 col-md-8'>
+                        {currentUser?.codeTypeProfil === "part" ? (  
                             <div className='currency-selection '>
                                 <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
                                 <div className='cryptocurrency-slides'>
                                         <div className='single-cryptocurrency-box'>
                                             <div className='row '>
-                                               
-
                                                 {currentUser?.lastName ? (
                                                     <div className='col-lg-6 col-md-6 mb-3'>
                                                         <h5>Nom</h5>
@@ -417,7 +531,7 @@ const InfosUtilisateur = () => {
                                                 ) : ('')}
                                                 {currentUser?.sex ? (
                                                     <div className='col-lg-6 col-md-6 mb-3'>
-                                                        <h5>Date de naissance</h5>
+                                                        <h5>Sexe</h5>
                                                         <p>{currentUser?.sex}</p>
                                                     </div>
                                                 ) : ('')}
@@ -441,13 +555,15 @@ const InfosUtilisateur = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ) : ("")}
+                        ) : ("")}
+                        
+                    
                     {/* Fin */}
 
                     {/* INFORMATIONS DU PROFIL Entreprise / Commerçant */}
-                    {currentUser?.codeTypeProfil === "entCom" ? (   
-                    <div className='col-lg-8 col-md-8'>
+                    {currentUser?.codeTypeProfil === "entCom" ? (  
+                        <>
+                         {/* <div className='col-lg-8 col-md-8'> */}
                         <div className='currency-selection '>
                             <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
                             <div className='cryptocurrency-slides'>
@@ -534,13 +650,14 @@ const InfosUtilisateur = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        </> 
                     ) : ("")}
                     {/* FIN */}
 
                 {/* INFORMATIONS DU PROFIL Institution et société financière */}
-                {currentUser?.codeTypeProfil === "insti" ? (   
-                    <div className='col-lg-8 col-md-8'>
+                {currentUser?.codeTypeProfil === "insti" ? ( 
+                    <>  
+                     {/* <div className='col-lg-8 col-md-8'> */}
                         <div className='currency-selection '>
                             <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
                             <div className='cryptocurrency-slides'>
@@ -614,13 +731,14 @@ const InfosUtilisateur = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </> 
                 ) : ("")}
                 {/* FIN */}
 
                  {/* INFORMATIONS DU PROFIL Institution et société de gestion des opcvm */}
-                 {currentUser?.codeTypeProfil === "socGest" ? (   
-                    <div className='col-lg-8 col-md-8'>
+                 {currentUser?.codeTypeProfil === "socGest" ? ( 
+                     <>  
+                     {/* <div className='col-lg-8 col-md-8'> */}
                         <div className='currency-selection '>
                             <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
                             <div className='cryptocurrency-slides'>
@@ -694,13 +812,31 @@ const InfosUtilisateur = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </> 
                 ) : ("")}
-                {/* FIN */}
+
+                {/* Le bouton de modification */}
+                <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                    <div className='cryptocurrency-slides'>
+                        <div className='single-cryptocurrency-box'>
+                            <div className='btn-box'>
+                            <Button
+                                block
+                                color="primary"
+                                type="button"
+                                onClick={handleShowFormUpdate}
+                            >
+                                Modifier les informations
+                            </Button>
+                            {/* Fin */}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            {/* FIN */}
             </div>
         </div>
-
-       
       </div>
 
 
@@ -782,6 +918,307 @@ const InfosUtilisateur = () => {
             </Modal>
             {/* *****************************************FIN****************************************** */}
 
+
+
+            {/* ********************************************************************************** */}
+                {/* MODAL DD MODIFICATION DES INFORMATIONS*/}
+            {/* ********************************************************************************** */}
+            <Modal show={showFormUpdate} className="mt-15" onHide={handleCloseFormUpdate}>
+                <Modal.Header closeButton id="bgcolor">
+                    <Modal.Title className="" >Modification des informations</Modal.Title>                
+                </Modal.Header>
+                {/* Formulaire de modification du profil particulier */}
+                {currentUser?.codeTypeProfil === "part" ? ( 
+                    <Form role="form" onSubmit={updateProfileParticular}>
+                    {/* <Form role="form" onSubmit={handleSubmit}> */}
+                        <Modal.Body>
+                        <div className='row mx-3'>
+                            <div className='form-group col-lg-6 col-md-6 mb-3'>
+                                <input
+                                    type="text"
+                                    className=' form-control'
+                                    defaultValue={currentUser?.lastName} 
+                                    onChange={(event) => setLastName(event.target.value)}
+                                />
+                            </div>
+                            
+                            <div className='form-group col-lg-6 col-md-6 mb-3'>
+                                <input
+                                    type="text"
+                                    className=' form-control'
+                                    defaultValue={currentUser?.firstName} 
+                                    onChange={(event) => setFirstName(event.target.value)}
+                                />
+                            </div>
+
+                            <div className=" form-group col-lg-6 col-md-6 mb-3 ">
+                                <div className=" input-group flex-nowrap ">
+                                    <span  className="input-group-text " id="addon-wrapping">
+                                        {dataCountryOfUser?.indicator}
+                                    </span>
+                                    <input
+                                        className=" form-control"
+                                        type="number"
+                                        id="contact"
+                                        required
+                                        defaultValue={currentUser?.mobile} 
+                                        onChange={(event)=>setMobile(event.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className='form-group col-lg-6 col-md-6 mb-3'>
+                                <input
+                                    type="text"
+                                    className=' form-control'
+                                    defaultValue={currentUser?.city} 
+                                    onChange={(event) => setCity(event.target.value)}
+                                />
+                            </div>
+
+                        </div>
+
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button className="text-white" color="danger" onClick={handleCloseFormUpdate}>
+                                Fermer
+                            </Button>
+                            <Button type='submit'  color="success" disabled={isLoggingIn}>
+                                Modifier
+                            </Button>
+                        </Modal.Footer>
+                    </Form>
+                ):("")}
+
+                {/* Formulaire de modification du profil Entreprise / Commerçant */}
+                {currentUser?.codeTypeProfil === "entCom" ? ( 
+                    <Form role="form" onSubmit={updateProfileParticular}>
+                    {/* <Form role="form" onSubmit={handleSubmit}> */}
+                        <Modal.Body>
+                            <div className='row mx-3'>
+                                {currentUser?.entreprise? (
+                                    <div className='form-group col-lg-6 col-md-6 mb-3'>
+                                        <input
+                                            type="text"
+                                            id="entreprise"
+                                            className=' form-control'
+                                            defaultValue={currentUser?.entreprise}
+                                            onChange={(event) => setEntreprise(event.target.value)}
+                                        />
+                                    </div>
+                                ) : ("")}
+                  
+                                {currentUser?.city? (
+                                    <div className='form-group col-lg-6 col-md-6 mb-3'>
+                                        <input
+                                            type="text"
+                                            id="city"
+                                            className='form-control'
+                                            defaultValue={currentUser?.city}
+                                            onChange={(event) => setCity(event.target.value)}
+                                        />
+                                    </div>
+                                ) : ("")}
+
+                                {currentUser?.site? (
+                                    <div className='form-group col-lg-6 col-md-6 mb-3'>
+                                        <input
+                                            type="text"
+                                            id="site"
+                                            className='form-control'
+                                            defaultValue={currentUser?.site}
+                                            onChange={(event) => setSite(event.target.value)}
+                                        />
+                                    </div>
+                                ) : ("")}
+
+                                {currentUser?.mobile? (
+                                    <div className=" form-group col-lg-6 col-md-6 mb-3 ">
+                                        <div className=" input-group flex-nowrap ">
+                                            <span  className="input-group-text " id="addon-wrapping">
+                                                {dataCountryOfUser?.indicator}
+                                            </span>
+                                            <input
+                                                className=" form-control"
+                                                type="number"
+                                                id="contact"
+                                                required
+                                                defaultValue={currentUser?.mobile} 
+                                                onChange={(event)=>setMobile(event.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                ) : ("")}
+
+                                {currentUser?.employee? (
+                                    <div className='form-group col-lg-6 col-md-6 mb-3'>
+                                        <input
+                                            type="text"
+                                            id="employee"
+                                            className='form-control'
+                                            defaultValue={currentUser?.employee}
+                                            onChange={(event) => setEmployee(event.target.value)}
+                                        />
+                                    </div>
+                                ) : ("")}
+                               
+                            </div>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button className="text-white" color="danger" onClick={handleCloseFormUpdate}>
+                                Fermer
+                            </Button>
+                            <Button type='submit' color="success" disabled={isLoggingIn}>
+                                Modifier
+                            </Button>
+                        </Modal.Footer>
+                    </Form> 
+                ):("")}
+
+                 {/* Formulaire de modification du profil Institution et société financière */}
+                 {currentUser?.codeTypeProfil === "insti" ? ( 
+                    <Form role="form" onSubmit={updateProfileParticular}>
+                    {/* <Form role="form" onSubmit={handleSubmit}> */}
+                        <Modal.Body>
+                            <div className='row mx-3'>
+                                {currentUser?.entreprise? (
+                                    <div className='form-group col-lg-6 col-md-6 mb-3'>
+                                        <input
+                                            type="text"
+                                            id="institutionName"
+                                            className='form-control'
+                                            defaultValue={currentUser?.entreprise}
+                                            onChange={(event) => setEntreprise(event.target.value)}
+                                        />
+                                    </div>
+                                ) : ("")}
+                  
+
+                                    {currentUser?.city? (
+                                        <div className='form-group col-lg-6 col-md-6 mb-3'>
+                                            <input
+                                                type="text"
+                                                id="city"
+                                                className='form-control'
+                                                defaultValue={currentUser?.city}
+                                                onChange={(event) => setCity(event.target.value)}
+                                            />
+                                        </div>
+                                    ) : ("")}
+
+                                    {currentUser?.site? (
+                                    <div className='form-group col-lg-6 col-md-6 mb-3'>
+                                        <input
+                                            type="text"
+                                            id="site"
+                                            className='form-control'
+                                            defaultValue={currentUser?.site}
+                                            onChange={(event) => setSite(event.target.value)}
+                                        />
+                                    </div>
+                                    ) : ("")}
+
+                                {currentUser?.mobile? (
+                                    <div className=" form-group col-lg-6 col-md-6 mb-3 ">
+                                        <div className=" input-group flex-nowrap ">
+                                            <span  className="input-group-text " id="addon-wrapping">
+                                                {dataCountryOfUser?.indicator}
+                                            </span>
+                                            <input
+                                                className=" form-control"
+                                                type="number"
+                                                id="contact"
+                                                required
+                                                defaultValue={currentUser?.mobile} 
+                                                onChange={(event)=>setMobile(event.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                ) : ("")}
+                                
+                            </div>
+
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button className="text-white" color="danger" onClick={handleCloseFormUpdate}>
+                                Fermer
+                            </Button>
+                            <Button type='submit' color="success" disabled={isLoggingIn}>
+                                Modifier
+                            </Button>
+                        </Modal.Footer>
+                    </Form>
+                ):("")}
+
+                {/* Formulaire de modification du profil Société de gestion OPCVM */}
+                {currentUser?.codeTypeProfil === "socGest" ? ( 
+                    <Form role="form" onSubmit={updateProfileParticular}>
+                    {/* <Form role="form" onSubmit={handleSubmit}> */}
+                        <Modal.Body>
+                            <div className='row mx-3'>
+                                {currentUser?.entreprise? (
+                                    <div className='form-group col-lg-6 col-md-6 mb-3'>
+                                        <input
+                                            type="text"
+                                            id="companyName"
+                                            className='mx-3 form-control'
+                                            defaultValue={currentUser?.entreprise}
+                                            onChange={(event) => setEntreprise(event.target.value)}
+                                        />
+                                    </div>
+                                ) : ("")}
+                       
+                                {currentUser?.city? (
+                                    <div className='form-group col-lg-6 col-md-6 mb-3'>
+                                        <input
+                                            type="text"
+                                            id="city"
+                                            className='mx-3 form-control'
+                                            defaultValue={currentUser?.city}
+                                            onChange={(event) => setCity(event.target.value)}
+                                        />
+                                    </div>
+                                ) : ("")}
+                                
+                                {currentUser?.site? (
+                                    <div className='form-group col-lg-6 col-md-6 mb-3'>
+                                        <input
+                                            type="text"
+                                            id="site"
+                                            className='mx-3 form-control'
+                                            defaultValue={currentUser?.site}
+                                            onChange={(event) => setSite(event.target.value)}
+                                        />
+                                    </div>
+                                ) : ("")}
+                             
+                                {currentUser?.mobile? (
+                                    <div className='form-group col-lg-6 col-md-6 mb-3'>
+                                        <input
+                                            type="text"
+                                            id="mobile"
+                                            className='mx-3 form-control'
+                                            defaultValue={currentUser?.mobile}
+                                            onChange={(event) => setMobile(event.target.value)}
+                                        />
+                                    </div>
+                                ) : ("")}
+                               
+                                
+                            </div>
+
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button className="text-white" color="danger" onClick={handleCloseFormUpdate}>
+                                Fermer
+                            </Button>
+                            <Button type='submit' color="success" disabled={isLoggingIn}>
+                                Modifier
+                            </Button>
+                        </Modal.Footer>
+                    </Form>
+                ):("")}
+            </Modal>
       
     </>
   );

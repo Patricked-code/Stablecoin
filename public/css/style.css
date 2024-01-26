@@ -7928,3 +7928,51 @@ button {
 }
 
 /* ***********************FIN*********************************************** */
+
+/* *************POUR MODAL DE PAIEMENT ECOMMERCE******************************** */
+/* Ajoutez ce style pour que le modal occupe toute la page */
+/* .modal-fullpage {
+  width: 100%;
+  min-width: 100%;
+  margin: 0;
+} */
+
+/* Si vous voulez également centrer le contenu à l'intérieur du modal */
+/* .modal-fullpage .modal-dialog {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+} */
+
+.modal-fullpage {
+  width: 1000px;
+  margin: 0;
+}
+
+.modal-fullpage .modal-content {
+  min-height: 90vh;
+  min-width: 600px;
+
+}
+
+/* .modal-fullpage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-fullpage .modal-content {
+  height: 100%;
+  overflow-y: auto;
+} */
+/* ********************FIN*********************************************************** */

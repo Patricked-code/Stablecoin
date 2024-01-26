@@ -533,7 +533,7 @@ const SurEcommerces = () => {
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Demandeur</p></Table.Column>
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actions</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-5 ">Actions</p></Table.Column>
                                     </Table.Header>
                                     <Table.Body>
                                         {allDataRequestUseStablecoinEshop?.map((data, index) => (

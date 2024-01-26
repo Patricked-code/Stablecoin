@@ -97,7 +97,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/resultat-kyc"||
       pathname === "/profil/wallet"||
       pathname === "/profil/paiements/paiements-attente"||
-      pathname === "/profil/paiements/paiements-ecommerce-attente"||
+      pathname === "/paiements/paiements-ecommerce-attente"||
 
 
       // POUR LES HISTORIQUES
@@ -264,7 +264,7 @@ const Layout = ({ children }) => {
       // pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/wallet"||
       pathname === "/profil/paiements/paiements-attente"||
-      pathname === "/profil/paiements/paiements-ecommerce-attente"||
+      pathname === "/paiements/paiements-ecommerce-attente"||
       
       // POUR LES HISTORIQUES
       pathname === "/profil/historique"||

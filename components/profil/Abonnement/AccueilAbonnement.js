@@ -97,7 +97,7 @@ const CAccueilAbonnement = () => {
             // setNameStablecoin(nameStablecoin)
             setSymbolStablecoin(symbolStablecoin)
             setDecimalStablecoin(decimalStablecoin)
-            // setBalanceStablecoin(balanceStablecoin/10**decimalStablecoin)
+            setBalanceStablecoin(balanceStablecoin/10**decimalStablecoin)
             // Fin
             
           // Obtenir un utilisateur en fonction de son email 
@@ -376,7 +376,8 @@ const CAccueilAbonnement = () => {
 
         // Vérifie si l'abonné a suffisamment de jetons pour payer le coût d'abonnement
       const subscriberTokenBalance = await contractStablecoin.balanceOf(dataForm?.addressSubscriber);
-      if (subscriberTokenBalance.lt(dataForm?.subscriptionCost)) {
+      const convertAmount = parseFloat(dataOneRateSubsription?.subscriptionCost)
+      if (balanceStablecoin<=convertAmount) {
         setIsLoggingIn(false);
         Swal.fire({
           position: 'center',
@@ -401,7 +402,7 @@ const CAccueilAbonnement = () => {
       const gasCost = gasEstimate.mul(await signer.getGasPrice());
       const senderBalance = await signer.getBalance();
   
-      if (gasCost.gt(senderBalance)) {
+      if (gasCost?._hex>senderBalance?._hex) {
       setIsLoggingIn(false);
 
         Swal.fire({

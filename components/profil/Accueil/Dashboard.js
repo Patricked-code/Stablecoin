@@ -43,6 +43,7 @@ import {
     // Row,
     // Col,
   } from "reactstrap";
+import ModalTransfertRemboursement from '../commun/ModalTransfertRemboursement';
 
 // FIN
 
@@ -125,6 +126,9 @@ const [bankByCountry, setBankByCountry] = useState({})
 const [userDataAccountBank, setUserDataAccountBank] = useState()
 const [accountBankLength, setAccountBankLength] = useState()
 const [deleteIdAccountBank, setDeleteIdAccountBank] = useState()
+
+// State des transactions des 10 dernières minutes
+const [transactionsLessThanTenMinutesOfUser, setTransactionsLessThanTenMinutesOfUser] = useState()
 
 
 
@@ -234,6 +238,13 @@ const [montantAchat, setMontantAchat] = useState(0)
     // State d'abonnement
     const [infoSubscriptionOfUser, setInfoSubscriptionOfUser] = useState()
 
+    // Modal de la demande de remboursement 
+    const [showRefund, setShowRefund] = useState(false);
+    // const handleCloseRefund = () => setShowRefund(false);
+
+    const handleButtonClick = () => {
+        setShowRefund(true);
+      };
 
 
     /**
@@ -647,8 +658,8 @@ const [montantAchat, setMontantAchat] = useState(0)
   
         getSubsriptionOfUser();
         
-      }, []);
-      // FIN
+    }, []);
+    // FIN
 
 
 
@@ -1264,6 +1275,75 @@ const [montantAchat, setMontantAchat] = useState(0)
     }, []);
     // Fin
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // *******************POUR LES DERNIERES TRANSACTIONS******************
+
+    // FONCTION POUR RECUPERER LES INFOSD'ABONNEMENT EN FONCTION DE L'UTILISATEUR CONNECTE
+    useEffect(() => {
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
+        const getTransactionsLessThanTenMinutesOfUser = async () => {
+        try {
+            const result = await fetch(`${API_URL}/api/historical/find-transactions-less-than-ten-minutes-of-user`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+  
+            },
+            });
+  
+            if (!result.ok) {
+            throw new Error('Failed to fetch user data');
+            }
+            const data = await result.json();
+            setTransactionsLessThanTenMinutesOfUser(data);
+        } catch (error) {
+            // Handle errors appropriately, e.g., set an error state.
+            console.error('Error fetching user data:', error);
+        }
+        };
+  
+        getTransactionsLessThanTenMinutesOfUser();
+        
+    }, []);
+    // FIN
+
+
+
+
     /**
      * Formate un nombre en tronquant à deux décimales et en ajoutant un séparateur de milliers (espace).
      * @param {number} number - Le nombre à formater.
@@ -1271,12 +1351,13 @@ const [montantAchat, setMontantAchat] = useState(0)
      * @throws {Error} - Si la fonction est appelée avec autre chose qu'un nombre.
      */
     function formatNumber(number) {
-        if (typeof number !== 'number') {
+        const decimalNumber = parseFloat(number);
+        if (typeof decimalNumber !== 'number') {
             throw new Error('La fonction doit être appelée avec un nombre.');
         }
 
         // Tronquer le nombre à deux décimales
-        const truncatedNumber = Math.floor(number * 100) / 100;
+        const truncatedNumber = Math.floor(decimalNumber * 100) / 100;
 
         // Ajouter un séparateur de milliers (espace)
         const formattedNumber = truncatedNumber.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
@@ -1285,8 +1366,46 @@ const [montantAchat, setMontantAchat] = useState(0)
     }
 
 
+  /**
+     * Affiche un contenu limité en fonction du nombre de mots ou de caractères spécifié.
+     *
+     * @param {string} content - Le contenu à afficher.
+     * @param {number} limit - Le nombre limite de mots ou de caractères.
+     * @param {string} unit - L'unité de la limite ('words' pour mots, 'characters' pour caractères).
+     * @returns {string} Le contenu limité avec des points de suspension si nécessaire.
+     * @throws {Error} Si l'unité spécifiée n'est ni 'words' ni 'characters'.
+     */
+   function displayLimitedContent(content, limit, unit) {
+    // Vérifier si le paramètre 'unit' est spécifié et valide
+    if (unit !== 'words' && unit !== 'characters') {
+        throw new Error("L'unité doit être 'words' ou 'characters'.");
+    }
 
+    if (unit === 'words') {
+        // Séparer le contenu en mots
+        const words = content.split(' ');
 
+        // Vérifier si le nombre de mots est inférieur ou égal à la limite
+        if (words.length <= limit) {
+            return content; // Pas besoin de points de suspension
+        } else {
+            // Sélectionner les premiers 'limit' mots et les rejoindre
+            const limitedContent = words.slice(0, limit).join(' ');
+
+            return `${limitedContent}...`;
+        }
+    } else if (unit === 'characters') {
+        // Vérifier si la longueur du contenu est inférieure ou égale à la limite
+        if (content.length <= limit) {
+            return content; // Pas besoin de points de suspension
+        } else {
+            // Sélectionner les premiers 'limit' caractères
+            const limitedContent = content.slice(0, limit);
+
+            return `${limitedContent}...`;
+        }
+    }
+}
 
 
 
@@ -1426,38 +1545,6 @@ const [montantAchat, setMontantAchat] = useState(0)
                     </div>
                 ) : ("")}
                 
-                {/* Paiement en cours */}
-                <div className='col-lg-6 col-md-6'>
-                    <div className='currency-selection text-center'>
-                        <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                            <div className='cryptocurrency-slides'>
-                                <div className='single-cryptocurrency-box'>
-                                    <div className='d-flex align-items-center mb-3'>
-                                    <div className='bestseller-coin-image'>
-                                        <img src="/images/ecfa/icons/icon1.jpg" className="rounded-circle"  alt='image' />
-                                    </div>
-                                    <div className='title text-center'>
-                                    <h3>
-                                        <p className='rounded-circle colorBlue'><b>{paymentPendingLength?(paymentPendingLength):("0")}</b></p>
-
-                                        Paiements E-commerce en attente
-                                    </h3>
-                                    </div>
-                                    </div><br/>
-                                    <a className='nav-link' href='/profil/paiements/paiements-ecommerce-attente'>
-                                        <Button
-                                            block
-                                            color="success"
-                                            type="button"
-                                        >
-                                            Voir plus
-                                        </Button>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 {/* Paiement en cours */}
                 <div className='col-lg-6 col-md-6'>
@@ -1467,15 +1554,15 @@ const [montantAchat, setMontantAchat] = useState(0)
                                 <div className='single-cryptocurrency-box'>
                                     <div className='d-flex align-items-center mb-3'>
                                     <div className='bestseller-coin-image'>
-                                        <img src="/images/ecfa/icons/icon1.jpg" className="rounded-circle"  alt='image' />
+                                        <img src="/images/ecfa/icons/icon2.jpg" className="rounded-circle"  alt='image' />
                                     </div>
                                     <div className='title text-center'>
-                                    <h3>
-                                        <p className='rounded-circle  colorBlue'><b>{paymentPendingLength?(paymentPendingLength):("0")}</b></p>
+                                    <h3 className='my-2'>
+                                        <p className='rounded-circle mb-4  colorBlue'><b>{paymentPendingLength?(paymentPendingLength):("0")}</b></p>
                                         Paiements en attente
                                     </h3>
                                     </div>
-                                    </div><br/>
+                                    </div>
                                     <a className='nav-link' href='/profil/paiements/paiements-attente'>
                                         <Button
                                             block
@@ -1584,7 +1671,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                                     <p>Activer mon profil d'investisseur</p>
                                 </div>
                                 </div>
-                                <a className='nav-link' href='/profil/kyc/opcvm/questionnaire-one'>
+                                <a className='nav-link ' href='/profil/kyc/opcvm/questionnaire-one'>
                                     <Button
                                         block
                                         color="success"
@@ -1609,9 +1696,9 @@ const [montantAchat, setMontantAchat] = useState(0)
                                 <div className='single-cryptocurrency-box'>
                                     <div className='d-flex align-items-center'>
                                     <div className='bestseller-coin-image'>
-                                        <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
+                                        <img src="/images/ecfa/abonnement/abo1.jpg" className="rounded-circle"  alt='image' />
                                     </div>
-                                    <div className='title'>
+                                    <div className='title mt-2 mb-3'>
                                         <h3>Abonnements</h3>
                                         {daysRemaining ==0 ?
                                             <p>Je fais mon abonnement </p>
@@ -1636,6 +1723,41 @@ const [montantAchat, setMontantAchat] = useState(0)
                         </div>
                     </div>
                 </div>
+
+                
+               
+
+
+                {/* <div className='col-lg-6 col-md-6'>
+                    <div className='currency-selection text-center '>
+                        <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className='cryptocurrency-slides'>
+                                <div className='single-cryptocurrency-box'>
+                                    <div className='d-flex align-items-center mb-0'>
+                                    <div className='title text-center'>
+                                    <h3>
+                                        Les transactions de moins de <b className='colorGreen'>10 min</b>
+                                    </h3>
+                                    {transactionsLessThanTenMinutesOfUser?.length!==0 ? (
+                                        transactionsLessThanTenMinutesOfUser?.map((data, index) => (
+                                            <div key={index} className='d-flex'>
+                                                <p className='mx-2'>{data?.typeTransaction} - {data?.amount} {symbolStablecoin} - {data?.nameReceiver} </p> 
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className='colorRed'>Aucune transactions effectuée recemment.</p> 
+                                    )}
+
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> */}
+
+
+
 
                 {/* Demander des E-WARI */}
                 {/* <div className='col-lg-6 col-md-6'> */}
@@ -1688,6 +1810,80 @@ const [montantAchat, setMontantAchat] = useState(0)
 
                 {/* </div> */}
             </div>
+
+             {/* Les 10 dernières transactions */}
+             <div className=''>
+                    <div className='currency-selection '>
+                        <div className=" mt-2 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            {/* <div className='cryptocurrency-slides'>
+                                <div className='single-cryptocurrency-box'>
+                                    <div className='d-flex align-items-center mb-0'>
+                                    <div className='title'> */}
+                                    <h5 className='text-center pt-3'>
+                                        Les transactions de moins de <b className='colorGreen'>10 min</b>
+                                    </h5>
+                                    {transactionsLessThanTenMinutesOfUser?.length!==0 ? (
+                                        <Table
+                                            aria-label="Example table with static content"
+                                            css={{
+                                                height: "auto",
+                                                minWidth: "100%",
+                                            }}
+                                        >
+                                            <Table.Header>
+                                                {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom & prenom </p></Table.Column> */}
+                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Type</p></Table.Column>
+                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Recepteur</p></Table.Column>
+                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
+                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actions</p></Table.Column>
+                                            </Table.Header>
+                                            <Table.Body>
+                                                {transactionsLessThanTenMinutesOfUser?.map((data, index) => (
+                                                    <Table.Row key={index}>                       
+                                                        <Table.Cell ><small className=" py-0 ">{data?.typeTransaction}</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent(data?.nameReceiver,20,"characters")}</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 ">{formatNumber(data?.amount)}</small></Table.Cell>
+                                                        <Table.Cell >
+                                                            <div className='text-center d-flex'>
+                                                                <button 
+                                                                    className={`py-0 mx-2 btn btn-primary`}
+                                                                    onClick={handleButtonClick}
+                                                                >
+                                                                    <p  className="text-white">Détails</p>
+                                                                        {/* {showRefund && <ModalTransfertRemboursement historicalId={data?.id} showRefund={showRefund} onClose={() => setShowRefund(false)} />} */}
+                                                                </button>
+                                                                {/* APPEL DU COMPOSANT DU AFFICHE LE MODAL */}
+                                                                {showRefund && <ModalTransfertRemboursement historicalId={data?.id} showRefund={showRefund} onClose={() => setShowRefund(false)} />}
+
+                                                                {/* <ModalTransfertRemboursement historicalId={data?.id} showRefund={showRefund} onClose={() => setShowRefund(false)} /> */}
+
+        
+                                                            </div>
+                                                        </Table.Cell>
+                                                    </Table.Row >
+                                                ))}
+                                            </Table.Body>
+                                            {transactionsLessThanTenMinutesOfUser?.length>5 ? (
+                                                <Table.Pagination
+                                                    shadow
+                                                    noMargin
+                                                    align="center"
+                                                    rowsPerPage={5}
+                                                    onPageChange={(page) => console.log({ page })}
+                                                />
+                                            ) : ("")}
+                                        </Table>
+                                    ) : (
+                                        <p className='colorRed text-center'>Aucune transactions effectuée recemment.</p> 
+                                    )}
+
+                                    {/* </div>
+                                    </div>
+                                </div>
+                            </div> */}
+                        </div>
+                    </div>
+                </div>
         </div>
 
         <div className='cryptocurrency-search-box mt-5'>
@@ -2311,6 +2507,7 @@ const [montantAchat, setMontantAchat] = useState(0)
             {/* *****************************************FIN****************************************** */}
 
 
+        
 
 
             

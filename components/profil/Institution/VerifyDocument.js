@@ -514,7 +514,7 @@ const handleTransfertShow = () => setShowTransfert(true);
       const gasCost = gasEstimate.mul(await provider.getGasPrice());
       const senderBalance = await signer.getBalance();
 
-      if (gasCost.gt(senderBalance)) {
+      if (gasCost?._hex>senderBalance?._hex) {
         setIsLoggingIn(false)
         Swal.fire({
           position: 'center',

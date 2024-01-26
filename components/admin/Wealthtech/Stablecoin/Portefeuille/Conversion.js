@@ -365,13 +365,13 @@ const Conversion = () => {
                                                                     
                                                     ))} 
                                                 </Table.Body>
-                                                {/* <Table.Pagination
+                                                <Table.Pagination
                                                     shadow
                                                     noMargin
                                                     align="center"
-                                                    rowsPerPage={3}
+                                                    rowsPerPage={5}
                                                     onPageChange={(page) => console.log({ page })}
-                                                /> */}
+                                                />
                                             </Table>
                                             <div className='text-center'>
                                                 <button className=" py-0 my-3  mx-2 btn btn-primary text-center">
@@ -390,11 +390,11 @@ const Conversion = () => {
             </div>
 
             {/* ********************************************************************************** */}
-                {/* MODAL DE MISE A JOUR DU TAUX D'ECHANGE*/}
+                {/* MODAL D'AJOUT DU TAUX D'ECHANGE*/}
             {/* ********************************************************************************** */}
             <Modal show={showFormAddConversion} className="mt-15" onHide={handleCloseFormAddConversion}>
                 <Modal.Header closeButton id="bgcolor">
-                    <Modal.Title className="" >Mise à jour du taux d'échange</Modal.Title>                
+                    <Modal.Title className="" >Ajout d'un taux d'échange</Modal.Title>                
                 </Modal.Header>
                 <form>
                 <Modal.Body>
@@ -460,7 +460,7 @@ const Conversion = () => {
                         Fermer
                     </Button>
                     <Button  onClick={addConversion}  color="success" disabled={isLoggingIn}>
-                        Modifier
+                        Ajouter
                         {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-2"></i>) : ("")}
                     </Button>
                 </Modal.Footer>

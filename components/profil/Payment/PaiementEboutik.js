@@ -175,17 +175,17 @@ const PaiementEboutik = () => {
     }, []);
     // Fin
 
-    // Obtenir les données de la demande de paiement en fonction de l'utilisateur connecté 
+    // Obtenir les données de la demande de paiement en fonction de l'utilisateur de l'utilisateur
     useEffect(async () => {
-        const getPaymentPendingOfUser= async (_currentUserId) => {
-            const token = localStorage.getItem('tokenEnCours');
+        const getPaymentPendingOfUser= async (_currentUserEmail) => {
+            // const token = localStorage.getItem('tokenEnCours');
 
             try {
                 
-                const result = await fetch(`${API_URL}/api/payment-request/find-all-payment-request-for-receiver?receiverId=${_currentUserId}`, {
+                const result = await fetch(`${API_URL}/api/eshop/find-one-order-by-email-customer-eshop?customerEmail=${_currentUserEmail}`, {
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
+                        // Authorization: `Bearer ${token}`,
                     },
                 });
 
@@ -195,17 +195,18 @@ const PaiementEboutik = () => {
 
                 const data = await result.json();
                 setDataPaymentPending(data)
+                console.log("data=>",data)
                 setPaymentPendingLength(data?.length)
 
             } catch (error) {
                 // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
-                console.error('Erreur lors de la récupération des demandes:', error);
+                console.error('Erreur lors de la récupération des données:', error);
             }
         };
-        if (currentUser?.id) {
-            await getPaymentPendingOfUser(currentUser?.id);
+        if (currentUser?.email) {
+            await getPaymentPendingOfUser(currentUser?.email);
         }
-    }, [currentUser?.id]);
+    }, [currentUser?.email]);
     // Fin
 
     // Recupération des données de l'utilisation de stablecoin comme moyen de paiement de l'utilisateur connecté
@@ -244,10 +245,12 @@ const PaiementEboutik = () => {
     const handleDeleteClose = () => setShowDelete(false);
     const handleDeleteShow = () => setShowDelete(true);
 
-    // Modal d'attribution d'un rôle à une adresse
+    // Modal de paiement sur des sites ecommerces
     const [showPayer, setShowPayer] = useState(false);
-    const handleClosePayer = () => setShowPayer(false);
+    // const handleClosePayer = () => setShowPayer(false);
     const handleShowPayer = () => setShowPayer(true);
+    const [secondsRemaining, setSecondsRemaining] = useState(5 * 60 );
+    
     // Fin
 
 
@@ -389,7 +392,7 @@ async function transferToEscrow() {
 
 
    // FONCTION POUR CONFIRMER LE PAIEMENT DANS LA BASE DE DONNEE
-   const transferAmount= async(_hash) =>{
+   const transferAmount= async() =>{
     setIsLoggingIn(true)
     
     const dataa = {
@@ -400,9 +403,9 @@ async function transferToEscrow() {
     // Obtenir le token en cours
     const token = localStorage.getItem('tokenEnCours');
 
-    const result = await fetch(`${API_URL}/api/payment-request/transfer-amount/${idPaymentPending}`, {
+    const result = await fetch(`${API_URL}/api/eshop/transfer-amount-eshop/${dataPaymentPending?.id}`, {
           method:"PUT",
-          body: JSON.stringify(dataa),
+        //   body: JSON.stringify(dataa),
           headers: {
               'Content-Type': 'application/json',
               Authorization:  `Bearer ${token}`
@@ -411,11 +414,13 @@ async function transferToEscrow() {
       .then(res=>{
       const data =  res.json();
         if (res.status==200) {
-            addHistorical(_hash) //Appel de la fonction d'ajout des infos de transaction dans la table de l'historique
-          //  Actualiser après l'affichage 
-        //   setTimeout(() => {
-        //     window.location.reload()
-        //   }, 20000) 
+            //addHistorical(_hash) //Appel de la fonction d'ajout des infos de transaction dans la table de l'historique
+        //    Actualiser après l'affichage 
+          setTimeout(() => {
+            window.location.reload()
+          }, 5000) 
+          Router.push("/profil/dashboard/");
+          
           // Fin
         }else{
           setIsLoggingIn(false)
@@ -511,7 +516,7 @@ async function transferToEscrow() {
         try {
             
             const dataBody = {
-                typeTransaction: "Achat",
+                typeTransaction: "Paiement e-commerce",
                 activeName: nameStablecoin,
                 activeSymbol: symbolStablecoin,
                 nameSender: nameSender,
@@ -593,7 +598,6 @@ async function transferToEscrow() {
     
             const user = await result.json();
             setInfosOtherUser(user);
-            console.log("user oth=>", user)
         } catch (error) {
             // Handle errors appropriately, e.g., set an error state.
             console.error('Error fetching user data:', error);
@@ -605,6 +609,51 @@ async function transferToEscrow() {
         }
     }, [currentSenderId]);
     // FIN
+
+
+
+    // Utilisez le useEffect pour effectuer des actions lorsque le composant est monté
+    useEffect(() => {
+        if (
+          dataPaymentPending?.status == "En attente" &&
+          dataPaymentPending?.createdAt
+        ) {
+            const createdAtTimestamp = new Date(dataPaymentPending.createdAt).getTime();
+            const nowTimestamp = new Date().getTime();
+            const initialTimeDifference = (nowTimestamp - createdAtTimestamp) / 1000; // en secondes
+            let remainingTime = 5 * 60 - Math.floor(initialTimeDifference);
+            setSecondsRemaining(remainingTime);
+
+          if (remainingTime > 0) {
+            setShowPayer(true);
+    
+            const intervalId = setInterval(() => {
+              remainingTime -= 1;
+              setSecondsRemaining(remainingTime);
+    
+              if (remainingTime <= 0) {
+                setShowPayer(false);
+                clearInterval(intervalId);
+
+                // Le temps est écoulé, exécutez la fonction transferAmount
+                transferAmount();
+              }
+            }, 1000); // Mettez à jour toutes les secondes
+          }
+        }
+      }, [dataPaymentPending?.id]); // Le tableau de dépendances vide garantit que cela s'exécute une seule fois lors du montage du composant
+  
+      const formatTime = (seconds) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+      };
+  
+      // Gérez la fermeture du Modal
+  const handleClosePayer = () => {
+    setShowPayer(false);
+    // Autres actions à effectuer lors de la fermeture du Modal
+  };
 
 
     /**
@@ -662,151 +711,7 @@ async function transferToEscrow() {
 
     return (
         <>
-        {/* {magicCurrentAddress?(  */}
-            <>
-                <div className='' >
-                    <div className=' mx-15'>
-                        <div className='py-10'>
-                            <h1 className='text-center'>Paiements en attente</h1>
-                        </div>
-                    </div>
-
-                    {/* Les images de fond */}
-                    <div className='shape1'>
-                    {/* <img src='/images/shape/shape1.png' alt='image' /> */}
-                    </div>
-                    <div className='shape2 mb-5'><br/>
-                    <img src='/images/shape/shape2.png' alt='image' />
-                    </div>
-                    <div className='shape3'>
-                    {/* <img src='/images/shape/shape3.png' alt='image' /> */}
-                    </div>
-                    <div className='shape4'>
-                    <img src='/images/shape/shape4.png' alt='image' />
-                    </div>
-                    {/* Fin des images de fond */}
-
-                    {/* Les cards */}
-                        <div className='cryptocurrency-search-box'>
-                            <div className='row'>
-                                <div className='col-lg-1 col-md-1'></div>
-
-                                    <div className='col-lg-10 col-md-10'>
-                                        <div className='currency-selection'>
-                                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                                    <div className='col-lg-12 col-md-12 row justify-content-between'>
-                                                        {!paymentPendingLength==0?(
-                                                            <Table
-                                                                aria-label="Example table with static content"
-                                                                css={{
-                                                                    height: "auto",
-                                                                    minWidth: "100%",
-                                                                }}
-                                                            >
-                                                            <Table.Header>
-                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Commerçant</p></Table.Column>
-                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
-                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Objet</p></Table.Column>
-                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
-                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
-                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
-                                                            </Table.Header>
-                                                                <Table.Body>
-                                                                    {dataPaymentPending?.map(
-                                                                        (
-                                                                        {id, objet, amount,senderEmail, senderAddress, nameEntreprise, senderId, createdAt, valid},
-                                                                        index
-                                                                        ) => (
-                                                                            <Table.Row key={index}>
-                                                                                {/* Default Admin */}
-                                                                                <Table.Cell ><small className=" py-0 ">{displayLimitedContent(nameEntreprise,30,"characters")}</small></Table.Cell>
-                                                                                <Table.Cell ><small className=" py-0 ">{amount}</small></Table.Cell>
-                                                                                <Table.Cell ><small className=" py-0 ">{displayLimitedContent(objet,15,"characters")}</small></Table.Cell>
-                                                                                <Table.Cell ><small className=" py-0 ">{valid == 1?(<i className='colorGreen'>Payé</i>):valid == 2 ? (<i className='colorBlue'>Remboursé</i>) :valid == 3? (<i className='colorRed'>Rejeté </i>) :<i>En cours</i>}</small></Table.Cell>
-
-                                                                                <Table.Cell ><small className=" py-0 ">{formatDate(createdAt)}</small></Table.Cell>
-                                                                            
-                                                                                <Table.Cell>
-                                                                                    <div className="d-flex py-0 ">
-                                                                                        <p className="text-center">
-
-                                                                                        
-                                                                                            <button  onClick={()=>setCurrentSenderAddress(senderAddress)} disabled={valid === 1 || valid === 3}  className={`py-0 mx-2 btn ${valid === 1 || valid === 3 ? 'btn-secondary' : 'btn-success'} d`}>
-                                                                                            {/* onClick={()=>setIdForSender(senderId)} */}
-                                                                                            
-                                                                                                <div onClick={()=>setIdPaymentPending(id)}>
-                                                                                                    <div onClick={()=>setCurrentSenderId(senderId)}>
-                                                                                                        <div onClick={()=>setCurrentAmount(amount)}>
-                                                                                                            <div onClick={()=>setCurrentEntreprise(nameEntreprise)}>
-                                                                                                                <div onClick={()=>setCurrentSenderEmail(senderEmail)}>
-                                                                                                                    <div onClick={handleShowPayer}>
-                                                                                                                        Valider 
-                                                                                                                    </div>
-                                                                                                                </div>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </button>
-
-                                                                                            <button  onClick={()=>setCurrentAmount(amount)} disabled={valid === 1 || valid === 3}  className={`py-0 mx-2 btn ${valid === 1 || valid === 3 ? 'btn-secondary' : 'btn-danger'}`}>
-                                                                                                <div onClick={()=>setIdPaymentPending(id)}>
-                                                                                                    <div onClick={()=>setCurrentSenderId(senderId)}>
-                                                                                                        <div onClick={handleDeleteShow}>
-                                                                                                            Rejeter
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </button>
-
-                                                                                            {/* <small  onClick={()=>setCurrentAmount(amount)} className='py-0 px-0 mx-2 btn btn-primary'>
-                                                                                                <div onClick={()=>setIdPaymentPending(id)}>
-                                                                                                    <div onClick={()=>setCurrentSenderId(senderId)}>
-                                                                                                        <div>
-                                                                                                            Rembourser
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </small> */}
-                                                                                        </p>
-                                                                                    </div>
-                                                                                </Table.Cell>
-                                                                            </Table.Row >
-                                                                        )
-                                                                    )}
-                                                                    {/* <Table.Pagination
-                                                                        shadow
-                                                                        noMargin
-                                                                        align="center"
-                                                                        rowsPerPage={3}
-                                                                        onPageChange={(page) => console.log({ page })}
-                                                                    /> */}
-                                                                </Table.Body>
-                                                            </Table>
-                                                        ):(
-                                                            <div className="text-center my-5">
-                                                                Aucune demande de paiement en attente
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                {/* </form> */}
-                                            </div>
-                                        </div>
-                                    </div>
-                                <div className='col-lg-1 col-md-1'></div>
-                            </div>
-                        </div>
-                </div>
-            </>
-         {/* ):(
-            <span className="text-center bg-default-2 btn-bottom-text  d-block gr-text-5 text-blackish-blue gr-opacity-10 my-35">
-                <Loading/>
-            </span>
-        )}  */}
-
-
-
-
+        
 
         {/* ********************************************************************************** */}
             {/* MODAL D'ANNULATION DE PAIEMENT'*/}
@@ -846,21 +751,57 @@ async function transferToEscrow() {
         {/* ********************************************************************************** */}
             {/* MODAL DE VALIDATION DE PAIEMENT  '*/}
         {/* ********************************************************************************** */}
-        <Modal show={showPayer} className="mt-15" onHide={handleClosePayer}>
-            <Modal.Header closeButton className='bgColorGreen'>
-                <Modal.Title className="text-white" >Validation de paiement</Modal.Title>                
+        <Modal show={showPayer} width='2000' fullscreen={true} >
+        {/* <Modal show={showPayer} className="mt-15" onHide={handleClosePayer}> */}
+            <Modal.Header closeButton className='bgColorblue'>
+                <Modal.Title className="text-white" >Paiements en attente (Temps restant: {formatTime(secondsRemaining)})</Modal.Title>                
             </Modal.Header>
             {/* <Form role="form" onSubmit={hant}> */}
                 <Modal.Body>
-                    <div className="input-group flex-nowrap">
-                        <div className='col-lg-12 col-md-12 row justify-content-between'>
-                            <div className='input-group-alternative my-3 '>
-                                Voulez-vous confirmer le paiement de {currentAmount} {symbolStablecoin} à l'adresse de {currentnameEntreprise}
-                            </div>
+                    <div className='col-lg-12 col-md-12  row justify-content-center'>
+                        <div className='col-lg-6 col-md-6 mt-3'>
+                            <b>Marchand : </b> <br/> {dataPaymentPending?.eshopName}
+                        </div>
+
+                        <div className='col-lg-6 col-md-6 mt-3'>
+                            <b>Identifiant marchand : </b> <br/> {dataPaymentPending?.merchantIdentifier}
+                        </div>
+                        <div className='col-lg-6 col-md-6 mt-3'>
+                            <b>Nom client : </b> <br/> {dataPaymentPending?.customerName}
+                        </div>
+
+                        <div className='col-lg-6 col-md-6 mt-3'>
+                            <b>Numéro commande : </b> <br/> {dataPaymentPending?.orderNumber}
+                        </div>
+                        <div className='col-lg-6 col-md-6 mt-3'>
+                            <b>Montant : </b> <br/> {dataPaymentPending?.amount} {symbolStablecoin}
+                        </div>
+                        <div className='col-lg-6 col-md-6 mt-3'>
+                            <b>Statut: </b> <br/> {dataPaymentPending?.status}
+                        </div>
+                        <div className='col-lg-6 col-md-6 mt-3'>
+                            <b>Email du marchand : </b> <br/> {dataPaymentPending?.merchantEmail}
+                        </div>
+                        <div className='col-lg-6 col-md-6 mt-3'>
+                            <b>Email Client : </b> <br/> {dataPaymentPending?.customerEmail}
+                        </div>
+                        
+                    </div>
+                    <div className='row d-flex'>
+                        <div className='col-lg-6 col-md-6 col-sm-6 mt-3'>
+                            <Button className="text-white" color="danger" >
+                                Annuler
+                            </Button>
+                        </div>
+                        <div className='col-lg-6 col-md-6 col-sm-6 mt-3 '>
+                            <Button className='px-3'  type='button'  color="success" onClick={transferToEscrow} disabled={isLoggingIn}>
+                                Payer
+                                {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
+                            </Button>
                         </div>
                     </div>
                 </Modal.Body>
-                <Modal.Footer>
+                {/* <Modal.Footer>
                     <Button className="text-white" color="danger" onClick={handleClosePayer}>
                         Fermer
                     </Button>
@@ -869,7 +810,7 @@ async function transferToEscrow() {
                         {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
 
                     </Button>
-                </Modal.Footer>
+                </Modal.Footer> */}
             {/* </Form> */}
         </Modal>
         {/* *****************************************FIN****************************************** */}

@@ -1,4 +1,4 @@
-import React, { useState,useCallback,useEffect, useContext } from 'react';
+import React, { useState,useCallback,useEffect, useContext,useRef } from 'react';
 import Link from "../../../components/Link";
 import { Icon } from '@iconify/react';
 import { useRouter } from "next/router";
@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 
 import Router from 'next/router';
 import Dropdown from 'react-bootstrap/Dropdown';
+import PaiementEboutik from '../Payment/PaiementEboutik';
 
 
 
@@ -122,79 +123,62 @@ const [kycBusinessTransactionAnnual, setKycBusinessTransactionAnnual] = useState
 
 
 
-    const [timeoutId, setTimeoutId] = useState(null);
-    // Fonction pour gérer l'inactivité
-    // const resetInactivityTimeout = () => {
-    //   clearTimeout(timeoutId);
-    //   setTimeout(() => {
-    //     setTimeoutId(prevTimeoutId => {
-    //       handleInactive(); 
-    //       return prevTimeoutId;
-    //     });
-    //   }, 172800000);
-    // };
-  
-    
-  
-    // const handleInactive = () => {
-    //   Swal.fire({
-    //     title: 'Déconnexion automatique',
-    //     html: 'Vous serez déconnecté dans <b></b> secondes.<br><button id="stayConnected">Rester connecté</button>',
-    //     timer: 172800000, // 120000 = 2 minutes en millisecondes
-    //     timerProgressBar: true,
-    //     didOpen: () => {
-    //       Swal.showLoading();
-    //       const b = Swal.getHtmlContainer().querySelector('b');
-    //       const stayConnectedButton = document.getElementById('stayConnected');
-  
-    //       stayConnectedButton.addEventListener('click', () => {
-    //         clearTimeout(timeoutId); // Correction ici
-    //         Swal.close();
-    //         resetInactivityTimeout(); // Réinitialiser le délai après avoir choisi de rester connecté
-    //       });
-  
-    //       const timerInterval = setInterval(() => {
-    //         const timeLeft = Swal.getTimerLeft();
-    //         if (timeLeft > 0) {
-    //           b.textContent = (timeLeft / 1000).toFixed(0);
-    //         } else {
-    //           clearInterval(timerInterval);
-    //           logout();
-    //         }
-    //       }, 100);
-    //     },
-    //     willClose: () => {
-    //       clearTimeout(timeoutId); // Correction ici
-    //     }
-    //   });
-    // };
-  
-  
-    // useEffect(() => {
-    //   const startInactivityTimeout = () => {
-    //     const newTimeoutId = setTimeout(() => {
-    //       setTimeoutId(prevTimeoutId => {
-    //         handleInactive();
-    //         return prevTimeoutId;
-    //       });
-    //     }, 172800000);
-    //     setTimeoutId(newTimeoutId);
-    //   };
-  
-    //   document.addEventListener('mousemove', resetInactivityTimeout);
-    //   document.addEventListener('keydown', resetInactivityTimeout);
-  
-    //   startInactivityTimeout(); // Démarrer le délai initial lors du rendu initial
-  
-    //   return () => {
-    //     document.removeEventListener('mousemove', resetInactivityTimeout);
-    //     document.removeEventListener('keydown', resetInactivityTimeout);
-    //     clearTimeout(timeoutId);
-    //   };
-    // }, [resetInactivityTimeout, timeoutId]);
-    
+  //  *********************INATIVITE***********************************  
+  let timerInterval; // Déclarez timerInterval à une portée supérieure
+  const timeoutRef = useRef(null); // Utilisez useRef au lieu de useState
 
-// FIN
+  // Fonction pour gérer l'inactivité
+  const resetInactivityTimeout = useCallback(() => {
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(handleInactive, 120000); // 2 minutes
+  }, []);
+
+  const handleInactive = () => {
+    Swal.fire({
+      title: 'Déconnexion automatique',
+      html: 'Vous serez déconnecté dans <b></b> secondes.<br><button id="stayConnected">Rester connecté</button>',
+      timer: 120000, // 2 minutes
+      timerProgressBar: true,
+      didOpen: () => {
+        Swal.showLoading();
+        const b = Swal.getHtmlContainer().querySelector('b');
+        const stayConnectedButton = document.getElementById('stayConnected');
+
+        stayConnectedButton.addEventListener('click', () => {
+          clearInterval(timerInterval); // Arrêtez également le timerInterval
+          Swal.close();
+          resetInactivityTimeout(); // Réinitialiser le délai après avoir choisi de rester connecté
+        });
+
+        timerInterval = setInterval(() => {
+          const timeLeft = Swal.getTimerLeft();
+          if (timeLeft > 0) {
+            b.textContent = (timeLeft / 1000).toFixed(0);
+          } else {
+            clearInterval(timerInterval);
+            logout(); // Implémentez votre logique de déconnexion ici
+          }
+        }, 100);
+      },
+      willClose: () => {
+        clearInterval(timerInterval); // Nettoyer l'intervalle
+      }
+    });
+  };
+
+  useEffect(() => {
+    resetInactivityTimeout(); // Démarrer le délai initial lors du rendu initial
+
+    document.addEventListener('mousemove', resetInactivityTimeout);
+    document.addEventListener('keydown', resetInactivityTimeout);
+
+    return () => {
+      document.removeEventListener('mousemove', resetInactivityTimeout);
+      document.removeEventListener('keydown', resetInactivityTimeout);
+      clearTimeout(timeoutRef.current);
+    };
+  }, [resetInactivityTimeout]);
+// ***********FIN****************************
 
 
 
@@ -641,12 +625,12 @@ useEffect(async() => {
             </Link>
 
             <div className='nav-list'>
-            {!currentUser?.entreprise ? (
-                <span className='nav-link-icon text-white mx-1'>{currentUser?.lastName} {currentUser?.firstName}</span>
-            ) :('')}
-            {currentUser?.entreprise? (
-                <span className='nav-link-icon text-white mx-1'>{currentUser?.entreprise}</span>
-            ) :('')}
+              <PaiementEboutik/>
+            {currentUser?.codeTypeProfil === "part" ? (
+              <span className='nav-link-icon text-white mx-1'>{currentUser?.lastName} {currentUser?.firstName}</span>
+            ) :(
+              <span className='nav-link-icon text-white mx-1'>{currentUser?.entreprise}</span>
+            )}
             <br/><span className='nav-link-icon text-white mx-18'>{currentUser?.email}</span>
             
             
@@ -667,7 +651,7 @@ useEffect(async() => {
                 </Link>
 
                 <Link to='/profil/institution/gestion-stablecoin' className={pathname == "/profil/institution/gestion-stablecoin" ? "active-sidebar nav-link-sidebar my-1" : "nav-link-sidebar my-1"}>
-                  <i className='fas fa-address-card nav-link-icon'></i>
+                  <i className='fas fa-cogs nav-link-icon'></i>
                   <span className='nav-link-name'>Gestion</span>
                 </Link>
               </>
@@ -1290,7 +1274,7 @@ useEffect(async() => {
 
              <Dropdown>
                 <Dropdown.Toggle variant="" className='text-white' id="dropdown-basic">
-                  <i className='fas fa-archive nav-link-icon mr-1 ml-0'></i> {" "}
+                  <i className='fas fa-archive nav-link-icon '></i> {" "}
                   <span className='nav-link-name  mx-4'>{" "}Ecosystème</span>
                 </Dropdown.Toggle>
 

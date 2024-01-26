@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import React from "react";
+import { Container, Row, Col, Modal} from "react-bootstrap";
+import {Button,} from "reactstrap";
+
 import moment from 'moment';
 // import Link from "../../Link";
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
 import copy from "copy-to-clipboard"; 
 import Swal from 'sweetalert2'
+import ABI_TOKEN_EWARI from "../../../components/Contrats/Abi/AbiStablecoin.json";
 
 
 // Pour Magic
@@ -20,64 +24,142 @@ import { Table } from '@nextui-org/react';
 
 
 
-// MODALS 
-// reactstrap components
-import {
-    Button,
-    Card,
-    CardHeader,
-    CardBody,
-    FormGroup,
-    Form,
-    Input,
-    InputGroupAddon,
-    InputGroupText,
-    InputGroup,
-    Modal,
-    Row,
-    Col,
-  } from "reactstrap";
-
-// FIN
 
 const CHistoriqueStablecoin = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
     const HASH_TX = process.env.NEXT_PUBLIC_HASH_TX
     const ADDRESS_TX = process.env.NEXT_PUBLIC_ADDRESS_TX
+    const ADDRESS_CONTRAT_EWARI =process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
+    const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY
 
     const [currentUser, setCurrentUser] = useState();
-    const [provider, setProvider] = useState(null);
+   
+    const [isLoggingIn, setIsLoggingIn] = useState(false);
 
     const [dataAllHistoricalByUserEmail, setDataAllHistoricalByUserEmail] = useState();
     const [copyAddress, setCopyAddress] = useState()
     const [successCopy, setSuccessCopy] = useState()
+
+    //***************************************************************** *
+        // LES STATES DU STABLECOIN
+    // ******************************************************************
+    const [contractStablecoin, setContractStablecoin] = useState();
+    const [signer, setSigner] = useState();
+    const [walletRelayer, setWalletRelayer] = useState();
+    const [magicCurrentAddress, setMagicCurrentAddress] = useState();
+    const [userMetadata, setUserMetadata] = useState("...");
+    const [provider, setProvider] = useState(null);
+    
+    const [nameStablecoin, setNameStablecoin] = useState();
+    const [symbolStablecoin, setSymbolStablecoin] = useState();
+    const [balanceStablecoin, setBalanceStablecoin] = useState();
+    const [balanceStablecoinNoFormat, setBalanceStablecoinNoFormat] = useState();
+    const [decimalStablecoin, setDecimalStablecoin] = useState();
     
 
+    // Modal de la demande de remboursement
+    const [amountRefund, setAmountRefund] = useState();
+    const [showRefund, setShowRefund] = useState(false);
+    const handleCloseRefund = () => setShowRefund(false);
+    const handleShowRefund = () => setShowRefund(true);
+    // Fin
 
+    // Modal de la demande de remboursement
+    const [amountRefundEcommerce, setAmountRefundEcommerce] = useState();
+    const [showRefundEcommerce, setShowRefundEcommerce] = useState(false);
+    const handleCloseRefundEcommerce = () => setShowRefundEcommerce(false);
+    const handleShowRefundEcommerce = () => setShowRefundEcommerce(true);
+    // Fin
+
+    /**
+     * Hook d'effet pour initialiser le fournisseur Web3 en fonction de l'instance Magic.
+     * @function
+     * @returns {void}
+     * @param {Object} magic - Instance de Magic.
+     * @param {Function} setProvider - Fonction pour mettre à jour l'état du fournisseur Web3.
+     */
     useEffect(() => {
-
+      /**
+       * Fonction pour initialiser le fournisseur Web3 en fonction de l'instance Magic.
+       * @returns {void}
+       */
+      const initializeWeb3Provider = () => {
         if (!!magic) {
-            const pt = new ethers.providers.Web3Provider(magic.rpcProvider);
-            setProvider(pt);
+          // Créer une instance du fournisseur Web3 à partir du fournisseur RPC de Magic.
+          const web3Provider = new ethers.providers.Web3Provider(magic.rpcProvider);
+
+          // Mettre à jour l'état du fournisseur Web3.
+          setProvider(web3Provider);
         }
+      };
+
+      // Appeler la fonction d'initialisation lorsque l'instance Magic change.
+      initializeWeb3Provider();
     }, [magic]);
 
-    // RECUPERATION DES INFORMATIONS QUI CONCERNENT MAGIC
+    /**
+     * Hook d'effet pour récupérer les informations liées à l'instance Magic et au fournisseur Web3.
+     * @function
+     * @returns {void}
+     * @param {Object} magic - Instance de Magic.
+     * @param {Object} provider - Fournisseur Web3.
+     */
     useEffect(() => {
-        (async () => {
-            if (!!magic && !!provider) {
-              const userMetadatas = await magic.user.getMetadata();
-              const signer = provider.getSigner();
-              const network = await provider.getNetwork();
-              const userAddress = await signer.getAddress();
-              //const userBalance = ethers.utils.formatEther(await provider.getBalance(userAddress))
-              // FIN
-              
-            }
-        })();
+      /**
+       * Fonction asynchrone pour récupérer les informations liées à Magic et au fournisseur Web3.
+       * @returns {void}
+       */
+      const getMagicAndWeb3Info = async () => {
+        if (!!magic && !!provider) {
+          // Récupérer les métadonnées de l'utilisateur Magic.
+          const userMetadatas = await magic.user.getMetadata();
+          setUserMetadata(userMetadatas);
+
+          // Obtenir le signer du fournisseur Web3.
+          const signer = provider.getSigner();
+          setSigner(signer);
+
+          // Obtenir le réseau actuel à partir du fournisseur Web3.
+          const network = await provider.getNetwork();
+
+          // Obtenir l'adresse actuelle de l'utilisateur à partir du signer.
+          const userAddress = await signer.getAddress();
+          setMagicCurrentAddress(userAddress);
+
+          // *************************************************************************
+          // INTERACTION AVEC LE SMART CONTRAT DE STABLECOIN
+          // *************************************************************************
+          // Créer un portefeuille Web3 avec la clé privée.
+          const walletRelay = new ethers.Wallet(PRIVATE_KEY, provider);
+
+          // Créer une instance du contrat de stablecoin.
+          const contractStablecoin = new ethers.Contract(
+            ADDRESS_CONTRAT_EWARI,
+            ABI_TOKEN_EWARI.abi,
+            walletRelay
+          );
+          setContractStablecoin(contractStablecoin);
+
+          // Récupérer les informations de stablecoin.
+          const nameStablecoin = await contractStablecoin.name();
+          const symbolStablecoin = await contractStablecoin.symbol();
+          const decimalStablecoin = await contractStablecoin.decimals();
+          const balanceStablecoin = await contractStablecoin.balanceOf(userAddress);
+
+          // Stocker les informations de stablecoin dans leur state.
+          setNameStablecoin(nameStablecoin);
+          setSymbolStablecoin(symbolStablecoin);
+          setDecimalStablecoin(decimalStablecoin);
+          setBalanceStablecoin(formatNumber(balanceStablecoin / 10 ** decimalStablecoin));
+          setBalanceStablecoinNoFormat(balanceStablecoin / 10 ** decimalStablecoin);
+        }
+      };
+
+      // Appeler la fonction pour récupérer les informations lorsque le fournisseur Web3 ou Magic changent.
+      getMagicAndWeb3Info();
     }, [provider, magic]);
-    //  Fin
+
 
 
     /**
@@ -109,7 +191,7 @@ const CHistoriqueStablecoin = () => {
     // FIN
 
 
-    // FONCTION POUR RECUPERER LES TARIFS DES ABONNEMENTS 
+    // FONCTION POUR RECUPERER L'HISTORIQUE DE TRANSACTION DE L'UTILISATEUR EN FONCTION DE SON EMAIL'
     useEffect(() => {
         // Obtenir le token en cours
         const token = localStorage.getItem('tokenEnCours');
@@ -140,6 +222,22 @@ const CHistoriqueStablecoin = () => {
     // FIN
 
 
+    /**
+ * Vérifie si le bouton doit être visible en fonction de la différence de temps entre
+ * l'heure actuelle et l'heure de création du transfert.
+ *
+ * @param {string} createdAt - La date de création du transfert (au format ISO 8601).
+ * @returns {boolean} - True si le bouton doit être visible, sinon false.
+ */
+const isButtonVisible = (createdAt) => {
+    const currentTime = new Date();
+    const createdAtTime = new Date(createdAt);
+    const differenceInMinutes = (currentTime - createdAtTime) / (10 * 60);
+
+    return differenceInMinutes <= 5000000; // Afficher le bouton si la différence est inférieure ou égale à 5 minutes
+};
+
+   
     /**
      * Formate un nombre en tronquant à deux décimales et en ajoutant un séparateur de milliers (espace).
      * @param {number} number - Le nombre à formater.
@@ -267,17 +365,34 @@ const CHistoriqueStablecoin = () => {
                                         {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom & prenom </p></Table.Column> */}
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 ">type</p></Table.Column>
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actif</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nom</p></Table.Column>
+                                        {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nom</p></Table.Column> */}
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Hash de transaction</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Adresse</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nom<br/>Adresse</p></Table.Column>
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant<br/>Date</p></Table.Column>
                                     </Table.Header>
                                     <Table.Body>
                                         {dataAllHistoricalByUserEmail?.map((data,) => (
                                             <Table.Row key={data?.id}>                       
-                                                <Table.Cell ><small className=" py-0 ">{data?.typeTransaction}</small></Table.Cell>
-                                                <Table.Cell ><small className=" py-0 ">{data?.activeSymbol}</small></Table.Cell>
                                                 <Table.Cell >
+                                                    <small className=" py-0 ">{data?.typeTransaction}</small>
+                                                    {data?.typeTransaction==="Paiement e-commerce" ?  (
+                                                        <button className='mx-2'>
+                                                            <Icon onClick={handleShowRefundEcommerce} color='blue' icon="healthicons:i-note-action-outline" width="20" />
+                                                        </button>
+                                                    ) : ("")}
+                                                </Table.Cell>
+                                                <Table.Cell >
+                                                    <small className=" py-0 ">{data?.activeSymbol}</small>
+                                                    {currentUser?.address != data?.receiverAddress ? (
+                                                            isButtonVisible(data.createdAt) && (
+                                                                <button className='mx-2' onClick={()=>setAmountRefund(data?.amount)}>
+                                                                    <Icon onClick={handleShowRefund} color='blue' icon="gridicons:refund" width="20" />
+                                                                </button>
+                                                            )
+                                                    ):("")}
+                                                    
+                                                </Table.Cell>
+                                                {/* <Table.Cell >
                                                     <small className=" py-0 ">
                                                         {currentUser?.address != data?.senderAddress ? (
                                                             <>
@@ -289,10 +404,20 @@ const CHistoriqueStablecoin = () => {
                                                             </>
                                                         ):("")}
                                                     </small>
-                                                </Table.Cell>
+                                                </Table.Cell> */}
                                                 <Table.Cell ><small className=" py-0 d-flex">{displayLimitedContent(data?.hash, 20, "characters")}<a className=" aNoDecor " target="_blank"  href={`${HASH_TX}/${data?.hash}`}>Détails</a></small></Table.Cell>
                                                 <Table.Cell >
                                                     <small className=" py-0 ">
+                                                    {currentUser?.address != data?.senderAddress ? (
+                                                            <>
+                                                                {displayLimitedContent(data?.nameSender,20,"characters")}
+                                                            </>
+                                                        ):currentUser?.address != data?.receiverAddress ? (
+                                                            <>
+                                                                {displayLimitedContent(data?.nameReceiver,20,"characters")}
+                                                            </>
+                                                        ):("")}
+                                                        <br/>
                                                         {currentUser?.address != data?.senderAddress ? (
                                                             <>
                                                                 {displayLimitedContent(data?.senderAddress,20,'characters')} 
@@ -352,6 +477,81 @@ const CHistoriqueStablecoin = () => {
                     <Loading/>
                 </span>
             )} */}
+
+
+
+
+
+        {/* ********************************************************************************** */}
+            {/* MODAL DE DEMANDE DE REMBOURSEMENT  '*/}
+        {/* ********************************************************************************** */}
+        <Modal show={showRefund} className="mt-15" onHide={handleCloseRefund}>
+            <Modal.Header closeButton className='bgColorblue'>
+                <Modal.Title className="text-white" >Demande de remboursement</Modal.Title>                
+            </Modal.Header>
+            {/* <Form role="form" onSubmit={hant}> */}
+                <Modal.Body>
+                    <div className="input-group flex-nowrap">
+                        <div className='col-lg-12 col-md-12 row justify-content-between'>
+                            <div className='input-group-alternative my-3  '>
+                                Voulez-vous confirmer la demande remboursement des <b className='colorGreen'>{formatNumber(parseFloat(amountRefund))} {symbolStablecoin}?</b>
+                            </div>
+                        </div>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button className="text-white" color="danger" onClick={handleCloseRefund}>
+                        Non
+                    </Button>
+                    <Button  type='button'  color="success"  disabled={isLoggingIn}>
+                        Oui
+                        {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
+
+                    </Button>
+                </Modal.Footer>
+            {/* </Form> */}
+        </Modal>
+        {/* *****************************************FIN****************************************** */}
+            
+
+        {/* ********************************************************************************** */}
+            {/* MODAL DE DEMANDE DE REMBOURSEMENT POUR LES ECOMMERCES '*/}
+        {/* ********************************************************************************** */}
+        <Modal show={showRefundEcommerce} className="mt-15" onHide={handleCloseRefundEcommerce}>
+            <Modal.Header closeButton className='bgColorblue'>
+                <Modal.Title className="text-white" >Demande de remboursement</Modal.Title>                
+            </Modal.Header>
+            {/* <Form role="form" onSubmit={hant}> */}
+                <Modal.Body>
+                    <div className="input-group flex-nowrap">
+                        <div className='col-lg-12 col-md-12 row justify-content-between'>
+                            <div className='input-group-alternative my-3 col-lg-6 col-md-6 '>
+                                <p>Statut de la demande de remboursement</p>
+                                <p className='colorRed'>En cours</p>
+                            </div>
+                            <div className='input-group-alternative my-3 col-lg-6 col-md-6 '>
+                                <p>Faire une demande de remboursement</p>
+                                <Button className="text-white" color="primary">
+                                    Demander
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </Modal.Body>
+                {/* <Modal.Footer>
+                    <Button className="text-white" color="danger" onClick={handleCloseRefundEcommerce}>
+                        Non
+                    </Button>
+                    <Button  type='button'  color="success"  disabled={isLoggingIn}>
+                        Oui
+                        {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
+
+                    </Button>
+                </Modal.Footer> */}
+            {/* </Form> */}
+        </Modal>
+        {/* *****************************************FIN****************************************** */}
+            
         </>
     );
 };
