@@ -1523,7 +1523,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                                             <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
                                         </div>
                                         <div className='title'>
-                                            <h3>Recette de la vente sur la plateforme</h3>
+                                            <h3>Recette de la vente directe</h3>
                                             <p>Mon solde : <b className='colorRed'>{balanceEscrow}</b> {symbolStablecoin}</p>
                                         </div>
                                         </div>
@@ -1724,103 +1724,14 @@ const [montantAchat, setMontantAchat] = useState(0)
                     </div>
                 </div>
 
-                
-               
-
-
-                {/* <div className='col-lg-6 col-md-6'>
-                    <div className='currency-selection text-center '>
-                        <div className="mt-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                            <div className='cryptocurrency-slides'>
-                                <div className='single-cryptocurrency-box'>
-                                    <div className='d-flex align-items-center mb-0'>
-                                    <div className='title text-center'>
-                                    <h3>
-                                        Les transactions de moins de <b className='colorGreen'>10 min</b>
-                                    </h3>
-                                    {transactionsLessThanTenMinutesOfUser?.length!==0 ? (
-                                        transactionsLessThanTenMinutesOfUser?.map((data, index) => (
-                                            <div key={index} className='d-flex'>
-                                                <p className='mx-2'>{data?.typeTransaction} - {data?.amount} {symbolStablecoin} - {data?.nameReceiver} </p> 
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <p className='colorRed'>Aucune transactions effectuée recemment.</p> 
-                                    )}
-
-                                    </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> */}
-
-
-
-
-                {/* Demander des E-WARI */}
-                {/* <div className='col-lg-6 col-md-6'> */}
-
-
-                    {/* <div className='currency-selection text-center'>
-                        <div className=" bg-white ">
-                        <br/>
-                        <form className="" onSubmit={handleSubmit}>
-                            <div className="row ml-2 my-3">
-                                <div className="col-lg-6 col-md-6 mb-3 ml-2">
-                                    <div className="input-group flex-nowrap">
-                                        <input type="number" defaultValue={montantSaisi} onChange={(e) => setMontantSaisi(e.target.value)} placeholder="Montant E-WARI" aria-describedby="addon-wrapping  autoFocus" className="input input-sm input-bordered form-control" />
-                                    </div>
-                                </div>
-                                <div className="col-lg-6 col-md-6">
-                                    <button type="submit" onClick={send_token} className="btn btn-success">Demander des E-WARI</button>
-                                </div>
-                            </div>
-                        </form>
-                        </div>
-                    </div> */}
-
-                    {/* PARTIE Transferer des E-WARI */}
-
-                    {/* <div className='currency-selection text-center'>
-                        <div className=" bg-white">
-                        <br/>
-                        <form onSubmit={handleSubmitTwo}>
-                                        <div className="row  mx-3">
-                                            <div className="col-lg-6 col-md-6 text-center my-2 ">
-                                                <div className="input-group ">
-                                                    <input type="number" defaultValue={montantSaisiForTo} onChange={(e) => setMontantSaisiForTo(e.target.value)} placeholder="Montant E-WARI" aria-describedby="addon-wrapping  autoFocus" className="input input-sm input-bordered form-control" />
-                                                </div>
-                                            </div>
-                                            <div className="col-lg-6 col-md-6 my-2 text-center">
-                                                <div className="input-group flex-nowrap">
-                                                    <input type="text" defaultValue={adresseTo} onChange={(e) => setAdresseTo(e.target.value)} placeholder="Adresse bénéfiaire" aria-describedby="addon-wrapping  autoFocus" className="input input-sm input-bordered form-control" />
-                                                </div>
-                                            </div>
-
-                                            <div className="col-lg-12 col-md-12   mb-3">
-                                                <button type="submit" className="btn btn-success" onClick={sell_tokenThree}>Transferer des E-WARI</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                        </div>
-                    </div> */}
-
-
-                {/* </div> */}
             </div>
 
              {/* Les 10 dernières transactions */}
              <div className=''>
                     <div className='currency-selection '>
                         <div className=" mt-2 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                            {/* <div className='cryptocurrency-slides'>
-                                <div className='single-cryptocurrency-box'>
-                                    <div className='d-flex align-items-center mb-0'>
-                                    <div className='title'> */}
                                     <h5 className='text-center pt-3'>
-                                        Les transactions de moins de <b className='colorGreen'>10 min</b>
+                                        Les transactions de moins de <b className='colorGreen'>10 min</b> que vous pouvez vérifier.
                                     </h5>
                                     {transactionsLessThanTenMinutesOfUser?.length!==0 ? (
                                         <Table
@@ -1845,16 +1756,44 @@ const [montantAchat, setMontantAchat] = useState(0)
                                                         <Table.Cell ><small className=" py-0 ">{formatNumber(data?.amount)}</small></Table.Cell>
                                                         <Table.Cell >
                                                             <div className='text-center d-flex'>
-                                                                <button 
-                                                                    className={`py-0 mx-2 btn btn-primary`}
-                                                                    onClick={handleButtonClick}
-                                                                >
-                                                                    <p  className="text-white">Détails</p>
-                                                                        {/* {showRefund && <ModalTransfertRemboursement historicalId={data?.id} showRefund={showRefund} onClose={() => setShowRefund(false)} />} */}
-                                                                </button>
-                                                                {/* APPEL DU COMPOSANT DU AFFICHE LE MODAL */}
-                                                                {showRefund && <ModalTransfertRemboursement historicalId={data?.id} showRefund={showRefund} onClose={() => setShowRefund(false)} />}
+                                                                {data?.refundStatus===0 ? (
+                                                                    <>
+                                                                    <button 
+                                                                        className={`py-0 px-4 mx-2 btn btn-primary`}
+                                                                        disabled
+                                                                    >
+                                                                        <p  className="text-white">En cours</p>
+                                                                    </button>
 
+                                                                    
+                                                                    </>
+                                                                ) : data?.refundStatus===1 ? (
+                                                                    <button 
+                                                                        className={`py-0 px-4 mx-2 btn btn-primary`}
+                                                                        disabled
+                                                                    >
+                                                                        <p  className="text-white">Effectuée</p>
+                                                                    </button>
+                                                                ): data?.refundStatus===2 ? (
+                                                                    <button 
+                                                                        className={`py-0 px-4 mx-2 btn btn-primary`}
+                                                                        disabled
+                                                                    >
+                                                                        <p  className="text-white">Rejetée .</p>
+                                                                    </button>
+                                                                ):(
+                                                                    <>
+                                                                    <button 
+                                                                        className={`py-0 mx-2 btn btn-primary`}
+                                                                        onClick={handleButtonClick}
+                                                                    >
+                                                                        <p  className="text-white">Réclamation </p>
+                                                                    </button>
+                                                                
+                                                                    {/* APPEL DU COMPOSANT DU AFFICHE LE MODAL */}
+                                                                    {showRefund && <ModalTransfertRemboursement historicalId={data?.id} showRefund={showRefund} onClose={() => setShowRefund(false)} />}
+                                                                </>
+                                                                )}
                                                                 {/* <ModalTransfertRemboursement historicalId={data?.id} showRefund={showRefund} onClose={() => setShowRefund(false)} /> */}
 
         
@@ -1874,7 +1813,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                                             ) : ("")}
                                         </Table>
                                     ) : (
-                                        <p className='colorRed text-center'>Aucune transactions effectuée recemment.</p> 
+                                        <p className='colorRed text-center my-3'>Aucune transactions effectuée recemment.</p> 
                                     )}
 
                                     {/* </div>

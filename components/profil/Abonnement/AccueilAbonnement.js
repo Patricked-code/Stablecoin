@@ -375,7 +375,6 @@ const CAccueilAbonnement = () => {
 
 
         // Vérifie si l'abonné a suffisamment de jetons pour payer le coût d'abonnement
-      const subscriberTokenBalance = await contractStablecoin.balanceOf(dataForm?.addressSubscriber);
       const convertAmount = parseFloat(dataOneRateSubsription?.subscriptionCost)
       if (balanceStablecoin<=convertAmount) {
         setIsLoggingIn(false);

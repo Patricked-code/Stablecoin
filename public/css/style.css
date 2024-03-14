@@ -7951,8 +7951,8 @@ button {
 }
 
 .modal-fullpage .modal-content {
-  min-height: 90vh;
-  min-width: 600px;
+  /* min-height: 90vh; */
+  min-width: 700px;
 
 }
 
@@ -7976,3 +7976,22 @@ button {
   overflow-y: auto;
 } */
 /* ********************FIN*********************************************************** */
+
+
+/* ****************POUR L'AFFICHAGE DU NOEUD************************ */
+.containerNoeud {
+  display: flex;
+  flex-direction: column;
+}
+
+.rowNoeud {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.cellNoeud {
+  flex: 1;
+  padding: 8px; /* Ajustez selon vos préférences */
+  border-bottom: 1px solid #ccc; /* Ajoute une ligne de séparation, si souhaité */
+}

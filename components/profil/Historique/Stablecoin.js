@@ -10,6 +10,7 @@ import { Icon } from '@iconify/react';
 import copy from "copy-to-clipboard"; 
 import Swal from 'sweetalert2'
 import ABI_TOKEN_EWARI from "../../../components/Contrats/Abi/AbiStablecoin.json";
+import ABI_ESCROW_STABLECOIN from "../../../components/Contrats/Abi/AbiEscrowStablecoin.json";
 
 
 // Pour Magic
@@ -36,7 +37,8 @@ const CHistoriqueStablecoin = () => {
     const [currentUser, setCurrentUser] = useState();
    
     const [isLoggingIn, setIsLoggingIn] = useState(false);
-
+    const [isLoggingInRefund, setIsLoggingInRefund] = useState(false); //Pour la partie de remboursement
+    
     const [dataAllHistoricalByUserEmail, setDataAllHistoricalByUserEmail] = useState();
     const [copyAddress, setCopyAddress] = useState()
     const [successCopy, setSuccessCopy] = useState()
@@ -57,14 +59,33 @@ const CHistoriqueStablecoin = () => {
     const [balanceStablecoinNoFormat, setBalanceStablecoinNoFormat] = useState();
     const [decimalStablecoin, setDecimalStablecoin] = useState();
     
+    // States smart contrat d'escrow
+    const [contractEscrow, setContractEscrow] = useState()
 
-    // Modal de la demande de remboursement
-    const [amountRefund, setAmountRefund] = useState();
-    const [showRefund, setShowRefund] = useState(false);
-    const handleCloseRefund = () => setShowRefund(false);
-    const handleShowRefund = () => setShowRefund(true);
+
+    // State de remboursement pour transfert directe
+    const [historicalId, setHistoricalId] = useState();
+    const [oneHistorical, setOneHistorical] = useState();
+
+    // States des commandes effectuées sur des sites ecommerce
+    const [oneEshopOrderById, setOneEshopOrderById] = useState();
+
+    // States pour les données du marchand
+    const [dataMerchantByIdentifier, setDataMerchantByIdentifier] = useState();
+
+    // Modal du resultat de la demande de remboursement
+    const [showRefundResult, setShowRefundResult] = useState(false);
+    const handleCloseRefundResult = () => setShowRefundResult(false);
+    const handleShowRefundResult = () => setShowRefundResult(true);
     // Fin
 
+     // Modal de la demande de remboursement
+     const [amountRefund, setAmountRefund] = useState();
+     const [showRefund, setShowRefund] = useState(false);
+     const handleCloseRefund = () => setShowRefund(false);
+     const handleShowRefund = () => setShowRefund(true);
+     // Fin
+    
     // Modal de la demande de remboursement
     const [amountRefundEcommerce, setAmountRefundEcommerce] = useState();
     const [showRefundEcommerce, setShowRefundEcommerce] = useState(false);
@@ -132,6 +153,14 @@ const CHistoriqueStablecoin = () => {
           // *************************************************************************
           // Créer un portefeuille Web3 avec la clé privée.
           const walletRelay = new ethers.Wallet(PRIVATE_KEY, provider);
+          /**
+            * Smart contrat du factory d'escrow.
+            * @type {string}
+            */
+            if (dataMerchantByIdentifier?.addressEscrow) {
+                const contractEscrow = new ethers.Contract(dataMerchantByIdentifier?.addressEscrow, ABI_ESCROW_STABLECOIN?.abi, walletRelay);
+                setContractEscrow(contractEscrow)
+            }
 
           // Créer une instance du contrat de stablecoin.
           const contractStablecoin = new ethers.Contract(
@@ -158,7 +187,7 @@ const CHistoriqueStablecoin = () => {
 
       // Appeler la fonction pour récupérer les informations lorsque le fournisseur Web3 ou Magic changent.
       getMagicAndWeb3Info();
-    }, [provider, magic]);
+    }, [provider, magic, dataMerchantByIdentifier]);
 
 
 
@@ -221,8 +250,314 @@ const CHistoriqueStablecoin = () => {
     }, [currentUser?.id]);
     // FIN
 
+    // Obtenir une seule ligne de transaction en fonction de son ID
+    useEffect(async () => {
+        const getOneHistorical= async (_historicalId) => {
+            const token = localStorage.getItem('tokenEnCours');
 
-    /**
+            try {
+                
+                const result = await fetch(`${API_URL}/api/historical/find-one-historical/${_historicalId}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!result.ok) {
+                    throw new Error('Failed to fetch request data');
+                }
+
+                const data = await result.json();
+                setOneHistorical(data);
+                console.log("setOneHistorical=>",data)
+
+
+            } catch (error) {
+                // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
+                console.error('Erreur lors de la récupération des données:', error);
+            }
+        };
+        if (historicalId) {
+            await getOneHistorical(historicalId);
+        }
+    }, [historicalId]);
+    // Fin
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // ********************************************************************
+        // PARTIE D'IMPLEMENTATION DES FONCTIONS DU SMART CONTRAT D'ESCROW
+    // ********************************************************************
+        // FONCTION SMART CONTRAT POUR CONFIRMER LE PAIEMENT ou APPROUVER PAIMENT
+        async function approveWithdrawal() {
+            setIsLoggingIn(true)
+        
+            try {
+              // Vérifier le solde de magicCurrentAddress
+              const magicCurrentBalance = await contractStablecoin.balanceOf(magicCurrentAddress);
+        
+                const dataForm = {
+                  ownerAddress: magicCurrentAddress,
+                };
+                
+                
+                    // Vérifier si l'exécutant a un solde gas suffisant pour le gaz d'apprabation de retrait
+                    const approveWithdrawalEstimateGas = await contractEscrow.estimateGas.approveWithdrawal(dataForm?.ownerAddress);
+                    const executorBalanceAfterTransfer = await signer.getBalance();
+                    if (executorBalanceAfterTransfer.gte(approveWithdrawalEstimateGas)) {
+                        // Fonction d'approbation de retrait
+                        const approveWithdrawalTx = await contractEscrow.approveWithdrawal(dataForm?.ownerAddress);
+                        await approveWithdrawalTx.wait();
+        
+                        confirmPaiementEshop() //Appele de la fonction de confirmation de la transaction dans la base de donnée
+                    } else {
+                        setIsLoggingIn(false);
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            html: `<p>Solde insuffisant pour couvrir les frais de gaz d'approbation du retrait.</p>`,
+                            showConfirmButton: false,
+                        timer: 5000
+                        });
+                        console.error("Solde insuffisant pour couvrir les frais de gaz d'approveWithdrawal.");
+                    }
+                  
+                
+              
+            } catch (error) {
+                setIsLoggingIn(false)
+                console.error("Erreur lors de l'exécution de la transaction :", error);
+            }
+        }
+
+        // FONCTION SMART CONTRAT POUR DEMANDE DE REMBOURSEMENT
+        async function requestRefund() {
+            setIsLoggingInRefund(true)
+        
+            try {
+              
+                const dataForm = {
+                  ownerAddress: magicCurrentAddress,
+                };
+                
+                
+                    // Vérifier si l'exécutant a un solde gas suffisant pour le gaz d'apprabation de retrait
+                    const requestRefundEstimateGas = await contractEscrow.estimateGas.requestRefund(dataForm?.ownerAddress);
+                    const executorBalanceAfterTransfer = await signer.getBalance();
+                    if (executorBalanceAfterTransfer.gte(requestRefundEstimateGas)) {
+                        // Fonction d'approbation de retrait
+                        const requestRefundTx = await contractEscrow.approveWithdrawal(dataForm?.ownerAddress);
+                        await requestRefundTx.wait();
+        
+                        requestRefundPaymentEshop() //Appele de la fonction de la demande de remboursement dans la base de donnée
+                    } else {
+                        setIsLoggingInRefund(false);
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            html: `<p>Solde insuffisant pour couvrir les frais de gaz de la demande de remboursement.</p>`,
+                            showConfirmButton: false,
+                        timer: 5000
+                        });
+                        console.error("Solde insuffisant pour couvrir les frais de gaz de la demande de remboursement.");
+                    }
+                  
+                
+              
+            } catch (error) {
+                setIsLoggingInRefund(false)
+                console.error("Erreur lors de l'exécution de la transaction :", error);
+            }
+        }
+
+
+
+
+        // FONCTION POUR CONFIRMER LE PAIEMENT DANS LA BASE DE DONNEE (Appélée dans la fonction approveWithdrawal())
+        const confirmPaiementEshop= async() =>{
+            setIsLoggingIn(true)
+
+            // Obtenir le token en cours
+            const token = localStorage.getItem('tokenEnCours');
+
+            const result = await fetch(`${API_URL}/api/eshop/confirm-paiement-eshop/${dataPaymentPending?.id}`, {
+                method:"PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`
+                }
+            })
+            .then(res=>{
+            const data =  res.json();
+                if (res.status==200) {
+                   Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Vous avez confirmé me paiement avec succès.</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+                //    Actualiser après l'affichage 
+                setTimeout(() => {
+                    window.location.reload()
+                }, 5000) 
+                // Router.push("/paiements/paiements-ecommerce-attente/");
+                
+                // Fin
+                }else{
+                setIsLoggingIn(false)
+            }
+            })
+            .catch(error => {
+            setIsLoggingIn(false)
+
+            //handle error
+            console.log(error);
+
+            });
+        }
+        // FIN
+
+
+        // FONCTION POUR DEMANDE DE REMBOURSEMENT DANS LA BASE DE DONNEE (Appélée dans la fonction requestRefund())
+        const requestRefundPaymentEshop = async() =>{
+            setIsLoggingInRefund(true)
+
+            // Obtenir le token en cours
+            const token = localStorage.getItem('tokenEnCours');
+
+            const result = await fetch(`${API_URL}/api/eshop/request-refund-payment-eshop/${dataPaymentPending?.id}`, {
+                method:"PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization:  `Bearer ${token}`
+                }
+            })
+            .then(res=>{
+            const data =  res.json();
+                if (res.status==200) {
+                   Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Vous demande de remboursement a été envoyé avec succès.</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+                //    Actualiser après l'affichage 
+                setTimeout(() => {
+                    window.location.reload()
+                }, 5000) 
+                // Router.push("/paiements/paiements-ecommerce-attente/");
+                
+                // Fin
+                }else{
+                setIsLoggingInRefund(false)
+            }
+            })
+            .catch(error => {
+            setIsLoggingIn(false)
+
+            //handle error
+            console.log(error);
+
+            });
+        }
+        // FIN
+
+
+        // Obtenir les données (adresse d'escrow) du marchand concerné en fonction de son identifiant
+    useEffect(async () => {
+        const getDataMerchantByIdentifier= async (_merchantIdentifier) => {
+            const token = localStorage.getItem('tokenEnCours');
+
+            try {
+                
+                const result = await fetch(`${API_URL}/api/apikey/find-one-use-stablecoin-for-eshop-by-merchant-identifier?merchantIdentifier=${_merchantIdentifier}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!result.ok) {
+                    throw new Error('Failed to fetch request data');
+                }
+
+                const data = await result.json();
+                setDataMerchantByIdentifier(data)
+
+            } catch (error) {
+                // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
+                console.error('Erreur lors de la récupération des données:', error);
+            }
+        };
+        if (oneEshopOrderById?.merchantIdentifier) {
+            await getDataMerchantByIdentifier(oneEshopOrderById?.merchantIdentifier);
+        }
+    }, [oneEshopOrderById?.merchantIdentifier]);
+    // Fin
+
+
+
+
+
+    // *********************************************************************
+        // PARTIE DES COMMANDES EFFECTUEES SUR LES SITES ECOMMERCES
+    // **********************************************************************
+
+    // Obtenir une commande d'un utilisateur en fonction de son email
+    useEffect(async () => {
+        const getOneEshopOrderById= async (_eshopOrderId) => {
+            // const token = localStorage.getItem('tokenEnCours');
+
+            try {
+                
+                const result = await fetch(`${API_URL}/api/eshop/find-one-order-eshop/${_eshopOrderId}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!result.ok) {
+                    throw new Error('Failed to fetch request data');
+                }
+
+                const data = await result.json();
+                setOneEshopOrderById(data);
+                console.log("setOneEshopOrderById=>",data)
+
+            } catch (error) {
+                // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
+                console.error('Erreur lors de la récupération des données:', error);
+            }
+        };
+        if (oneHistorical?.eshopOrderId) {
+            await getOneEshopOrderById(oneHistorical?.eshopOrderId);
+        }
+    }, [oneHistorical?.eshopOrderId]);
+
+/**
  * Vérifie si le bouton doit être visible en fonction de la différence de temps entre
  * l'heure actuelle et l'heure de création du transfert.
  *
@@ -368,7 +703,8 @@ const isButtonVisible = (createdAt) => {
                                         {/* <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nom</p></Table.Column> */}
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Hash de transaction</p></Table.Column>
                                         <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nom<br/>Adresse</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant<br/>Date</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant<br/>Bonus/Frais</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
                                     </Table.Header>
                                     <Table.Body>
                                         {dataAllHistoricalByUserEmail?.map((data,) => (
@@ -376,19 +712,28 @@ const isButtonVisible = (createdAt) => {
                                                 <Table.Cell >
                                                     <small className=" py-0 ">{data?.typeTransaction}</small>
                                                     {data?.typeTransaction==="Paiement e-commerce" ?  (
-                                                        <button className='mx-2'>
-                                                            <Icon onClick={handleShowRefundEcommerce} color='blue' icon="healthicons:i-note-action-outline" width="20" />
+                                                        <button className='mx-2' onClick={()=>setHistoricalId(data?.id)}>
+                                                            <Icon onClick={handleShowRefundEcommerce}  color='blue' icon="healthicons:i-note-action-outline" width="20" />
                                                         </button>
                                                     ) : ("")}
                                                 </Table.Cell>
                                                 <Table.Cell >
                                                     <small className=" py-0 ">{data?.activeSymbol}</small>
-                                                    {currentUser?.address != data?.receiverAddress ? (
-                                                            isButtonVisible(data.createdAt) && (
-                                                                <button className='mx-2' onClick={()=>setAmountRefund(data?.amount)}>
-                                                                    <Icon onClick={handleShowRefund} color='blue' icon="gridicons:refund" width="20" />
-                                                                </button>
-                                                            )
+                                                    {currentUser?.address != data?.receiverAddress && data?.typeTransaction=="Transfert"? (
+                                                        <>
+                                                            {data?.refundStatus===0 || data?.refundStatus===1 || data?.refundStatus===2 ? (
+                                                                <button className='mx-2' onClick={()=>setHistoricalId(data?.id)}>
+                                                                    <Icon onClick={handleShowRefundResult} color='green' icon="gridicons:refund" width="20" />
+                                                                </button>  
+                                                            ) : (
+                                                                isButtonVisible(data?.createdAt) && (
+                                                                    <button className='mx-2' onClick={()=>setAmountRefund(data?.amount)}>
+                                                                        <Icon onClick={handleShowRefund} color='blue' icon="gridicons:refund" width="20" />
+                                                                    </button>
+                                                                )
+                                                            )}
+                                                            
+                                                        </>
                                                     ):("")}
                                                     
                                                 </Table.Cell>
@@ -449,7 +794,31 @@ const isButtonVisible = (createdAt) => {
                                                             </>
                                                     ):("")}
                                                     
-                                                    <br/>{formatDate(data?.createdAt)}
+                                                    <br/>
+                                                    {currentUser?.address != data?.senderAddress  ? (
+                                                        <>
+                                                            {data?.typeTransaction==="Remboursement" ? (
+                                                                <i className='colorRed'> - {formatNumber(parseFloat(data?.refundServiceFee))}</i>
+                                                            ):('- - - - - - -') }
+                                                        </>
+                                                    ):currentUser?.address != data?.receiverAddress? (
+                                                            <>
+                                                            {data?.typeTransaction==="Remboursement" ? (
+                                                                <i className='colorGreen'> + {formatNumber(parseFloat(data?.refundAmountReceiver))}</i>
+                                                            ):data?.typeTransaction==="Transfert" && data?.fees?(
+                                                                <i className='colorRed'> - {formatNumber(parseFloat(data?.fees))}</i>
+                                                            ):('- - - - - - -') }
+
+                                                            </>
+                                                    ):("")}
+                                                    </small>
+                                                    {/* <small className=" py-0 ">
+                                                        {formatNumber(parseFloat(data?.amount))}<br/>{formatDate(data?.createdAt)}
+                                                    </small> */}
+                                                </Table.Cell>
+                                                <Table.Cell >
+                                                    <small className=" py-0 ">
+                                                        {formatDate(data?.createdAt)}
                                                     </small>
                                                     {/* <small className=" py-0 ">
                                                         {formatNumber(parseFloat(data?.amount))}<br/>{formatDate(data?.createdAt)}
@@ -458,6 +827,7 @@ const isButtonVisible = (createdAt) => {
                                             </Table.Row >
                                         ))} 
                                     </Table.Body>
+                                    {!dataAllHistoricalByUserEmail?.length>5 ? (
                                     <Table.Pagination
                                         shadow
                                         noMargin
@@ -465,6 +835,7 @@ const isButtonVisible = (createdAt) => {
                                         rowsPerPage={5}
                                         onPageChange={(page) => console.log({ page })}
                                     />
+                                    ):("")}
                                 </Table>
                             ) : (
                                 <p className='colorRed text-center m-3'>Aucune transaction effectuée</p>
@@ -483,6 +854,34 @@ const isButtonVisible = (createdAt) => {
 
 
         {/* ********************************************************************************** */}
+            {/* MODAL DE DEMANDE DE REMBOURSEMENT  '*/}
+        {/* ********************************************************************************** */}
+        <Modal show={showRefundResult} className="mt-15" onHide={handleCloseRefundResult}>
+            <Modal.Header closeButton className='bgColorblue'>
+                <Modal.Title className="text-white" >Resultat demande de remboursement</Modal.Title>                
+            </Modal.Header>
+                <Modal.Body>
+                    <div className="input-group flex-nowrap">
+                        <div className='col-lg-12 col-md-12 row justify-content-between'>
+                        {oneHistorical?.refundStatus==0 ? 
+                            (
+                                <><br/><i className='colorBlue'>Demande de remboursement en cours </i></>
+                            ):oneHistorical?.refundStatus==1 ?
+                            (
+                                <><br/><i colorGreen>Remboursement Effectué </i></>
+                            ): oneHistorical?.refundStatus==2 ?
+                            (
+                                <><br/><i className='colorRed'>Demande de remboursement rejétée </i></>
+                            ):("")
+                        }
+                        
+                        </div>
+                    </div>
+                </Modal.Body>
+        </Modal>
+        {/* *****************************************FIN****************************************** */}
+            
+         {/* ********************************************************************************** */}
             {/* MODAL DE DEMANDE DE REMBOURSEMENT  '*/}
         {/* ********************************************************************************** */}
         <Modal show={showRefund} className="mt-15" onHide={handleCloseRefund}>
@@ -517,24 +916,135 @@ const isButtonVisible = (createdAt) => {
         {/* ********************************************************************************** */}
             {/* MODAL DE DEMANDE DE REMBOURSEMENT POUR LES ECOMMERCES '*/}
         {/* ********************************************************************************** */}
-        <Modal show={showRefundEcommerce} className="mt-15" onHide={handleCloseRefundEcommerce}>
+        <Modal show={showRefundEcommerce} width={2000} className="mt-15 modal-fullpage" onHide={handleCloseRefundEcommerce}>
             <Modal.Header closeButton className='bgColorblue'>
-                <Modal.Title className="text-white" >Demande de remboursement</Modal.Title>                
+                <Modal.Title className="text-white" >Informations du paiement en ligne</Modal.Title>                
             </Modal.Header>
             {/* <Form role="form" onSubmit={hant}> */}
                 <Modal.Body>
-                    <div className="input-group flex-nowrap">
+                    <div className="input-group flex-nowrap ">
                         <div className='col-lg-12 col-md-12 row justify-content-between'>
-                            <div className='input-group-alternative my-3 col-lg-6 col-md-6 '>
-                                <p>Statut de la demande de remboursement</p>
-                                <p className='colorRed'>En cours</p>
-                            </div>
-                            <div className='input-group-alternative my-3 col-lg-6 col-md-6 '>
-                                <p>Faire une demande de remboursement</p>
-                                <Button className="text-white" color="primary">
-                                    Demander
-                                </Button>
-                            </div>
+                            <Table
+                                aria-label="Example table with static content"
+                                css={{
+                                    height: "auto",
+                                    minWidth: "100%",
+                                }}
+                            >
+                            <Table.Header>
+                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Numéro commande</p></Table.Column>
+                                <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Statut</p></Table.Column>
+                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actions</p></Table.Column>
+                            </Table.Header>
+                            <Table.Body>
+                                <Table.Row >
+                                    <Table.Cell >
+                                        <p className=" py-0 ">{oneEshopOrderById?.orderNumber}</p>
+                                    </Table.Cell>
+                                    <Table.Cell >
+                                        
+                                        {oneEshopOrderById?.status=="Paiement effectué"? (
+                                            <>
+                                                <div className='input-group-alternative my-3 col-lg-6 col-md-6 '>
+                                                    <p className='colorGreen'>Paiement effectué</p>
+                                                </div>
+                                            </>
+                                        ):oneEshopOrderById?.status=="Paiement confirmé"? (
+                                            <>
+                                                <div className='input-group-alternative my-3 col-lg-6 col-md-6 '>
+                                                    <p className='colorGreen'>Paiement confirmé</p>
+                                                </div>
+                                            </>
+                                        ):oneEshopOrderById?.status=="Demande de remboursement"?(
+                                            <>
+                                                <div className='input-group-alternative my-3 col-lg-6 col-md-6 '>
+                                                    <p className=''>Demande de remboursement en cours</p>
+                                                </div>
+                                            </>
+                                        ):oneEshopOrderById?.status=="Demande de remboursement acceptée"? (
+                                            <>
+                                                <div className='input-group-alternative my-3 col-lg-6 col-md-6 '>
+                                                    <p className='colorGreen'>Demande de remboursement acceptée </p>
+                                                </div>
+                                            </>
+                                        ):oneEshopOrderById?.status=="Demande de remboursement rejetée"? (
+                                            <>
+                                                <div className='input-group-alternative my-3 col-lg-6 col-md-6 '>
+                                                    <p className='colorRed'>Demande de remboursement rejetée </p>
+                                                </div>
+                                            </>
+                                        ):oneEshopOrderById?.status=="Remboursement effectué"? (
+                                            <>
+                                                <div className='input-group-alternative my-3 col-lg-6 col-md-6 '>
+                                                    <p className='colorGreen'>Remboursement effectué </p>
+                                                </div>
+                                            </>
+                                        ):oneEshopOrderById?.status=="Commande annulée"? (
+                                            <>
+                                                <div className='input-group-alternative my-3 col-lg-6 col-md-6 '>
+                                                    <p className='colorRed'>Commande annulée </p>
+                                                </div>
+                                            </>
+                                        ):("")}
+                                    </Table.Cell>
+                                    
+                                    <Table.Cell>
+                                        <div className="d-flex py-0 ">
+                                        {oneEshopOrderById?.status=="Paiement effectué"? (
+                                            <>
+                                                <Button onClick={approveWithdrawal} className="text-white py-0 px-4 mx-1" disabled={isLoggingIn} color="success">
+                                                    Colis reçu
+                                                    {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
+                                                </Button>
+
+                                                <Button onClick={requestRefund} className="text-white py-0 px-2" disabled={isLoggingInRefund} color="primary">
+                                                    Colis non reçu
+                                                    {isLoggingInRefund === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
+                                                </Button>
+                                            </>
+                                        ):oneEshopOrderById?.status=="Paiement confirmé"? (
+                                            <>
+                                                <Button disabled className="text-white py-0 px-1" color="primary">
+                                                    Aucune
+                                                </Button>
+                                            </>
+                                        ):oneEshopOrderById?.status=="Demande de remboursement"?(
+                                            <>
+                                                <Button disabled className="text-white py-0 px-1" color="primary">
+                                                    Aucune
+                                                </Button>
+                                            </>
+                                        ):oneEshopOrderById?.status=="Demande de remboursement acceptée"? (
+                                            <>
+                                                <Button disabled className="text-white py-0 px-1" color="primary">
+                                                    Aucune
+                                                </Button>
+                                            </>
+                                        ):oneEshopOrderById?.status=="Demande de remboursement rejetée"? (
+                                            <>
+                                                <Button disabled className="text-white py-0 px-1" color="primary">
+                                                    Aucune
+                                                </Button>
+                                            </>
+                                        ):oneEshopOrderById?.status=="Remboursement effectué"? (
+                                            <>
+                                                <Button disabled className="text-white py-0 px-1" color="primary">
+                                                    Aucune
+                                                </Button>
+                                            </>
+                                        ):oneEshopOrderById?.status=="Commande annulée"? (
+                                            <>
+                                                <Button disabled className="text-white py-0 px-1" color="primary">
+                                                    Aucune
+                                                </Button>
+                                            </>
+                                        ):("")}
+                                        </div>
+                                    </Table.Cell>
+                                </Table.Row >
+                            </Table.Body>
+                        </Table>
+
                         </div>
                     </div>
                 </Modal.Body>

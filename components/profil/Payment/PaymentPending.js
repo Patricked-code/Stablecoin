@@ -273,9 +273,9 @@ async function transferToEscrow() {
       if (magicCurrentBalance.gte(amountWei)) {
 
         const dataForm = {
-          spenderAddress: currentSenderAddress,
-          ownerAddress: magicCurrentAddress,
-          amount: amountWei,
+          spenderAddress: currentSenderAddress, //Adresse du smart contrat d'escrow
+          ownerAddress: magicCurrentAddress, //Adresse du client
+          amount: amountWei, //Montant
         };
         
         // Estimer le coût en gaz pour l'approbation
@@ -473,7 +473,7 @@ async function transferToEscrow() {
           Swal.fire({
             position: 'center',
             icon: 'error',
-            html: "<p> L'annulation de la demande de paiement a échouée. </p>" ,
+            html: "<p> L'annulation de la demande de paiement a échoué. </p>" ,
             showConfirmButton: false,
             timer: 15000
         })

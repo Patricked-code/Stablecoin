@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import axios from 'axios';
 import Banner from '../components/HomeOne/Banner';
 // import Analytics from 'analytics'
@@ -13,6 +14,7 @@ import MotPresident from '../components/HomeOne/Mot_president';
 import NotreVisions from '../components/HomeOne/Notre_vision';
 import Avantage from '../components/HomeOne/Avantages';
 import Adoption from '../components/HomeOne/Adoption';
+import SEO from '../components/Commun/SEO';
 
 
 const Index = () => {
@@ -30,6 +32,12 @@ const Index = () => {
   
   return (
     <>
+      <SEO 
+        title="Page d'accueil "
+        description="Page d'accueil de stablecoin de Wealthtech Innovations" 
+        keywords=""
+      />
+      
       <Banner />
       <Avantage/>
       <MotPresident pt70='pt-70' />

@@ -30,7 +30,7 @@ const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
 
     // console.log('historicalId=>',historicalId)
     // console.log('onClose=>',showRefund)
-    console.log('onClose=>',onClose)
+    // console.log('onClose=>',onClose)
     // Pour les smart contrats
     const ADDRESS_CONTRAT_EWARI = process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
     const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY
@@ -53,8 +53,8 @@ const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
     
     // Autre user
     const [infosOtherUser, setInfosOtherUser] = useState()
+    const [errorDataOtherUser, setErrorDataOtherUser] = useState()
 
-    
     
 
     //***************************************************************** *
@@ -82,8 +82,34 @@ const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
     const [showButtonRegul, setShowButtonRegul] = useState(0);
 
     
-    
+    // *******************************************************************
+        // LES CALCULS AFFICHER LE RECAPUTILATIF DES FRAIS DE DEMANDE DE REMBOURSEMENT
+    // *******************************************************************
 
+    let refundPercent=0.5
+    let refundPercentWti=70
+
+    let amountSender=""
+    let amountReceiver=""
+    let amountWti=""
+
+    // Calcul du feeService
+    let feeService = (oneHistorical?.amount * refundPercent) / 100;
+    if (feeService>2000) {
+        feeService = 2000 //Si le montant depasse 2000 on prend 2000 comme frais de service
+    } else if(feeService<100){
+        feeService = 100 //Si le montant est en dessous de 100 on prend 100 comme frais de service
+    }
+
+    // Calcul du montant pour l'expéditeur (amountSender)
+    amountSender = oneHistorical?.amount - feeService;
+    
+    // Calcul du montant pour WTI (amountWti)
+    amountWti = (feeService * refundPercentWti) / 100;
+
+    // Calcul du montant pour le destinataire (amountReceiver)
+    amountReceiver = feeService - amountWti;
+// ***********************FIN***************************************
 
 
     
@@ -185,7 +211,7 @@ const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
     // Fin
 
 
-    // Obtenir une seule ligne de transaction
+    // Obtenir une seule ligne de transaction en fonction de son ID
     useEffect(async () => {
         const getOneHistorical= async (_historicalId) => {
             const token = localStorage.getItem('tokenEnCours');
@@ -222,7 +248,7 @@ const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
     // const [showRefund, setShowRefund] = useState(false);
     // const handleCloseRefund = () => setShowRefund(false);
     // const handleShowRefund = () => setShowRefund(true);
-    const [secondsRemaining, setSecondsRemaining] = useState(5 * 60 );
+    const [secondsRemaining, setSecondsRemaining] = useState(10 * 60 );
     
     // Fin
 
@@ -241,12 +267,18 @@ const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
                     },
                 });
 
-                if (!result.ok) {
-                    throw new Error('Failed to fetch request data');
-                }
+                // if (!result.ok) {
+                //     throw new Error('Failed to fetch request data OK');
+                //     setErrorDataOtherUser(1)
+                // }
 
                 const data = await result.json();
                 setInfosOtherUser(data);
+                if (optionRefund==0) {
+                    setErrorDataOtherUser("")
+                } else {
+                    setErrorDataOtherUser(data?.message)
+                }
 
             } catch (error) {
                 // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
@@ -260,7 +292,100 @@ const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
 
 
    
+    // Fonction pour faire la demande de remboursement du transfert à un mauvais destinateur
+    const requestRefundTransfer  = async (e) => {
+        e.preventDefault()
+        setIsLoggingIn(true);
+        /* Vérifier si l'utilisateur a choisi un pays, forme juridique, secteur, employés, type  
+        *sinon il reçoit une alerte pour choisir
+        */
+        
+          try {
+            let address = ""
+            if (optionRefund==0) {
+                address = ""
+            }else if(optionRefund==1){
+                address= addressTo
+            } 
 
+            const dataForm = {
+                addressRefund:address,
+            }
+
+            const token = localStorage.getItem('tokenEnCours') //Le token récuperé
+
+            const result = await fetch(`${API_URL}/api/historical/request-refund-transfer/${historicalId}`, {
+              method:"PUT",
+              body: JSON.stringify(dataForm),
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+              }
+            })
+            const data = await result.json();
+            /* Verifier s'il y a un messsage d'erreur on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data?.transferFound?.refundStatus==0) {
+                if (data?.transferFound?.addressRefund) {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        html: `
+                            <p> 
+                                Votre demande de remboursement du montant ${data?.transferFound?.amount} ${symbolStablecoin} envoyé à ${data?.transferFound?.nameReceiver} a bien été pris en compte.
+                            </p>
+                            <p> Veuillez patienter dans un delai De 24h .<br/>  Si l’incident est résolu ${infosOtherUser?.codeTypeProfil=="part"? (infosOtherUser?.firstName + " " + infosOtherUser?.lastName): (infosOtherUser?.entreprise)} recevra : </p>
+                            <p><b>Montant à recevoir </b> : ${formatNumber(data?.transferFound?.refundAmountSender)} ${symbolStablecoin}</p>
+                            <p><b>Frais de service  </b> : <i class="colorRed">- ${formatNumber(data?.transferFound?.refundServiceFee)} ${symbolStablecoin} </i></p>
+                            <p><b>Montant envoyé  </b> : ${formatNumber(data?.transferFound?.amount)} ${symbolStablecoin}</p>
+                        ` ,
+                        showConfirmButton: false,
+                        timer: 30000
+                      })
+                } else {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        html: `
+                        <p> 
+                            Votre demande de remboursement du montant ${data?.transferFound?.amount} ${symbolStablecoin} envoyé à ${data?.transferFound?.nameReceiver} a bien été pris en compte.
+                        </p>
+                        <p> Veuillez patienter dans un delai De 24h .<br/>  Si l’incident est résolu vous recevrez : </p>
+                        <p><b>Montant à recevoir </b> : ${formatNumber(data?.transferFound?.refundAmountSender)} ${symbolStablecoin}</p>
+                        <p><b>Frais de service  </b> : <i class="colorRed">- ${formatNumber(data?.transferFound?.refundServiceFee)} ${symbolStablecoin} </i></p>
+                        <p><b>Montant envoyé  </b> : ${formatNumber(data?.transferFound?.amount)} ${symbolStablecoin}</p>
+                        ` ,
+                        showConfirmButton: false,
+                        timer: 30000
+                      })
+                }
+              
+
+              // Actualiser après l'affichage 
+              setTimeout(() => {
+                window.location.reload()
+                }, 30000)
+                // Fin
+            }else{
+                setIsLoggingIn(false);
+              
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${data?.message} </p>` ,
+                    showConfirmButton: false,
+                    timer: 10000
+                  })
+            }
+            // Fin condition 
+        
+            } catch {
+              setIsLoggingIn(false);
+            }
+        
+    }
+    // Fin
 
 
   
@@ -288,37 +413,35 @@ const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
 
 
 
-
     // Utilisez le useEffect pour effectuer des actions lorsque le composant est monté
     useEffect(() => {
         if (
-          dataPaymentPending?.status == "En attente" &&
-          dataPaymentPending?.createdAt
+            oneHistorical?.createdAt
         ) {
-            const createdAtTimestamp = new Date(dataPaymentPending.createdAt).getTime();
+            const createdAtTimestamp = new Date(oneHistorical?.createdAt).getTime();
             const nowTimestamp = new Date().getTime();
             const initialTimeDifference = (nowTimestamp - createdAtTimestamp) / 1000; // en secondes
-            let remainingTime = 5 * 60 - Math.floor(initialTimeDifference);
+            let remainingTime = 10 * 60 - Math.floor(initialTimeDifference);
             setSecondsRemaining(remainingTime);
-
-          if (remainingTime > 0) {
-            setShowPayer(true);
+        //   if (remainingTime > 0) {
+        //     setShowPayer(true);
     
             const intervalId = setInterval(() => {
               remainingTime -= 1;
               setSecondsRemaining(remainingTime);
     
               if (remainingTime <= 0) {
-                setShowPayer(false);
+                // setShowPayer(false);
+                onClose
                 clearInterval(intervalId);
 
                 // Le temps est écoulé, exécutez la fonction transferAmount
-                transferAmount();
+                // transferAmount();
               }
             }, 1000); // Mettez à jour toutes les secondes
-          }
+        //   }
         }
-      }, [dataPaymentPending?.id]); // Le tableau de dépendances vide garantit que cela s'exécute une seule fois lors du montage du composant
+      }, [oneHistorical?.createdAt]); // Le tableau de dépendances vide garantit que cela s'exécute une seule fois lors du montage du composant
   
       const formatTime = (seconds) => {
         const minutes = Math.floor(seconds / 60);
@@ -326,7 +449,27 @@ const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
         return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
       };
   
- 
+      
+       /**
+     * Formate un nombre en tronquant à deux décimales et en ajoutant un séparateur de milliers (espace).
+     * @param {number} number - Le nombre à formater.
+     * @returns {string} - Le nombre formaté en tant que chaîne de caractères.
+     * @throws {Error} - Si la fonction est appelée avec autre chose qu'un nombre.
+     */
+    function formatNumber(number) {
+        const decimalNumber = parseFloat(number);
+        if (typeof decimalNumber !== 'number') {
+            throw new Error('La fonction doit être appelée avec un nombre.');
+        }
+
+        // Tronquer le nombre à deux décimales
+        const truncatedNumber = Math.floor(decimalNumber * 100) / 100;
+
+        // Ajouter un séparateur de milliers (espace)
+        const formattedNumber = truncatedNumber.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
+        return formattedNumber;
+}
 
     /**
      * Affiche un contenu limité en fonction du nombre de mots ou de caractères spécifié.
@@ -392,7 +535,7 @@ const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
         <Modal show={showRefund} width='2000' fullscreen={true} >
         {/* <Modal show={true} className="mt-15" width='50%' height='50%' onHide={handleCloseRefund}> */}
             <Modal.Header closeButton className='bgColorblue text-center'>
-                <Modal.Title className="text-white " >Demande de remboursement</Modal.Title>                
+                <Modal.Title className="text-white " >Demande de remboursement (Temps restant: {formatTime(secondsRemaining)})</Modal.Title>                
             </Modal.Header>
             {/* <h3 className='text-center my-3'>Demande de remboursement</h3> */}
             {/* <Form role="form" onSubmit={hant}> */}
@@ -494,11 +637,12 @@ const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
                         ) : ("")}
                     </div>
 
+                    <form className='' onSubmit={requestRefundTransfer}>
                     
                     {/* LE FORMULAIRE DE DEMANDE DE REMBOURSEMENT */}
                     {showPartRefund==1 ? (
                         <>
-                            <form className=''>
+                            {/* <form className=''> */}
                                 <p className='my-2'>Erreur sur le Destinataire : </p>
                                 
                                 <div className='row'>
@@ -563,15 +707,45 @@ const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
                                             </>
                                         )}
                                         
-                                        {/* <div className=' col-lg-6 col-md-6'>
-                                            <Button className="text-white" color="primary" >
-                                                Confirmer 
-                                            </Button>
-                                        </div> */}
+                                        
                                     </>
                                 ):('')}
+
+                            {optionRefund==0 ? (
+                                <div className='mt-3'>
+                                    <p> 
+                                        Votre demande de remboursement du montant {oneHistorical?.amount} {symbolStablecoin} envoyé à {oneHistorical?.nameReceiver} a bien été pris en compte.
+                                    </p>
+                                    <p> 
+                                        Veuillez patienter dans un delai De 24h .<br/>  
+                                        Si l’incident est résolu vous recevrez : 
+                                    </p>
+                                    <p><b>Montant à recevoir </b> : {formatNumber(amountSender)} {symbolStablecoin}</p>
+                                    <p><b>Frais de service  </b> : <i className='colorRed'>- {formatNumber(feeService)} {symbolStablecoin}</i></p>
+                                    <p><b>Montant envoyé  </b> : {formatNumber(oneHistorical?.amount)} {symbolStablecoin}</p>
+                                </div>
+                            ) : ("")}
+
+                            {infosOtherUser?.codeTypeProfil? (
+                                <div className='mt-3'>
+                                    <p>            
+                                        Votre demande de remboursement du montant {formatNumber(oneHistorical?.amount)} {symbolStablecoin} envoyé à {oneHistorical?.nameReceiver} a bien été pris en compte.
+                                    </p>
+                                    <p> Veuillez patienter dans un delai De 24h .<br/>  Si l’incident est résolu {infosOtherUser?.codeTypeProfil=="part"? (infosOtherUser?.firstName + " " + infosOtherUser?.lastName): (infosOtherUser?.entreprise)} recevra : </p>
+                                    <p><b>Montant à recevoir </b> : {formatNumber(amountSender)} {symbolStablecoin}</p>
+                                    <p><b>Frais de service  </b> : <i className='colorRed'>- {formatNumber(feeService)} {symbolStablecoin}</i></p>
+                                    <p><b>Montant envoyé  </b> : {formatNumber(oneHistorical?.amount)} {symbolStablecoin}</p>
+                                </div>
+                            ) :("")}
+                        
+                        
+
+
+                                {errorDataOtherUser === "Aucun utilisateur trouvé"? (
+                                    <p className='colorRed text-center my-3'>Désolé, aucun utilisateur trouvé</p>
+                                ):("")}
                                 
-                            </form>
+                            {/* </form> */}
                         </>
                     ) :("")}
 
@@ -603,10 +777,26 @@ const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
                                         Fermer
                                     </Button>
                                 </div>
-                                {optionRefund==1 ? (
+                                {optionRefund==0? (
                                     <div className=' col-lg-6 col-md-6'>
-                                        <Button className="text-white" onClick={()=>setShowPartRefund(1)} color="primary" >
+                                        <Button disabled={isLoggingIn} className="text-white" type='submit' onClick={()=>setShowPartRefund(1)} color="primary" >
                                             Confirmer 
+                                            {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
+                                        </Button>
+                                    </div>
+                                ) : optionRefund==1? (
+                                    <div className=' col-lg-6 col-md-6'>
+                                        <Button  
+                                            disabled={errorDataOtherUser === "Aucun utilisateur trouvé"}  
+                                            className="text-white" type='submit' 
+                                            onClick={()=>setShowPartRefund(1)} 
+                                            color="primary"
+                                            // disabled={isLoggingIn} 
+
+                                        >
+                                            Confirmer 
+                                            {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
+
                                         </Button>
                                     </div>
                                 ) : (
@@ -620,6 +810,8 @@ const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
                             </div>
                         </>
                     ):("")}
+
+                    </form>
 
                     {/* <div className='row d-flex'>
                         <div className='col-lg-6 col-md-6 col-sm-6 mt-3 '>

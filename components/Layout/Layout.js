@@ -184,10 +184,12 @@ const Layout = ({ children }) => {
       pathname === "/admin/wealthtech/stablecoin/distributeur"||
       pathname === "/admin/wealthtech/stablecoin/portefeuille/conversion"||
       pathname === "/admin/wealthtech/stablecoin/abonnement/tarifs"||
-      pathname === "/admin/wealthtech/stablecoin/abonnement/liste-abonnes"
+      pathname === "/admin/wealthtech/stablecoin/abonnement/liste-abonnes"||
 
 
 
+      // *********PARTIE DU NOEUD****************************************
+      pathname === "/noeud"
 
 
       // FIN
@@ -359,6 +361,11 @@ const Layout = ({ children }) => {
       pathname === "/auth/enregistrer" || 
       pathname === "/account/activated" || 
       pathname ==="/account/twoEdition" || 
+
+
+      // *********PARTIE DU NOEUD****************************************
+      pathname === "/noeud"||
+
       pathname ==="/account/firstEdition"?'' : <Footer />}
         {/* <Footer /> */}
 

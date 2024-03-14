@@ -607,15 +607,11 @@ const Frais = () => {
                 AbiEcfa,
                 signer
             );
-            console.log("ok 2")
         
             // Call a state-change method
             const montantParse = ethers.utils.parseUnits(montantCei, 2);
-            console.log("ok 3")
 
-            console.log("montant parse",montantParse);
             await contract.transfer(adresseToCIE, montantParse).then((transferResult) => {
-            console.log("ok 4")
 
                 // PARTIE SWITCH ALERT
                 let timerInterval

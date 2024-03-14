@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import Router from 'next/router';
 import Dropdown from 'react-bootstrap/Dropdown';
 import PaiementEboutik from '../Payment/PaiementEboutik';
+import ModalTransfertRemboursementRecepteur from '../commun/ModalTransfertRemboursementRecepteur';
 
 
 
@@ -128,56 +129,56 @@ const [kycBusinessTransactionAnnual, setKycBusinessTransactionAnnual] = useState
   const timeoutRef = useRef(null); // Utilisez useRef au lieu de useState
 
   // Fonction pour gérer l'inactivité
-  const resetInactivityTimeout = useCallback(() => {
-    clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(handleInactive, 120000); // 2 minutes
-  }, []);
+  // const resetInactivityTimeout = useCallback(() => {
+  //   clearTimeout(timeoutRef.current);
+  //   timeoutRef.current = setTimeout(handleInactive, 60000); // 2 minutes
+  // }, []);
 
-  const handleInactive = () => {
-    Swal.fire({
-      title: 'Déconnexion automatique',
-      html: 'Vous serez déconnecté dans <b></b> secondes.<br><button id="stayConnected">Rester connecté</button>',
-      timer: 120000, // 2 minutes
-      timerProgressBar: true,
-      didOpen: () => {
-        Swal.showLoading();
-        const b = Swal.getHtmlContainer().querySelector('b');
-        const stayConnectedButton = document.getElementById('stayConnected');
+  // const handleInactive = () => {
+  //   Swal.fire({
+  //     title: 'Déconnexion automatique',
+  //     html: '<p>Nous avons décidé une inactivité prolongée dans votre espace.</p> <p> Sans actions de votre part, vous allez être déconnecté dans <b></b> secondes.</p> <button class="btn btn-primary rounded-pill" id="stayConnected">Rester connecté</button>',
+  //     timer: 60000, // 2 minutes
+  //     timerProgressBar: true,
+  //     didOpen: () => {
+  //       Swal.showLoading();
+  //       const b = Swal.getHtmlContainer().querySelector('b');
+  //       const stayConnectedButton = document.getElementById('stayConnected');
 
-        stayConnectedButton.addEventListener('click', () => {
-          clearInterval(timerInterval); // Arrêtez également le timerInterval
-          Swal.close();
-          resetInactivityTimeout(); // Réinitialiser le délai après avoir choisi de rester connecté
-        });
+  //       stayConnectedButton.addEventListener('click', () => {
+  //         clearInterval(timerInterval); // Arrêtez également le timerInterval
+  //         Swal.close();
+  //         resetInactivityTimeout(); // Réinitialiser le délai après avoir choisi de rester connecté
+  //       });
 
-        timerInterval = setInterval(() => {
-          const timeLeft = Swal.getTimerLeft();
-          if (timeLeft > 0) {
-            b.textContent = (timeLeft / 1000).toFixed(0);
-          } else {
-            clearInterval(timerInterval);
-            logout(); // Implémentez votre logique de déconnexion ici
-          }
-        }, 100);
-      },
-      willClose: () => {
-        clearInterval(timerInterval); // Nettoyer l'intervalle
-      }
-    });
-  };
+  //       timerInterval = setInterval(() => {
+  //         const timeLeft = Swal.getTimerLeft();
+  //         if (timeLeft > 0) {
+  //           b.textContent = (timeLeft / 1000).toFixed(0);
+  //         } else {
+  //           clearInterval(timerInterval);
+  //           logout(); // Implémentez votre logique de déconnexion ici
+  //         }
+  //       }, 100);
+  //     },
+  //     willClose: () => {
+  //       clearInterval(timerInterval); // Nettoyer l'intervalle
+  //     }
+  //   });
+  // };
 
-  useEffect(() => {
-    resetInactivityTimeout(); // Démarrer le délai initial lors du rendu initial
+  // useEffect(() => {
+  //   resetInactivityTimeout(); // Démarrer le délai initial lors du rendu initial
 
-    document.addEventListener('mousemove', resetInactivityTimeout);
-    document.addEventListener('keydown', resetInactivityTimeout);
+  //   document.addEventListener('mousemove', resetInactivityTimeout);
+  //   document.addEventListener('keydown', resetInactivityTimeout);
 
-    return () => {
-      document.removeEventListener('mousemove', resetInactivityTimeout);
-      document.removeEventListener('keydown', resetInactivityTimeout);
-      clearTimeout(timeoutRef.current);
-    };
-  }, [resetInactivityTimeout]);
+  //   return () => {
+  //     document.removeEventListener('mousemove', resetInactivityTimeout);
+  //     document.removeEventListener('keydown', resetInactivityTimeout);
+  //     clearTimeout(timeoutRef.current);
+  //   };
+  // }, [resetInactivityTimeout]);
 // ***********FIN****************************
 
 
@@ -625,7 +626,16 @@ useEffect(async() => {
             </Link>
 
             <div className='nav-list'>
+
+            {/* POUR DELENCHER LE POP UP DE PAIEMENT EN ATTENTE FAIRE SUR LES SITES ECOMMERCES */}
               <PaiementEboutik/>
+            {/* FIN */}
+
+            {/* POUR DELENCHER LE POP UP DE REMBOURSEMENT DE TRANSFERT ENTRE UTILISATEUR*/}
+              <ModalTransfertRemboursementRecepteur/>
+            {/* FIN */}
+
+
             {currentUser?.codeTypeProfil === "part" ? (
               <span className='nav-link-icon text-white mx-1'>{currentUser?.lastName} {currentUser?.firstName}</span>
             ) :(

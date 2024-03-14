@@ -24,7 +24,7 @@ const CAccueilPortefeuille = () => {
     const URL_API_OPCVM =process.env.NEXT_PUBLIC_URL_API_OPCVM // URL STABLECOIN
     const ADDRESS_CONTRAT_EWARI =process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
     const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY
-    
+    const ADDRESS_COMMISSION_TRANSFER =process.env.NEXT_PUBLIC_ADDRESS_COMMISSION_TRANSFER //Adresse de commission des transferts
     
     const [currentUser, setCurrentUser] = useState();
     const [magicCurrentAddress, setMagicCurrentAddress] = useState();
@@ -195,20 +195,35 @@ const CAccueilPortefeuille = () => {
     const handleTransfertClose = () => setShowTransfert(false);
     const handleTransfertShow = () => setShowTransfert(true);
 
+    // Modal Transfert sans abonnement
+    const [showTransfertNoSubscribe, setShowTransfertNoSubscribe] = useState(false);
+    const handleTransfertCloseNoSubscribe = () => setShowTransfertNoSubscribe(false);
+    const handleTransfertShowNoSubscribe = () => setShowTransfertNoSubscribe(true);
+    
+
     // Formulaire du Modal Transfert
-    const [montantEnvoyer, setMontantEnvoyer] = useState(0);
+    const [montantEnvoyer, setMontantEnvoyer] = useState();
     const [addressTo, setAddressTo] = useState();
-    const [montantRecu, setMontantRecu] = useState(0);
-    const [percent, setPercent] = useState(1);
+    const [montantRecu, setMontantRecu] = useState();
+    const [percent, setPercent] = useState(0.5);
 
     const [symbol, setSymbol] = useState();
     // Fin
 
+    // *********************************************************
+      // LES CALCULS
+    // ***************************************************************
 
     // Calcule des frais de transaction
-    const frais = montantEnvoyer*percent/100
-    const montantRecevoir =  montantEnvoyer - frais 
-    // Fin
+    let feeTransfer = montantEnvoyer*percent/100
+
+    if (feeTransfer<10) {
+      feeTransfer = 10 //Si le montant est en dessous de 10 on prend 10 comme frais de transfert
+    }
+
+    //Calcul du montant à rececoir 
+    const montantRecevoir =  montantEnvoyer - feeTransfer
+    // *********************FIN CALCUL******************************
 
     // FONCTION POUR COPIER L'ADRESSE PUBLIC DE L'UTILISATEUR
     const copyToClipboard = () => {
@@ -382,6 +397,95 @@ const CAccueilPortefeuille = () => {
         }
     };
 
+
+    // Fonction d'enregistrement des données du transfert dans l'historique
+    const addHistoricalTransferBatch = async (_hash) => {
+      setIsLoggingIn(true);
+      
+      let nameSender =""
+      if (currentUser?.codeTypeProfil=="part") {
+          nameSender = currentUser?.lastName + '' + currentUser?.firstName
+      } else {
+          nameSender = currentUser?.entreprise
+      }
+
+      let nameReceiver =""
+      if (infosOtherUser?.codeTypeProfil=="part") {
+          nameReceiver = infosOtherUser?.lastName + '' + infosOtherUser?.firstName
+      } else {
+          nameReceiver = infosOtherUser?.entreprise
+      }
+      try {
+          
+          const dataBody = {
+              typeTransaction: "Transfert",
+              activeName: nameStablecoin,
+              activeSymbol: symbolStablecoin,
+              nameSender: nameSender,
+              nameReceiver: nameReceiver,
+              emailSender: currentUser?.email,
+              emailReceiver: infosOtherUser?.email,
+              senderAddress: magicCurrentAddress,
+              receiverAddress: infosOtherUser?.address,
+              commissionWealthechAddress:ADDRESS_COMMISSION_TRANSFER,
+              fees:feeTransfer,
+              percent:percent,
+              amount: montantRecevoir,
+              hash: _hash
+          }
+
+          // Obtenir le token en cours
+          const token = localStorage.getItem('tokenEnCours');
+          
+          const response = await fetch(`${API_URL}/api/historical/add-historical`, {
+              method: 'POST',
+              body: JSON.stringify(dataBody),
+              headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`
+              },
+          });
+
+          /**
+           * Données de la réponse de la requête .
+           * @type {object}
+           */
+          const data = await response.json();
+
+          /* Verifier s'il y a un messsage d'erreur, on l'affiche dans SWAL 
+          * sinon on affiche le message de succès
+          */
+          if (data.message==200) {
+              Swal.fire({
+                  position: 'center',
+                  icon: 'success',
+                  html: `<p> votre transfert s'est effectué avec succès.</p>`,
+                  showConfirmButton: false,
+                  timer: 5000
+              });
+
+              // Actualiser après l'affichage
+              setTimeout(() => {
+                  window.location.reload();
+              }, 7000);
+              // Fin
+          } else {
+              setMessageError(data.message);
+              setIsLoggingIn(false);
+              Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  html: `<p> ${messageError} </p>`,
+                  showConfirmButton: false,
+                  timer: 10000
+              });
+          }
+          // Fin condition
+      } catch (error) {
+          console.error('Erreur =>', error);
+      }
+  };
+
     // ***************************************************************************************
     // IMPLEMENTATIONS DES FONCTIONS DU SMART CONTRAT DU TOKEN DE STABLECOIN
     // ***************************************************************************************
@@ -446,6 +550,95 @@ const CAccueilPortefeuille = () => {
         e.preventDefault()
     }
   // Fin
+
+
+
+  
+    // **********Fonction pour effectuer le transfert en payant les frais de transaction***************************************************************
+    const transferBatch = async () => {
+      setIsLoggingIn(true)
+  
+      // Parser le montant à recevoir à l'expéditeur
+      const tostingReceiver = String(montantRecevoir)
+      const amountWeiReceiver = ethers.utils.parseUnits(tostingReceiver, decimalStablecoin);
+  
+      // Parser le montant de commission de remboursement de transfert de WTI
+      const tostingWti = String(feeTransfer)
+      const amountWeiWti = ethers.utils.parseUnits(tostingWti, decimalStablecoin);
+  
+     
+  // return
+      const dataForm = {
+        addressTo:magicCurrentAddress,
+        recipients: [addressTo, ADDRESS_COMMISSION_TRANSFER],
+        amounts: [amountWeiReceiver, amountWeiWti],
+      };
+      
+      try {
+        // Vérifie que les tableaux ont la même longueur
+        if (dataForm?.recipients.length !== dataForm?.amounts.length) {
+          setIsLoggingIn(false)
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            html: `<p> Les tableaux doivent avoir la même longueur.</p>`,
+            showConfirmButton: false,
+            timer: 5000
+          });
+          throw new Error("Les tableaux doivent avoir la même longueur");
+        }
+  
+      // Vérifie si l'abonné a suffisamment de jetons pour effectuer le remboursement
+        const convertAmount = parseFloat(montantEnvoyer)
+        if (balanceStablecoin<=convertAmount) {
+          setIsLoggingIn(false);
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            html: "Votre solde est insuffisant pour effectuer le transfert.",
+            showConfirmButton: false,
+            timer: 5000,
+          });
+          throw new Error("Solde insuffisant pour effectuer le transfert.");
+        }
+  
+        // Vérifie que l'expéditeur a suffisamment de DEV pour les frais de gas
+        const gasEstimate = await contractStablecoin.estimateGas.transferBatch(dataForm?.addressTo, dataForm?.recipients, dataForm?.amounts);
+        const gasCost = gasEstimate.mul(await provider.getGasPrice());
+        const senderBalance = await signer.getBalance();
+  
+        if (gasCost?._hex>senderBalance?._hex) {
+          setIsLoggingIn(false)
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            html: `<p> L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.</p>`,
+            showConfirmButton: false,
+            timer: 5000
+          });
+          throw new Error("L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.");
+  
+        }
+  
+        // Effectue le transfert pour chaque destinataire dans une seule transaction
+        const transferBatchTx = await contractStablecoin.transferBatch(dataForm?.addressTo, dataForm?.recipients, dataForm?.amounts);
+        await transferBatchTx.wait();
+
+        //Appel de la fonction de la mise à jour de l'historique de transaction
+        addHistoricalTransferBatch(transferBatchTx?.hash);
+
+      } catch (error) {
+        setIsLoggingIn(false)
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            html: `<p> Une erreur s'est produite lors de la transaction.</p>`,
+            showConfirmButton: false,
+            timer: 5000
+          });
+        console.error("Erreur:", error.message);
+      }
+  };
 
 
     // FONCTION POUR RECUPERER TOUTES LES INFOS DE CONVERSION
@@ -571,10 +764,8 @@ const CAccueilPortefeuille = () => {
               }
 
               const data = await result.json();
-              console.log("llFondsOfUser=>1")
               
               setAllFondsOfUser(data.data.funds);
-              console.log("llFondsOfUser=>",allFondsOfUser)
           } catch (error) {
               // Handle errors appropriately, e.g., set an error state.
               console.error('Error fetching data:', error);
@@ -610,7 +801,6 @@ const CAccueilPortefeuille = () => {
             const data = await result.json();
             
             setAllWalletOpcvmOfUser(data.data.portefeuille);
-            console.log("getportefeuillebyuser=>",allWalletOpcvmOfUser)
         } catch (error) {
             // Handle errors appropriately, e.g., set an error state.
             console.error('Error fetching data:', error);
@@ -633,7 +823,7 @@ const CAccueilPortefeuille = () => {
      * @returns {string} - Le nombre formaté en tant que chaîne de caractères.
      * @throws {Error} - Si la fonction est appelée avec autre chose qu'un nombre.
      */
-     function formatNumber(number) {
+    function formatNumber(number) {
       if (typeof number !== 'number') {
           throw new Error('La fonction doit être appelée avec un nombre.');
       }
@@ -645,7 +835,7 @@ const CAccueilPortefeuille = () => {
       const formattedNumber = truncatedNumber.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 
       return formattedNumber;
-  }
+    }
 
     return (
         <>
@@ -736,7 +926,9 @@ const CAccueilPortefeuille = () => {
                                                                     <a className=" text-white aNoDecor px-3">Retrait</a> 
                                                                     </Link>
                                                                 </small>
-                                                                <small className=" py-0 mx-2 px-0 btn btn-primary" onClick={!stateOfSubscription || stateOfSubscription==0 ? warnOnSubscription : handleTransfertShow}>
+                                                                {/* <small className=" py-0 mx-2 px-0 btn btn-primary" onClick={!stateOfSubscription || stateOfSubscription==0 ? warnOnSubscription : handleTransfertShow}> */}
+                                                                <small className=" py-0 mx-2 px-0 btn btn-primary" onClick={!stateOfSubscription || stateOfSubscription==0 ? handleTransfertShowNoSubscribe : handleTransfertShow}>
+                                                                
                                                                 {/* <small className=" py-0 mx-2 px-0 btn btn-primary" onClick={ handleTransfertShow}> */}
                                                                     <a className=" text-white aNoDecor  px-3">Transfert</a> 
                                                                 </small>
@@ -1139,7 +1331,7 @@ const CAccueilPortefeuille = () => {
                               className="order-lg-1 text-center"
                             >
                               <Button className="text-white " variant="danger" onClick={handleTransfertClose} >
-                                Annuler
+                                Fermer
                               </Button>
                             </Col>
 
@@ -1270,7 +1462,7 @@ const CAccueilPortefeuille = () => {
                                 
                               >
                                 <Button className="text-white " variant="danger"  onClick={handleTransfertClose} >
-                                  Annuler
+                                  Fermer
                                 </Button>
                               </Col>
 
@@ -1398,7 +1590,7 @@ const CAccueilPortefeuille = () => {
                                 className="order-lg-1 text-center"
                               >
                                 <Button className="text-white " variant="danger" onClick={handleTransfertClose}>
-                              Annuler
+                              Fermer
                             </Button>
                               </Col>
 
@@ -1436,7 +1628,544 @@ const CAccueilPortefeuille = () => {
                 </Modal.Body>
                 {/* <Modal.Footer> */}
                 {/* <Button className="text-white" variant="danger" onClick={handleTransfertClose}>
-                    Annuler
+                    Fermer
+                </Button>
+                <Button variant="success" className="text-white" >
+                    Envoyer
+                </Button>
+                </Modal.Footer> */}
+                {/* </form> */}
+                
+            </Modal>
+            {/* *****************************************FIN****************************************** */}
+
+            {/* ********************************************************************************** */}
+                {/* MODAL DE TRANSFERT DE JETON VERS AUTRE COMPTE SANS ABONNEMENT*/}
+            {/* ********************************************************************************** */}
+            <Modal show={showTransfertNoSubscribe} className="mt-15" onHide={handleTransfertCloseNoSubscribe} style={{maxWidth: '1800px', width: '100%'}}>
+                <Modal.Header closeButton id="bgcolorblue">
+                <Modal.Title className="" >Transfert des jetons </Modal.Title>
+                </Modal.Header>
+                {/* <form > */}
+                <Modal.Body>
+                
+                  <div className="bloc-tabs-utilite">
+                    <button
+                      className={toggleState === 1 ? "tabs active-tabs gr-text-8 text-color-opacity" : "tabs gr-text-8 text-color-opacity"}
+                      onClick={() => toggleTab(1)}
+                    >
+                      Adresse Blockchain
+                    </button>
+
+                    <button
+                    className={toggleState === 2 ? "tabs active-tabs  gr-text-8 text-color-opacity" : "tabs  gr-text-8 text-color-opacity"}
+                    onClick={() => toggleTab(2)}
+                    >
+                      Adresse email
+                    </button>
+
+                    <button
+                    className={toggleState === 3 ? "tabs active-tabs  gr-text-8 text-color-opacity" : "tabs  gr-text-8 text-color-opacity"}
+                    onClick={() => toggleTab(3)}
+                    >
+                      Identifiant
+                    </button>
+                  </div>
+
+                  <div className="content-tabs">
+                    <div
+                    className={toggleState === 1 ? "content  active-content" : "content"}
+                    >
+                     {/* Formulaire de la partie avec adresse blockchain  */}
+                    <form onSubmit={handleSubmit}>
+                      {/* <div className="form-group mb-6">
+                        <label
+                          htmlFor="addressTo"
+                          className="gr-text-8 fw-bold text-blackish-blue "
+                        >
+                          Adresse blockchain du bénéficiaire <sup className="text-red">*</sup>
+                        </label>
+                        <input
+                          className="form-control gr-text-11 border mt-3 bg-white"
+                          type="text"
+                          id="addressTo"
+                          placeholder="Adresse blockchain du bénéficiaire"
+                          required
+                          defaultValue={addressTo} 
+                          onChange={(event)=>setAddressTo(event.target.value)}
+                        />
+                      </div> */}
+
+                        <div className="form-group my-6 ">
+                          <label
+                            htmlFor="montant"
+                            className="gr-text-8 fw-bold text-blackish-blue"
+                          >
+                            Adresse bockchain du bénéficiaire <sup className="text-red">*</sup>
+
+                          </label>
+                          <div className="input-group flex-nowrap">
+                          <input
+                              className="form-control gr-text-11 border mt-3 bg-white"
+                              type="text"
+                              id="addressTo"
+                              placeholder="Adresse blockchain du bénéficiaire"
+                              required
+                              defaultValue={addressTo} 
+                              onChange={(event)=>setAddressTo(event.target.value)}
+                              
+                          />
+                          <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
+                            <button onClick={searchUserWithBlockchain} disabled={isLoggingIn}><Icon  icon="bx:search-alt"  />
+                            </button>
+                          </span>
+
+                          </div>
+                        </div>
+
+                        {/* affichage infos utilisateur beneeficiaire */}
+                        {infosOtherUser?.entreprise ? (
+                          <p className="gr-text-8 " id="addon-wrapping">
+                            Nom de l'entreprise : {infosOtherUser?.entreprise}
+                          </p>
+                        ) : (infosOtherUser?.firstName && infosOtherUser?.lastName ?
+                         (<div>
+                            <p className="gr-text-8 " id="addon-wrapping">
+                              Nom : {infosOtherUser?.lastName}
+                            </p>
+                            <p className="gr-text-8 " id="addon-wrapping">
+                              Prenom : {infosOtherUser?.firstName}
+                            </p>
+                         </div>) : <p className="gr-text-8 colorRed" id="addon-wrapping">{infosOtherUser?.message}</p>)}
+                          {/* Fin affichage */}
+
+                      {infosOtherUser?.entreprise || infosOtherUser?.firstName || infosOtherUser?.lastName?(
+                        <>
+                          <div className="form-group my-6 ">
+                            <label
+                              htmlFor="montant"
+                              className="gr-text-8 fw-bold text-blackish-blue"
+                            >
+                              Montant à envoyer <sup className="text-red">*</sup>
+                            </label>
+                            <div className="input-group flex-nowrap">
+                            <input
+                              className="form-control gr-text-11 border mt-3 bg-white"
+                              type="number"
+                              id="montant"
+                              placeholder="Montant envoyé"
+                              required
+                              defaultValue={montantEnvoyer} 
+                              onChange={(event)=>setMontantEnvoyer(event.target.value)}
+                            />
+                            <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">{symbolStablecoin}</span>
+
+                            </div>
+                          </div>
+
+                          <div className='row mt-3'>
+                            <div className="form-group my-6 col-lg-6 col-md-6">
+                              <label
+                                htmlFor="montant"
+                                className="gr-text-8 fw-bold text-blackish-blue"
+                              >
+                                Montant à recevoir <sup className="text-red">*</sup>
+                              </label>
+                              <div className="input-group flex-nowrap">
+                              <input
+                                className="form-control gr-text-11 border mt-3 bg-white"
+                                type="number"
+                                id="montant"
+                                placeholder="Montant reçu"
+                                required
+                                disabled={true}
+                                value={montantRecevoir} 
+                                // defaultValue={montantRecu} 
+                                // onChange={(event)=>setMontantRecu(event.target.value)}
+                              />
+                              <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">{symbolStablecoin}</span>
+
+                              </div>
+                            </div>
+
+                            <div className="form-group my-6 col-lg-6 col-md-6">
+                              <label
+                                htmlFor="montant"
+                                className="gr-text-8 fw-bold text-blackish-blue"
+                              >
+                                Frais <sup className="text-red">*</sup>
+                              </label>
+                              <div className="input-group flex-nowrap">
+                              <input
+                                className="form-control gr-text-11 border mt-3 bg-white"
+                                type="number"
+                                id="montant"
+                                placeholder="Montant reçu"
+                                required
+                                disabled={true}
+                                value={feeTransfer} 
+                              
+                              />
+                              <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">{symbolStablecoin}</span>
+
+                              </div>
+                            </div>
+                          </div>
+                          <Row className="my-3 justify-content-between align-items-center">
+                            <Col
+                                xs="6"
+                                md="6"
+                                lg="6"
+                                xl="6"
+                              className="order-lg-1 text-center"
+                            >
+                              <Button className="text-white " variant="danger" onClick={handleTransfertClose} >
+                                Fermer
+                              </Button>
+                            </Col>
+
+                            <Col
+                                xs="6"
+                                md="6"
+                                lg="6"
+                                xl="6"
+                              className="order-lg-1 text-center"
+                              
+                            >
+                              <Button variant="success" onClick={transferBatch} disabled={isLoggingIn} className="text-white" >
+                                Envoyer
+                                {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
+
+                              </Button>
+                            </Col>
+                          </Row>
+                         
+                        </>
+                      ):("")}
+                    </form>
+                    </div>
+
+                    <div
+                    className={toggleState === 2 ? "content  active-content" : "content"}
+                    >
+                     {/* Formulaire de la partie avec adresse Email  */}
+                    <form onSubmit={handleSubmit}>
+                      
+                        <div className="form-group my-6 ">
+                          <label
+                            htmlFor="montant"
+                            className="gr-text-8 fw-bold text-blackish-blue"
+                          >
+                            Adresse email du bénéficiaire <sup className="text-red">*</sup>
+
+                          </label>
+                          <div className="input-group flex-nowrap">
+                          <input
+                              className="form-control gr-text-11 border mt-3 bg-white"
+                              type="email"
+                              id="email"
+                              placeholder="Adresse email du bénéficiaire"
+                              required
+                              defaultValue={emailOtherUser} 
+                              onChange={(event)=>setEmailOtherUser(event.target.value)}
+                              
+                          />
+                          <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
+                            <button onClick={searchUserWithEmail} disabled={isLoggingIn}><Icon  icon="bx:search-alt"  />
+                            </button>
+                          </span>
+
+                          </div>
+                        </div>
+                        {/* affichage des infos de l'utilisateur */}
+                        {infosOtherUser?.entreprise ? (
+                          <p className="gr-text-8 mb-3" id="addon-wrapping">
+                            Nom de l'entreprise : {infosOtherUser?.entreprise}
+                          </p>
+                        ) : (infosOtherUser?.firstName && infosOtherUser?.lastName ?
+                         (<div className='mb-3'>
+                            <p className="gr-text-8 " id="addon-wrapping">
+                              Nom : {infosOtherUser?.lastName}
+                            </p>
+                            <p className="gr-text-8 " id="addon-wrapping">
+                              Prenom : {infosOtherUser?.firstName}
+                            </p>
+                         </div>) : <p className="gr-text-8 mb-3 colorRed" id="addon-wrapping">{infosOtherUser?.message}</p>)}
+                        {/* Fin affichage */}
+
+                        {infosOtherUser?.entreprise || infosOtherUser?.firstName || infosOtherUser?.lastName?(
+                          <>
+                            <div className="form-group my-6 ">
+                              <label
+                                htmlFor="montant"
+                                className="gr-text-8 fw-bold text-blackish-blue"
+                              >
+                                Montant à envoyer <sup className="text-red">*</sup>
+                              </label>
+                              <div className="input-group flex-nowrap">
+                              <input
+                                className="form-control gr-text-11 border mt-3 bg-white"
+                                type="number"
+                                id="montant"
+                                placeholder="Montant envoyé"
+                                required
+                                defaultValue={montantEnvoyer} 
+                                onChange={(event)=>setMontantEnvoyer(event.target.value)}
+                              />
+                              <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">{symbolStablecoin}</span>
+
+                              </div>
+                            </div>
+
+                            <div className='row mt-3'>
+                            <div className="form-group my-6 col-lg-6 col-md-6">
+                              <label
+                                htmlFor="montant"
+                                className="gr-text-8 fw-bold text-blackish-blue"
+                              >
+                                Montant à recevoir <sup className="text-red">*</sup>
+                              </label>
+                              <div className="input-group flex-nowrap">
+                              <input
+                                className="form-control gr-text-11 border mt-3 bg-white"
+                                type="number"
+                                id="montant"
+                                placeholder="Montant reçu"
+                                required
+                                disabled={true}
+                                value={montantRecevoir} 
+                                // defaultValue={montantRecu} 
+                                // onChange={(event)=>setMontantRecu(event.target.value)}
+                              />
+                              <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">{symbolStablecoin}</span>
+
+                              </div>
+                            </div>
+
+                            <div className="form-group my-6 col-lg-6 col-md-6">
+                              <label
+                                htmlFor="montant"
+                                className="gr-text-8 fw-bold text-blackish-blue"
+                              >
+                                Frais <sup className="text-red">*</sup>
+                              </label>
+                              <div className="input-group flex-nowrap">
+                              <input
+                                className="form-control gr-text-11 border mt-3 bg-white"
+                                type="number"
+                                id="montant"
+                                placeholder="Montant reçu"
+                                required
+                                disabled={true}
+                                value={feeTransfer} 
+                              
+                              />
+                              <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">{symbolStablecoin}</span>
+
+                              </div>
+                            </div>
+                          </div>
+                          <Row className="my-3 justify-content-between align-items-center">
+                            <Col
+                                xs="6"
+                                md="6"
+                                lg="6"
+                                xl="6"
+                              className="order-lg-1 text-center"
+                            >
+                              <Button className="text-white " variant="danger" onClick={handleTransfertClose} >
+                                Fermer
+                              </Button>
+                            </Col>
+
+                            <Col
+                                xs="6"
+                                md="6"
+                                lg="6"
+                                xl="6"
+                              className="order-lg-1 text-center"
+                              
+                            >
+                              <Button variant="success" onClick={transferBatch} disabled={isLoggingIn} className="text-white" >
+                                Envoyer
+                                {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
+
+                              </Button>
+                            </Col>
+                          </Row>
+                          </>
+                        ):("")}
+
+                    </form>
+                    </div>
+
+                    <div
+                    className={toggleState === 3 ? "content  active-content" : "content"}
+                    >
+                     {/* Formulaire de la partie avec identifiant */}
+                    <form onSubmit={handleSubmit}>
+
+                      <div className="form-group my-6 ">
+                          <label
+                            htmlFor="montant"
+                            className="gr-text-8 fw-bold text-blackish-blue"
+                          >
+                            Identifiant du bénéficiaire <sup className="text-red">*</sup>
+
+                          </label>
+                          <div className="input-group flex-nowrap">
+                          <input
+                              className="form-control gr-text-11 border mt-3 bg-white"
+                              type="text"
+                              id="addressTo"
+                              placeholder="Identifiant du bénéficiaire"
+                              required
+                              defaultValue={codeOtherUser} 
+                              onChange={(event)=>setCodeOtherUser(event.target.value)}
+                          />
+                          <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">
+                            <button onClick={searchUserWithIdentifiant} disabled={isLoggingIn}><Icon  icon="bx:search-alt"  />
+                            </button>
+                          </span>
+
+                          </div>
+                        </div>
+
+                        {/* affichage des infos de l'utilisateur */}
+                        {infosOtherUser?.entreprise ? (
+                          <p className="gr-text-8 mb-3" id="addon-wrapping">
+                            Nom de l'entreprise : {infosOtherUser?.entreprise}
+                          </p>
+                        ) : (infosOtherUser?.firstName && infosOtherUser?.lastName ?
+                         (<div className='mb-3'>
+                            <p className="gr-text-8 " id="addon-wrapping">
+                              Nom : {infosOtherUser?.lastName}
+                            </p>
+                            <p className="gr-text-8 " id="addon-wrapping">
+                              Prenom : {infosOtherUser?.firstName}
+                            </p>
+                         </div>) : <p className="gr-text-8 mb-3 colorRed" id="addon-wrapping">{infosOtherUser?.message}</p>)}
+                        {/* Fin affichage */}
+                        {infosOtherUser?.entreprise || infosOtherUser?.firstName || infosOtherUser?.lastName ?(
+                          <>
+                            <div className="form-group my-6 ">
+                              <label
+                                htmlFor="montant"
+                                className="gr-text-8 fw-bold text-blackish-blue"
+                              >
+                                Montant à envoyer <sup className="text-red">*</sup>
+                              </label>
+                              <div className="input-group flex-nowrap">
+                              <input
+                                className="form-control gr-text-11 border mt-3 bg-white"
+                                type="number"
+                                id="montant"
+                                placeholder="Montant envoyé"
+                                required
+                                defaultValue={montantEnvoyer} 
+                                onChange={(event)=>setMontantEnvoyer(event.target.value)}
+                              />
+                              <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">{symbolStablecoin}</span>
+
+                              </div>
+                            </div>
+                        
+                            <div className='row mt-3'>
+                            <div className="form-group my-6 col-lg-6 col-md-6">
+                              <label
+                                htmlFor="montant"
+                                className="gr-text-8 fw-bold text-blackish-blue"
+                              >
+                                Montant à recevoir <sup className="text-red">*</sup>
+                              </label>
+                              <div className="input-group flex-nowrap">
+                              <input
+                                className="form-control gr-text-11 border mt-3 bg-white"
+                                type="number"
+                                id="montant"
+                                placeholder="Montant reçu"
+                                required
+                                disabled={true}
+                                value={montantRecevoir} 
+                                // defaultValue={montantRecu} 
+                                // onChange={(event)=>setMontantRecu(event.target.value)}
+                              />
+                              <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">{symbolStablecoin}</span>
+
+                              </div>
+                            </div>
+
+                            <div className="form-group my-6 col-lg-6 col-md-6">
+                              <label
+                                htmlFor="montant"
+                                className="gr-text-8 fw-bold text-blackish-blue"
+                              >
+                                Frais <sup className="text-red">*</sup>
+                              </label>
+                              <div className="input-group flex-nowrap">
+                              <input
+                                className="form-control gr-text-11 border mt-3 bg-white"
+                                type="number"
+                                id="montant"
+                                placeholder="Montant reçu"
+                                required
+                                disabled={true}
+                                value={feeTransfer} 
+                              
+                              />
+                              <span className="input-group-text gr-text-11  mt-3" id="addon-wrapping">{symbolStablecoin}</span>
+
+                              </div>
+                            </div>
+                          </div>
+                          <Row className="my-3 justify-content-between align-items-center">
+                            <Col
+                                xs="6"
+                                md="6"
+                                lg="6"
+                                xl="6"
+                              className="order-lg-1 text-center"
+                            >
+                              <Button className="text-white " variant="danger" onClick={handleTransfertClose} >
+                                Fermer
+                              </Button>
+                            </Col>
+
+                            <Col
+                                xs="6"
+                                md="6"
+                                lg="6"
+                                xl="6"
+                              className="order-lg-1 text-center"
+                              
+                            >
+                              <Button variant="success" onClick={transferBatch} disabled={isLoggingIn} className="text-white" >
+                                Envoyer
+                                {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
+
+                              </Button>
+                            </Col>
+                          </Row>
+                          </>
+                        ):("")}
+
+                    </form>
+                    </div>
+                  </div>
+
+              
+
+
+
+
+
+
+                    
+                    
+                </Modal.Body>
+                {/* <Modal.Footer> */}
+                {/* <Button className="text-white" variant="danger" onClick={handleTransfertClose}>
+                    Fermer
                 </Button>
                 <Button variant="success" className="text-white" >
                     Envoyer

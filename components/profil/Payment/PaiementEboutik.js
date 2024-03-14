@@ -21,13 +21,23 @@ import Swal from 'sweetalert2';
 import ABI_TOKEN_EWARI from "../../../components/Contrats/Abi/AbiStablecoin.json";
 import ABI_ESCROW_STABLECOIN from "../../../components/Contrats/Abi/AbiEscrowStablecoin.json";
 
-
-// FIN
-
+/**
+ * Le composant PaiementEboutik gère le processus de paiement dans une application d'e-commerce,
+ * permettant aux utilisateurs d'effectuer des paiements en utilisant un actif numérique stable (stablecoin)
+ * via un smart contract Ethereum. Ce composant interagit avec l'API backend pour récupérer les informations
+ * de paiement, ainsi qu'avec des smart contracts pour exécuter les transactions.
+ *
+ * @component
+ * @example
+ * return (
+ *   <PaiementEboutik />
+ * )
+ */
 const PaiementEboutik = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
 
+    // Déclaration des états et hooks pour gérer les différentes informations et états du composant.
     // Pour les smart contrats
     const ADDRESS_CONTRAT_EWARI = process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
     const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY
@@ -37,21 +47,7 @@ const PaiementEboutik = () => {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
 
     const [dataPaymentPending, setDataPaymentPending] = useState(); //state des données de paiement en entente
-    const [dataOnePaymentPending, setDataOnePaymentPending] = useState();
-    const [paymentPendingLength, setPaymentPendingLength] = useState();
-
-    const [idPaymentPending, setIdPaymentPending] = useState();
-    const [currentnameEntreprise, setCurrentEntreprise] = useState();
-    const [currentSenderEmail, setCurrentSenderEmail] = useState();
-    const [currentSenderAddress, setCurrentSenderAddress] = useState();
-    const [currentAmount, setCurrentAmount] = useState();
-    const [currentSenderId, setCurrentSenderId] = useState();
-    const [contractEscrow, setContractEscrow] = useState()
-    
-    // Autre user
-    const [infosOtherUser, setInfosOtherUser] = useState()
-
-    
+    const [contractEscrow, setContractEscrow] = useState() //State du smart contrat d'escrow
     
 
     //***************************************************************** *
@@ -59,27 +55,20 @@ const PaiementEboutik = () => {
     // ******************************************************************
     const [contractStablecoin, setContractStablecoin] = useState();
     const [signer, setSigner] = useState();
-    const [walletRelayer, setWalletRelayer] = useState();
-    
     const [nameStablecoin, setNameStablecoin] = useState();
     const [symbolStablecoin, setSymbolStablecoin] = useState();
     const [balanceStablecoin, setBalanceStablecoin] = useState();
     const [decimalStablecoin, setDecimalStablecoin] = useState();
 
-    // States des données de l'utilisation de stablecoin comme moyen de paiement
-    const [dataRequestUseStablecoinOfUser, setDataRequestUseStablecoinOfUser] = useState()
-
-
-
-
-
+    // States pour les données du marchand
+    const [dataMerchantByIdentifier, setDataMerchantByIdentifier] = useState();
     
+    const [operationCompleted, setOperationCompleted] = useState(false);
 
 
-
-    
-
-
+    /**
+    * Exécute des effets secondaires pour initialiser le provider Ethereum et récupérer les métadonnées de l'utilisateur connecté avec Magic.
+   */
     useEffect(() => {
 
         if (!!magic) {
@@ -88,7 +77,9 @@ const PaiementEboutik = () => {
         }
     }, [magic]);
 
-    // RECUPERATION DES INFORMATIONS QUI CONCERNENT MAGIC
+    /**
+   * Récupère les informations de l'utilisateur connecté à partir de magic link.
+   */
     useEffect(() => {
         const fetchData = async () => {
             if (!!magic && !!provider) {
@@ -107,10 +98,8 @@ const PaiementEboutik = () => {
                  * @type {string}
                  */
                  const walletRelay = new ethers.Wallet(PRIVATE_KEY, provider);
-                 setWalletRelayer(walletRelay)
-
-                 if (currentSenderAddress) {
-                    const contractEscrow = new ethers.Contract(currentSenderAddress, ABI_ESCROW_STABLECOIN?.abi, walletRelay);
+                 if (dataMerchantByIdentifier?.addressEscrow) {
+                    const contractEscrow = new ethers.Contract(dataMerchantByIdentifier?.addressEscrow, ABI_ESCROW_STABLECOIN?.abi, walletRelay);
                     setContractEscrow(contractEscrow)
                  }
                  
@@ -140,11 +129,13 @@ const PaiementEboutik = () => {
         // Appel de la fonction asynchrone pour obtenir les données lorsqu'il y a des changements dans `provider` ou `magic`.
         fetchData();;
 
-    }, [provider, magic, currentSenderAddress]);
+    }, [provider, magic, dataMerchantByIdentifier?.addressEscrow]);
     //  Fin
     
 
-    // Obtenir l'utilisateur connecté 
+     /**
+   * Récupère les informations de l'utilisateur connecté à partir de l'API backend.
+   */
     useEffect(async () => {
         const getUser= async () => {
             const token = localStorage.getItem('tokenEnCours');
@@ -175,7 +166,9 @@ const PaiementEboutik = () => {
     }, []);
     // Fin
 
-    // Obtenir les données de la demande de paiement en fonction de l'utilisateur de l'utilisateur
+    /**
+   * Récupère les informations sur les paiements en attente pour l'utilisateur connecté.
+   */
     useEffect(async () => {
         const getPaymentPendingOfUser= async (_currentUserEmail) => {
             // const token = localStorage.getItem('tokenEnCours');
@@ -195,8 +188,6 @@ const PaiementEboutik = () => {
 
                 const data = await result.json();
                 setDataPaymentPending(data)
-                console.log("data=>",data)
-                setPaymentPendingLength(data?.length)
 
             } catch (error) {
                 // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
@@ -209,14 +200,15 @@ const PaiementEboutik = () => {
     }, [currentUser?.email]);
     // Fin
 
-    // Recupération des données de l'utilisation de stablecoin comme moyen de paiement de l'utilisateur connecté
+
+    // Obtenir les données (adresse d'escrow) du marchand concerné en fonction de son identifiant
     useEffect(async () => {
-        const getDataRequestUseStablecoinOfUser = async () => {
+        const getDataMerchantByIdentifier= async (_merchantIdentifier) => {
             const token = localStorage.getItem('tokenEnCours');
 
             try {
                 
-                const result = await fetch(`${API_URL}/api/payment-request/find-request-use-stablecoin-of-user`, {
+                const result = await fetch(`${API_URL}/api/apikey/find-one-use-stablecoin-for-eshop-by-merchant-identifier?merchantIdentifier=${_merchantIdentifier}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`,
@@ -228,28 +220,38 @@ const PaiementEboutik = () => {
                 }
 
                 const data = await result.json();
-                setDataRequestUseStablecoinOfUser(data);
+                setDataMerchantByIdentifier(data)
+
             } catch (error) {
                 // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
-                console.error('Erreur lors de la récupération des demandes:', error);
+                console.error('Erreur lors de la récupération des données:', error);
             }
         };
-
-        await getDataRequestUseStablecoinOfUser();
-    }, []);
+        if (dataPaymentPending?.merchantIdentifier) {
+            await getDataMerchantByIdentifier(dataPaymentPending?.merchantIdentifier);
+        }
+    }, [dataPaymentPending?.merchantIdentifier]);
     // Fin
 
+   
+
     
-    // Modal pour révoquer un rôle
+    // Modal pour annuler le paiement
     const [showDelete, setShowDelete] = useState(false);
     const handleDeleteClose = () => setShowDelete(false);
     const handleDeleteShow = () => setShowDelete(true);
+    
+    // Modal pour confirmer le paiement
+    const [showConfirmPayment, setShowConfirmPayment] = useState(false);
+    const handleConfirmPaymentClose = () => setShowConfirmPayment(false);
+    const handleConfirmPaymentShow = () => setShowConfirmPayment(true);
 
     // Modal de paiement sur des sites ecommerces
     const [showPayer, setShowPayer] = useState(false);
     // const handleClosePayer = () => setShowPayer(false);
     const handleShowPayer = () => setShowPayer(true);
-    const [secondsRemaining, setSecondsRemaining] = useState(5 * 60 );
+    const delay = 10
+    const [secondsRemaining, setSecondsRemaining] = useState(delay * 60 ); //Changer le temps ici aussi en 10 Min
     
     // Fin
 
@@ -259,243 +261,254 @@ const PaiementEboutik = () => {
 
 
 
-// ***************************************************************
-    // Transfert de stablecoin vers le smart contrat d'escrow
-// ****************************************************************
-async function transferToEscrow() {
-    setIsLoggingIn(true)
+    // ***************************************************************
+        // Transfert de stablecoin vers le smart contrat d'escrow
+    // ****************************************************************
+    /**
+     * Transfère les stablecoins vers le smart contract d'escrow pour effectuer le paiement.
+     * Cette fonction interagit avec le smart contract de stablecoin pour approuver et transférer les fonds.
+   */
+    async function transferToEscrow() {
+        setIsLoggingIn(true)
 
-    try {
-      // Vérifier le solde de magicCurrentAddress
-      const magicCurrentBalance = await contractStablecoin.balanceOf(magicCurrentAddress);
-  
-      // Convertir currentAmount en Wei
-      const amountWei = ethers.utils.parseUnits(String(currentAmount), decimalStablecoin);
-  
-      // Vérifier si magicCurrentAddress a des fonds suffisants
-      if (magicCurrentBalance.gte(amountWei)) {
+        try {
 
-        const dataForm = {
-          spenderAddress: currentSenderAddress,
-          ownerAddress: magicCurrentAddress,
-          amount: amountWei,
-        };
-        
-        // Estimer le coût en gaz pour l'approbation
-        const approveEstimateGas = await contractStablecoin.estimateGas.approveFrom(
-          dataForm?.ownerAddress,
-          dataForm?.spenderAddress,
-          dataForm?.amount
-        );
-  
-        // Obtenir le solde de l'exécutant
-        const executorBalance = await signer.getBalance();
-  
-        // Vérifier si l'exécutant a un solde Ether suffisant pour le gaz d'approbation
-        if (executorBalance.gte(approveEstimateGas)) {
-          // Transaction d'approbation
-          const approveTx = await contractStablecoin.approveFrom(
-            dataForm?.ownerAddress,
-            dataForm?.spenderAddress,
-            dataForm?.amount
-          );
-          await approveTx.wait();
-  
-          // Estimer le coût en gaz pour le dépôt
-          const asyncTransferEstimateGas = await contractEscrow.estimateGas.asyncTransfer(
-            dataForm?.ownerAddress,
-            dataForm?.amount,
-          );
-        
-        // return
-          // Vérifier si l'exécutant a un solde Ether suffisant pour le gaz de dépôt
-          if (executorBalance.gte(asyncTransferEstimateGas)) {
-            // Transaction de dépôt
-            const asyncTransferTx = await contractEscrow.asyncTransfer(dataForm?.ownerAddress, dataForm?.amount);
-            await asyncTransferTx.wait();
+            if (dataMerchantByIdentifier?.addressEscrow) {
+                        
+                // Vérifier le solde de magicCurrentAddress
+                const magicCurrentBalance = await contractStablecoin.balanceOf(magicCurrentAddress);
+            
+                // Convertir currentAmount en Wei
+                const amountWei = ethers.utils.parseUnits(String(dataPaymentPending?.amount), decimalStablecoin);
+                console.log("magicCurrentBalance=>",magicCurrentBalance)
+                console.log("amountWei=>",amountWei)
 
-            // Vérifier si l'exécutant a un solde gas suffisant pour le gaz d'apprabation de retrait
-            const approveWithdrawalEstimateGas = await contractEscrow.estimateGas.approveWithdrawal(dataForm?.ownerAddress);
-            const executorBalanceAfterTransfer = await signer.getBalance();
-            if (executorBalanceAfterTransfer.gte(approveWithdrawalEstimateGas)) {
-                // Fonction d'approbation de retrait
-                const approveWithdrawalTx = await contractEscrow.approveWithdrawal(dataForm?.ownerAddress);
-                await approveWithdrawalTx.wait();
+                // Vérifier si magicCurrentAddress a des fonds suffisants
+                if (magicCurrentBalance._hex>=amountWei._hex) {
 
-                transferAmount(asyncTransferTx.hash) //Appele de la fonction de confirmation de la transaction dans la base de donnée
-            } else {
-                setIsLoggingIn(false);
+                    const dataForm = {
+                        spenderAddress: dataMerchantByIdentifier?.addressEscrow, //Adresse du smart contrat d'escrow
+                        ownerAddress: magicCurrentAddress, //Adresse du client
+                        amount: amountWei, //Montant
+                    };
+
+                    // Estimer le coût en gaz pour l'approbation
+                    const approveEstimateGas = await contractStablecoin.estimateGas.approveFrom(
+                    dataForm?.ownerAddress,
+                    dataForm?.spenderAddress,
+                    dataForm?.amount
+                    );
+            
+                    // Obtenir le solde de l'exécutant
+                    const executorBalance = await signer.getBalance();
+            
+                    // Vérifier si l'exécutant a un solde Ether suffisant pour le gaz d'approbation
+                    if (executorBalance.gte(approveEstimateGas)) {
+                    // Transaction d'approbation
+                    const approveTx = await contractStablecoin.approveFrom(
+                        dataForm?.ownerAddress,
+                        dataForm?.spenderAddress,
+                        dataForm?.amount
+                    );
+                    await approveTx.wait();
+                    // Estimer le coût en gaz pour le dépôt
+                    const asyncTransferEstimateGas = await contractEscrow.estimateGas.asyncTransfer(
+                        dataForm?.ownerAddress,
+                        dataForm?.amount,
+                    );
+
+                    // Vérifier si l'exécutant a un solde Ether suffisant pour le gaz de dépôt
+                    if (executorBalance.gte(asyncTransferEstimateGas)) {
+                        // Transaction de dépôt
+                        const asyncTransferTx= await contractEscrow.asyncTransfer(dataForm?.ownerAddress, dataForm?.amount);
+                        await asyncTransferTx.wait();
+                        //Appel de la fonction d'ajout de la transaction dans la base de donnée (table historical)
+                        addHistorical(asyncTransferTx.hash)
+                    
+                    } else {
+                        setIsLoggingIn(false)
+                        Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        html: `<p> Solde insuffisant pour couvrir les frais de gaz d'async transfer.</p>`,
+                        showConfirmButton: false,
+                        timer: 5000
+                        });
+                        console.error("Solde insuffisant pour couvrir les frais de gaz d'asyncTransfer.");
+                    }
+                    } else {
+                        setIsLoggingIn(false)
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            html: `<p> Solde insuffisant pour couvrir les frais de gaz d'approbation.</p>`,
+                            showConfirmButton: false,
+                            timer: 5000
+                        });
+                        console.error("Solde insuffisant pour couvrir les frais de gaz d'approbation.");
+                    }
+                } else {
+                    setIsLoggingIn(false)
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        html: `<p> Fonds insuffisants sur votre compte. <br/> Votre solde est: ${balanceStablecoin}</p>`,
+                        showConfirmButton: false,
+                        timer: 5000
+                    });
+                    cancelPayment('solde') //Appel de la fonction d'annulation de transaction
+                    console.error("Fonds insuffisants sur votre compte.");
+                }
+
+                }else{
+                    setIsLoggingIn(false)
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        html: `<p> Recepteur introuvable</p>`,
+                        showConfirmButton: false,
+                        timer: 5000
+                    });
+                    console.error("Recepteur introuvable.");
+                }
+        } catch (error) {
+            setIsLoggingIn(false)
+            // Gestion spécifique de l'erreur de solde insuffisant
+            if (error.message.includes("Le montant du transfert depasse le solde")) {
+                // Swal.fire({
+                //     position: 'center',
+                //     icon: 'error',
+                //     html: `<p> Fonds insuffisants sur votre compte. <br/> Votre solde est: ${ethers.utils.formatEther(await contractStablecoin.balanceOf(magicCurrentAddress))} ${symbolStablecoin}</p>`,
+                //     showConfirmButton: false,
+                //     timer: 10000
+                // });
+                cancelPayment('solde') //Appel de la fonction d'annulation de transaction
+
+            }
+
+            console.error("Erreur lors de l'exécution de la transaction :", error);
+        }
+    }
+  
+
+    /**
+     * Confirme le paiement dans la base de données via une requête API.
+   */
+    const transferAmount= async() =>{
+        setIsLoggingIn(true)
+
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
+
+        const result = await fetch(`${API_URL}/api/eshop/transfer-amount-eshop/${dataPaymentPending?.id}`, {
+            method:"PUT",
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+        })
+        .then(res=>{
+        const data =  res.json();
+            if (res.ok) {
                 Swal.fire({
                     position: 'center',
-                    icon: 'error',
-                    html: `<p>Solde insuffisant pour couvrir les frais de gaz d'approbation du retrait.</p>`,
+                    icon: 'success',
+                    html: `<p> Votre paiement s'est effectué avec succès.</p>`,
                     showConfirmButton: false,
                     timer: 5000
                 });
-                console.error("Solde insuffisant pour couvrir les frais de gaz d'approveWithdrawal.");
-            }
-          } else {
+                setOperationCompleted(true); // Indique que l'opération est terminée
+                //  Actualiser après l'affichage 
+                // Router.push("/profil/dashboard/");
+                setTimeout(() => {
+                    window.location.href = "/profil/dashboard/";
+                    // window.location.reload()
+                }, 10000) 
+
+            }else{
             setIsLoggingIn(false)
             Swal.fire({
-              position: 'center',
-              icon: 'error',
-              html: `<p> Solde insuffisant pour couvrir les frais de gaz d'async transfer.</p>`,
-              showConfirmButton: false,
-              timer: 5000
+                position: 'center',
+                icon: 'error',
+                html: `<p> ${data.message} </p>`,
+                showConfirmButton: false,
+                timer: 10000
             });
-            console.error("Solde insuffisant pour couvrir les frais de gaz d'asyncTransfer.");
-          }
-        } else {
-            setIsLoggingIn(false)
-            Swal.fire({
-              position: 'center',
-              icon: 'error',
-              html: `<p> Solde insuffisant pour couvrir les frais de gaz d'approbation.</p>`,
-              showConfirmButton: false,
-              timer: 5000
-            });
-            console.error("Solde insuffisant pour couvrir les frais de gaz d'approbation.");
         }
-      } else {
-        setIsLoggingIn(false)
-        Swal.fire({
-          position: 'center',
-          icon: 'error',
-          html: `<p> Fonds insuffisants sur votre compte. <br/> Votre solde est: ${balanceStablecoin}</p>`,
-          showConfirmButton: false,
-          timer: 5000
-        });
-        console.error("Fonds insuffisants sur votre compte.");
-      }
-    } catch (error) {
-        setIsLoggingIn(false)
-        console.error("Erreur lors de l'exécution de la transaction :", error);
-    }
-}
-  
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-   
-
-
-   // FONCTION POUR CONFIRMER LE PAIEMENT DANS LA BASE DE DONNEE
-   const transferAmount= async() =>{
-    setIsLoggingIn(true)
-    
-    const dataa = {
-      amount:currentAmount,
-      senderId:currentSenderId,
-    }
-    
-    // Obtenir le token en cours
-    const token = localStorage.getItem('tokenEnCours');
-
-    const result = await fetch(`${API_URL}/api/eshop/transfer-amount-eshop/${dataPaymentPending?.id}`, {
-          method:"PUT",
-        //   body: JSON.stringify(dataa),
-          headers: {
-              'Content-Type': 'application/json',
-              Authorization:  `Bearer ${token}`
-          }
-      })
-      .then(res=>{
-      const data =  res.json();
-        if (res.status==200) {
-            //addHistorical(_hash) //Appel de la fonction d'ajout des infos de transaction dans la table de l'historique
-        //    Actualiser après l'affichage 
-          setTimeout(() => {
-            window.location.reload()
-          }, 5000) 
-          Router.push("/profil/dashboard/");
-          
-          // Fin
-        }else{
-          setIsLoggingIn(false)
-      }
-    })
-    .catch(error => {
-      setIsLoggingIn(false)
-
-      //handle error
-      console.log(error);
-
-    });
-    }
-    // FIN
-
-    // FONCTION QUI METTRE VALID DE LA TABLE EN False
-   const cancelPayment= async() =>{
-    setIsLoggingIn(true)
-    
-    const dataForm = {
-      amount:currentAmount,
-      senderId:currentSenderId
-       
-    }
-    // Obtenir le token en cours
-    const token = localStorage.getItem('tokenEnCours');
-
-    const result = await fetch(`${API_URL}/api/payment-request/cancel-payment/${idPaymentPending}`, {
-          method:"PUT",
-          body: JSON.stringify(dataForm),
-          headers: {
-              'Content-Type': 'application/json',
-              Authorization:  `Bearer ${token}`
-          }
-      })
-      .then(res=>{
-      const data =  res.json();
-        if (res.status==200) {
-          Swal.fire({
-            position: 'center',
-            icon: 'success',
-            html: "<p> La demande de paiement a été rejeté avec succès.<br/> Nous vous avons transmis un email de confirmation en ce sens.</p>" ,
-            showConfirmButton: false,
-            timer: 10000
-          })
-
-          //  Actualiser après l'affichage 
-          setTimeout(() => {
-            window.location.reload()
-          }, 10000) 
-          // Fin
-        }else{
-          setIsLoggingIn(false)
-
-          Swal.fire({
-            position: 'center',
-            icon: 'error',
-            html: "<p> L'annulation de la demande de paiement a échouée. </p>" ,
-            showConfirmButton: false,
-            timer: 15000
         })
-      }
-    })
-    .catch(error => {
-      setIsLoggingIn(false)
+        .catch(error => {
+        setIsLoggingIn(false)
 
-      //handle error
-      console.log(error);
+        //handle error
+        console.log(error);
 
-    });
+        });
+    }
+
+
+    /**
+   * Annule le paiement et met à jour la base de données via une requête API.
+   */
+    const cancelPayment= async(_data) =>{
+        setIsLoggingIn(true)
+
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
+
+        const result = await fetch(`${API_URL}/api/eshop/cancel-payment-eshop/${dataPaymentPending?.id}`, {
+            method:"PUT",
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:  `Bearer ${token}`
+            }
+        })
+        .then(res=>{
+            if (res.status==200) {
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p> Paiement échoué ${_data=="solde"?("car votre est insuffisant"):("")}.<br/> Nous vous avons transmis un email de confirmation en ce sens.</p>` ,
+                showConfirmButton: false,
+                timer: 10000
+            })
+            setOperationCompleted(true); // Indique que l'opération est terminée
+            //  Actualiser après l'affichage 
+            // Router.push("/profil/dashboard/");
+            setTimeout(() => {
+                window.location.href = "/profil/dashboard/";
+                // window.location.reload()
+            }, 10000) 
+
+
+            // Fin
+
+            }else{
+            setIsLoggingIn(false)
+
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: "<p> L'annulation du paiement a échoué. </p>" ,
+                showConfirmButton: false,
+                timer: 15000
+            })
+        }
+        })
+        .catch(error => {
+        setIsLoggingIn(false)
+
+        //handle error
+        console.log(error);
+
+        });
     }
     // FIN
 
 
-    // Fonction d'enregistrement des données du transfert dans l'historique
+    /**
+     * Enregistre les informations de la transaction dans l'historique via une requête API.
+     * @param {string} _hash - Le hash de la transaction à enregistrer.
+   */
     const addHistorical = async (_hash) => {
         setIsLoggingIn(true);
 
@@ -505,13 +518,6 @@ async function transferToEscrow() {
         } else {
             nameSender = currentUser?.entreprise
         }
-
-        let nameReceiver =""
-        if (infosOtherUser?.codeTypeProfil=="part") {
-            nameReceiver = infosOtherUser?.lastName + '' + infosOtherUser?.firstName
-        } else {
-            nameReceiver = infosOtherUser?.entreprise
-        }
         
         try {
             
@@ -520,12 +526,13 @@ async function transferToEscrow() {
                 activeName: nameStablecoin,
                 activeSymbol: symbolStablecoin,
                 nameSender: nameSender,
-                nameReceiver: nameReceiver,
+                nameReceiver: dataPaymentPending?.eshopName,
                 emailSender: currentUser?.email,
-                emailReceiver: infosOtherUser?.email,
+                emailReceiver: dataPaymentPending?.merchantEmail,
                 senderAddress: magicCurrentAddress,
-                receiverAddress: infosOtherUser?.address,
-                amount: currentAmount,
+                receiverAddress: dataMerchantByIdentifier?.addressEscrow,
+                amount: dataPaymentPending?.amount,
+                eshopOrderId:dataPaymentPending?.id,
                 hash: _hash
             }
 
@@ -551,26 +558,14 @@ async function transferToEscrow() {
             * sinon on affiche le message de succès
             */
             if (data.message==200) {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'success',
-                    html: `<p> Votre transfert s'est effectué avec succès.</p>`,
-                    showConfirmButton: false,
-                    timer: 5000
-                });
-
-                // Actualiser après l'affichage
-                setTimeout(() => {
-                    window.location.reload();
-                }, 7000);
-                // Fin
+                //Appele de la fonction de confirmation de la transaction dans la base de donnée 
+                transferAmount()
             } else {
-                setMessageError(data.message);
                 setIsLoggingIn(false);
                 Swal.fire({
                     position: 'center',
                     icon: 'error',
-                    html: `<p> ${messageError} </p>`,
+                    html: `<p> ${data.message} </p>`,
                     showConfirmButton: false,
                     timer: 10000
                 });
@@ -580,35 +575,6 @@ async function transferToEscrow() {
             console.error('Erreur =>', error);
         }
     };
-
-
-    // FONCTION POUR RECUPERER LES INFOS D'UN AUTRE UTILISATEUR EN FONCTION DE SON ID
-    useEffect(() => {
-        const getInfosOtherUser = async (_userId) => {
-        try {
-            const result = await fetch(`${API_URL}/api/user/find-one-user-by-id/${_userId}`, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            });
-    
-            if (!result.ok) {
-            throw new Error('Failed to fetch user data');
-            }
-    
-            const user = await result.json();
-            setInfosOtherUser(user);
-        } catch (error) {
-            // Handle errors appropriately, e.g., set an error state.
-            console.error('Error fetching user data:', error);
-        }
-        };
-    
-        if (currentSenderId) {
-        getInfosOtherUser(currentSenderId);
-        }
-    }, [currentSenderId]);
-    // FIN
 
 
 
@@ -621,7 +587,7 @@ async function transferToEscrow() {
             const createdAtTimestamp = new Date(dataPaymentPending.createdAt).getTime();
             const nowTimestamp = new Date().getTime();
             const initialTimeDifference = (nowTimestamp - createdAtTimestamp) / 1000; // en secondes
-            let remainingTime = 5 * 60 - Math.floor(initialTimeDifference);
+            let remainingTime = delay * 60 - Math.floor(initialTimeDifference); //Changer le temps ici aussi en 10 Min
             setSecondsRemaining(remainingTime);
 
           if (remainingTime > 0) {
@@ -636,66 +602,42 @@ async function transferToEscrow() {
                 clearInterval(intervalId);
 
                 // Le temps est écoulé, exécutez la fonction transferAmount
-                transferAmount();
+                cancelPayment('echec');
               }
             }, 1000); // Mettez à jour toutes les secondes
           }
         }
-      }, [dataPaymentPending?.id]); // Le tableau de dépendances vide garantit que cela s'exécute une seule fois lors du montage du composant
+    }, [dataPaymentPending?.id]); // Le tableau de dépendances vide garantit que cela s'exécute une seule fois lors du montage du composant
   
-      const formatTime = (seconds) => {
+    // Formater le temps en seconde
+    const formatTime = (seconds) => {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
-        return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+        return `${minutes}:${remainingSeconds < delay ? '0' : ''}${remainingSeconds}`; //Changer le temps ici aussi en 10 Min
       };
-  
-      // Gérez la fermeture du Modal
-  const handleClosePayer = () => {
-    setShowPayer(false);
-    // Autres actions à effectuer lors de la fermeture du Modal
-  };
 
 
-    /**
-     * Affiche un contenu limité en fonction du nombre de mots ou de caractères spécifié.
-     *
-     * @param {string} content - Le contenu à afficher.
-     * @param {number} limit - Le nombre limite de mots ou de caractères.
-     * @param {string} unit - L'unité de la limite ('words' pour mots, 'characters' pour caractères).
-     * @returns {string} Le contenu limité avec des points de suspension si nécessaire.
-     * @throws {Error} Si l'unité spécifiée n'est ni 'words' ni 'characters'.
-     */
-    function displayLimitedContent(content, limit, unit) {
-        // Vérifier si le paramètre 'unit' est spécifié et valide
-        if (unit !== 'words' && unit !== 'characters') {
-            throw new Error("L'unité doit être 'words' ou 'characters'.");
-        }
 
-        if (unit === 'words') {
-            // Séparer le contenu en mots
-            const words = content.split(' ');
+    
 
-            // Vérifier si le nombre de mots est inférieur ou égal à la limite
-            if (words.length <= limit) {
-                return content; // Pas besoin de points de suspension
-            } else {
-                // Sélectionner les premiers 'limit' mots et les rejoindre
-                const limitedContent = words.slice(0, limit).join(' ');
 
-                return `${limitedContent}...`;
+    //UseEffect pour empêcher l'actualisation de la page pour le modal de confirmation
+    useEffect(() => {
+        const handleBeforeUnload = (event) => {
+            if (showConfirmPayment && !operationCompleted) {
+                event.preventDefault();
+                event.returnValue = ''; // Pour les anciens navigateurs
             }
-        } else if (unit === 'characters') {
-            // Vérifier si la longueur du contenu est inférieure ou égale à la limite
-            if (content.length <= limit) {
-                return content; // Pas besoin de points de suspension
-            } else {
-                // Sélectionner les premiers 'limit' caractères
-                const limitedContent = content.slice(0, limit);
+        };
+    
+        window.addEventListener('beforeunload', handleBeforeUnload);
+    
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, [showConfirmPayment, operationCompleted]);
+    
 
-                return `${limitedContent}...`;
-            }
-        }
-    }
      
     // FONCTION POUR FORMATER LA DATE
     const formatDate = (_updatedAt) =>{
@@ -704,42 +646,81 @@ async function transferToEscrow() {
     }
     //  FIN
 
-    
-
-
-
-
     return (
         <>
-        
 
         {/* ********************************************************************************** */}
             {/* MODAL D'ANNULATION DE PAIEMENT'*/}
         {/* ********************************************************************************** */}
-        
-        <Modal show={showDelete} className="mt-15" onHide={handleDeleteClose}>
+        <Modal show={showDelete} className="mt-15 border border-secondary border-5" backdrop="static">
             <Modal.Header closeButton className='bgColorRed'>
-            <Modal.Title className="text-white">Annulation de la demande</Modal.Title>
+            <Modal.Title className="text-white">Annulation de paiement</Modal.Title>
             </Modal.Header>
                 {/* <Form role="form"> */}
-                    <Modal.Body>
+                    <Modal.Body className='bg-light'>
                         <div className="input-group flex-nowrap">
                             <div className='col-lg-12 col-md-12 row justify-content-center'>
                                 <div className='input-group-alternative my-3 '>
                                     <label className="mx-2 mb-3 text-center" htmlFor='address'>
-                                        Voulez-vous vraiment annuler cette demande de paiement ?
+                                        {isLoggingIn === true ?(
+                                            <i className='colorRed'>Annulation en cours... <br/>Merci de suivre le retour sur le site de votre marchand.</i>
+                                        ):(
+                                            "Voulez-vous vraiment annuler ce paiement ?"
+                                        )}
                                     </label>
                                 </div>
                             </div>
                         </div>
                     </Modal.Body>
-                    <Modal.Footer>
-                    <Button className="text-white" color="danger" onClick={handleDeleteClose}>
-                        Fermer
+                    <Modal.Footer className='bg-light'>
+                    {isLoggingIn === true ?(""):(
+                        <Button className="text-white px-4" color="danger" onClick={handleDeleteClose}>
+                            Non .
+                        </Button>
+                    )}
+                    <Button className='px-4' type='button' onClick={cancelPayment}  color="primary" disabled={isLoggingIn}>
+                        Oui .
+                        {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
                     </Button>
-                    <Button  type='button' onClick={cancelPayment}  color="primary" disabled={isLoggingIn}>
-                        Rejeter
-                    </Button>
+                    </Modal.Footer>
+                {/* </Form> */}
+        </Modal>
+        {/* *****************************************FIN****************************************** */}
+
+        {/* ********************************************************************************** */}
+            {/* MODAL DE CONFIRMATION DE PAIEMENT'*/}
+        {/* ********************************************************************************** */}
+        <Modal show={showConfirmPayment} className="mt-30 border border-secondary border-5" backdrop="static">
+            <Modal.Header closeButton className='bgColorGreen'>
+            <Modal.Title className="text-white">Confirmation du paiement</Modal.Title>
+            </Modal.Header>
+                {/* <Form role="form"> */}
+                    <Modal.Body className='bg-light'>
+                        <div className="input-group flex-nowrap">
+                            <div className='col-lg-12 col-md-12 row justify-content-center'>
+                                <div className='input-group-alternative my-3 '>
+                                    <label className="mx-2 mb-3 text-center " htmlFor='address'>
+                                        {isLoggingIn === true ?(
+                                            <i className='colorGreen'>Confirmation en cours... <br/>Merci de suivre le retour sur le site de votre marchand.</i>
+                                        ):(
+                                            "Voulez-vous vraiment confirmer ce paiement ?"
+                                        )}
+                                        
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer className='bg-light'>
+                        {isLoggingIn === true ?(""):(
+                            <Button className="text-white px-4" color="danger" onClick={handleConfirmPaymentClose}>
+                                Non .
+                            </Button>
+                        )}
+                        <Button className='px-4' type='button' onClick={transferToEscrow}  color="success" disabled={isLoggingIn}>
+                            Oui .
+                            {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
+                        </Button>
                     </Modal.Footer>
                 {/* </Form> */}
         </Modal>
@@ -789,14 +770,15 @@ async function transferToEscrow() {
                     </div>
                     <div className='row d-flex'>
                         <div className='col-lg-6 col-md-6 col-sm-6 mt-3'>
-                            <Button className="text-white" color="danger" >
+                            <Button onClick={handleDeleteShow} disabled={isLoggingIn} className="text-white" color="danger" >
                                 Annuler
                             </Button>
                         </div>
                         <div className='col-lg-6 col-md-6 col-sm-6 mt-3 '>
-                            <Button className='px-3'  type='button'  color="success" onClick={transferToEscrow} disabled={isLoggingIn}>
-                                Payer
-                                {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
+                            <Button className='px-4'  type='button'  color="success" onClick={handleConfirmPaymentShow} disabled={isLoggingIn}>
+                            {/* <Button className='px-4'  type='button'  color="success" onClick={transferAmount} disabled={isLoggingIn}> */}
+                                
+                                Payer 
                             </Button>
                         </div>
                     </div>

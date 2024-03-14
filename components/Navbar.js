@@ -1,15 +1,15 @@
 import React from "react";
 import Image from 'next/image'
-import PaiementEboutik from "./profil/Payment/PaiementEboutik";
+// import PaiementEboutik from "./profil/Payment/PaiementEboutik";
 
 
 export default function Navbar() {
     return (
         <>
             {/* POUR DELENCHER LE POP UP DE PAIEMENT EN ATTENTE FAIRE SUR LES SITES ECOMMERCES */}
-            <PaiementEboutik/>
+            {/* <PaiementEboutik/> */}
             {/* FIN */}
-            
+
             <nav className="navbar navbar-expand-lg navbar navbar-dark bg-dark">
                 <div className="container-fluid">
                     <a className="navbar-brand" href="/">
