@@ -315,6 +315,12 @@ const Navbar = () => {
                 </li>
                 </ul>
 
+                <li className='nav-item'>
+                  <Link href='/map/carte-commerces' activeClassName='active'>
+                    <a className='nav-link'>Localisation</a>
+                  </Link>
+                </li>
+
                
                 {/* <li className='nav-item'>
                   <Link href='/#' activeClassName='active'>

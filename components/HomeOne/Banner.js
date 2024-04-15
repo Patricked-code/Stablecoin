@@ -73,11 +73,11 @@ const Banner = () => {
                 à la stabilité de l'une des devises les plus échangées en Afrique et surtout dans la zone UEMOA/CEMAC.
                 </p>
                 <Link
-                  href='/auth/enregistrer'
+                  href='/auth/authentication'
                   className='default-btn'
                 >
                   <a className='default-btn'>
-                    <i className='bx bxs-user'></i> Enregistrez-vous
+                    <i className='bx bxs-user'></i> Connexion/Inscription
                   </a>
                 </Link>
               </div>

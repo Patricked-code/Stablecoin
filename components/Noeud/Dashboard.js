@@ -727,7 +727,7 @@ const [montantAchat, setMontantAchat] = useState(0)
             .then((result) => result.json())
             .then((data) => {
                 // Filtrer les éléments où le champ 'valid' est égal à null
-                const pendingRequests = data.filter(item => item.valid === null);
+                const pendingRequests = data?.filter(item => item.valid === null);
     
                 // Obtenir la longueur des éléments filtrés
                 const pendingRequestsLength = pendingRequests.length;
@@ -748,7 +748,6 @@ const [montantAchat, setMontantAchat] = useState(0)
     // RECUPERER TOUS LES PAYS
     useEffect(async() => {
         const token = localStorage.getItem('tokenEnCours')
-        console.log("token pays=>",token)
         
             const getAllCountries = async () => {
             const resCountry = await fetch(`${API_URL}/api/country/find-all`, {

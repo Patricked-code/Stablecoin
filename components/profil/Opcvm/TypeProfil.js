@@ -180,7 +180,7 @@ const TypeProfil = () => {
                                                             color="primary"
                                                             type="button"
                                                         >
-Q                                                            Questionnaire MIFID
+                                                           Questionnaire MIFID
                                                         </Button>
                                                     </a>
                                                 )}

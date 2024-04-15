@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import CPartieHeight from '../../../../../components/profil/Kyc/Opcvm/QuizMifid.js/PartieHeight';
+import CPartieHeight from '../../../../../components/profil/Kyc/Opcvm/QuizMifid/PartieHeight';
 import SidebarProfil from '../../../../../components/profil/SideBar/Sidebar';
 
 

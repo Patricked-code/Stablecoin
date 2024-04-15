@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import CPartieThree from '../../../../../components/profil/Kyc/Opcvm/QuizMifid/PartieThree';
+import CompteEcommerce from '../../../../../components/profil/Entreprise/Actions/Boutique/CompteEcommerce';
 import SidebarProfil from '../../../../../components/profil/SideBar/Sidebar';
 
 
@@ -23,8 +22,8 @@ const index = () => {
             {/* FIN */}
           </aside>
 
-          {/* CONTENU */}
-            <CPartieThree/>
+          {/* CONTENU PROFIL */}
+          <CompteEcommerce/>
           {/* FIN */}
 
         </main>

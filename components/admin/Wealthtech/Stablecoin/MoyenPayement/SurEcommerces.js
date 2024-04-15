@@ -40,6 +40,10 @@ const SurEcommerces = () => {
     
     // States du formulaire d'acceptation par partie
     const [requestId, setRequestId] = useState();
+    const [dataRequestById, setDataRequestById] = useState();
+    const [contractUnsigned, setContractUnsigned] = useState();
+    const [reason, setReason]=useState()
+
     const [resetTime, setResetTime] = useState()
     const [limit, setLimit] = useState()
     const [addressEscrow, setAddressEscrow] = useState()
@@ -64,6 +68,48 @@ const SurEcommerces = () => {
      * @returns {void}
      */
     const handleShowForm = () => setShowForm(true);
+
+
+    /**
+     * État de contrôle pour afficher ou masquer la modal des informations de la demande d'accès.
+     * @type {boolean}
+    */
+     const [showInfos, setShowInfos] = useState(false);
+
+     /**
+      * Fonction pour fermer la modal des informations.
+      * @function
+      * @returns {void}
+      */
+     const handleCloseInfos = () => setShowInfos(false);
+ 
+     /**
+      * Fonction pour afficher la modal des informations.
+      * @function
+      * @returns {void}
+      */
+     const handleShowInfos = () => setShowInfos(true);
+
+    /**
+     * État de contrôle pour afficher ou masquer la modal du contrat signer.
+     * @type {boolean}
+    */
+     const [showContrat, setShowContrat] = useState(false);
+
+     /**
+      * Fonction pour fermer la modal du contrat.
+      * @function
+      * @returns {void}
+      */
+     const handleCloseContrat = () => setShowContrat(false);
+ 
+     /**
+      * Fonction pour afficher la modal du contrat.
+      * @function
+      * @returns {void}
+      */
+     const handleShowContrat = () => setShowContrat(true);
+ 
 
     /**
      * État de contrôle pour afficher ou masquer la modal du rejet de la demande.
@@ -241,19 +287,36 @@ const SurEcommerces = () => {
     }, []);
 
 
+    // Pour uploader le fichier du contrat
+    const handleFileChange = (event) => {
+        setContractUnsigned(event.target.files[0]);
+    };
+
+    // Fonction pour envoyer le contrat au marchand
     const acceptRequest = async (_addressEscrow) => {
         setIsLoggingIn(true);
-        
+
+        if (!contractUnsigned) {
+            setUploadStatus('Vous devez sélectionner un fichier.');
+            return;
+            }
+    
+            
+
         try {
             
-            const dataBody ={
-                // rateLimit: {
-                //     limit: limit,
-                //     resetTime: resetTime,
-                // },
-                addressEscrow:_addressEscrow
-            }
+            // const dataBody ={
+            //     // rateLimit: {
+            //     //     limit: limit,
+            //     //     resetTime: resetTime,
+            //     // },
+            //     addressEscrow:_addressEscrow
+            // }
            
+            const formData = new FormData();
+            formData.append('contract', contractUnsigned);
+            formData.append('addressEscrow', _addressEscrow);
+
             // Obtenir le token en cours
             const token = localStorage.getItem('tokenEnCours');
             /**
@@ -262,9 +325,9 @@ const SurEcommerces = () => {
              */
             const response = await fetch(`${API_URL}/api/apikey/answer-of-request-use-stablecoin-for-eshop/${requestId}`, {
                 method: 'PUT',
-                body: JSON.stringify(dataBody),
+                body: formData,
                 headers: {
-                    'Content-Type': 'application/json',
+                    // 'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`
                 },
             });
@@ -282,7 +345,7 @@ const SurEcommerces = () => {
                 Swal.fire({
                     position: 'center',
                     icon: 'success',
-                    html: `<p> Vous avez accepté cette demande avec succès.</p>`,
+                    html: `<p> Vous avez envoyé un contrat à signer au marchand avec succès.</p>`,
                     showConfirmButton: false,
                     timer: 5000
                 });
@@ -338,11 +401,44 @@ const SurEcommerces = () => {
     }, [requestId]);
     // FIN
 
+
+     // FONCTION POUR RECUPERER LES INFOS D'UNE DEMANDE D'ACCESS SPECIFIQUE
+     useEffect(() => {
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
+
+        const getDataRequestById = async (_requestId) => {
+        try {
+            const result = await fetch(`${API_URL}/api/apikey/find-one-request-use-stablecoin-for-eshop/${_requestId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+
+            },
+            });
+    
+            if (!result.ok) {
+            throw new Error('Failed to fetch user data');
+            }
+    
+            const data = await result.json();
+            setDataRequestById(data);
+        } catch (error) {
+            // Handle errors appropriately, e.g., set an error state.
+            console.error('Error fetching user data:', error);
+        }
+        };
+    
+        if (requestId) {
+        getDataRequestById(requestId);
+        }
+    }, [requestId]);
+    // FIN
+
     // ****************************************************
         // PARTIE DU SMART CONTRAT
     // *****************************************************
     
-    // Fonction pour créer un smart contrat d'escrow pour l'utilisateur
     // Fonction pour créer un smart contrat d'escrow pour l'utilisateur
     const createEscrowStablecoin = async () => {
         const maxRetries = 3; // Set a maximum number of retries
@@ -389,12 +485,14 @@ const SurEcommerces = () => {
     };
     
     
-
+    // FONCTION POUR REJETER LA DEMANDE
     const rejetRequest = async () => {
         setIsLoggingIn(true);
         
         try {
-           
+            const dataForm ={
+                reason:reason
+            }
   
             // Obtenir le token en cours
             const token = localStorage.getItem('tokenEnCours');
@@ -404,6 +502,7 @@ const SurEcommerces = () => {
              */
             const response = await fetch(`${API_URL}/api/apikey/rejection-request-use-stablecoin-for-eshop/${requestId}`, {
                 method: 'PUT',
+                body: JSON.stringify(dataForm),
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`
@@ -451,6 +550,66 @@ const SurEcommerces = () => {
     };
 
 
+     // FONCTION POUR VALIDER LE CONTRAT
+     const validContratSign = async () => {
+        setIsLoggingIn(true);
+        
+        try {
+           
+  
+            // Obtenir le token en cours
+            const token = localStorage.getItem('tokenEnCours');
+            /**
+             * Réponse de la requête .
+             * @type {Response}
+             */
+            const response = await fetch(`${API_URL}/api/apikey/valid-contract-for-eshop/${requestId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+            });
+  
+            /**
+             * Données de la réponse de la requête .
+             * @type {object}
+             */
+            const data = await response.json();
+  
+            /* Verifier s'il y a un messsage d'erreur, on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message===200) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Vous avez validé ce contrat avec succès.</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+  
+                // Actualiser après l'affichage
+                setTimeout(() => {
+                    window.location.reload();
+                }, 7000);
+                // Fin
+            } else {
+                setMessageError(data.message);
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>`,
+                    showConfirmButton: false,
+                    timer: 10000
+                });
+            }
+            // Fin condition
+        } catch (error) {
+            console.error('Erreur =>', error);
+        }
+    };
 
 
 
@@ -458,6 +617,30 @@ const SurEcommerces = () => {
 
 
 
+
+/**
+     * Transforme une chaîne de caractères JSON représentant un tableau de types de commerce
+     * en une chaîne de caractères lisible avec les éléments séparés par des virgules.
+     * La fonction tente de parser la chaîne de caractères en tant que JSON. Si le parsing
+     * réussit et que le résultat est un tableau, elle renvoie une chaîne avec les éléments
+     * du tableau séparés par des virgules. En cas d'échec du parsing, elle attrape l'erreur
+     * et retourne une chaîne vide.
+     *
+     * @param {string} productTypesString - La chaîne de caractères JSON à transformer.
+     * @returns {string} Les types de commerce formatés en une chaîne lisible, ou une chaîne vide en cas d'erreur.
+     */
+    function formatProductTypes(productTypesString) {
+        try {
+        const productTypes = JSON.parse(productTypesString);
+        if (Array.isArray(productTypes)) {
+            return productTypes.join(', ');
+        }
+        return '';
+        } catch (error) {
+        console.error('Erreur lors du parsing de productTypes:', error);
+        return '';
+        }
+    }
 
 
 
@@ -489,6 +672,8 @@ const SurEcommerces = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
     };
+
+   
 
     return (
         <>
@@ -540,7 +725,18 @@ const SurEcommerces = () => {
                                             <Table.Row key={index}>                       
                                                 <Table.Cell ><small className=" py-0 ">{data?.customerName}</small></Table.Cell>
                                                 <Table.Cell ><small className=" py-0 ">{formatDate(data?.createdAt)}</small></Table.Cell>
-                                                <Table.Cell ><small className=" py-0 ">{data?.allow == 0?(<i className=''>Pas encore acceptée</i>):data?.allow == 1?(<i className='colorGreen'>Déjà acceptée</i>):data?.allow == 2?(<i className='colorRed'>Rejetée</i>):""}</small></Table.Cell>
+                                                <Table.Cell >
+                                                    <small className=" py-0 ">
+                                                        {
+                                                        data?.allow == 0?(
+                                                        <i className=''>Pas encore acceptée</i>
+                                                        ):data?.allow == 1 && data?.validContract == 2 ?(<i className='colorGreen'>Déjà acceptée</i>
+                                                        ):data?.allow === 1 && data?.validContract === 0 ?(<i className='colorBlue'>Contrat envoyé au marchand</i>
+                                                        ):data?.allow == 1 && data?.validContract == 1 ?(<i className='colorBlue'>Le marchand a envoyé le contrat </i>
+                                                        ):data?.allow == 2?(<i className='colorRed'>Rejetée</i>)
+                                                        :""}
+                                                    </small>
+                                                </Table.Cell>
 
                                                 <Table.Cell >
                                                     <div className='text-center d-flex'>
@@ -558,6 +754,21 @@ const SurEcommerces = () => {
                                                             disabled={data?.allow === 1 || data?.allow === 2}
                                                         >
                                                             <small className=" py-2  mx-3 " onClick={handleShowRejection}>Rejeter</small>
+                                                        </button>
+
+                                                        <button 
+                                                            className={`py-0 mx-2 btn btn-info`}
+                                                            onClick={()=>setRequestId(data?.id)}
+                                                        >
+                                                            <small className=" py-2  mx-3 " onClick={handleShowInfos}>Détails</small>
+                                                        </button>
+
+                                                        <button 
+                                                            className={`py-0 mx-2 btn ${!data?.allow == 1 && !data?.validContract == 1? 'btn-secondary' : 'btn-success'} d`}
+                                                            onClick={()=>setRequestId(data?.id)}
+                                                            disabled={!data?.allow == 1 && !data?.validContract == 1}
+                                                        >
+                                                            <small className=" py-2  mx-3 " onClick={handleShowContrat}>Contrat</small>
                                                         </button>
                                                     </div>
                                                 </Table.Cell>
@@ -585,17 +796,19 @@ const SurEcommerces = () => {
             )} */}
 
             {/* ********************************************************************************** */}
-                {/* MODAL D'ACCEPTATION OU REFUS DE LA DEMANDE*/}
+                {/* MODAL D'ENVOIE DU CONTRAT*/}
             {/* ********************************************************************************** */}
             <Modal show={showForm} className="mt-15" onHide={handleCloseForm}>
                 <Modal.Header closeButton id="bgcolor">
-                    <Modal.Title className="" >Acceptation de la demande</Modal.Title>                
+                    <Modal.Title className="" >Envoie du contrat</Modal.Title>                
                 </Modal.Header>
                     <form>
                     <Modal.Body>
                         <div className='form-group my-3'>
-                            Voulez-vous vraiment accepter cette demande ?
+                            Veuillez envoyer le contrat à signer au marchand.
                         </div>
+                        <input type="file" onChange={handleFileChange} accept=".pdf" />
+
                         {/* <div className=" mb-3">
                             <label className="">Nombre limite de requêtes</label>
                             <div className="input-group">
@@ -614,9 +827,119 @@ const SurEcommerces = () => {
                             Fermer
                         </Button>
                         <Button  onClick={createEscrowStablecoin}  color="success" disabled={isLoggingIn}>
-                            Accepter
+                            Envoyer
                             {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-2"></i>) : ("")}
                         </Button>
+                    </Modal.Footer>
+                    </form>
+            </Modal>
+            {/* *****************************************FIN****************************************** */}
+
+
+            {/* ********************************************************************************** */}
+                {/* MODAL DE L'AFFICHAGE DES INFORMATIONS*/}
+            {/* ********************************************************************************** */}
+            <Modal show={showInfos} className="mt-15" onHide={handleCloseInfos}>
+                <Modal.Header closeButton id="bgcolor">
+                    <Modal.Title className="" >Les informations</Modal.Title>                
+                </Modal.Header>
+                    <Modal.Body>
+                        <div className=''>
+                            <div className=''>
+                                <b>Nom de la boutique en ligne:</b> <br/>
+                                {dataRequestById?.partner}
+                            </div>
+                            <div className=''>
+                                <b>Email:</b> <br/>
+                                {dataRequestById?.customerEmail}
+                            </div>
+                            <div className=''>
+                                <b>Lien du site:</b> <br/>
+                                {dataRequestById?.siteLink}
+                            </div>
+                            <div className=''>
+                                <b>Lien de notification:</b> <br/>
+                                {dataRequestById?.notificationLink}
+                            </div>
+                            <div className=''>
+                                <b>Lien de retour du succès:</b> <br/>
+                                {dataRequestById?.returnLink}
+                            </div>
+                            <div className=''>
+                                <b>Lien de retour d'échec:</b> <br/>
+                                {dataRequestById?.returnFailLinks}
+                            </div>
+                            <div className=''>
+                                <b>Les types de produits:</b> <br/>
+                                {formatProductTypes(dataRequestById?.productType)}
+                            </div>
+
+                            <div className=''>
+                                <b>Description:</b> <br/>
+                                {dataRequestById?.description}
+                            </div>
+
+                        </div>
+                        
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button className="text-white" color="danger" onClick={handleCloseInfos}>
+                            Fermer
+                        </Button>
+                       
+                    </Modal.Footer>
+            </Modal>
+            {/* *****************************************FIN****************************************** */}
+
+
+            {/* ********************************************************************************** */}
+                {/* MODAL DU CONTRAT SIGNER*/}
+            {/* ********************************************************************************** */}
+            <Modal show={showContrat} className="mt-15" onHide={handleCloseContrat}>
+                <Modal.Header closeButton id="bgcolor">
+                    <Modal.Title className="" >Voici le contrat final.</Modal.Title>                
+                </Modal.Header>
+                    <form>
+                    <Modal.Body>
+                        <div className='btn-box'>
+                            <a 
+                                href={`${API_URL}/${dataRequestById?.contract}`} 
+                                download
+                                target="_blank"
+                            >
+                                <Button
+                                    block
+                                    color="primary"
+                                    type="button"
+                                >
+                                    Télécharger contrat final
+                                </Button>
+                            </a>
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button className="text-white" color="danger" onClick={handleCloseContrat}>
+                            Fermer
+                        </Button>
+                        {/* <Button  onClick={validContratSign}  color="success" disabled={isLoggingIn}> */}
+                        {dataRequestById?.allow === 1 && dataRequestById?.validContract === 0 ? (
+
+                            <Button 
+                                className={` mx-2 btn  btn-secondary'`}
+                                disabled
+                            >
+                                Valider
+                            </Button>
+                            ):(
+                                <Button 
+                                className={` mx-2 btn ${dataRequestById?.allow === 1 && dataRequestById?.validContract === 2? 'btn-secondary' : 'btn-success'} d`}
+                                onClick={validContratSign}
+                                disabled={dataRequestById?.allow === 1 && dataRequestById?.validContract === 2}
+                            >
+                                Valider
+                                {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-2"></i>) : ("")}
+                            </Button>
+                            )}
                     </Modal.Footer>
                     </form>
             </Modal>
@@ -633,6 +956,22 @@ const SurEcommerces = () => {
                     <Modal.Body>
                         <div className='form-group my-3'>
                             Voulez-vous vraiment rejeter cette demande ?
+                        </div>
+                        <div className="form-group mb-6">
+                            <label
+                                htmlFor="reason"
+                                className="text-blackish-blue mb-2"
+                            >
+                                Raison du rejet
+                            </label>
+                            <textarea
+                                className="form-control gr-text-11 border mt-3 bg-white"
+                                type="text"
+                                id="reason"
+                                placeholder="La raison ici"
+                                defaultValue={reason} 
+                                onChange={(event)=>setReason(event.target.value)}
+                            />
                         </div>
                     </Modal.Body>
                     <Modal.Footer>

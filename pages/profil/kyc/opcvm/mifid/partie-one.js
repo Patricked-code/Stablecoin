@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import CPartieOne from '../../../../../components/profil/Kyc/Opcvm/QuizMifid.js/PartieOne';
+import CPartieOne from '../../../../../components/profil/Kyc/Opcvm/QuizMifid/PartieOne';
 import SidebarProfil from '../../../../../components/profil/SideBar/Sidebar';
 
 

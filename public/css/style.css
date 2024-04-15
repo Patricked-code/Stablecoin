@@ -7995,3 +7995,51 @@ button {
   padding: 8px; /* Ajustez selon vos préférences */
   border-bottom: 1px solid #ccc; /* Ajoute une ligne de séparation, si souhaité */
 }
+
+
+
+/* ******************POUR LE CHAMP SELECT DE LA DEMANDE DE E-COMMERCE******** */
+.dropdown-select .dropdown-button {
+  cursor: pointer;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  margin-bottom: 10px;
+}
+
+.dropdown-select .dropdown-menu {
+  list-style: none;
+  padding: 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: #fff;
+}
+
+.dropdown-select .dropdown-item {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.dropdown-select .dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.dropdown-select .selected-options {
+  margin-top: 10px;
+}
+
+/* **************POUR LE CHAMP PRODUCTTYPE DES DEMANDE D'UTILISATION DE STABLECOIN**** */
+.form-group .row > div {
+  /* flex: 0 0 25%; Pour les grands écrans
+  max-width: 25%; Pour les grands écrans */
+  flex: 0 0 33.33%; /* Pour les grands écrans */
+  max-width: 33.33%; /* Pour les grands écrans */
+  box-sizing: border-box;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+/* ***************FIN************************************************* */

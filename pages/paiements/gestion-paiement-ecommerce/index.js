@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
-import CPartieThree from '../../../../../components/profil/Kyc/Opcvm/QuizMifid/PartieThree';
-import SidebarProfil from '../../../../../components/profil/SideBar/Sidebar';
+import GestionCommandeEboutik from '../../../components/profil/Payment/GestionCommandeEboutik';
+import SidebarProfil from '../../../components/profil/SideBar/Sidebar';
 
 
 
@@ -23,8 +22,8 @@ const index = () => {
             {/* FIN */}
           </aside>
 
-          {/* CONTENU */}
-            <CPartieThree/>
+          {/* CONTENU PROFIL */}
+          <GestionCommandeEboutik />
           {/* FIN */}
 
         </main>

@@ -17,8 +17,12 @@ import ABI_ESCROW_STABLECOIN from "../../../../../components/Contrats/Abi/AbiFac
 
 
 
-
-
+/**
+ * Composant SurPlateforme pour la gestion des demandes d'utilisation de stablecoin sur la plateforme.
+ * Il permet d'afficher les demandes, de répondre à ces demandes, et de visualiser les informations détaillées.
+ * @component
+ * @returns {React.Component} Le composant SurPlateforme.
+ */
 const SurPlateforme = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
@@ -40,8 +44,12 @@ const SurPlateforme = () => {
     
     // States du formulaire d'acceptation par partie
     const [requestId, setRequestId] = useState();
+    const [dataRequestById, setDataRequestById] = useState();
+    const [reason, setReason]=useState()
+
     const [dataOnrequestUseStablecoin, setDataOneRequestUseStablecoin] = useState();
     const [addressEscrow, setAddressEscrow] = useState();
+    const [contractUnsigned, setContractUnsigned] = useState();
     
     
 
@@ -64,6 +72,49 @@ const SurPlateforme = () => {
      * @returns {void}
      */
     const handleShowForm = () => setShowForm(true);
+
+
+    /**
+     * État de contrôle pour afficher ou masquer la modal des informations de la demande d'accès.
+     * @type {boolean}
+    */
+      const [showInfos, setShowInfos] = useState(false);
+
+      /**
+       * Fonction pour fermer la modal des informations.
+       * @function
+       * @returns {void}
+       */
+      const handleCloseInfos = () => setShowInfos(false);
+  
+      /**
+       * Fonction pour afficher la modal des informations.
+       * @function
+       * @returns {void}
+       */
+      const handleShowInfos = () => setShowInfos(true);
+  
+
+
+    /**
+     * État de contrôle pour afficher ou masquer la modal du contrat signer.
+     * @type {boolean}
+    */
+         const [showContrat, setShowContrat] = useState(false);
+
+         /**
+          * Fonction pour fermer la modal du contrat.
+          * @function
+          * @returns {void}
+          */
+         const handleCloseContrat = () => setShowContrat(false);
+     
+         /**
+          * Fonction pour afficher la modal du contrat.
+          * @function
+          * @returns {void}
+          */
+         const handleShowContrat = () => setShowContrat(true);
 
     /**
      * État de contrôle pour afficher ou masquer la modal du rejet de la demande.
@@ -210,7 +261,13 @@ const SurPlateforme = () => {
     }, [provider, magic]);
 
 
-    
+    /**
+     * Récupère toutes les demandes d'utilisation de stablecoin et met à jour l'état correspondant.
+     * Cet effet dépend de la variable d'environnement NEXT_PUBLIC_URL_API pour construire l'URL de l'API.
+     *
+     * @async
+     * @effect
+     */
     useEffect(async () => {
         const getAllDataRequestUseStablecoin = async () => {
             const token = localStorage.getItem('tokenEnCours');
@@ -240,17 +297,38 @@ const SurPlateforme = () => {
         await getAllDataRequestUseStablecoin();
     }, []);
 
-    // Fonction d'acceptation de la demande au niveau de la base de données
+    /**
+     * Gère le changement de l'input de fichier, mettant à jour l'état avec le fichier sélectionné par l'utilisateur.
+     *
+     * @param {Event} event - L'événement déclenché par le changement de l'input fichier.
+     */
+    const handleFileChange = (event) => {
+        setContractUnsigned(event.target.files[0]);
+    };
+
+    /**
+     * Accepte une demande d'utilisation de stablecoin au niveau de la base de données.
+     * Envoie un contrat à signer au marchand et affiche une alerte selon le résultat de l'opération.
+     *
+     * @async
+     * @param {string} _addressEscrow - L'adresse du contrat d'escrow associée à la demande.
+     */
     const acceptRequest = async (_addressEscrow) => {
         setIsLoggingIn(true);
         
-        try {
-            
-            const dataBody = {
-                addressEscrow:_addressEscrow
+        if (!contractUnsigned) {
+            setUploadStatus('Vous devez sélectionner un fichier.');
+            return;
             }
-           
-  
+    
+            
+
+        try {
+            const formData = new FormData();
+            formData.append('contract', contractUnsigned);
+            formData.append('addressEscrow', _addressEscrow);
+            
+            console.log("formData=>",formData)
             // Obtenir le token en cours
             const token = localStorage.getItem('tokenEnCours');
             /**
@@ -259,9 +337,8 @@ const SurPlateforme = () => {
              */
             const response = await fetch(`${API_URL}/api/payment-request/answer-of-request-use-stablecoin/${requestId}`, {
                 method: 'PUT',
-                body: JSON.stringify(dataBody),
+                body: formData,
                 headers: {
-                    'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`
                 },
             });
@@ -279,15 +356,15 @@ const SurPlateforme = () => {
                 Swal.fire({
                     position: 'center',
                     icon: 'success',
-                    html: `<p> Vous avez accepté cette demande avec succès.</p>`,
+                    html: `<p> Vous avez envoyé un contrat à signer au marchand avec succès.</p>`,
                     showConfirmButton: false,
                     timer: 5000
                 });
   
                 // Actualiser après l'affichage
-                setTimeout(() => {
-                    window.location.reload();
-                }, 7000);
+                // setTimeout(() => {
+                //     window.location.reload();
+                // }, 7000);
                 // Fin
             } else {
                 setMessageError(data.message);
@@ -306,8 +383,55 @@ const SurPlateforme = () => {
         }
     };
 
+    /**
+     * Récupère les informations d'une demande d'accès spécifique en utilisant son identifiant.
+     * Met à jour l'état avec les données récupérées de la demande.
+     *
+     * @async
+     * @effect
+     * @param {number} requestId - L'identifiant de la demande d'accès à récupérer.
+     */
+     useEffect(() => {
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
 
-    // FONCTION POUR RECUPERER LES INFOS DE L'UTILISATEUR EN FONCTION DE SON ID
+        const getDataRequestById = async (_requestId) => {
+        try {
+            const result = await fetch(`${API_URL}/api/payment-request/find-one-request-use-stablecoin/${_requestId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+
+            },
+            });
+    
+            if (!result.ok) {
+            throw new Error('Failed to fetch user data');
+            }
+    
+            const data = await result.json();
+            setDataRequestById(data);
+        } catch (error) {
+            // Handle errors appropriately, e.g., set an error state.
+            console.error('Error fetching user data:', error);
+        }
+        };
+    
+        if (requestId) {
+        getDataRequestById(requestId);
+        }
+    }, [requestId]);
+    // FIN
+
+
+    /**
+     * Récupère les informations d'un utilisateur en fonction de son identifiant.
+     * Met à jour l'état avec les données de l'utilisateur récupérées.
+     *
+     * @async
+     * @effect
+     * @param {number} userId - L'identifiant de l'utilisateur à récupérer.
+     */
     useEffect(() => {
         const getUserById = async (_userId) => {
         try {
@@ -335,7 +459,24 @@ const SurPlateforme = () => {
     }, [dataOnrequestUseStablecoin?.userId]);
     // FIN
 
-    // FONCTION POUR RECUPERER LES INFOS DE LA DEMANDE D'UTILISATION DE STABLECOIN COMME MOYEN DE PAIEMENT
+    /**
+     * Utilise `useEffect` pour récupérer les informations d'une demande spécifique d'utilisation de stablecoin 
+     * à partir de son identifiant et met à jour l'état avec ces informations. Ce hook effectue une requête 
+     * HTTP GET à l'API et met à jour l'état avec le résultat de cette demande. En cas d'échec de la requête,
+     * une erreur est consignée dans la console.
+     *
+     * La requête est effectuée uniquement si `requestId` est défini, assurant que le hook ne s'exécute pas 
+     * inutilement. L'identifiant de la demande est utilisé pour construire l'URL de la requête à l'API.
+     * 
+     * Le token d'authentification nécessaire pour l'autorisation avec l'API est récupéré à partir du stockage local.
+     * 
+     * @effect
+     * Déclenche une requête à l'API pour obtenir les informations d'une demande d'utilisation de stablecoin spécifique.
+     * La dépendance `requestId` garantit que l'effet est réexécuté chaque fois que l'identifiant de la demande change,
+     * permettant de récupérer les informations de la nouvelle demande spécifiée.
+     *
+     * @param {number|string} requestId - L'identifiant de la demande d'utilisation de stablecoin à récupérer.
+     */
     useEffect(() => {
         const getDataOneRequestUseStablecoin = async (_requestId) => {
             // Obtenir le token en cours
@@ -371,7 +512,12 @@ const SurPlateforme = () => {
         // PARTIE DU SMART CONTRAT
     // *****************************************************
     
-    // Fonction pour créer un smart contrat d'escrow pour l'utilisateur
+    /**
+     * Crée un contrat d'escrow pour l'utilisateur et envoie une réponse à la demande d'utilisation de stablecoin.
+     * Effectue des tentatives répétées en cas d'échec de la transaction avec un backoff exponentiel.
+     *
+     * @async
+     */
     const createEscrowStablecoin = async () => {
         const maxRetries = 3; // Set a maximum number of retries
         let retryCount = 0;
@@ -417,8 +563,13 @@ const SurPlateforme = () => {
     };
 
 
-    // Fonction du rejet de la demande au niveau de la base de données
-    const rejetRequest = async () => {
+    /**
+     * Valide le contrat signé au niveau de la base de données.
+     * Affiche une alerte selon le résultat de l'opération.
+     *
+     * @async
+     */
+     const validContratSign = async () => {
         setIsLoggingIn(true);
         
         try {
@@ -427,11 +578,79 @@ const SurPlateforme = () => {
             // Obtenir le token en cours
             const token = localStorage.getItem('tokenEnCours');
             /**
+             * Réponse de la requête .
+             * @type {Response}
+             */
+            const response = await fetch(`${API_URL}/api/payment-request/valid-contract-for-shop/${requestId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+            });
+  
+            /**
+             * Données de la réponse de la requête .
+             * @type {object}
+             */
+            const data = await response.json();
+  
+            /* Verifier s'il y a un messsage d'erreur, on l'affiche dans SWAL 
+            * sinon on affiche le message de succès
+            */
+            if (data.message===200) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    html: `<p> Vous avez validé ce contrat avec succès.</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+  
+                // Actualiser après l'affichage
+                setTimeout(() => {
+                    window.location.reload();
+                }, 7000);
+                // Fin
+            } else {
+                setMessageError(data.message);
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> ${messageError} </p>`,
+                    showConfirmButton: false,
+                    timer: 10000
+                });
+            }
+            // Fin condition
+        } catch (error) {
+            console.error('Erreur =>', error);
+        }
+    };
+
+    /**
+     * Rejette une demande d'utilisation de stablecoin au niveau de la base de données.
+     * Affiche une alerte selon le résultat de l'opération.
+     *
+     * @async
+     */
+    const rejetRequest = async () => {
+        setIsLoggingIn(true);
+        
+        try {
+            const dataForm ={
+                reason:reason
+            }
+            // Obtenir le token en cours
+            const token = localStorage.getItem('tokenEnCours');
+            /**
              * Réponse de la requête KYC.
              * @type {Response}
              */
             const response = await fetch(`${API_URL}/api/payment-request/rejection-request-use-stablecoin/${requestId}`, {
                 method: 'PUT',
+                body: JSON.stringify(dataForm),
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`
@@ -478,6 +697,32 @@ const SurPlateforme = () => {
         }
     };
 
+
+   /**
+     * Transforme une chaîne de caractères JSON représentant un tableau de types de commerce
+     * en une chaîne de caractères lisible avec les éléments séparés par des virgules.
+     * La fonction tente de parser la chaîne de caractères en tant que JSON. Si le parsing
+     * réussit et que le résultat est un tableau, elle renvoie une chaîne avec les éléments
+     * du tableau séparés par des virgules. En cas d'échec du parsing, elle attrape l'erreur
+     * et retourne une chaîne vide.
+     *
+     * @param {string} productTypesString - La chaîne de caractères JSON à transformer.
+     * @returns {string} Les types de commerce formatés en une chaîne lisible, ou une chaîne vide en cas d'erreur.
+     */
+    function formatProductTypes(productTypesString) {
+        try {
+          const productTypes = JSON.parse(productTypesString);
+          if (Array.isArray(productTypes)) {
+            return productTypes.join(', ');
+          }
+          return '';
+        } catch (error) {
+          console.error('Erreur lors du parsing de productTypes:', error);
+          return '';
+        }
+    }
+  
+  
 
     /**
      * Fonction pour formater une date dans le format 'DD/MM/YYYY'.
@@ -557,7 +802,18 @@ const SurPlateforme = () => {
                                             <Table.Row key={index}>                       
                                                 <Table.Cell ><small className=" py-0 ">{data?.customerName}</small></Table.Cell>
                                                 <Table.Cell ><small className=" py-0 ">{formatDate(data?.createdAt)}</small></Table.Cell>
-                                                <Table.Cell ><small className=" py-0 ">{data?.allow == 0?(<i className=''>Pas encore acceptée</i>):data?.allow == 1?(<i className='colorGreen'>Déjà acceptée</i>):data?.allow == 2?(<i className='colorRed'>Rejetée</i>):""}</small></Table.Cell>
+                                                <Table.Cell >
+                                                    <small className=" py-0 ">
+                                                        {
+                                                            data?.allow == 0?(
+                                                            <i className=''>Pas encore acceptée</i>
+                                                            ):data?.allow == 1 && data?.validContract == 2 ?(<i className='colorGreen'>Déjà acceptée</i>
+                                                            ):data?.allow === 1 && data?.validContract === 0 ?(<i className='colorBlue'>Contrat envoyé au marchand</i>
+                                                            ):data?.allow == 1 && data?.validContract == 1 ?(<i className='colorBlue'>Le marchand a envoyé le contrat </i>
+                                                            ):data?.allow == 2?(<i className='colorRed'>Rejetée</i>)
+                                                        :""}
+                                                    </small>
+                                                </Table.Cell>
                                                 <Table.Cell >
                                                     <div className='text-center d-flex'>
                                                         <button 
@@ -574,6 +830,21 @@ const SurPlateforme = () => {
                                                             disabled={data?.allow === 1 || data?.allow === 2}
                                                         >
                                                             <small className=" py-2  mx-3 " onClick={handleShowRejection}>Rejeter</small>
+                                                        </button>
+
+                                                        <button 
+                                                            className={`py-0 mx-2 btn btn-info`}
+                                                            onClick={()=>setRequestId(data?.id)}
+                                                        >
+                                                            <small className=" py-2  mx-3 " onClick={handleShowInfos}>Détails</small>
+                                                        </button>
+                                                        
+                                                        <button 
+                                                            className={`py-0 mx-2 btn ${!data?.allow == 1 && !data?.validContract == 1 ? 'btn-secondary' : 'btn-success'} d`}
+                                                            onClick={()=>setRequestId(data?.id)}
+                                                            disabled={!data?.allow == 1 && !data?.validContract == 1}
+                                                        >
+                                                            <small className=" py-2  mx-3 " onClick={handleShowContrat}>Contrat</small>
                                                         </button>
                                                     </div>
                                                 </Table.Cell>
@@ -601,27 +872,145 @@ const SurPlateforme = () => {
             )} */}
 
             {/* ********************************************************************************** */}
-                {/* MODAL D'ACCEPTATION OU REFUS DE LA DEMANDE*/}
+                {/* MODAL D'ENVOIE DU CONTRAT*/}
             {/* ********************************************************************************** */}
             <Modal show={showForm} className="mt-15" onHide={handleCloseForm}>
                 <Modal.Header closeButton id="bgcolor">
-                    <Modal.Title className="" >Acceptation de la demande</Modal.Title>                
+                    <Modal.Title className="" >Envoie du contrat</Modal.Title>                
                 </Modal.Header>
+                    <form>
                     <Modal.Body>
                         <div className='form-group my-3'>
-                            Voulez-vous vraiment accepter cette demande ?
+                            Veuillez envoyer le contrat à signer au marchand.
                         </div>
+                        <input type="file" onChange={handleFileChange} accept=".pdf" />
+
+                        {/* <div className=" mb-3">
+                            <label className="">Nombre limite de requêtes</label>
+                            <div className="input-group">
+                                <input type="number" defaultValue={limit} onChange={(e)=>setLimit(e.target.value)} placeholder="20"  className="input input-sm input-bordered form-control" />
+                            </div>
+                        </div>
+                        <div className=" mb-3">
+                            <label className="" >La durée de disponibilité en heure(24h)</label>
+                            <div className="input-group">
+                                <input type="text" defaultValue={resetTime} onChange={(e)=>setResetTime(e.target.value)} placeholder="24h"  className="input input-sm input-bordered form-control" />
+                            </div>
+                        </div> */}
                     </Modal.Body>
                     <Modal.Footer>
                         <Button className="text-white" color="danger" onClick={handleCloseForm}>
                             Fermer
                         </Button>
                         <Button  onClick={createEscrowStablecoin}  color="success" disabled={isLoggingIn}>
-                            Accepter
-                            {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
-
+                            Envoyer
+                            {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-2"></i>) : ("")}
                         </Button>
                     </Modal.Footer>
+                    </form>
+            </Modal>
+            {/* *****************************************FIN****************************************** */}
+
+            {/* ********************************************************************************** */}
+                {/* MODAL DE L'AFFICHAGE DES INFORMATIONS*/}
+            {/* ********************************************************************************** */}
+            <Modal show={showInfos} className="mt-15" onHide={handleCloseInfos}>
+                <Modal.Header closeButton id="bgcolor">
+                    <Modal.Title className="" >Les informations</Modal.Title>                
+                </Modal.Header>
+                    <Modal.Body>
+                        <div className=''>
+                            <div className=''>
+                                <b>Nom du commerce:</b> <br/>
+                                {dataRequestById?.shopName}
+                            </div>
+                            <div className=''>
+                                <b>Email:</b> <br/>
+                                {dataRequestById?.emailShop}
+                            </div>
+                            <div className=''>
+                                <b>Voulez-vous avoir une agence de retrait?</b> <br/>
+                                {dataRequestById?.partnerWithdrawal}
+                            </div>
+                            <div className=''>
+                                <b>Voulez-vous avoir une boutique en ligne?</b> <br/>
+                                {dataRequestById?.eshopWti}
+                            </div>
+                            <div className=''>
+                                <b>Les types de commerce:</b> <br/>
+                                {formatProductTypes(dataRequestById?.productType)}
+                            </div>
+
+                            <div className=''>
+                                <b>Description:</b> <br/>
+                                {dataRequestById?.description}
+                            </div>
+
+                        </div>
+                        
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button className="text-white" color="danger" onClick={handleCloseInfos}>
+                            Fermer
+                        </Button>
+                       
+                    </Modal.Footer>
+            </Modal>
+            {/* *****************************************FIN****************************************** */}
+
+
+            {/* ********************************************************************************** */}
+                {/* MODAL DU CONTRAT SIGNER*/}
+            {/* ********************************************************************************** */}
+            <Modal show={showContrat} className="mt-15" onHide={handleCloseContrat}>
+                <Modal.Header closeButton id="bgcolor">
+                    <Modal.Title className="" >Voici le contrat final.</Modal.Title>                
+                </Modal.Header>
+                    <form>
+                    <Modal.Body>
+                        <div className='btn-box'>
+                            <a 
+                                href={`${API_URL}/${dataRequestById?.contract}`} 
+                                download
+                                target="_blank"
+                            >
+                                <Button
+                                    block
+                                    color="primary"
+                                    type="button"
+                                >
+                                    {dataRequestById?.allow === 1 && dataRequestById?.validContract === 0 ? "Télécharger contrat non signé":"Télécharger contrat final"}
+                                    
+                                </Button>
+                            </a>
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button className="text-white" color="danger" onClick={handleCloseContrat}>
+                            Fermer
+                        </Button>
+                        {/* <Button  onClick={validContratSign}  color="success" disabled={isLoggingIn}> */}
+                        
+                        {dataRequestById?.allow === 1 && dataRequestById?.validContract === 0 ? (
+
+                        <Button 
+                            className={` mx-2 btn  btn-secondary'`}
+                            disabled
+                        >
+                            Valider
+                        </Button>
+                        ):(
+                            <Button 
+                            className={` mx-2 btn ${dataRequestById?.allow === 1 && dataRequestById?.validContract === 2? 'btn-secondary' : 'btn-success'} d`}
+                            onClick={validContratSign}
+                            disabled={dataRequestById?.allow === 1 && dataRequestById?.validContract === 2}
+                        >
+                            Valider
+                            {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-2"></i>) : ("")}
+                        </Button>
+                        )}
+                    </Modal.Footer>
+                    </form>
             </Modal>
             {/* *****************************************FIN****************************************** */}
 
@@ -636,6 +1025,22 @@ const SurPlateforme = () => {
                     <Modal.Body>
                         <div className='form-group my-3'>
                             Voulez-vous vraiment rejeter cette demande ?
+                        </div>
+                        <div className="form-group mb-6">
+                            <label
+                                htmlFor="reason"
+                                className="text-blackish-blue mb-2"
+                            >
+                                Raison du rejet
+                            </label>
+                            <textarea
+                                className="form-control gr-text-11 border mt-3 bg-white"
+                                type="text"
+                                id="reason"
+                                placeholder="La raison ici"
+                                defaultValue={reason} 
+                                onChange={(event)=>setReason(event.target.value)}
+                            />
                         </div>
                     </Modal.Body>
                     <Modal.Footer>

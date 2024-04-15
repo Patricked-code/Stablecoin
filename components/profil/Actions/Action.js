@@ -289,7 +289,7 @@ const Action = () => {
                                         <div className='single-cryptocurrency-box'>
                                             <div className='d-flex align-items-center'>
                                             <div className='title'>
-                                                <h3>Demande d'utilisation de stablecoin comme moyen de paiement</h3>
+                                                <h3>Demande d'utilisation de stablecoin comme moyen de paiement direct</h3>
                                             </div>
                                             </div>
                                             
@@ -310,6 +310,65 @@ const Action = () => {
                                 </div>
                             </div>
                         </div>
+
+                        <div className='col-lg-6 col-md-6'>
+                            <div className='currency-selection text-center'>
+                                <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                <div className='cryptocurrency-slides'>
+                                        <div className='single-cryptocurrency-box'>
+                                            <div className='d-flex align-items-center'>
+                                            <div className='title'>
+                                                <h3>Demande d'utilisation de stablecoin comme moyen de paiement E-commerce</h3>
+                                            </div>
+                                            </div>
+                                            
+                                            <div className='btn-box'>
+                                            <Link href='/profil/entreprise/actions/boutique/compte-ecommerce' activeClassName='active'>
+                                                <Button
+                                                    block
+                                                    color="primary"
+                                                    type="button"
+                                                >
+                                                    Voir plus
+                                                </Button>
+                                            </Link>
+                                            {/* Fin */}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className='col-lg-6 col-md-6'>
+                            <div className='currency-selection text-center'>
+                                <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                <div className='cryptocurrency-slides'>
+                                        <div className='single-cryptocurrency-box'>
+                                            <div className='d-flex align-items-center'>
+                                            <div className='title'>
+                                                <h3>Gestion des commandes e-commerce</h3>
+                                            </div>
+                                            </div><br/>
+                                            
+                                            <div className='btn-box'>
+                                            <Link href='/paiements/gestion-paiement-ecommerce' activeClassName='active'>
+                                                <Button
+                                                    block
+                                                    color="primary"
+                                                    type="button"
+                                                >
+                                                    Voir plus
+                                                </Button>
+                                            </Link>
+                                            {/* Fin */}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div className='col-lg-6 col-md-6'>
                             <div className='currency-selection text-center'>
                                 <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">

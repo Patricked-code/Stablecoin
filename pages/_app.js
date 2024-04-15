@@ -1,6 +1,8 @@
-
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { Provider } from 'react-redux';
 import { useStore } from '../store';
+// import {Script} from 'next/script';
 
 
 import '../public/css/animate.min.css';
@@ -23,12 +25,26 @@ import GoTop from '../components/Shared/GoTop';
 import Head from 'next/head';
 import 'bootstrap/dist/css/bootstrap.css'
 
-// import Script from 'next/script';
 
 
 
 function MyApp({ Component, pageProps }) {
   const store = useStore(pageProps.initialReduxState);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const handleRouteChange = (url) => {
+      window.gtag('config', process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS, {
+        page_path: url,
+      });
+    };
+
+    router.events.on('routeChangeComplete', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router.events]);
 
   return (
     <>

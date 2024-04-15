@@ -113,7 +113,7 @@ const AccueilCommeMoyenPaiement = () => {
       <div className='' >
         <div className=' mx-15'>
             <div className='py-10'>
-                <h1 className='text-center'>Validation des Kyc</h1>
+                <h1 className='text-center'>Stablecoin comme moyen de paiement</h1>
             </div>
         </div>
 

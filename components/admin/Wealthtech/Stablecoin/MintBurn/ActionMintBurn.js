@@ -248,7 +248,6 @@ const ActionMintBurn = () => {
         try {
             // Exécutez votre appel de contrat ici
             
-            console.log("NEXT_PUBLIC_RPC_PROVIDER=>",NEXT_PUBLIC_RPC_PROVIDER)
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
             const contract = new ethers.Contract(ADDRESS_CONTRAT_EWARI, ABI_TOKEN_EWARI.abi, signer);
@@ -335,7 +334,6 @@ const ActionMintBurn = () => {
         try {
             // Exécutez votre appel de contrat ici
             
-            console.log("NEXT_PUBLIC_RPC_PROVIDER=>",NEXT_PUBLIC_RPC_PROVIDER)
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
             const contract = new ethers.Contract(ADDRESS_CONTRAT_EWARI, ABI_TOKEN_EWARI.abi, signer);

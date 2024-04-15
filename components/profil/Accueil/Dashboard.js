@@ -728,6 +728,7 @@ const [montantAchat, setMontantAchat] = useState(0)
             })
             .then((result) => result.json())
             .then((data) => {
+                if (!data.message) {
                 // Filtrer les éléments où le champ 'valid' est égal à null
                 const pendingRequests = data.filter(item => item.valid === null);
     
@@ -737,6 +738,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                 // Mettre à jour les états
                 setDataPaymentPending(data);
                 setPaymentPendingLength(pendingRequestsLength);
+                }
             }) 
         }
         };
@@ -1714,6 +1716,37 @@ const [montantAchat, setMontantAchat] = useState(0)
                                             disabled={daysRemaining!==0}
                                         >
                                             <a className='nav-link' href='/profil/abonnement'>
+                                                Voir plus
+                                            </a>
+
+                                        </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Carte des Commerces à Proximité  */}
+                <div className='col-lg-6 col-md-6'>
+                    <div className='currency-selection text-center'>
+                        <div className="mt-4  credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className='cryptocurrency-slides'>
+                                <div className='single-cryptocurrency-box'>
+                                    <div className='d-flex align-items-center'>
+                                    <div className='bestseller-coin-image'>
+                                        <img src="/images/ecfa/abonnement/abo1.jpg" className="rounded-circle"  alt='image' />
+                                    </div>
+                                    <div className='title mt-2 mb-3'>
+                                        <h3>Carte des Commerces à Proximité</h3>
+                                        
+                                    </div>
+                                    </div>
+                                        <Button
+                                            block
+                                            color="success"
+                                            type="button"
+                                        >
+                                            <a className='nav-link' href='/map/carte-commerces'>
                                                 Voir plus
                                             </a>
 

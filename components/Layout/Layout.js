@@ -97,8 +97,12 @@ const Layout = ({ children }) => {
       pathname === "/profil/kyc/entreprise/resultat-kyc"||
       pathname === "/profil/wallet"||
       pathname === "/profil/paiements/paiements-attente"||
+      // PAIEMENT ECOMMERCE
       pathname === "/paiements/paiements-ecommerce-attente"||
-
+      pathname === "/paiements/gestion-paiement-ecommerce"||
+      
+      // CARTE DE LOCALISATION
+      // pathname === "/map/carte-commerces"||
 
       // POUR LES HISTORIQUES
       pathname === "/profil/historique"||
@@ -161,6 +165,7 @@ const Layout = ({ children }) => {
       pathname === "/profil/entreprise/actions/demande-paiement"||
       pathname === "/profil/entreprise/actions/boutique"||
       pathname === "/profil/entreprise/actions/boutique/ouverture-boutique"||
+      pathname === "/profil/entreprise/actions/boutique/compte-ecommerce"||
 
 
 
@@ -266,7 +271,14 @@ const Layout = ({ children }) => {
       // pathname === "/profil/kyc/entreprise/justificatif-domicile"||
       pathname === "/profil/wallet"||
       pathname === "/profil/paiements/paiements-attente"||
+      // PAIEMENT ECOMMERCE
       pathname === "/paiements/paiements-ecommerce-attente"||
+      pathname === "/paiements/gestion-paiement-ecommerce"||
+
+      // CARTE DE LOCALISATION COMMERCE
+      pathname === "/map/carte-commerces"||
+
+
       
       // POUR LES HISTORIQUES
       pathname === "/profil/historique"||
@@ -324,8 +336,9 @@ const Layout = ({ children }) => {
       pathname === "/profil/entreprise/actions/demande-paiement"||
       pathname === "/profil/entreprise/actions/boutique"||
       pathname === "/profil/entreprise/actions/boutique/ouverture-boutique"||
+      pathname === "/profil/entreprise/actions/boutique/compte-ecommerce"||
 
-
+      
       // FIN
 
       // LES ROUTES DE LA PARTIE ADMIN WEALTHTECH
