@@ -25,6 +25,8 @@ import Webcam from 'react-webcam'
 const CIformationFinanciereFive = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
@@ -284,6 +286,7 @@ const CIformationFinanciereFive = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization:  `Bearer ${token}`
   
                 },
@@ -378,6 +381,7 @@ const CIformationFinanciereFive = () => {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization:  `Bearer ${token}`
   
                 },
@@ -432,6 +436,7 @@ const CIformationFinanciereFive = () => {
             const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-transaction-annual-of-user-signIn`, {
                 headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })
@@ -454,6 +459,7 @@ const CIformationFinanciereFive = () => {
             const resCountry = await fetch(`${API_URL}/api/country/find-all`, {
                 headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
 
                 },

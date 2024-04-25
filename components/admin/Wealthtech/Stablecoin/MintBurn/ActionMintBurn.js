@@ -92,6 +92,7 @@ const ActionMintBurn = () => {
                   const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
                       headers: {
                       'Content-Type': 'application/json',
+                        'x-api-key': `${API_KEY_STABLECOIN}`,
                       Authorization:  `Bearer ${token}`,
 
                       },
@@ -123,6 +124,7 @@ const ActionMintBurn = () => {
                     // apiKey  =N72PF9RYJUGZRV9F2Q4FFB8HXBRKVA89BZ
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     },
                 })
                   .then((result) => result.json())

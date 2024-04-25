@@ -19,6 +19,9 @@ import Swal from 'sweetalert2';
 const ListeAbonnes = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
+     
     const HASH_TX = process.env.NEXT_PUBLIC_HASH_TX
 
     
@@ -129,6 +132,7 @@ const ListeAbonnes = () => {
                     const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
                         headers: {
                             'Content-Type': 'application/json',
+                            'x-api-key': `${API_KEY_STABLECOIN}`,
                             Authorization: `Bearer ${token}`,
                         },
                     });
@@ -187,6 +191,7 @@ const ListeAbonnes = () => {
                 const result = await fetch(`${API_URL}/api/subscription/find-all-subscription`, {
                     headers: {
                         'Content-Type': 'application/json',
+                        'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -227,6 +232,7 @@ const ListeAbonnes = () => {
             const result = await fetch(`${API_URL}/api/user/find-user-by-addrBlockchain?address=${_subsriberAddressBc}`, {
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization: `Bearer ${token}`,
                 },
             });

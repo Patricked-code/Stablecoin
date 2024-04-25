@@ -27,6 +27,8 @@ import ABI_ESCROW_STABLECOIN from "../../../components/Contrats/Abi/AbiEscrowSta
 const PaiementPending = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     // Pour les smart contrats
     const ADDRESS_CONTRAT_EWARI = process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
@@ -154,6 +156,7 @@ const PaiementPending = () => {
                 const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
                     headers: {
                         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -185,6 +188,7 @@ const PaiementPending = () => {
                 const result = await fetch(`${API_URL}/api/payment-request/find-all-payment-request-for-receiver?receiverId=${_currentUserId}`, {
                     headers: {
                         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -218,6 +222,7 @@ const PaiementPending = () => {
                 const result = await fetch(`${API_URL}/api/payment-request/find-request-use-stablecoin-of-user`, {
                     headers: {
                         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -405,6 +410,7 @@ async function transferToEscrow() {
           body: JSON.stringify(dataa),
           headers: {
               'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
               Authorization:  `Bearer ${token}`
           }
       })
@@ -448,6 +454,7 @@ async function transferToEscrow() {
           body: JSON.stringify(dataForm),
           headers: {
               'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
               Authorization:  `Bearer ${token}`
           }
       })
@@ -532,6 +539,7 @@ async function transferToEscrow() {
                 body: JSON.stringify(dataBody),
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization: `Bearer ${token}`
                 },
             });
@@ -584,6 +592,7 @@ async function transferToEscrow() {
             const result = await fetch(`${API_URL}/api/user/find-one-user-by-id/${_userId}`, {
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
             },
             });
     

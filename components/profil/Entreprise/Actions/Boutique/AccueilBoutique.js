@@ -28,6 +28,8 @@ import ABI_ESCROW_STABLECOIN from "../../../../../components/Contrats/Abi/AbiEsc
 const AccueilBoutique = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
 
      // Pour les smart contrats
@@ -147,13 +149,11 @@ const AccueilBoutique = () => {
                  * Smart contrat d'escrow ecommerce.
                  * @type {string}
                  */
-                 console.log("dataForUserOfEshop?.addressEscrow 1=>",dataForUserOfEshop?.addressEscrow)
 
                 if (dataForUserOfEshop?.addressEscrow) {
                     const contractEscrowEshop = new ethers.Contract(dataForUserOfEshop?.addressEscrow, ABI_ESCROW_STABLECOIN?.abi, walletRelay);
                     setContractEscrowEshop(contractEscrowEshop)
                     
-                    console.log("dataForUserOfEshop?.addressEscrow2=>",dataForUserOfEshop?.addressEscrow)
                     // Balance de l'escrow de ecommerce approuvé du marchand connecté
                     const balanceEscrowApprovedEshop = await contractEscrowEshop.getTotalApprovedAmount()
                     setBalanceEscrowApprovedEshop(formatNumber(balanceEscrowApprovedEshop/10**decimalStablecoin))
@@ -185,6 +185,7 @@ const AccueilBoutique = () => {
                 const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
                     headers: {
                         'Content-Type': 'application/json',
+                        'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -216,6 +217,7 @@ const AccueilBoutique = () => {
                 const result = await fetch(`${API_URL}/api/payment-request/find-request-use-stablecoin-of-user`, {
                     headers: {
                         'Content-Type': 'application/json',
+                        'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -247,6 +249,7 @@ const AccueilBoutique = () => {
                 const result = await fetch(`${API_URL}/api/apikey/find-request-use-stablecoin-for-eshop-of-user`, {
                     headers: {
                         'Content-Type': 'application/json',
+                        'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -418,6 +421,7 @@ const AccueilBoutique = () => {
                 body: JSON.stringify(dataBody),
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization: `Bearer ${token}`
                 },
             });
@@ -487,6 +491,7 @@ const AccueilBoutique = () => {
                 body: JSON.stringify(dataBody),
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization: `Bearer ${token}`
                 },
             });

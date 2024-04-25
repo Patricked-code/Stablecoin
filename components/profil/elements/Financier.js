@@ -40,7 +40,8 @@ import {
 const Financier = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
-
+    // Variable de l'api key de stablecoin
+    const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     // MODALS
     const [modalDefaultOpen, setModalDefaultOpen] = React.useState(false);
@@ -637,6 +638,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                     body: JSON.stringify(dataa),
                     headers: {
                         'Content-Type': 'application/json',
+                        'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization:  `Bearer ${token}`
                     }
                 })
@@ -825,6 +827,7 @@ const [montantAchat, setMontantAchat] = useState(0)
             const res = await fetch(`${API_URL}/api/user`, {
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
                 },
             })
@@ -853,6 +856,7 @@ const [montantAchat, setMontantAchat] = useState(0)
             const resCountry = await fetch(`${API_URL}/api/country/find-all`, {
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
 
                 },
@@ -878,6 +882,7 @@ const [montantAchat, setMontantAchat] = useState(0)
             const resBank = await fetch(`${API_URL}/api/bank/find-all`, {
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })
@@ -901,6 +906,7 @@ const [montantAchat, setMontantAchat] = useState(0)
             const resOperator = await fetch(`${API_URL}/api/operator/find-all-Operators`, {
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })
@@ -942,6 +948,7 @@ const [montantAchat, setMontantAchat] = useState(0)
               body: JSON.stringify(dataa),
               headers: {
                   'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                   Authorization:  `Bearer ${token}`
               }
           })
@@ -1000,6 +1007,7 @@ const [montantAchat, setMontantAchat] = useState(0)
               body: JSON.stringify(dataa),
               headers: {
                   'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                   Authorization:  `Bearer ${token}`
               }
           })

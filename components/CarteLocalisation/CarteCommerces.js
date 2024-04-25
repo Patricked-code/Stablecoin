@@ -17,6 +17,8 @@ const haversineDistance = (mk1, mk2) => {
 
 const CarteCommerces = () => {
     const API_URL = process.env.NEXT_PUBLIC_URL_API;
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
     const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
 
     const { isLoaded, loadError } = useLoadScript({
@@ -69,6 +71,7 @@ const CarteCommerces = () => {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
+                        'x-api-key': `${API_KEY_STABLECOIN}`,
                     },
                 });
 

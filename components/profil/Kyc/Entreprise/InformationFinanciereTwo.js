@@ -9,6 +9,8 @@ import ProgressBar from '../ProgressBar';
 const CIformationFinanciereTwo = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
@@ -147,6 +149,7 @@ const CIformationFinanciereTwo = () => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
 
             },
@@ -225,6 +228,7 @@ const CIformationFinanciereTwo = () => {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
 
             },
@@ -279,6 +283,7 @@ const CIformationFinanciereTwo = () => {
         const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-quarterly-of-user-signIn`, {
             headers: {
             'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization:  `Bearer ${token}`,
             },
         })

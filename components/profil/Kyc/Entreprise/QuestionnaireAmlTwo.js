@@ -10,6 +10,8 @@ import ProgressBar from '../ProgressBar';
 const CQuestionnaireAmlTwo = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
@@ -114,6 +116,7 @@ const CQuestionnaireAmlTwo = () => {
               body: JSON.stringify(dataa),
               headers: {
                   'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                   Authorization:  `Bearer ${token}`
               }
               })
@@ -225,6 +228,7 @@ const CQuestionnaireAmlTwo = () => {
       const resCountry = await fetch(`${API_URL}/api/country/find-all`, {
           headers: {
           'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
           },
       })
         .then((resCountry) => resCountry.json())
@@ -243,6 +247,7 @@ const CQuestionnaireAmlTwo = () => {
       const resBank = await fetch(`${API_URL}/api/bank/find-all`, {
           headers: {
           'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
           },
       })
           .then((resBank) => resBank.json())

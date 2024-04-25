@@ -13,6 +13,8 @@ import ABI_TOKEN_EWARI from "../../../components/Contrats/Abi/AbiStablecoin.json
 const CAccueilAbonnement = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
     const ADDRESS_CONTRAT_EWARI = process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
     const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY
     const  ADDRESS_COMMISSION = process.env.NEXT_PUBLIC_ADDRESS_COMMISSION
@@ -105,6 +107,7 @@ const CAccueilAbonnement = () => {
             const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 },
             })
               .then((result) => result.json())
@@ -151,6 +154,7 @@ const CAccueilAbonnement = () => {
               body: JSON.stringify(dataBody),
               headers: {
                   'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                   Authorization: `Bearer ${token}`
               },
           });
@@ -217,6 +221,7 @@ const CAccueilAbonnement = () => {
               body: JSON.stringify(dataBody),
               headers: {
                   'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                   Authorization: `Bearer ${token}`
               },
           });
@@ -273,6 +278,7 @@ const CAccueilAbonnement = () => {
           const result = await fetch(`${API_URL}/api/subscription/find-subscription-of-user`, {
           headers: {
               'Content-Type': 'application/json',
+              'x-api-key': `${API_KEY_STABLECOIN}`,
               Authorization: `Bearer ${token}`
 
           },
@@ -303,6 +309,7 @@ const CAccueilAbonnement = () => {
           const result = await fetch(`${API_URL}/api/subscription/find-all-rate-subscription`, {
           headers: {
               'Content-Type': 'application/json',
+              'x-api-key': `${API_KEY_STABLECOIN}`,
               Authorization: `Bearer ${token}`
 
           },
@@ -334,6 +341,7 @@ const CAccueilAbonnement = () => {
           const result = await fetch(`${API_URL}/api/subscription/find-one-rate-subscription/${_selectedOption}`, {
           headers: {
               'Content-Type': 'application/json',
+              'x-api-key': `${API_KEY_STABLECOIN}`,
               Authorization: `Bearer ${token}`
 
           },

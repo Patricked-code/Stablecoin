@@ -21,6 +21,8 @@ import Router from 'next/router';
 const SidebarNoeud = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
 // LES ELEMENTS DE LA ROUTE
 const router = useRouter();
@@ -76,6 +78,7 @@ const [kycBusinessTransactionAnnual, setKycBusinessTransactionAnnual] = useState
                 const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     },
                 })
                   .then((result) => result.json())
@@ -197,6 +200,7 @@ const [kycBusinessTransactionAnnual, setKycBusinessTransactionAnnual] = useState
           const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
               headers: {
               'Content-Type': 'application/json',
+              'x-api-key': `${API_KEY_STABLECOIN}`,
               Authorization:  `Bearer ${token}`
 
               },
@@ -224,6 +228,7 @@ const [kycBusinessTransactionAnnual, setKycBusinessTransactionAnnual] = useState
         const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-kyc-particular-for-user`, {
             headers: {
             'Content-Type': 'application/json',
+              'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization:  `Bearer ${token}`,
             },
         })
@@ -248,6 +253,7 @@ const [kycBusinessTransactionAnnual, setKycBusinessTransactionAnnual] = useState
             const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-of-user`, {
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })
@@ -302,6 +308,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-identity-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+          'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -324,6 +331,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-representative-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+          'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -347,6 +355,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-beneficiary-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+          'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -368,6 +377,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-structure-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+          'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -389,6 +399,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-politically-exposed-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+          'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -411,6 +422,7 @@ const getKycBusinessFinancialOperation = async () => {
       const response = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-operation-of-user-signIn`,{
           headers: {
               'Content-Type': 'application/json',
+              'x-api-key': `${API_KEY_STABLECOIN}`,
               Authorization:  `Bearer ${token}`
           },
       });
@@ -439,6 +451,7 @@ const getKycBusinessFundOriginIds = async () => {
       const response = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-fund-origin-of-user-signIn`,{
           headers: {
               'Content-Type': 'application/json',
+              'x-api-key': `${API_KEY_STABLECOIN}`,
               Authorization:  `Bearer ${token}`
           },
       });
@@ -468,6 +481,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-monthly-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+          'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -490,6 +504,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-quarterly-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+          'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -510,6 +525,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-annual-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+          'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -531,6 +547,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-transaction-monthly-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+          'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -551,6 +568,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-transaction-annual-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+          'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -587,6 +605,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-legal-documents-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+          'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })

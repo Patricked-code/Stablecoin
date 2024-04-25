@@ -22,6 +22,8 @@ import Swal from 'sweetalert2';
 const CKycEntrepriseDemandes = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     const [isLoggingIn, setIsLoggingIn] = useState();
     const [currentUser, setCurrentUser] = useState();
@@ -157,6 +159,7 @@ const CKycEntrepriseDemandes = () => {
                      const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
                          headers: {
                              'Content-Type': 'application/json',
+                            'x-api-key': `${API_KEY_STABLECOIN}`,
                              Authorization: `Bearer ${token}`,
                          },
                      });
@@ -249,6 +252,7 @@ const CKycEntrepriseDemandes = () => {
                 body: JSON.stringify(dataForm),
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization: `Bearer ${token}`
                 },
             });
@@ -316,6 +320,7 @@ const CKycEntrepriseDemandes = () => {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization: `Bearer ${token}`
                 },
             });
@@ -387,6 +392,7 @@ const CKycEntrepriseDemandes = () => {
                 const result = await fetch(`${API_URL}/api/kyc/find-all-kyc-request-of-kyc-owner`, {
                     headers: {
                         'Content-Type': 'application/json',
+                        'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -438,6 +444,7 @@ const CKycEntrepriseDemandes = () => {
                 const result = await fetch(`${API_URL}/api/kyc/find-one-kyc-request/${_kycRequestId}`, {
                     headers: {
                         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });

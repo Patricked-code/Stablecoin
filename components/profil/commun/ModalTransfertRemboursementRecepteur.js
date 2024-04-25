@@ -27,6 +27,8 @@ import ABI_ESCROW_STABLECOIN from "../../../components/Contrats/Abi/AbiEscrowSta
 const ModalTransfertRemboursementRecepteur = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     
     // Pour les smart contrats
@@ -254,6 +256,7 @@ const ModalTransfertRemboursementRecepteur = () => {
                 const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
                     headers: {
                         'Content-Type': 'application/json',
+                        'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -286,6 +289,7 @@ const ModalTransfertRemboursementRecepteur = () => {
                 const result = await fetch(`${API_URL}/api/historical/find-one-request-refund-transfer-by-user-email?email=${_userEmail}`, {
                     headers: {
                         'Content-Type': 'application/json',
+                        'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -328,6 +332,7 @@ const ModalTransfertRemboursementRecepteur = () => {
                 const result = await fetch(`${API_URL}/api/user/find-user-by-addrBlockchain?address=${_addressTo}`, {
                     headers: {
                         'Content-Type': 'application/json',
+                        'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -510,6 +515,7 @@ const ModalTransfertRemboursementRecepteur = () => {
                 body: JSON.stringify(dataBody),
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization: `Bearer ${token}`
                 },
             });
@@ -591,6 +597,7 @@ const ModalTransfertRemboursementRecepteur = () => {
                 body: JSON.stringify(dataBody),
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization: `Bearer ${token}`
                 },
             });
@@ -635,6 +642,7 @@ const ModalTransfertRemboursementRecepteur = () => {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization: `Bearer ${token}`
                 },
             });

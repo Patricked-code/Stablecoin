@@ -9,6 +9,8 @@ import Swal from 'sweetalert2';
 const CStatusEtDelegation = ({kycDocumentId,kycRegister, kycDfe, kycCopyStatutes, kycDelegationPowers}) => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     const [isLoggingIn, setIsLoggingIn] = useState(false); 
     const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
@@ -92,6 +94,7 @@ const [delegationPowersFile, setDelegationPowersFile] = useState(null)
             body,
             headers: {
             // 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization:  `Bearer ${token}`,
             },
         }) 
@@ -144,6 +147,7 @@ const [delegationPowersFile, setDelegationPowersFile] = useState(null)
             method:"PUT",
             headers: {
             'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization:  `Bearer ${token}`,
             },
         }) 
@@ -212,6 +216,7 @@ const [delegationPowersFile, setDelegationPowersFile] = useState(null)
             body,
             headers: {
             // 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization:  `Bearer ${token}`,
             },
         }) 
@@ -264,6 +269,7 @@ const [delegationPowersFile, setDelegationPowersFile] = useState(null)
             method:"PUT",
             headers: {
             'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization:  `Bearer ${token}`,
             },
         }) 

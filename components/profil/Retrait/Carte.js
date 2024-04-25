@@ -18,6 +18,8 @@ import { Icon } from '@iconify/react';
 const CarteRetrait = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
 
@@ -64,6 +66,7 @@ const CarteRetrait = () => {
                 const resCountry = await fetch(`${API_URL}/api/country/find-all`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization:  `Bearer ${token}`,
     
                     },
@@ -89,6 +92,7 @@ const CarteRetrait = () => {
                 const resBank = await fetch(`${API_URL}/api/bank/find-all`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization:  `Bearer ${token}`,
                     },
                 })
@@ -112,6 +116,7 @@ const CarteRetrait = () => {
                 const resOperator = await fetch(`${API_URL}/api/operator/find-all-Operators`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization:  `Bearer ${token}`,
                     },
                 })
@@ -136,6 +141,7 @@ const CarteRetrait = () => {
             const resBank = await fetch(`${API_URL}/api/bank/find-all`, {
                 headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })
@@ -158,6 +164,7 @@ const CarteRetrait = () => {
 
                 headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })

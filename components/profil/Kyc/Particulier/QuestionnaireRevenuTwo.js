@@ -19,6 +19,8 @@ import ProgressBar from '../ProgressBar';
 const CQuestionnaireRevenuTwo = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
@@ -131,6 +133,7 @@ const [dataBankOfCountry, setDataBankOfCountry] = useState('');
             body: JSON.stringify(dataa),
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
             })
@@ -183,6 +186,7 @@ const [dataBankOfCountry, setDataBankOfCountry] = useState('');
             const resOperator = await fetch(`${API_URL}/api/operator/find-all-Operators`, {
                 headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })
@@ -202,6 +206,7 @@ const [dataBankOfCountry, setDataBankOfCountry] = useState('');
         const resBank = await fetch(`${API_URL}/api/bank/find-all`, {
             headers: {
             'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
             },
         })
             .then((resBank) => resBank.json())
@@ -271,6 +276,7 @@ const [dataBankOfCountry, setDataBankOfCountry] = useState('');
             const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-kyc-particular-for-user`, {
                 headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })
@@ -336,6 +342,7 @@ useEffect(async() => {
     const resCountry = await fetch(`${API_URL}/api/country/find-all`, {
         headers: {
         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
         },
     })
       .then((resCountry) => resCountry.json())

@@ -27,6 +27,8 @@ import ABI_ESCROW_STABLECOIN from "../../../components/Contrats/Abi/AbiEscrowSta
 const GestionCommandeEboutik = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     // Pour les smart contrats
     const ADDRESS_CONTRAT_EWARI = process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
@@ -36,21 +38,13 @@ const GestionCommandeEboutik = () => {
     const [provider, setProvider] = useState(null);
     const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-    const [dataPaymentPending, setDataPaymentPending] = useState(); //state des données de paiement en entente
-    const [dataOnePaymentPending, setDataOnePaymentPending] = useState();
-    const [paymentPendingLength, setPaymentPendingLength] = useState();
+   
 
-    const [idPaymentPending, setIdPaymentPending] = useState();
-    const [currentnameEntreprise, setCurrentEntreprise] = useState();
-    const [currentSenderEmail, setCurrentSenderEmail] = useState();
+   
     const [currentSenderAddress, setCurrentSenderAddress] = useState();
-    const [currentAmount, setCurrentAmount] = useState();
-    const [currentSenderId, setCurrentSenderId] = useState();
     const [contractEscrow, setContractEscrow] = useState()
     
-    // Autre user
-    const [infosOtherUser, setInfosOtherUser] = useState()
-
+   
     
     
 
@@ -66,12 +60,49 @@ const GestionCommandeEboutik = () => {
     const [balanceStablecoin, setBalanceStablecoin] = useState();
     const [decimalStablecoin, setDecimalStablecoin] = useState();
 
-    // States des données de l'utilisation de stablecoin comme moyen de paiement
-    const [dataRequestUseStablecoinOfUser, setDataRequestUseStablecoinOfUser] = useState()
+
+    // States
+    const [dataForUserOfEshop, setDataForUserOfEshop] = useState() //state pour les infos marchand en ligne
+    const [dataAllOrdersOfMerchantByIdentifier, setDataAllOrdersOfMerchantByIdentifier] = useState() //state pour les infos marchand en ligne
 
 
+     // États pour stocker les commandes par statut
+     const [paidOrders, setPaidOrders] = useState([]);
+     const [confirmedPayments, setConfirmedPayments] = useState([]);
+     const [refundRequests, setRefundRequests] = useState([]);
+     const [acceptedRefunds, setAcceptedRefunds] = useState([]);
+     const [rejectedRefunds, setRejectedRefunds] = useState([]);
+     const [completedRefunds, setCompletedRefunds] = useState([]);
+     const [cancelledOrders, setCancelledOrders] = useState([]);
+    
+console.log("confirmedPayments=>",confirmedPayments)
+console.log("refundRequests=>",refundRequests)
+console.log("acceptedRefunds=>",acceptedRefunds)
+console.log("rejectedRefunds=>",rejectedRefunds)
+console.log("completedRefunds=>",completedRefunds)
+console.log("cancelledOrders=>",cancelledOrders)
+
+    // States de tab
+    const [toggleState, setToggleState] = useState(1);
+    const toggleTab = (index) => {
+        setToggleState(index);
+    };
+    // Fin
+
+    // States de tab des paiements
+    const [toggleStatePaiment, setToggleStatePaiment] = useState(1);
+    const toggleTabPaiment = (index) => {
+        setToggleStatePaiment(index);
+    };
+    // Fin
 
 
+    // States de tab des remboursements
+    const [toggleStateRefund, setToggleStateRefund] = useState(1);
+    const toggleTabRefund = (index) => {
+        setToggleStateRefund(index);
+    };
+    // Fin
 
     
 
@@ -154,6 +185,7 @@ const GestionCommandeEboutik = () => {
                 const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
                     headers: {
                         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -175,68 +207,7 @@ const GestionCommandeEboutik = () => {
     }, []);
     // Fin
 
-    // Obtenir les données de la demande de paiement en fonction de l'utilisateur connecté 
-    useEffect(async () => {
-        const getPaymentPendingOfUser= async (_currentUserId) => {
-            const token = localStorage.getItem('tokenEnCours');
-
-            try {
-                
-                const result = await fetch(`${API_URL}/api/payment-request/find-all-payment-request-for-receiver?receiverId=${_currentUserId}`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-
-                if (!result.ok) {
-                    throw new Error('Failed to fetch request data');
-                }
-
-                const data = await result.json();
-                setDataPaymentPending(data)
-                setPaymentPendingLength(data?.length)
-
-            } catch (error) {
-                // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
-                console.error('Erreur lors de la récupération des demandes:', error);
-            }
-        };
-        if (currentUser?.id) {
-            await getPaymentPendingOfUser(currentUser?.id);
-        }
-    }, [currentUser?.id]);
-    // Fin
-
-    // Recupération des données de l'utilisation de stablecoin comme moyen de paiement de l'utilisateur connecté
-    useEffect(async () => {
-        const getDataRequestUseStablecoinOfUser = async () => {
-            const token = localStorage.getItem('tokenEnCours');
-
-            try {
-                
-                const result = await fetch(`${API_URL}/api/payment-request/find-request-use-stablecoin-of-user`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-
-                if (!result.ok) {
-                    throw new Error('Failed to fetch request data');
-                }
-
-                const data = await result.json();
-                setDataRequestUseStablecoinOfUser(data);
-            } catch (error) {
-                // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
-                console.error('Erreur lors de la récupération des demandes:', error);
-            }
-        };
-
-        await getDataRequestUseStablecoinOfUser();
-    }, []);
-    // Fin
+   
 
     
     // Modal pour révoquer un rôle
@@ -250,361 +221,104 @@ const GestionCommandeEboutik = () => {
     const handleShowPayer = () => setShowPayer(true);
     // Fin
 
-
-
-   
-
-
-
-// ***************************************************************
-    // Transfert de stablecoin vers le smart contrat d'escrow
-// ****************************************************************
-async function transferToEscrow() {
-    setIsLoggingIn(true)
-
-    try {
-      // Vérifier le solde de magicCurrentAddress
-      const magicCurrentBalance = await contractStablecoin.balanceOf(magicCurrentAddress);
-  
-      // Convertir currentAmount en Wei
-      const amountWei = ethers.utils.parseUnits(String(currentAmount), decimalStablecoin);
-  
-      // Vérifier si magicCurrentAddress a des fonds suffisants
-      if (magicCurrentBalance.gte(amountWei)) {
-
-        const dataForm = {
-          spenderAddress: currentSenderAddress, //Adresse du smart contrat d'escrow
-          ownerAddress: magicCurrentAddress, //Adresse du client
-          amount: amountWei, //Montant
-        };
-        
-        // Estimer le coût en gaz pour l'approbation
-        const approveEstimateGas = await contractStablecoin.estimateGas.approveFrom(
-          dataForm?.ownerAddress,
-          dataForm?.spenderAddress,
-          dataForm?.amount
-        );
-  
-        // Obtenir le solde de l'exécutant
-        const executorBalance = await signer.getBalance();
-  
-        // Vérifier si l'exécutant a un solde Ether suffisant pour le gaz d'approbation
-        if (executorBalance.gte(approveEstimateGas)) {
-          // Transaction d'approbation
-          const approveTx = await contractStablecoin.approveFrom(
-            dataForm?.ownerAddress,
-            dataForm?.spenderAddress,
-            dataForm?.amount
-          );
-          await approveTx.wait();
-  
-          // Estimer le coût en gaz pour le dépôt
-          const asyncTransferEstimateGas = await contractEscrow.estimateGas.asyncTransfer(
-            dataForm?.ownerAddress,
-            dataForm?.amount,
-          );
-        
-        // return
-          // Vérifier si l'exécutant a un solde Ether suffisant pour le gaz de dépôt
-          if (executorBalance.gte(asyncTransferEstimateGas)) {
-            // Transaction de dépôt
-            const asyncTransferTx = await contractEscrow.asyncTransfer(dataForm?.ownerAddress, dataForm?.amount);
-            await asyncTransferTx.wait();
-
-            // Vérifier si l'exécutant a un solde gas suffisant pour le gaz d'apprabation de retrait
-            const approveWithdrawalEstimateGas = await contractEscrow.estimateGas.approveWithdrawal(dataForm?.ownerAddress);
-            const executorBalanceAfterTransfer = await signer.getBalance();
-            if (executorBalanceAfterTransfer.gte(approveWithdrawalEstimateGas)) {
-                // Fonction d'approbation de retrait
-                const approveWithdrawalTx = await contractEscrow.approveWithdrawal(dataForm?.ownerAddress);
-                await approveWithdrawalTx.wait();
-
-                transferAmount(asyncTransferTx.hash) //Appele de la fonction de confirmation de la transaction dans la base de donnée
-            } else {
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p>Solde insuffisant pour couvrir les frais de gaz d'approbation du retrait.</p>`,
-                    showConfirmButton: false,
-                    timer: 5000
-                });
-                console.error("Solde insuffisant pour couvrir les frais de gaz d'approveWithdrawal.");
-            }
-          } else {
-            setIsLoggingIn(false)
-            Swal.fire({
-              position: 'center',
-              icon: 'error',
-              html: `<p> Solde insuffisant pour couvrir les frais de gaz d'async transfer.</p>`,
-              showConfirmButton: false,
-              timer: 5000
-            });
-            console.error("Solde insuffisant pour couvrir les frais de gaz d'asyncTransfer.");
-          }
-        } else {
-            setIsLoggingIn(false)
-            Swal.fire({
-              position: 'center',
-              icon: 'error',
-              html: `<p> Solde insuffisant pour couvrir les frais de gaz d'approbation.</p>`,
-              showConfirmButton: false,
-              timer: 5000
-            });
-            console.error("Solde insuffisant pour couvrir les frais de gaz d'approbation.");
-        }
-      } else {
-        setIsLoggingIn(false)
-        Swal.fire({
-          position: 'center',
-          icon: 'error',
-          html: `<p> Fonds insuffisants sur votre compte. <br/> Votre solde est: ${balanceStablecoin}</p>`,
-          showConfirmButton: false,
-          timer: 5000
-        });
-        console.error("Fonds insuffisants sur votre compte.");
-      }
-    } catch (error) {
-        setIsLoggingIn(false)
-        console.error("Erreur lors de l'exécution de la transaction :", error);
-    }
-}
-  
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-   
-
-
-   // FONCTION POUR CONFIRMER LE PAIEMENT DANS LA BASE DE DONNEE
-   const transferAmount= async(_hash) =>{
-    setIsLoggingIn(true)
-    
-    const dataa = {
-      amount:currentAmount,
-      senderId:currentSenderId,
-    }
-    
-    // Obtenir le token en cours
-    const token = localStorage.getItem('tokenEnCours');
-
-    const result = await fetch(`${API_URL}/api/payment-request/transfer-amount/${idPaymentPending}`, {
-          method:"PUT",
-          body: JSON.stringify(dataa),
-          headers: {
-              'Content-Type': 'application/json',
-              Authorization:  `Bearer ${token}`
-          }
-      })
-      .then(res=>{
-      const data =  res.json();
-        if (res.status==200) {
-            addHistorical(_hash) //Appel de la fonction d'ajout des infos de transaction dans la table de l'historique
-          //  Actualiser après l'affichage 
-        //   setTimeout(() => {
-        //     window.location.reload()
-        //   }, 20000) 
-          // Fin
-        }else{
-          setIsLoggingIn(false)
-      }
-    })
-    .catch(error => {
-      setIsLoggingIn(false)
-
-      //handle error
-      console.log(error);
-
-    });
-    }
-    // FIN
-
-    // FONCTION QUI METTRE VALID DE LA TABLE EN False
-   const cancelPayment= async() =>{
-    setIsLoggingIn(true)
-    
-    const dataForm = {
-      amount:currentAmount,
-      senderId:currentSenderId
-       
-    }
-    // Obtenir le token en cours
-    const token = localStorage.getItem('tokenEnCours');
-
-    const result = await fetch(`${API_URL}/api/payment-request/cancel-payment/${idPaymentPending}`, {
-          method:"PUT",
-          body: JSON.stringify(dataForm),
-          headers: {
-              'Content-Type': 'application/json',
-              Authorization:  `Bearer ${token}`
-          }
-      })
-      .then(res=>{
-      const data =  res.json();
-        if (res.status==200) {
-          Swal.fire({
-            position: 'center',
-            icon: 'success',
-            html: "<p> La demande de paiement a été rejeté avec succès.<br/> Nous vous avons transmis un email de confirmation en ce sens.</p>" ,
-            showConfirmButton: false,
-            timer: 10000
-          })
-
-          //  Actualiser après l'affichage 
-          setTimeout(() => {
-            window.location.reload()
-          }, 10000) 
-          // Fin
-        }else{
-          setIsLoggingIn(false)
-
-          Swal.fire({
-            position: 'center',
-            icon: 'error',
-            html: "<p> L'annulation de la demande de paiement a échoué. </p>" ,
-            showConfirmButton: false,
-            timer: 15000
-        })
-      }
-    })
-    .catch(error => {
-      setIsLoggingIn(false)
-
-      //handle error
-      console.log(error);
-
-    });
-    }
-    // FIN
-
-
-    // Fonction d'enregistrement des données du transfert dans l'historique
-    const addHistorical = async (_hash) => {
-        setIsLoggingIn(true);
-
-        let nameSender =""
-        if (currentUser?.codeTypeProfil=="part") {
-            nameSender = currentUser?.lastName + '' + currentUser?.firstName
-        } else {
-            nameSender = currentUser?.entreprise
-        }
-
-        let nameReceiver =""
-        if (infosOtherUser?.codeTypeProfil=="part") {
-            nameReceiver = infosOtherUser?.lastName + '' + infosOtherUser?.firstName
-        } else {
-            nameReceiver = infosOtherUser?.entreprise
-        }
-        
-        try {
-            
-            const dataBody = {
-                typeTransaction: "Achat",
-                activeName: nameStablecoin,
-                activeSymbol: symbolStablecoin,
-                nameSender: nameSender,
-                nameReceiver: nameReceiver,
-                emailSender: currentUser?.email,
-                emailReceiver: infosOtherUser?.email,
-                senderAddress: magicCurrentAddress,
-                receiverAddress: infosOtherUser?.address,
-                amount: currentAmount,
-                hash: _hash
-            }
-
-            // Obtenir le token en cours
+    // Recupérer les données concernant de l'escrow du marchand en ligne de l'utilisateur connecté
+    useEffect( () => {
+        const getDataForUserOfEshop= async () => {
             const token = localStorage.getItem('tokenEnCours');
-            
-            const response = await fetch(`${API_URL}/api/historical/add-historical`, {
-                method: 'POST',
-                body: JSON.stringify(dataBody),
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-            });
 
-            /**
-             * Données de la réponse de la requête .
-             * @type {object}
-             */
-            const data = await response.json();
-
-            /* Verifier s'il y a un messsage d'erreur, on l'affiche dans SWAL 
-            * sinon on affiche le message de succès
-            */
-            if (data.message==200) {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'success',
-                    html: `<p> Votre transfert s'est effectué avec succès.</p>`,
-                    showConfirmButton: false,
-                    timer: 5000
+            try {
+                
+                const result = await fetch(`${API_URL}/api/apikey/find-request-use-stablecoin-for-eshop-of-user`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
+                        Authorization: `Bearer ${token}`,
+                    },
                 });
 
-                // Actualiser après l'affichage
-                setTimeout(() => {
-                    window.location.reload();
-                }, 7000);
-                // Fin
-            } else {
-                setMessageError(data.message);
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> ${messageError} </p>`,
-                    showConfirmButton: false,
-                    timer: 10000
-                });
-            }
-            // Fin condition
-        } catch (error) {
-            console.error('Erreur =>', error);
-        }
-    };
+                if (!result.ok) {
+                    throw new Error('Failed to fetch request data');
+                }
 
+                const data = await result.json();
+                setDataForUserOfEshop(data);
 
-    // FONCTION POUR RECUPERER LES INFOS D'UN AUTRE UTILISATEUR EN FONCTION DE SON ID
-    useEffect(() => {
-        const getInfosOtherUser = async (_userId) => {
-        try {
-            const result = await fetch(`${API_URL}/api/user/find-one-user-by-id/${_userId}`, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            });
-    
-            if (!result.ok) {
-            throw new Error('Failed to fetch user data');
+            } catch (error) {
+                // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
+                console.error('Erreur lors de la récupération des demandes:', error);
             }
-    
-            const user = await result.json();
-            setInfosOtherUser(user);
-            console.log("user oth=>", user)
-        } catch (error) {
-            // Handle errors appropriately, e.g., set an error state.
-            console.error('Error fetching user data:', error);
-        }
         };
+
+        getDataForUserOfEshop();
+    }, []);
+    // Fin
+
+
+    // Obtenir toutes les transactions effectuées sur les sites ecommerces
+    useEffect(() => {
+        const fetchOrders = async () => {
+            const token = localStorage.getItem('tokenEnCours');
+            try {
+                const response = await fetch(`${API_URL}/api/eshop/find-all-order-by-merchant-identifier-eshop?merchantIdentifier=${dataForUserOfEshop?.merchantIdentifier}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch orders');
+                }
+                const orders = await response.json();
+                // Filtrer et stocker les commandes par statut
+                setPaidOrders(orders.filter(order => order.status === 'Paiement effectué'));
+                setConfirmedPayments(orders.filter(order => order.status === 'Paiement confirmé'));
+                setRefundRequests(orders.filter(order => order.status === 'Demande de remboursement'));
+                setAcceptedRefunds(orders.filter(order => order.status === 'Demande de remboursement acceptée'));
+                setRejectedRefunds(orders.filter(order => order.status === 'Demande de remboursement rejetée'));
+                setCompletedRefunds(orders.filter(order => order.status === 'Remboursement effectué'));
+                setCancelledOrders(orders.filter(order => order.status === 'Commande annulée'));
+                console.log("orders=>",paidOrders)
+            
+            } catch (error) {
+                console.error('Error fetching orders:', error);
+            }
+        };
+
+        fetchOrders();
+    }, [dataForUserOfEshop?.merchantIdentifier]);
+    // Fin
+
     
-        if (currentSenderId) {
-        getInfosOtherUser(currentSenderId);
-        }
-    }, [currentSenderId]);
-    // FIN
+
+
+
+
+
+  
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+  
+
+
+
 
 
     /**
@@ -686,109 +400,472 @@ async function transferToEscrow() {
                     </div>
                     {/* Fin des images de fond */}
 
-                    {/* Les cards */}
-                        <div className='cryptocurrency-search-box'>
-                            <div className='row'>
-                                <div className='col-lg-1 col-md-1'></div>
 
-                                    <div className='col-lg-10 col-md-10'>
-                                        <div className='currency-selection'>
-                                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                                                    <div className='col-lg-12 col-md-12 row justify-content-between'>
-                                                        {/* {!paymentPendingLength==0?( */}
-                                                            <Table
-                                                                aria-label="Example table with static content"
-                                                                css={{
-                                                                    height: "auto",
-                                                                    minWidth: "100%",
-                                                                }}
-                                                            >
-                                                            <Table.Header>
-                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom client</p></Table.Column>
-                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Numéro commande</p></Table.Column>
-                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Email Client</p></Table.Column>
-                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
-                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
-                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
-                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
-                                                            </Table.Header>
-                                                                <Table.Body>
-                                                                    {/* {dataPaymentPending?.map(
-                                                                        (
-                                                                        {id, objet, amount,senderEmail, senderAddress, nameEntreprise, senderId, createdAt, valid},
-                                                                        index
-                                                                        ) => ( */}
-                                                                            <Table.Row >
-                                                                                {/* Default Admin */}
-                                                                                <Table.Cell ><small className=" py-0 ">{displayLimitedContent("Arouna",30,"characters")}</small></Table.Cell>
-                                                                                <Table.Cell ><small className=" py-0 "> 57437637657</small></Table.Cell>
-                                                                                <Table.Cell ><small className=" py-0 "> arouna@gmail.com</small></Table.Cell>
-                                                                                <Table.Cell ><small className=" py-0 "> 200</small></Table.Cell>
-                                                                                <Table.Cell ><small className=" py-0 "> En cours</small></Table.Cell>
-                                                                                <Table.Cell ><small className=" py-0 "> 21/03/2024</small></Table.Cell>
-                                                                                {/* <Table.Cell ><small className=" py-0 ">{amount}</small></Table.Cell>
-                                                                                <Table.Cell ><small className=" py-0 ">{displayLimitedContent(objet,15,"characters")}</small></Table.Cell>
-                                                                                <Table.Cell ><small className=" py-0 ">{valid == 1?(<i className='colorGreen'>Payé</i>):valid == 2 ? (<i className='colorBlue'>Remboursé</i>) :valid == 3? (<i className='colorRed'>Rejeté </i>) :<i>En cours</i>}</small></Table.Cell>
+                    {/************L'entête des tabs Paiements et Remboursement*********/}
+                    <div className="bloc-tabs-utilite ">
+                        <button
+                            className={toggleState === 1 ? "tabs active-tabs gr-text-8 text-color-opacity " : "tabs gr-text-8 text-color-opacity"}
+                            onClick={() => toggleTab(1)}
+                        >
+                            <span className='colorBlue'>Paiements</span>
+                        </button>
 
-                                                                                <Table.Cell ><small className=" py-0 ">{formatDate(createdAt)}</small></Table.Cell> */}
-                                                                            
-                                                                                <Table.Cell>
-                                                                                    <div className="d-flex py-0 ">
-                                                                                        <p className="text-center">
+                        <button
+                            className={toggleState === 2 ? "tabs active-tabs gr-text-8 text-color-opacity" : "tabs gr-text-8 text-color-opacity"}
+                            onClick={() => toggleTab(2)}
+                        >
+                            <span className='colorRed'>Remboursements</span>
+                        </button>
+                    </div>
+                    {/* Fin L'entête des tabs Paiements et Remboursement */}
 
-                                                                                        <button  className="py-0 mx-2 btn btn-success">
-                                                                                            Evaluer
-                                                                                        </button>
-                                                                                            
-                                                                                            {/* <button  onClick={()=>setCurrentAmount(amount)} disabled={valid === 1 || valid === 3}  className={`py-0 mx-2 btn ${valid === 1 || valid === 3 ? 'btn-secondary' : 'btn-danger'}`}>
-                                                                                                <div onClick={()=>setIdPaymentPending(id)}>
-                                                                                                    <div onClick={()=>setCurrentSenderId(senderId)}>
-                                                                                                        <div onClick={handleDeleteShow}>
-                                                                                                            Rejeter
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </button> */}
 
-                                                                                            {/* <small  onClick={()=>setCurrentAmount(amount)} className='py-0 px-0 mx-2 btn btn-primary'>
-                                                                                                <div onClick={()=>setIdPaymentPending(id)}>
-                                                                                                    <div onClick={()=>setCurrentSenderId(senderId)}>
-                                                                                                        <div>
-                                                                                                            Rembourser
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </small> */}
-                                                                                        </p>
-                                                                                    </div>
-                                                                                </Table.Cell>
-                                                                            </Table.Row >
-                                                                        {/* )
-                                                                    )} */}
 
-                                                                    {/* <Table.Pagination
-                                                                        shadow
-                                                                        noMargin
-                                                                        align="center"
-                                                                        rowsPerPage={3}
-                                                                        onPageChange={(page) => console.log({ page })}
-                                                                    /> */}
-                                                                </Table.Body>
-                                                            </Table>
-                                                        {/* ):(
-                                                            <div className="text-center my-5">
-                                                                Aucune demande de paiement en attente
-                                                            </div>
-                                                        )} */}
-                                                    </div>
-                                                {/* </form> */}
-                                            </div>
-                                        </div>
-                                    </div>
-                                <div className='col-lg-1 col-md-1'></div>
+
+                            
+                            
+                    {/************* Le corps de tab des paiements***************/}
+                    <div className="content-tabs">
+                        <div
+                            className={toggleState === 1 ? "content  active-content" : "content"}
+                        >
+
+
+                            {/******************L'entête des tabs de Paiements ***********/}
+                            <div className="bloc-tabs-utilite ">
+                                <button
+                                    className={toggleStatePaiment === 1 ? "tabs active-tabs gr-text-8 text-color-opacity" : "tabs gr-text-8 text-color-opacity"}
+                                    onClick={() => toggleTabPaiment(1)}
+                                >
+                                    <span className=''>Paiements effectués</span>
+                                </button>
+
+                                <button
+                                    className={toggleStatePaiment === 2 ? "tabs active-tabs gr-text-8 text-color-opacity" : "tabs gr-text-8 text-color-opacity"}
+                                    onClick={() => toggleTabPaiment(2)}
+                                >
+                                    <span className=''>Paiements confirmés </span>
+                                </button>
+
+                                <button
+                                    className={toggleStatePaiment === 3 ? "tabs active-tabs gr-text-8 text-color-opacity" : "tabs gr-text-8 text-color-opacity"}
+                                    onClick={() => toggleTabPaiment(3)}
+                                >
+                                    <span className=''>Paiements annulés </span>
+                                </button>
                             </div>
+                            {/* FIN L'entête des tabs de Paiements*/}
+
+
                         </div>
+                    </div>
+                    {/* Fin Le corps de tab des paiements */}
+
+
+
+
+
+
+                    {/* ***************************************************** */}
+                        {/* LE CONTENU QUI CONTIENT LES DIFFERENTES PARTIES DE PAIEMENT */}
+                    {/* ********************************************************* */}
+
+                    {/************* Le corps de tab des Paiements effectués***************/}
+                    <div className="content-tabs">
+                        <div
+                            className={toggleStatePaiment === 1 ? "content  active-content" : "content"}
+                        >
+
+                            {/* Les cards à revoir */}
+                            <div className='cryptocurrency-search-box'>
+    <div className='row'>
+
+            <div className='col-lg-12 col-md-12'>
+                <div className='currency-selection'>
+                    <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className='col-lg-12 col-md-12 row justify-content-between'>
+                                {/* {!paymentPendingLength==0?( */}
+                                    <Table
+                                        aria-label="Example table with static content"
+                                        css={{
+                                            height: "auto",
+                                            minWidth: "100%",
+                                        }}
+                                    >
+                                    <Table.Header>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom client</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Numéro commande</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Email Client</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
+                                    </Table.Header>
+                                        <Table.Body>
+                                            {/* {dataPaymentPending?.map(
+                                                (
+                                                {id, objet, amount,senderEmail, senderAddress, nameEntreprise, senderId, createdAt, valid},
+                                                index
+                                                ) => ( */}
+                                                    <Table.Row >
+                                                        {/* Default Admin */}
+                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent("Arouna",30,"characters")}</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 "> 57437637657</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 "> arouna@gmail.com</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 "> 200</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 "> En cours</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 "> 21/03/2024</small></Table.Cell>
+                                                        {/* <Table.Cell ><small className=" py-0 ">{amount}</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent(objet,15,"characters")}</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 ">{valid == 1?(<i className='colorGreen'>Payé</i>):valid == 2 ? (<i className='colorBlue'>Remboursé</i>) :valid == 3? (<i className='colorRed'>Rejeté </i>) :<i>En cours</i>}</small></Table.Cell>
+
+                                                        <Table.Cell ><small className=" py-0 ">{formatDate(createdAt)}</small></Table.Cell> */}
+                                                    
+                                                        <Table.Cell>
+                                                            <div className="d-flex py-0 ">
+                                                                <p className="text-center">
+
+                                                                <button  className="py-0 mx-2 btn btn-success">
+                                                                    Evaluer
+                                                                </button>
+                                                                    
+                                                                    {/* <button  onClick={()=>setCurrentAmount(amount)} disabled={valid === 1 || valid === 3}  className={`py-0 mx-2 btn ${valid === 1 || valid === 3 ? 'btn-secondary' : 'btn-danger'}`}>
+                                                                        <div onClick={()=>setIdPaymentPending(id)}>
+                                                                            <div onClick={()=>setCurrentSenderId(senderId)}>
+                                                                                <div onClick={handleDeleteShow}>
+                                                                                    Rejeter
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </button> */}
+
+                                                                    {/* <small  onClick={()=>setCurrentAmount(amount)} className='py-0 px-0 mx-2 btn btn-primary'>
+                                                                        <div onClick={()=>setIdPaymentPending(id)}>
+                                                                            <div onClick={()=>setCurrentSenderId(senderId)}>
+                                                                                <div>
+                                                                                    Rembourser
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </small> */}
+                                                                </p>
+                                                            </div>
+                                                        </Table.Cell>
+                                                    </Table.Row >
+                                                {/* )
+                                            )} */}
+
+                                            {/* <Table.Pagination
+                                                shadow
+                                                noMargin
+                                                align="center"
+                                                rowsPerPage={3}
+                                                onPageChange={(page) => console.log({ page })}
+                                            /> */}
+                                        </Table.Body>
+                                    </Table>
+                                {/* ):(
+                                    <div className="text-center my-5">
+                                        Aucune demande de paiement en attente
+                                    </div>
+                                )} */}
+                            </div>
+                        {/* </form> */}
+                    </div>
                 </div>
+            </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+
+                    {/* ***************************FIN******************************* */}
+
+
+{/************* Le corps de tab des Paiements effectués***************/}
+<div className="content-tabs">
+                        <div
+                            className={toggleStatePaiment === 2 ? "content  active-content" : "content"}
+                        >
+
+                            {/* Les cards à revoir */}
+                            <div className='cryptocurrency-search-box'>
+    <div className='row'>
+
+            <div className='col-lg-12 col-md-12'>
+                <div className='currency-selection'>
+                    <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className='col-lg-12 col-md-12 row justify-content-between'>
+                                {/* {!paymentPendingLength==0?( */}
+                                    <Table
+                                        aria-label="Example table with static content"
+                                        css={{
+                                            height: "auto",
+                                            minWidth: "100%",
+                                        }}
+                                    >
+                                    <Table.Header>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom client</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Numéro commande</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Email Client</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
+                                    </Table.Header>
+                                        <Table.Body>
+                                            {/* {dataPaymentPending?.map(
+                                                (
+                                                {id, objet, amount,senderEmail, senderAddress, nameEntreprise, senderId, createdAt, valid},
+                                                index
+                                                ) => ( */}
+                                                    <Table.Row >
+                                                        {/* Default Admin */}
+                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent("Arouna",30,"characters")}</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 "> 57437637657</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 "> arouna@gmail.com</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 "> 200</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 "> En cours</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 "> 21/03/2024</small></Table.Cell>
+                                                        {/* <Table.Cell ><small className=" py-0 ">{amount}</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent(objet,15,"characters")}</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 ">{valid == 1?(<i className='colorGreen'>Payé</i>):valid == 2 ? (<i className='colorBlue'>Remboursé</i>) :valid == 3? (<i className='colorRed'>Rejeté </i>) :<i>En cours</i>}</small></Table.Cell>
+
+                                                        <Table.Cell ><small className=" py-0 ">{formatDate(createdAt)}</small></Table.Cell> */}
+                                                    
+                                                        <Table.Cell>
+                                                            <div className="d-flex py-0 ">
+                                                                <p className="text-center">
+
+                                                                <button  className="py-0 mx-2 btn btn-success">
+                                                                    Evaluer
+                                                                </button>
+                                                                    
+                                                                    {/* <button  onClick={()=>setCurrentAmount(amount)} disabled={valid === 1 || valid === 3}  className={`py-0 mx-2 btn ${valid === 1 || valid === 3 ? 'btn-secondary' : 'btn-danger'}`}>
+                                                                        <div onClick={()=>setIdPaymentPending(id)}>
+                                                                            <div onClick={()=>setCurrentSenderId(senderId)}>
+                                                                                <div onClick={handleDeleteShow}>
+                                                                                    Rejeter
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </button> */}
+
+                                                                    {/* <small  onClick={()=>setCurrentAmount(amount)} className='py-0 px-0 mx-2 btn btn-primary'>
+                                                                        <div onClick={()=>setIdPaymentPending(id)}>
+                                                                            <div onClick={()=>setCurrentSenderId(senderId)}>
+                                                                                <div>
+                                                                                    Rembourser
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </small> */}
+                                                                </p>
+                                                            </div>
+                                                        </Table.Cell>
+                                                    </Table.Row >
+                                                {/* )
+                                            )} */}
+
+                                            {/* <Table.Pagination
+                                                shadow
+                                                noMargin
+                                                align="center"
+                                                rowsPerPage={3}
+                                                onPageChange={(page) => console.log({ page })}
+                                            /> */}
+                                        </Table.Body>
+                                    </Table>
+                                {/* ):(
+                                    <div className="text-center my-5">
+                                        Aucune demande de paiement en attente
+                                    </div>
+                                )} */}
+                            </div>
+                        {/* </form> */}
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+
+                    {/* ***************************FIN******************************* */}
+
+{/************* Le corps de tab des Paiements effectués***************/}
+<div className="content-tabs">
+                        <div
+                            className={toggleStatePaiment === 3 ? "content  active-content" : "content"}
+                        >
+
+                            {/* Les cards à revoir */}
+                            <div className='cryptocurrency-search-box'>
+    <div className='row'>
+
+            <div className='col-lg-12 col-md-12'>
+                <div className='currency-selection'>
+                    <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className='col-lg-12 col-md-12 row justify-content-between'>
+                                {/* {!paymentPendingLength==0?( */}
+                                    <Table
+                                        aria-label="Example table with static content"
+                                        css={{
+                                            height: "auto",
+                                            minWidth: "100%",
+                                        }}
+                                    >
+                                    <Table.Header>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom client</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Numéro commande</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Email Client</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
+                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
+                                    </Table.Header>
+                                        <Table.Body>
+                                            {/* {dataPaymentPending?.map(
+                                                (
+                                                {id, objet, amount,senderEmail, senderAddress, nameEntreprise, senderId, createdAt, valid},
+                                                index
+                                                ) => ( */}
+                                                    <Table.Row >
+                                                        {/* Default Admin */}
+                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent("Arouna",30,"characters")}</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 "> 57437637657</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 "> arouna@gmail.com</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 "> 200</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 "> En cours</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 "> 21/03/2024</small></Table.Cell>
+                                                        {/* <Table.Cell ><small className=" py-0 ">{amount}</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent(objet,15,"characters")}</small></Table.Cell>
+                                                        <Table.Cell ><small className=" py-0 ">{valid == 1?(<i className='colorGreen'>Payé</i>):valid == 2 ? (<i className='colorBlue'>Remboursé</i>) :valid == 3? (<i className='colorRed'>Rejeté </i>) :<i>En cours</i>}</small></Table.Cell>
+
+                                                        <Table.Cell ><small className=" py-0 ">{formatDate(createdAt)}</small></Table.Cell> */}
+                                                    
+                                                        <Table.Cell>
+                                                            <div className="d-flex py-0 ">
+                                                                <p className="text-center">
+
+                                                                <button  className="py-0 mx-2 btn btn-success">
+                                                                    Evaluer
+                                                                </button>
+                                                                    
+                                                                    {/* <button  onClick={()=>setCurrentAmount(amount)} disabled={valid === 1 || valid === 3}  className={`py-0 mx-2 btn ${valid === 1 || valid === 3 ? 'btn-secondary' : 'btn-danger'}`}>
+                                                                        <div onClick={()=>setIdPaymentPending(id)}>
+                                                                            <div onClick={()=>setCurrentSenderId(senderId)}>
+                                                                                <div onClick={handleDeleteShow}>
+                                                                                    Rejeter
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </button> */}
+
+                                                                    {/* <small  onClick={()=>setCurrentAmount(amount)} className='py-0 px-0 mx-2 btn btn-primary'>
+                                                                        <div onClick={()=>setIdPaymentPending(id)}>
+                                                                            <div onClick={()=>setCurrentSenderId(senderId)}>
+                                                                                <div>
+                                                                                    Rembourser
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </small> */}
+                                                                </p>
+                                                            </div>
+                                                        </Table.Cell>
+                                                    </Table.Row >
+                                                {/* )
+                                            )} */}
+
+                                            {/* <Table.Pagination
+                                                shadow
+                                                noMargin
+                                                align="center"
+                                                rowsPerPage={3}
+                                                onPageChange={(page) => console.log({ page })}
+                                            /> */}
+                                        </Table.Body>
+                                    </Table>
+                                {/* ):(
+                                    <div className="text-center my-5">
+                                        Aucune demande de paiement en attente
+                                    </div>
+                                )} */}
+                            </div>
+                        {/* </form> */}
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+
+                    {/* ***************************FIN******************************* */}
+
+
+
+
+
+
+
+
+
+
+
+                    {/************* Le corps de tab des remboursements***************/}
+                    <div className="content-tabs">
+                        <div
+                            className={toggleState === 2 ? "content  active-content" : "content"}
+                        >
+
+                            {/******************L'entête des tabs de remboursement ***********/}
+                            <div className="bloc-tabs-utilite ">
+                            <button
+                                    className={toggleStateRefund === 1 ? "tabs active-tabs  gr-text-8 text-color-opacity" : "tabs  gr-text-8 text-color-opacity"}
+                                    onClick={() => toggleTabRefund(1)}
+                                >
+                                    <span className=''>Remboursements demandés</span>
+                                </button>
+
+                                <button
+                                    className={toggleStateRefund === 2 ? "tabs active-tabs  gr-text-8 text-color-opacity" : "tabs  gr-text-8 text-color-opacity"}
+                                    onClick={() => toggleTabRefund(2)}
+                                    
+                                >
+                                    <span className=''>Remboursements Acceptés</span>
+                                </button>
+
+                                <button
+                                    className={toggleStateRefund === 3 ? "tabs active-tabs  gr-text-8 text-color-opacity" : "tabs  gr-text-8 text-color-opacity"}
+                                    onClick={() => toggleTabRefund(3)}
+                                    
+                                >
+                                    <span className=''>Remboursements Effectués</span>
+                                </button>
+
+                                <button
+                                    className={toggleStateRefund === 4 ? "tabs active-tabs  gr-text-8 text-color-opacity" : "tabs  gr-text-8 text-color-opacity"}
+                                    onClick={() => toggleTabRefund(4)}
+                                    
+                                >
+                                    <span className=''>Remboursements Rejetés</span>
+                                </button> 
+                            </div>
+                            {/* FIN L'entête des tabs de remboursement*/}
+                        </div>
+                    </div>
+                    {/* Fin Le corps de tab des remboursement */}
+
+
+
+
+                    
+                </div>  
             </>
          {/* ):(
             <span className="text-center bg-default-2 btn-bottom-text  d-block gr-text-5 text-blackish-blue gr-opacity-10 my-35">

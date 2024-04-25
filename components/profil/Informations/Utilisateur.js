@@ -131,6 +131,7 @@ const InfosUtilisateur = () => {
             body: formData,
             headers: {
                 // 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization: `Bearer ${token}`
             }
         });
@@ -200,6 +201,7 @@ const InfosUtilisateur = () => {
                     const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
                         headers: {
                         'Content-Type': 'application/json',
+                        'x-api-key': `${API_KEY_STABLECOIN}`,
                         },
                     })
                       .then((result) => result.json())
@@ -222,6 +224,7 @@ const InfosUtilisateur = () => {
                 
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     },
                 })
                     .then((res) => res.json())
@@ -290,6 +293,7 @@ const InfosUtilisateur = () => {
                 body: JSON.stringify(dataRequest),
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization:  `Bearer ${token}`
                 }
             })

@@ -24,6 +24,8 @@ import ModalTransfertRemboursementRecepteur from '../commun/ModalTransfertRembou
 const SidebarProfil = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
 // LES ELEMENTS DE LA ROUTE
 const router = useRouter();
@@ -79,6 +81,7 @@ const [kycBusinessTransactionAnnual, setKycBusinessTransactionAnnual] = useState
                 const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     },
                 })
                   .then((result) => result.json())
@@ -129,56 +132,56 @@ const [kycBusinessTransactionAnnual, setKycBusinessTransactionAnnual] = useState
   const timeoutRef = useRef(null); // Utilisez useRef au lieu de useState
 
   // Fonction pour gérer l'inactivité
-  // const resetInactivityTimeout = useCallback(() => {
-  //   clearTimeout(timeoutRef.current);
-  //   timeoutRef.current = setTimeout(handleInactive, 60000); // 2 minutes
-  // }, []);
+  const resetInactivityTimeout = useCallback(() => {
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(handleInactive, 60000); // 2 minutes
+  }, []);
 
-  // const handleInactive = () => {
-  //   Swal.fire({
-  //     title: 'Déconnexion automatique',
-  //     html: '<p>Nous avons décidé une inactivité prolongée dans votre espace.</p> <p> Sans actions de votre part, vous allez être déconnecté dans <b></b> secondes.</p> <button class="btn btn-primary rounded-pill" id="stayConnected">Rester connecté</button>',
-  //     timer: 60000, // 2 minutes
-  //     timerProgressBar: true,
-  //     didOpen: () => {
-  //       Swal.showLoading();
-  //       const b = Swal.getHtmlContainer().querySelector('b');
-  //       const stayConnectedButton = document.getElementById('stayConnected');
+  const handleInactive = () => {
+    Swal.fire({
+      title: 'Déconnexion automatique',
+      html: '<p>Nous avons décidé une inactivité prolongée dans votre espace.</p> <p> Sans actions de votre part, vous allez être déconnecté dans <b></b> secondes.</p> <button class="btn btn-primary rounded-pill" id="stayConnected">Rester connecté</button>',
+      timer: 60000, // 2 minutes
+      timerProgressBar: true,
+      didOpen: () => {
+        Swal.showLoading();
+        const b = Swal.getHtmlContainer().querySelector('b');
+        const stayConnectedButton = document.getElementById('stayConnected');
 
-  //       stayConnectedButton.addEventListener('click', () => {
-  //         clearInterval(timerInterval); // Arrêtez également le timerInterval
-  //         Swal.close();
-  //         resetInactivityTimeout(); // Réinitialiser le délai après avoir choisi de rester connecté
-  //       });
+        stayConnectedButton.addEventListener('click', () => {
+          clearInterval(timerInterval); // Arrêtez également le timerInterval
+          Swal.close();
+          resetInactivityTimeout(); // Réinitialiser le délai après avoir choisi de rester connecté
+        });
 
-  //       timerInterval = setInterval(() => {
-  //         const timeLeft = Swal.getTimerLeft();
-  //         if (timeLeft > 0) {
-  //           b.textContent = (timeLeft / 1000).toFixed(0);
-  //         } else {
-  //           clearInterval(timerInterval);
-  //           logout(); // Implémentez votre logique de déconnexion ici
-  //         }
-  //       }, 100);
-  //     },
-  //     willClose: () => {
-  //       clearInterval(timerInterval); // Nettoyer l'intervalle
-  //     }
-  //   });
-  // };
+        timerInterval = setInterval(() => {
+          const timeLeft = Swal.getTimerLeft();
+          if (timeLeft > 0) {
+            b.textContent = (timeLeft / 1000).toFixed(0);
+          } else {
+            clearInterval(timerInterval);
+            logout(); // Implémentez votre logique de déconnexion ici
+          }
+        }, 100);
+      },
+      willClose: () => {
+        clearInterval(timerInterval); // Nettoyer l'intervalle
+      }
+    });
+  };
 
-  // useEffect(() => {
-  //   resetInactivityTimeout(); // Démarrer le délai initial lors du rendu initial
+  useEffect(() => {
+    resetInactivityTimeout(); // Démarrer le délai initial lors du rendu initial
 
-  //   document.addEventListener('mousemove', resetInactivityTimeout);
-  //   document.addEventListener('keydown', resetInactivityTimeout);
+    document.addEventListener('mousemove', resetInactivityTimeout);
+    document.addEventListener('keydown', resetInactivityTimeout);
 
-  //   return () => {
-  //     document.removeEventListener('mousemove', resetInactivityTimeout);
-  //     document.removeEventListener('keydown', resetInactivityTimeout);
-  //     clearTimeout(timeoutRef.current);
-  //   };
-  // }, [resetInactivityTimeout]);
+    return () => {
+      document.removeEventListener('mousemove', resetInactivityTimeout);
+      document.removeEventListener('keydown', resetInactivityTimeout);
+      clearTimeout(timeoutRef.current);
+    };
+  }, [resetInactivityTimeout]);
 // ***********FIN****************************
 
 
@@ -200,6 +203,7 @@ const [kycBusinessTransactionAnnual, setKycBusinessTransactionAnnual] = useState
           const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
               headers: {
               'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
               Authorization:  `Bearer ${token}`
 
               },
@@ -227,6 +231,7 @@ const [kycBusinessTransactionAnnual, setKycBusinessTransactionAnnual] = useState
         const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-kyc-particular-for-user`, {
             headers: {
             'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization:  `Bearer ${token}`,
             },
         })
@@ -251,6 +256,7 @@ const [kycBusinessTransactionAnnual, setKycBusinessTransactionAnnual] = useState
             const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-of-user`, {
                 headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })
@@ -305,6 +311,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-identity-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -327,6 +334,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-representative-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -350,6 +358,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-beneficiary-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -371,6 +380,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-structure-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -392,6 +402,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-politically-exposed-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -414,6 +425,7 @@ const getKycBusinessFinancialOperation = async () => {
       const response = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-operation-of-user-signIn`,{
           headers: {
               'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
               Authorization:  `Bearer ${token}`
           },
       });
@@ -442,6 +454,7 @@ const getKycBusinessFundOriginIds = async () => {
       const response = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-fund-origin-of-user-signIn`,{
           headers: {
               'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
               Authorization:  `Bearer ${token}`
           },
       });
@@ -471,6 +484,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-monthly-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -493,6 +507,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-quarterly-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -513,6 +528,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-annual-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -534,6 +550,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-transaction-monthly-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -554,6 +571,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-transaction-annual-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })
@@ -590,6 +608,7 @@ useEffect(async() => {
       const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-legal-documents-of-user-signIn`, {
           headers: {
           'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`,
           },
       })

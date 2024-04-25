@@ -41,6 +41,8 @@ import {
 const CBancaire = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
     const HASH_TX = process.env.NEXT_PUBLIC_HASH_TX
 
 
@@ -98,6 +100,7 @@ const CBancaire = () => {
             const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization: `Bearer ${token}`,
                 },
             })
@@ -121,6 +124,7 @@ const CBancaire = () => {
             const result = await fetch(`${API_URL}/api/transaction/find-all-cash-transaction-of-user`, {
             headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization: `Bearer ${token}`
   
             },
@@ -150,6 +154,7 @@ const CBancaire = () => {
             const result = await fetch(`${API_URL}/api/transaction/find-all-cash-transaction-of-institution`, {
             headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization: `Bearer ${token}`
   
             },

@@ -47,7 +47,8 @@ import { id } from 'ethers/lib/utils';
 const ShowKycEntreprise = ({kycForBusinessId, kycRequestId}) => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
-
+    // Variable de l'api key de stablecoin
+    const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     const [currentUser, setCurrentUser] = useState();
     const [provider, setProvider] = useState(null);
@@ -220,6 +221,7 @@ const ShowKycEntreprise = ({kycForBusinessId, kycRequestId}) => {
                 const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     },
                 })
                   .then((result) => result.json())
@@ -313,6 +315,7 @@ const ShowKycEntreprise = ({kycForBusinessId, kycRequestId}) => {
             body: JSON.stringify(dataa),
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
             })
@@ -369,6 +372,7 @@ const ShowKycEntreprise = ({kycForBusinessId, kycRequestId}) => {
             body: JSON.stringify(dataa),
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
             })
@@ -424,6 +428,7 @@ const validKycIdentity= async (event) => {
         body: JSON.stringify(dataa),
         headers: {
             'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization:  `Bearer ${token}`
         }
         })
@@ -477,6 +482,7 @@ const validKycIdentity= async (event) => {
             body: JSON.stringify(dataa),
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
             })
@@ -529,6 +535,7 @@ const validKycIdentity= async (event) => {
             body: JSON.stringify(dataa),
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
             })
@@ -581,6 +588,7 @@ const validKycIdentity= async (event) => {
             body: JSON.stringify(dataa),
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
             })
@@ -633,6 +641,7 @@ const validKycIdentity= async (event) => {
             body: JSON.stringify(dataa),
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
             })
@@ -685,6 +694,7 @@ const validKycIdentity= async (event) => {
             body: JSON.stringify(dataa),
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
             })
@@ -739,6 +749,7 @@ const validKycIdentity= async (event) => {
             body: JSON.stringify(dataa),
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
             })
@@ -793,6 +804,7 @@ const validKycIdentity= async (event) => {
             body: JSON.stringify(dataa),
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
             })
@@ -846,6 +858,7 @@ const validKycIdentity= async (event) => {
             body: JSON.stringify(dataa),
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
             })
@@ -905,6 +918,7 @@ const validKycIdentity= async (event) => {
             body: JSON.stringify(dataa),
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
             })
@@ -987,6 +1001,7 @@ const validKycIdentity= async (event) => {
                 const result = await fetch(`${API_URL}/api/kyc/find-one-kyc-request/${_kycRequestId}`, {
                     headers: {
                         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -1025,6 +1040,7 @@ const validKycIdentity= async (event) => {
             const resKyc = await fetch(`${API_URL}/api/kyc/business/find-one-kyc/${_userId}`, {
                 headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
 
                 },
@@ -1079,6 +1095,7 @@ const validKycIdentity= async (event) => {
             const resCountry = await fetch(`${API_URL}/api/country/find-all`, {
                 headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
 
                 },
@@ -1101,6 +1118,7 @@ const validKycIdentity= async (event) => {
             const result = await fetch(`${API_URL}/api/user/find-one-user-by-id/${_userId}`, {
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
             },
             });
     
@@ -1131,6 +1149,7 @@ const validKycIdentity= async (event) => {
             const result = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-identity-by-kycId?kycId=${_kycId}`, {
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
             },
             });
@@ -1173,6 +1192,7 @@ const validKycIdentity= async (event) => {
             const result = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-representative-by-kycId?kycId=${_kycId}`, {
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
             },
             });
@@ -1211,6 +1231,7 @@ const validKycIdentity= async (event) => {
             const result = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-beneficiary-by-kycId?kycId=${_kycId}`, {
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
             },
             });
@@ -1249,6 +1270,7 @@ const validKycIdentity= async (event) => {
             const result = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-structure-by-kycId?kycId=${_kycId}`, {
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
             },
             });
@@ -1287,6 +1309,7 @@ const validKycIdentity= async (event) => {
             const result = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-politically-exposed-by-kycId?kycId=${_kycId}`, {
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
             },
             });
@@ -1325,6 +1348,7 @@ const validKycIdentity= async (event) => {
             const result = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-operation-by-kycId?kycId=${_kycId}`, {
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
             },
             });
@@ -1356,6 +1380,7 @@ const validKycIdentity= async (event) => {
             const result = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-fund-origin-by-kycId?kycId=${_kycId}`, {
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
             },
             });
@@ -1387,6 +1412,7 @@ const validKycIdentity= async (event) => {
                 const result = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-information-by-kycId?kycId=${_kycId}`, {
                     headers: {
                         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization:  `Bearer ${token}`,
                     },
                 });
@@ -1436,6 +1462,7 @@ const validKycIdentity= async (event) => {
                 const result = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-financial-transaction-by-kycId?kycId=${_kycId}`, {
                     headers: {
                         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization:  `Bearer ${token}`,
                     },
                 });
@@ -1483,6 +1510,7 @@ const validKycIdentity= async (event) => {
             const result = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-legal-documents-by-kycId?kycId=${_kycId}`, {
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
             },
             });

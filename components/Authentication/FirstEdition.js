@@ -23,6 +23,8 @@ import { ethers } from "ethers";
 const FirstEdition = () => {
   // Variable de l'url de l'api
   const API_URL =process.env.NEXT_PUBLIC_URL_API
+   // Variable de l'api key de stablecoin
+   const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
   // Form particulier
   const [firstName, setFirstName] = useState('');
@@ -146,6 +148,7 @@ const [serviceD, setServiceD] = useState([]);
                 const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     },
                 })
                   .then((result) => result.json())
@@ -218,6 +221,7 @@ const [serviceD, setServiceD] = useState([]);
           body: JSON.stringify(dataa),
           headers: {
               'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
           }
         })
         const data = await result.json();
@@ -299,6 +303,7 @@ const [serviceD, setServiceD] = useState([]);
           body: JSON.stringify(dataa),
           headers: {
               'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
           }
         })
         const data = await result.json();
@@ -395,6 +400,7 @@ const [serviceD, setServiceD] = useState([]);
           body,
           headers: {
               // 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
           }
         })
         const data = await result.json();
@@ -522,6 +528,7 @@ const [serviceD, setServiceD] = useState([]);
           body: JSON.stringify(dataa),
           headers: {
               'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
           }
         })
         const data = await result.json();
@@ -659,6 +666,7 @@ const [serviceD, setServiceD] = useState([]);
     const resCountry = await fetch(`${API_URL}/api/country/find-all`, {
         headers: {
         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
         },
     })
       .then((resCountry) => resCountry.json())
@@ -681,6 +689,7 @@ const [serviceD, setServiceD] = useState([]);
     const resCountry = await fetch(`${API_URL}/api/country/find-all-nationnality`, {
         headers: {
         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
         },
     })
       .then((resNationality) => resNationality.json())

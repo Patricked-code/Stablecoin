@@ -26,6 +26,8 @@ import {Button} from "reactstrap";
 const OuvertureBoutik = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
 
     const [currentUser, setCurrentUser] = useState();
@@ -77,6 +79,7 @@ const OuvertureBoutik = () => {
                 const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     },
                 })
                   .then((result) => result.json())
@@ -110,6 +113,7 @@ const OuvertureBoutik = () => {
             body: JSON.stringify(dataa),
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
         })
@@ -168,6 +172,7 @@ const OuvertureBoutik = () => {
             body: JSON.stringify(requestBody),
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
         })
@@ -223,6 +228,7 @@ const OuvertureBoutik = () => {
             const result = await fetch(`${API_URL}/api/payment-request/find-request-use-stablecoin-of-user`, {
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization: `Bearer ${token}`,
                 },
             });
@@ -260,6 +266,7 @@ const OuvertureBoutik = () => {
                 const result = await fetch(`${API_URL}/api/apikey/find-request-use-stablecoin-for-eshop-of-user`, {
                     headers: {
                         'Content-Type': 'application/json',
+                        'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });

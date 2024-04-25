@@ -30,6 +30,9 @@ import ABI_TOKEN_EWARI from "../../../../../components/Contrats/Abi/AbiStablecoi
 const OuvertureBoutik = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
+     
     // Pour les smart contrats
     const ADDRESS_CONTRAT_EWARI = process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
     const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY
@@ -264,6 +267,7 @@ const OuvertureBoutik = () => {
                 const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     },
                 })
                   .then((result) => result.json())
@@ -322,6 +326,7 @@ const OuvertureBoutik = () => {
                 body: JSON.stringify(dataa),
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization:  `Bearer ${token}`
                 }
             })
@@ -405,6 +410,7 @@ const OuvertureBoutik = () => {
                 body: JSON.stringify(dataa),
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization:  `Bearer ${token}`
                 }
             })
@@ -542,6 +548,7 @@ const mapContainerStyle = {
                 body: formData,
                 headers: {
                     // 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization: `Bearer ${token}`
                 },
             });
@@ -605,6 +612,7 @@ const mapContainerStyle = {
             const result = await fetch(`${API_URL}/api/payment-request/find-request-use-stablecoin-of-user`, {
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization: `Bearer ${token}`,
                 },
             });

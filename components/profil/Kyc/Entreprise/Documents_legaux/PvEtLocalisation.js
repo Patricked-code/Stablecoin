@@ -9,6 +9,8 @@ import Swal from 'sweetalert2';
 const CPvEtLocalisation = ({kycDocumentId, kycRegister, kycDfe, kycCopyStatutes, kycDelegationPowers, kycPvAppointment, kycMapLocation}) => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     const [isLoggingIn, setIsLoggingIn] = useState(false); 
     const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
@@ -92,6 +94,7 @@ const [mapLocationFile, setMapLocationFile] = useState(null)
             body,
             headers: {
             // 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization:  `Bearer ${token}`,
             },
         }) 
@@ -144,6 +147,7 @@ const [mapLocationFile, setMapLocationFile] = useState(null)
             method:"PUT",
             headers: {
             'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization:  `Bearer ${token}`,
             },
         }) 
@@ -211,6 +215,7 @@ const [mapLocationFile, setMapLocationFile] = useState(null)
             body,
             headers: {
             // 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization:  `Bearer ${token}`,
             },
         }) 
@@ -263,6 +268,7 @@ const [mapLocationFile, setMapLocationFile] = useState(null)
             method:"PUT",
             headers: {
             'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization:  `Bearer ${token}`,
             },
         }) 

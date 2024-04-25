@@ -5,6 +5,8 @@ import {Button} from "reactstrap";
 const TypeProfil = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
     
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [questionnaireForUser, setQuestionnaireForUser] = useState(false);
@@ -17,6 +19,7 @@ const TypeProfil = () => {
             const result = await fetch(`${API_URL}/api/profile/opcvm/find-profile-opcvm-questionnaire-of-user-signIn`, {
                 headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })
@@ -37,6 +40,7 @@ const TypeProfil = () => {
             const result = await fetch(`${API_URL}/api/mifid/find-quiz-mifid-of-user`, {
                 headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })

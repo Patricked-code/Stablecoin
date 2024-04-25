@@ -37,6 +37,8 @@ const containerStyle = {
 const VerifyDocumentsRetrait = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
     const ADDRESS_CONTRAT_EWARI =process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -172,6 +174,7 @@ const VerifyDocumentsRetrait = () => {
                 const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     },
                 })
                   .then((result) => result.json())
@@ -208,6 +211,7 @@ const VerifyDocumentsRetrait = () => {
                 const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${_emailOtherUser}`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     },
                 })
                     .then((result) => result.json())
@@ -233,6 +237,7 @@ const VerifyDocumentsRetrait = () => {
                 const result = await fetch(`${API_URL}/api/user/find-user-by-addrBlockchain?address=${_addressTo}`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
 
                     },
                 })
@@ -257,6 +262,7 @@ const VerifyDocumentsRetrait = () => {
                 const result = await fetch(`${API_URL}/api/user/find-user-by-userCode?code=${_codeOtherUser}`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     },
                 })
                     .then((result) => result.json())
@@ -311,6 +317,7 @@ const VerifyDocumentsRetrait = () => {
         const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-one-kyc-particular-by-userId?userId=${_userId}`, {
           headers: {
             'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization:  `Bearer ${token}`
 
           },
@@ -397,6 +404,7 @@ const dumpVariables = () =>{
             body: JSON.stringify(dataBody),
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization: `Bearer ${token}`
             },
         });
@@ -450,6 +458,7 @@ const dumpVariables = () =>{
         const result = await fetch(`${API_URL}/api/distributer/find-request-distributer-of-user`, {
         headers: {
             'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization: `Bearer ${token}`
 
         },

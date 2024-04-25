@@ -10,6 +10,8 @@ import ProgressBar from '../ProgressBar';
 const CQuestionnaireTwo = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
@@ -89,6 +91,7 @@ const CQuestionnaireTwo = () => {
               body: JSON.stringify(dataa),
               headers: {
                   'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                   Authorization:  `Bearer ${token}`
               }
               })

@@ -10,6 +10,8 @@ import ProgressBar from '../ProgressBar';
 const CQuestionnaireOne = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
@@ -67,6 +69,7 @@ const CQuestionnaireOne = () => {
                   body: JSON.stringify(dataa),
                   headers: {
                       'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                       Authorization:  `Bearer ${token}`
                   }
                   })
@@ -123,6 +126,7 @@ const CQuestionnaireOne = () => {
                 body: JSON.stringify(dataa),
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization:  `Bearer ${token}`
                 }
                 })
@@ -167,6 +171,7 @@ const CQuestionnaireOne = () => {
           const result = await fetch(`${API_URL}/api/profile/opcvm/find-profile-opcvm-questionnaire-of-user-signIn`, {
               headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
               },
           })

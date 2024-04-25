@@ -44,6 +44,8 @@ import {
 const MintBurn = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
     const ADDRESS_CONTRAT_EWARI =process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI //adesse du contrat
     const NEXT_PUBLIC_RPC_PROVIDER = process.env.NEXT_PUBLIC_RPC_PROVIDER //PROVIDER
 
@@ -99,6 +101,7 @@ const MintBurn = () => {
                   const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
                       headers: {
                       'Content-Type': 'application/json',
+                        'x-api-key': `${API_KEY_STABLECOIN}`,
                       Authorization:  `Bearer ${token}`,
 
                       },
@@ -124,6 +127,7 @@ const MintBurn = () => {
                     // apiKey  =N72PF9RYJUGZRV9F2Q4FFB8HXBRKVA89BZ
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     },
                 })
                   .then((result) => result.json())

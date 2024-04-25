@@ -17,6 +17,8 @@ import Dropdown from 'react-bootstrap/Dropdown';
 const SidebarWealthtech = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
 // LES ELEMENTS DE LA ROUTE
 const router = useRouter();
@@ -53,6 +55,7 @@ const [provider, setProvider] = useState(null);
                 const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     },
                 })
                   .then((result) => result.json())
@@ -109,6 +112,7 @@ const [provider, setProvider] = useState(null);
       const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
           headers: {
           'Content-Type': 'application/json',
+          'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization:  `Bearer ${token}`
 
           },

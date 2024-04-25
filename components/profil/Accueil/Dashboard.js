@@ -50,6 +50,8 @@ import ModalTransfertRemboursement from '../commun/ModalTransfertRemboursement';
 const Dashboard = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
     const ADDRESS_CONTRAT_EWARI =process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
     const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY
     // New
@@ -383,6 +385,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                 const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization:  `Bearer ${token}`,
                     },
                 })
@@ -404,6 +407,7 @@ const [montantAchat, setMontantAchat] = useState(0)
             
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 },
             })
                 .then((res) => res.json())
@@ -425,6 +429,7 @@ const [montantAchat, setMontantAchat] = useState(0)
             
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 },
             })
                 .then((res) => res.json())
@@ -584,6 +589,7 @@ const [montantAchat, setMontantAchat] = useState(0)
     //         const res = await fetch(`${API_URL}/api/user`, {
     //             headers: {
     //             'Content-Type': 'application/json',
+                    // 'x-api-key': `${API_KEY_STABLECOIN}`,
     //             Authorization:  `Bearer ${token}`
     //             },
     //         })
@@ -613,6 +619,7 @@ const [montantAchat, setMontantAchat] = useState(0)
             const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
             headers: {
             'Content-Type': 'application/json',
+            'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization:  `Bearer ${token}`
     
             },
@@ -640,6 +647,7 @@ const [montantAchat, setMontantAchat] = useState(0)
             const result = await fetch(`${API_URL}/api/subscription/find-subscription-of-user`, {
             headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization: `Bearer ${token}`
   
             },
@@ -723,6 +731,7 @@ const [montantAchat, setMontantAchat] = useState(0)
             const result = await fetch(`${API_URL}/api/payment-request/find-all-payment-request-for-receiver?receiverId=${currentUser.id}`, {
             headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             },
             })
@@ -758,6 +767,7 @@ const [montantAchat, setMontantAchat] = useState(0)
             const resCountry = await fetch(`${API_URL}/api/country/find-all`, {
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
 
                 },
@@ -781,6 +791,7 @@ const [montantAchat, setMontantAchat] = useState(0)
             const resBank = await fetch(`${API_URL}/api/bank/find-all`, {
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 },
             })
                 .then((resBank) => resBank.json())
@@ -802,6 +813,7 @@ const [montantAchat, setMontantAchat] = useState(0)
             const resOperator = await fetch(`${API_URL}/api/operator/find-all-Operators`, {
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })
@@ -822,6 +834,7 @@ const [montantAchat, setMontantAchat] = useState(0)
 
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })
@@ -847,6 +860,7 @@ const [montantAchat, setMontantAchat] = useState(0)
 
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })
@@ -873,6 +887,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                method:"DELETE",
                headers: {
                    'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                }
            })
            .then(result=>{
@@ -913,6 +928,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                method:"DELETE",
                headers: {
                    'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                }
            })
            .then(result=>{
@@ -969,6 +985,7 @@ const [montantAchat, setMontantAchat] = useState(0)
               body: JSON.stringify(dataa),
               headers: {
                   'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                   Authorization:  `Bearer ${token}`
               }
           })
@@ -1036,6 +1053,7 @@ const [montantAchat, setMontantAchat] = useState(0)
               body: JSON.stringify(dataa),
               headers: {
                   'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                   Authorization:  `Bearer ${token}`
               }
           })
@@ -1233,6 +1251,7 @@ const [montantAchat, setMontantAchat] = useState(0)
             const result = await fetch(`${API_URL}/api/profile/opcvm/find-profile-opcvm-questionnaire-of-user-signIn`, {
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })
@@ -1256,6 +1275,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                 const result = await fetch(`${API_URL}/api/payment-request/find-request-use-stablecoin-of-user`, {
                     headers: {
                         'Content-Type': 'application/json',
+                        'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -1322,6 +1342,7 @@ const [montantAchat, setMontantAchat] = useState(0)
             const result = await fetch(`${API_URL}/api/historical/find-transactions-less-than-ten-minutes-of-user`, {
             headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization: `Bearer ${token}`
   
             },

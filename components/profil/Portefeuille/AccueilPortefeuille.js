@@ -21,6 +21,8 @@ import Swal from 'sweetalert2'
 const CAccueilPortefeuille = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
     const URL_API_OPCVM =process.env.NEXT_PUBLIC_URL_API_OPCVM // URL STABLECOIN
     const ADDRESS_CONTRAT_EWARI =process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
     const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY
@@ -169,6 +171,7 @@ const CAccueilPortefeuille = () => {
           const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
             headers: {
               'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
               Authorization: `Bearer ${token}`,
             },
           });
@@ -247,6 +250,7 @@ const CAccueilPortefeuille = () => {
           const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${_emailOtherUser}`, {
               headers: {
               'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
               },
           })
               .then((result) => result.json())
@@ -272,6 +276,7 @@ const CAccueilPortefeuille = () => {
           const result = await fetch(`${API_URL}/api/user/find-user-by-addrBlockchain?address=${_addressTo}`, {
               headers: {
               'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
               },
           })
               .then((result) => result.json())
@@ -297,6 +302,7 @@ const CAccueilPortefeuille = () => {
           const result = await fetch(`${API_URL}/api/user/find-user-by-userCode?code=${_codeOtherUser}`, {
               headers: {
               'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
               },
           })
             .then((result) => result.json())
@@ -353,6 +359,7 @@ const CAccueilPortefeuille = () => {
                 body: JSON.stringify(dataBody),
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization: `Bearer ${token}`
                 },
             });
@@ -442,6 +449,7 @@ const CAccueilPortefeuille = () => {
               body: JSON.stringify(dataBody),
               headers: {
                   'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                   Authorization: `Bearer ${token}`
               },
           });
@@ -650,6 +658,7 @@ const CAccueilPortefeuille = () => {
                 const result = await fetch(`${API_URL}/api/conversion/find-all-conversion`, {
                     headers: {
                         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`
                     },
                 });
@@ -755,6 +764,7 @@ const CAccueilPortefeuille = () => {
               const result = await fetch(`${URL_API_OPCVM}/api/getfondbyusersignin/${_userId}`, {
                   headers: {
                       'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                       // Authorization: `Bearer ${token}`
                   },
               });
@@ -790,6 +800,7 @@ const CAccueilPortefeuille = () => {
             const result = await fetch(`${URL_API_OPCVM}/api/getportefeuillebyuser/${_userId}`, {
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     // Authorization: `Bearer ${token}`
                 },
             });

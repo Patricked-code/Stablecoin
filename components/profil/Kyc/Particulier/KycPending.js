@@ -46,6 +46,8 @@ import {
 const KycPendingParticular = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
 
     const [currentUser, setCurrentUser] = useState();
@@ -112,6 +114,7 @@ const KycPendingParticular = () => {
                 const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     },
                 })
                   .then((result) => result.json())
@@ -140,6 +143,7 @@ const KycPendingParticular = () => {
             const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-kyc-particular-for-user`, {
                 headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })
@@ -159,6 +163,7 @@ const KycPendingParticular = () => {
             const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-one-kyc-particular/${_idKycForParticular}`, {
                 headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 },
             })
                 .then((resKyc) => resKyc.json())
@@ -177,6 +182,7 @@ const KycPendingParticular = () => {
             const result = await fetch(`${API_URL}/api/country/find-one/${_countryId}`, {
               headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
               },
             });
       
@@ -241,6 +247,7 @@ const KycPendingParticular = () => {
             body: JSON.stringify(dataa),
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
             })
@@ -288,6 +295,7 @@ const KycPendingParticular = () => {
             const resCountry = await fetch(`${API_URL}/api/country/find-all`, {
                 headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
 
                 },
@@ -329,6 +337,7 @@ const KycPendingParticular = () => {
                 const result = await fetch(`${API_URL}/api/kyc/find-all-kyc-request-of-kyc-owner`, {
                     headers: {
                         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });

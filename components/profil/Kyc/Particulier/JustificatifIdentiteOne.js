@@ -20,6 +20,8 @@ import ProgressBar from '../ProgressBar';
 const CJustificatifIdentiteOne = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [messageError, setMessageError] = useState();
@@ -56,6 +58,7 @@ const CJustificatifIdentiteOne = () => {
             const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
 
                 },
@@ -76,6 +79,7 @@ const CJustificatifIdentiteOne = () => {
                 const resultCountry = await fetch(`${API_URL}/api/country/find-one/${currentUser?.nativeCountry}`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     },
                 })
                
@@ -120,6 +124,7 @@ const CJustificatifIdentiteOne = () => {
                 body: JSON.stringify(dataa),
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization:  `Bearer ${token}`
                 }
                 })
@@ -174,6 +179,7 @@ const CJustificatifIdentiteOne = () => {
                 body: JSON.stringify(dataInfosUser),
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization:  `Bearer ${token}`
                 }
                 })
@@ -248,6 +254,7 @@ const CJustificatifIdentiteOne = () => {
             const resKyc = await fetch(`${API_URL}/api/kyc/particular/find-kyc-particular-for-user`, {
                 headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })

@@ -28,6 +28,8 @@ import Web3 from "web3";
 const AccueilGestion = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
 
     const [currentUser, setCurrentUser] = useState();
@@ -84,6 +86,7 @@ const AccueilGestion = () => {
                 const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${userMetadatas?.email}`, {
                     headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     },
                 })
                   .then((result) => result.json())
@@ -114,6 +117,7 @@ const AccueilGestion = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization: `Bearer ${token}`
                 },
             });
@@ -168,6 +172,7 @@ const AccueilGestion = () => {
         const result = await fetch(`${API_URL}/api/distributer/find-request-distributer-of-user`, {
         headers: {
             'Content-Type': 'application/json',
+            'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization: `Bearer ${token}`
 
         },
@@ -216,6 +221,7 @@ const AccueilGestion = () => {
             body: formData,
             headers: {
                 // 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization: `Bearer ${token}`
             }
         });

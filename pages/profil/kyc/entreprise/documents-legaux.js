@@ -13,6 +13,8 @@ import SidebarProfil from '../../../../components/profil/SideBar/Sidebar';
 const documentLegaux = () => {
   // Variable de l'url de l'api
   const API_URL =process.env.NEXT_PUBLIC_URL_API
+   // Variable de l'api key de stablecoin
+   const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
   const [showSidebar, setShowSidebar] = useState(false);
   const [kycDocument, setKycDocument] = useState(false);
   const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
@@ -33,6 +35,7 @@ const documentLegaux = () => {
         const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-legal-documents-of-user-signIn`, {
             headers: {
             'Content-Type': 'application/json',
+            'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization:  `Bearer ${token}`,
             },
         })

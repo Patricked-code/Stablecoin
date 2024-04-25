@@ -10,6 +10,8 @@ import ProgressBar from '../ProgressBar';
 const CIdentiteOne = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     const [currentKycEntrepriseStatut, setCurrentKycEntrepriseStatut] = useState();
     const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -58,6 +60,7 @@ const CIdentiteOne = () => {
             const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
 
                 },
@@ -83,6 +86,7 @@ const CIdentiteOne = () => {
             const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-of-user`, {
                 headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })
@@ -104,6 +108,7 @@ const CIdentiteOne = () => {
             const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-of-user`, {
                 headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })
@@ -124,6 +129,7 @@ const CIdentiteOne = () => {
             const resKyc = await fetch(`${API_URL}/api/kyc/business/find-kyc-business-identity-of-user-signIn`, {
                 headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`,
                 },
             })
@@ -169,6 +175,7 @@ const CIdentiteOne = () => {
                 body: JSON.stringify(dataa),
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization:  `Bearer ${token}`
                 }
                 })
@@ -231,6 +238,7 @@ const CIdentiteOne = () => {
                 body: JSON.stringify(dataa),
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization:  `Bearer ${token}`
                 }
                 })
@@ -281,6 +289,7 @@ const CIdentiteOne = () => {
                 body: JSON.stringify(dataInfosUser),
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization:  `Bearer ${token}`
                 }
                 })

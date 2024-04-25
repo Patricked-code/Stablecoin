@@ -27,6 +27,8 @@ import ABI_ESCROW_STABLECOIN from "../../../components/Contrats/Abi/AbiEscrowSta
 const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     // console.log('historicalId=>',historicalId)
     // console.log('onClose=>',showRefund)
@@ -189,6 +191,7 @@ const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
                 const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
                     headers: {
                         'Content-Type': 'application/json',
+                        'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -221,6 +224,7 @@ const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
                 const result = await fetch(`${API_URL}/api/historical/find-one-historical/${_historicalId}`, {
                     headers: {
                         'Content-Type': 'application/json',
+                        'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -263,6 +267,7 @@ const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
                 const result = await fetch(`${API_URL}/api/user/find-user-by-addrBlockchain?address=${_addressTo}`, {
                     headers: {
                         'Content-Type': 'application/json',
+                        'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -319,6 +324,7 @@ const ModalTransfertRemboursement = ({historicalId, showRefund, onClose}) => {
               body: JSON.stringify(dataForm),
               headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
               }
             })

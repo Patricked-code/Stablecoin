@@ -36,6 +36,8 @@ import ABI_ESCROW_STABLECOIN from "../../../components/Contrats/Abi/AbiEscrowSta
 const PaiementEboutik = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     // Déclaration des états et hooks pour gérer les différentes informations et états du composant.
     // Pour les smart contrats
@@ -145,6 +147,7 @@ const PaiementEboutik = () => {
                 const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
                     headers: {
                         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -178,6 +181,7 @@ const PaiementEboutik = () => {
                 const result = await fetch(`${API_URL}/api/eshop/find-one-order-by-email-customer-eshop?customerEmail=${_currentUserEmail}`, {
                     headers: {
                         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                         // Authorization: `Bearer ${token}`,
                     },
                 });
@@ -211,6 +215,7 @@ const PaiementEboutik = () => {
                 const result = await fetch(`${API_URL}/api/apikey/find-one-use-stablecoin-for-eshop-by-merchant-identifier?merchantIdentifier=${_merchantIdentifier}`, {
                     headers: {
                         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -404,6 +409,7 @@ const PaiementEboutik = () => {
             method:"PUT",
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
         })
@@ -459,6 +465,7 @@ const PaiementEboutik = () => {
             method:"PUT",
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
         })
@@ -544,6 +551,7 @@ const PaiementEboutik = () => {
                 body: JSON.stringify(dataBody),
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization: `Bearer ${token}`
                 },
             });

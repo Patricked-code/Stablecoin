@@ -23,6 +23,8 @@ const ResetPassword = () => {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const API_URL =process.env.NEXT_PUBLIC_URL_API
+   // Variable de l'api key de stablecoin
+   const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
   
    /**
@@ -69,6 +71,7 @@ const ResetPassword = () => {
             body: JSON.stringify(dataa),
             headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
             }
         })
         const data = await res.json();

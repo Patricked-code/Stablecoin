@@ -29,6 +29,7 @@ const CPartieSeven = () => {
         const result = await fetch(`${API_URL}/api/mifid/find-quiz-part-seven`, {
           headers: {
             'Content-Type': 'application/json',
+            'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization: `Bearer ${token}`,
           },
         });
@@ -77,6 +78,7 @@ const CPartieSeven = () => {
         body: JSON.stringify(dataToUpdate),
         headers: {
           'Content-Type': 'application/json',
+          'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization: `Bearer ${token}`,
         },
       });

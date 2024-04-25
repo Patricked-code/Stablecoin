@@ -19,6 +19,8 @@ const QrScannerWithNoSSR = dynamic(() => import('react-qr-scanner'), {
 const PaymentRequest = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [isLoggingInEmail, setIsLoggingInEmail] = useState(false);
@@ -62,6 +64,7 @@ const PaymentRequest = () => {
             const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${_emailOtherUser}`, {
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 },
             })
                 .then((result) => result.json())
@@ -86,6 +89,7 @@ const PaymentRequest = () => {
             const result = await fetch(`${API_URL}/api/user/find-user-by-addrBlockchain?address=${_addressTo}`, {
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 },
             })
                 .then((result) => result.json())
@@ -109,6 +113,7 @@ const PaymentRequest = () => {
             const result = await fetch(`${API_URL}/api/user/find-user-by-userCode?code=${_codeOtherUser}`, {
                 headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 },
             })
                 .then((result) => result.json())
@@ -153,6 +158,7 @@ const PaymentRequest = () => {
             body: JSON.stringify(dataa),
             headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
         })

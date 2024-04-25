@@ -12,6 +12,8 @@ import ProgressBar from '../../ProgressBar';
 const CPartieFive = () => {
   // Variable de l'url de l'api
   const API_URL = process.env.NEXT_PUBLIC_URL_API;
+   // Variable de l'api key de stablecoin
+   const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
 
   // États pour gérer l'état du formulaire
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -29,6 +31,7 @@ const CPartieFive = () => {
         const result = await fetch(`${API_URL}/api/mifid/find-quiz-part-five`, {
           headers: {
             'Content-Type': 'application/json',
+            'x-api-key': `${API_KEY_STABLECOIN}`,
             Authorization: `Bearer ${token}`,
           },
         });
@@ -77,6 +80,7 @@ const CPartieFive = () => {
         body: JSON.stringify(dataToUpdate),
         headers: {
           'Content-Type': 'application/json',
+          'x-api-key': `${API_KEY_STABLECOIN}`,
           Authorization: `Bearer ${token}`,
         },
       });

@@ -29,6 +29,8 @@ import { Table } from '@nextui-org/react';
 const CHistoriqueStablecoin = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+     // Variable de l'api key de stablecoin
+     const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
     const HASH_TX = process.env.NEXT_PUBLIC_HASH_TX
     const ADDRESS_TX = process.env.NEXT_PUBLIC_ADDRESS_TX
     const ADDRESS_CONTRAT_EWARI =process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI
@@ -206,6 +208,7 @@ const CHistoriqueStablecoin = () => {
             const result = await fetch(`${API_URL}/api/user/find-user-sign-in`, {
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization: `Bearer ${token}`,
                 },
             })
@@ -229,6 +232,7 @@ const CHistoriqueStablecoin = () => {
             const result = await fetch(`${API_URL}/api/historical/find-all-historical-by-user-email?email=${currentUser?.email}`, {
             headers: {
                 'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization: `Bearer ${token}`
   
             },
@@ -260,6 +264,7 @@ const CHistoriqueStablecoin = () => {
                 const result = await fetch(`${API_URL}/api/historical/find-one-historical/${_historicalId}`, {
                     headers: {
                         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -404,6 +409,7 @@ const CHistoriqueStablecoin = () => {
                 method:"PUT",
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization:  `Bearer ${token}`
                 }
             })
@@ -450,6 +456,7 @@ const CHistoriqueStablecoin = () => {
                 method:"PUT",
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                     Authorization:  `Bearer ${token}`
                 }
             })
@@ -495,6 +502,7 @@ const CHistoriqueStablecoin = () => {
                 const result = await fetch(`${API_URL}/api/apikey/find-one-use-stablecoin-for-eshop-by-merchant-identifier?merchantIdentifier=${_merchantIdentifier}`, {
                     headers: {
                         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                         Authorization: `Bearer ${token}`,
                     },
                 });
@@ -535,6 +543,7 @@ const CHistoriqueStablecoin = () => {
                 const result = await fetch(`${API_URL}/api/eshop/find-one-order-eshop/${_eshopOrderId}`, {
                     headers: {
                         'Content-Type': 'application/json',
+                    'x-api-key': `${API_KEY_STABLECOIN}`,
                         // Authorization: `Bearer ${token}`,
                     },
                 });
@@ -545,7 +554,6 @@ const CHistoriqueStablecoin = () => {
 
                 const data = await result.json();
                 setOneEshopOrderById(data);
-                console.log("setOneEshopOrderById=>",data)
 
             } catch (error) {
                 // Gérer les erreurs de manière appropriée, par exemple, définir un état d'erreur.
