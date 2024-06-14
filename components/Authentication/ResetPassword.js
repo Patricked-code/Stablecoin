@@ -100,7 +100,7 @@ const ResetPassword = () => {
     } catch {
         setIsLoggingIn(false);
     }
-  }, [password]);
+  }, [password,confirmPassword]);
   // Fin
 
 
@@ -125,7 +125,7 @@ const ResetPassword = () => {
 
               <div className='form-group'>
                 <input
-                  type='confirmPassword'
+                  type='password'
                   className='form-control'
                   placeholder='Confirmer le nouveau mot de passe'
                   defaultValue={confirmPassword} 

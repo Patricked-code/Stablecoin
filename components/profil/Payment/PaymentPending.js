@@ -123,6 +123,7 @@ const PaiementPending = () => {
                 // *************************************************************************
 
                 const contractStablecoin = new ethers.Contract(ADDRESS_CONTRAT_EWARI,ABI_TOKEN_EWARI.abi,walletRelay);
+                // const contractStablecoin = new ethers.Contract(ADDRESS_CONTRAT_EWARI,ABI_TOKEN_EWARI.abi,signer);
                 setContractStablecoin(contractStablecoin);
                 
                 //   recuperation des infos de stablecoin
@@ -264,132 +265,133 @@ const PaiementPending = () => {
 // ***************************************************************
     // Transfert de stablecoin vers le smart contrat d'escrow
 // ****************************************************************
-async function transferToEscrow() {
-    setIsLoggingIn(true)
 
-    try {
-      // Vérifier le solde de magicCurrentAddress
-      const magicCurrentBalance = await contractStablecoin.balanceOf(magicCurrentAddress);
-  
-      // Convertir currentAmount en Wei
-      const amountWei = ethers.utils.parseUnits(String(currentAmount), decimalStablecoin);
-  
-      // Vérifier si magicCurrentAddress a des fonds suffisants
-      if (magicCurrentBalance.gte(amountWei)) {
-
-        const dataForm = {
-          spenderAddress: currentSenderAddress, //Adresse du smart contrat d'escrow
-          ownerAddress: magicCurrentAddress, //Adresse du client
-          amount: amountWei, //Montant
-        };
-        
-        // Estimer le coût en gaz pour l'approbation
-        const approveEstimateGas = await contractStablecoin.estimateGas.approveFrom(
-          dataForm?.ownerAddress,
-          dataForm?.spenderAddress,
-          dataForm?.amount
-        );
-  
-        // Obtenir le solde de l'exécutant
-        const executorBalance = await signer.getBalance();
-  
-        // Vérifier si l'exécutant a un solde Ether suffisant pour le gaz d'approbation
-        if (executorBalance.gte(approveEstimateGas)) {
-          // Transaction d'approbation
-          const approveTx = await contractStablecoin.approveFrom(
-            dataForm?.ownerAddress,
-            dataForm?.spenderAddress,
-            dataForm?.amount
-          );
-          await approveTx.wait();
-  
-          // Estimer le coût en gaz pour le dépôt
-          const asyncTransferEstimateGas = await contractEscrow.estimateGas.asyncTransfer(
-            dataForm?.ownerAddress,
-            dataForm?.amount,
-          );
-        
-        // return
-          // Vérifier si l'exécutant a un solde Ether suffisant pour le gaz de dépôt
-          if (executorBalance.gte(asyncTransferEstimateGas)) {
-            // Transaction de dépôt
-            const asyncTransferTx = await contractEscrow.asyncTransfer(dataForm?.ownerAddress, dataForm?.amount);
-            await asyncTransferTx.wait();
-
-            // Vérifier si l'exécutant a un solde gas suffisant pour le gaz d'apprabation de retrait
-            const approveWithdrawalEstimateGas = await contractEscrow.estimateGas.approveWithdrawal(dataForm?.ownerAddress);
-            const executorBalanceAfterTransfer = await signer.getBalance();
-            if (executorBalanceAfterTransfer.gte(approveWithdrawalEstimateGas)) {
-                // Fonction d'approbation de retrait
-                const approveWithdrawalTx = await contractEscrow.approveWithdrawal(dataForm?.ownerAddress);
-                await approveWithdrawalTx.wait();
-
-                transferAmount(asyncTransferTx.hash) //Appele de la fonction de confirmation de la transaction dans la base de donnée
-            } else {
+    async function transferToEscrowShop() {
+        setIsLoggingIn(true);
+    
+        try {
+            // Vérifier le solde de magicCurrentAddress
+            const magicCurrentBalance = await contractStablecoin.balanceOf(magicCurrentAddress);
+            const amountWei = ethers.utils.parseUnits(String(currentAmount), decimalStablecoin);
+    
+            // Vérifier si magicCurrentAddress a des fonds suffisants
+            if (!magicCurrentBalance.gte(amountWei)) {
                 setIsLoggingIn(false);
                 Swal.fire({
                     position: 'center',
                     icon: 'error',
-                    html: `<p>Solde insuffisant pour couvrir les frais de gaz d'approbation du retrait.</p>`,
+                    html: `<p> Fonds insuffisants sur votre compte. <br/> Votre solde est: ${ethers.utils.formatUnits(magicCurrentBalance, decimalStablecoin)}</p>`,
                     showConfirmButton: false,
                     timer: 5000
                 });
-                console.error("Solde insuffisant pour couvrir les frais de gaz d'approveWithdrawal.");
+                console.error("Fonds insuffisants sur votre compte.");
+                return;
             }
-          } else {
-            setIsLoggingIn(false)
-            Swal.fire({
-              position: 'center',
-              icon: 'error',
-              html: `<p> Solde insuffisant pour couvrir les frais de gaz d'async transfer.</p>`,
-              showConfirmButton: false,
-              timer: 5000
-            });
-            console.error("Solde insuffisant pour couvrir les frais de gaz d'asyncTransfer.");
-          }
-        } else {
-            setIsLoggingIn(false)
-            Swal.fire({
-              position: 'center',
-              icon: 'error',
-              html: `<p> Solde insuffisant pour couvrir les frais de gaz d'approbation.</p>`,
-              showConfirmButton: false,
-              timer: 5000
-            });
-            console.error("Solde insuffisant pour couvrir les frais de gaz d'approbation.");
+    
+            const dataForm = {
+                spenderAddress: currentSenderAddress,
+                ownerAddress: magicCurrentAddress,
+                amount: amountWei,
+            };
+    
+            // Estimer le coût en gaz pour l'approbation
+            const approveEstimateGas = await contractStablecoin.estimateGas.approveFrom(
+                dataForm?.ownerAddress,
+                dataForm?.spenderAddress,
+                dataForm?.amount
+            );
+    
+            const executorBalance = await walletRelayer.getBalance();
+    
+            // Vérifier si l'exécutant a un solde Ether suffisant pour le gaz d'approbation
+            if (!executorBalance.gte(approveEstimateGas)) {
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> Solde insuffisant pour couvrir les frais de gaz d'approbation.</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+                console.error("Solde insuffisant pour couvrir les frais de gaz d'approbation.");
+                return;
+            }
+    
+            // Effectuer l'approbation
+            try {
+                const gasLimit = approveEstimateGas.add(ethers.BigNumber.from("100000"));  // Adding extra gas as a buffer
+                const approveTx = await contractStablecoin.approveFrom(
+                    dataForm?.ownerAddress,
+                    dataForm?.spenderAddress,
+                    dataForm?.amount,
+                    { gasLimit }
+                );
+                await approveTx.wait(1);
+
+            } catch (error) {
+                console.error("Erreur lors de l'approbation :", error.message);
+                // Swal.fire({
+                //     position: 'center',
+                //     icon: 'error',
+                //     html: `<p>Erreur lors de l'approbation: ${error.message}</p>`,
+                //     showConfirmButton: true
+                // });
+                setIsLoggingIn(false);
+                return;
+            }
+    
+            // Estimer le coût en gaz pour le dépôt
+            const asyncTransferEstimateGas = await contractEscrow.estimateGas.asyncTransferShop(
+                dataForm?.ownerAddress,
+                dataForm?.amount
+            );
+    
+            // Vérifier si l'exécutant a un solde Ether suffisant pour le gaz de dépôt
+            if (!executorBalance.gte(asyncTransferEstimateGas)) {
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> Solde insuffisant pour couvrir les frais de gaz d'asyncTransfer.</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+                console.error("Solde insuffisant pour couvrir les frais de gaz d'asyncTransfer.");
+                return;
+            }
+    
+            // Exécuter le transfert asynchrone vers l'escrow
+            try {
+                const asyncTransferTx = await contractEscrow.asyncTransferShop(dataForm?.ownerAddress, dataForm?.amount);
+                console.log("asyncTransferTx=>", asyncTransferTx);
+                const receipt =  await asyncTransferTx.wait(1);
+
+                const depositEvent = receipt.events.find(event => event.event === 'AsyncTransfer');
+                const depositIndex = depositEvent.args.depositIndex.toNumber(); // Convertir en nombre décimal
+                // const depositIndex = receipt.events.find(event => event.event === 'AsyncTransfer').args.depositIndex;
+                console.log("depositEvent:", depositEvent);
+                console.log("Deposit Index:", depositIndex);
+    
+                transferAmount(asyncTransferTx.hash); // Appel de la fonction de confirmation de la transaction dans la base de données
+            } catch (error) {
+                console.error("Erreur lors du transfert asynchrone :", error);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p>Erreur lors du transfert asynchrone: ${error.message}</p>`,
+                    showConfirmButton: true
+                });
+                setIsLoggingIn(false);
+                return;
+            }
+    
+            setIsLoggingIn(false);
+        } catch (error) {
+            setIsLoggingIn(false);
+            console.error("Erreur lors de l'exécution de la transaction :", error);
         }
-      } else {
-        setIsLoggingIn(false)
-        Swal.fire({
-          position: 'center',
-          icon: 'error',
-          html: `<p> Fonds insuffisants sur votre compte. <br/> Votre solde est: ${balanceStablecoin}</p>`,
-          showConfirmButton: false,
-          timer: 5000
-        });
-        console.error("Fonds insuffisants sur votre compte.");
-      }
-    } catch (error) {
-        setIsLoggingIn(false)
-        console.error("Erreur lors de l'exécution de la transaction :", error);
     }
-}
-  
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
    
 
 
@@ -518,7 +520,7 @@ async function transferToEscrow() {
         try {
             
             const dataBody = {
-                typeTransaction: "Achat",
+                typeTransaction: "Achat shop",
                 activeName: nameStablecoin,
                 activeSymbol: symbolStablecoin,
                 nameSender: nameSender,
@@ -873,7 +875,7 @@ async function transferToEscrow() {
                     <Button className="text-white" color="danger" onClick={handleClosePayer}>
                         Fermer
                     </Button>
-                    <Button  type='button'  color="success" onClick={transferToEscrow} disabled={isLoggingIn}>
+                    <Button  type='button'  color="success" onClick={transferToEscrowShop} disabled={isLoggingIn}>
                         Payer
                         {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
 

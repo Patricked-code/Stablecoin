@@ -441,7 +441,7 @@ const ModalTransfertRemboursementRecepteur = () => {
           // Vérifie que l'expéditeur a suffisamment de DEV pour les frais de gas
           const gasEstimate = await contractStablecoin.estimateGas.transferBatch(dataForm?.addressTo, dataForm?.recipients, dataForm?.amounts);
           const gasCost = gasEstimate.mul(await provider.getGasPrice());
-          const senderBalance = await signer.getBalance();
+          const senderBalance = await walletRelayer.getBalance();
     
           if (gasCost?._hex>senderBalance?._hex) {
             setIsLoggingIn(false)

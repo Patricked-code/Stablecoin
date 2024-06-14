@@ -22,13 +22,44 @@
                 {
                     "indexed": true,
                     "internalType": "address",
-                    "name": "payee",
+                    "name": "contributor",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "index",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "enum EscrowStablecoin.WithdrawalStatus",
+                    "name": "status",
+                    "type": "uint8"
+                }
+            ],
+            "name": "ApprovalStatusChanged",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "contributor",
                     "type": "address"
                 },
                 {
                     "indexed": false,
                     "internalType": "uint256",
                     "name": "amount",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "depositIndex",
                     "type": "uint256"
                 }
             ],
@@ -60,19 +91,11 @@
                     "internalType": "address",
                     "name": "_contributor",
                     "type": "address"
-                }
-            ],
-            "name": "approveRefund",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
+                },
                 {
-                    "internalType": "address",
-                    "name": "_contributor",
-                    "type": "address"
+                    "internalType": "uint256",
+                    "name": "depositIndex",
+                    "type": "uint256"
                 }
             ],
             "name": "approveWithdrawal",
@@ -93,7 +116,25 @@
                     "type": "uint256"
                 }
             ],
-            "name": "asyncTransfer",
+            "name": "asyncTransferEshop",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "_contributor",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_amount",
+                    "type": "uint256"
+                }
+            ],
+            "name": "asyncTransferShop",
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
@@ -125,6 +166,54 @@
                     "internalType": "uint256",
                     "name": "",
                     "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "name": "contributors",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "name": "deposits",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "amount",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "enum EscrowStablecoin.WithdrawalStatus",
+                    "name": "status",
+                    "type": "uint8"
                 }
             ],
             "stateMutability": "view",
@@ -168,12 +257,17 @@
         },
         {
             "inputs": [],
-            "name": "getRefundRequests",
+            "name": "getPendingRefundRequests",
             "outputs": [
                 {
                     "internalType": "address[]",
                     "name": "",
                     "type": "address[]"
+                },
+                {
+                    "internalType": "uint256[]",
+                    "name": "",
+                    "type": "uint256[]"
                 },
                 {
                     "internalType": "uint256[]",
@@ -227,27 +321,13 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "dest",
-                    "type": "address"
-                }
-            ],
-            "name": "payments",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
                     "name": "_contributor",
                     "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "depositIndex",
+                    "type": "uint256"
                 }
             ],
             "name": "refund",
@@ -280,6 +360,11 @@
                     "internalType": "address",
                     "name": "_contributor",
                     "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "depositIndex",
+                    "type": "uint256"
                 }
             ],
             "name": "requestRefund",
@@ -293,6 +378,11 @@
                     "internalType": "address",
                     "name": "_contributor",
                     "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "depositIndex",
+                    "type": "uint256"
                 }
             ],
             "name": "revokeApproval",
@@ -306,6 +396,11 @@
                     "internalType": "address",
                     "name": "_contributor",
                     "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "depositIndex",
+                    "type": "uint256"
                 }
             ],
             "name": "revokeRefundRequest",
@@ -328,7 +423,14 @@
         },
         {
             "inputs": [],
-            "name": "withdrawAllApprovedFunds",
+            "name": "withdrawAllApprovedFundsEshop",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "withdrawAllApprovedFundsShop",
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
@@ -336,12 +438,477 @@
         {
             "inputs": [
                 {
-                    "internalType": "address payable",
-                    "name": "payee",
+                    "internalType": "address",
+                    "name": "",
                     "type": "address"
                 }
             ],
-            "name": "withdrawPayments",
+            "name": "withdrawalStatus",
+            "outputs": [
+                {
+                    "internalType": "enum EscrowStablecoin.WithdrawalStatus",
+                    "name": "",
+                    "type": "uint8"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "name": "withdrawnAmount",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        }
+    ],
+
+
+    
+    "abiNo":[
+        {
+            "inputs": [
+                {
+                    "internalType": "address payable",
+                    "name": "_beneficiary",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_token",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "contributor",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "index",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "enum EscrowStablecoin.WithdrawalStatus",
+                    "name": "status",
+                    "type": "uint8"
+                }
+            ],
+            "name": "ApprovalStatusChanged",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "contributor",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "amount",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "depositIndex",
+                    "type": "uint256"
+                }
+            ],
+            "name": "AsyncTransfer",
+            "type": "event"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "name": "allUsers",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "_contributor",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "depositIndex",
+                    "type": "uint256"
+                }
+            ],
+            "name": "approveWithdrawal",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "_contributor",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_amount",
+                    "type": "uint256"
+                }
+            ],
+            "name": "asyncTransferEshop",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "_contributor",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_amount",
+                    "type": "uint256"
+                }
+            ],
+            "name": "asyncTransferShop",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "beneficiary",
+            "outputs": [
+                {
+                    "internalType": "address payable",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "name": "contributions",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "name": "contributors",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "name": "deposits",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "amount",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "enum EscrowStablecoin.WithdrawalStatus",
+                    "name": "status",
+                    "type": "uint8"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "getApprovedWithdrawals",
+            "outputs": [
+                {
+                    "internalType": "address[]",
+                    "name": "",
+                    "type": "address[]"
+                },
+                {
+                    "internalType": "uint256[]",
+                    "name": "",
+                    "type": "uint256[]"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "getNoApprovedWithdrawals",
+            "outputs": [
+                {
+                    "internalType": "address[]",
+                    "name": "",
+                    "type": "address[]"
+                },
+                {
+                    "internalType": "uint256[]",
+                    "name": "",
+                    "type": "uint256[]"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "getPendingRefundRequests",
+            "outputs": [
+                {
+                    "internalType": "address[]",
+                    "name": "",
+                    "type": "address[]"
+                },
+                {
+                    "internalType": "uint256[]",
+                    "name": "",
+                    "type": "uint256[]"
+                },
+                {
+                    "internalType": "uint256[]",
+                    "name": "",
+                    "type": "uint256[]"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "getTotalApprovedAmount",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "getTotalNoApprovedAmount",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "owner",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "_contributor",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "depositIndex",
+                    "type": "uint256"
+                }
+            ],
+            "name": "refund",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "name": "refundRequests",
+            "outputs": [
+                {
+                    "internalType": "bool",
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "_contributor",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "depositIndex",
+                    "type": "uint256"
+                }
+            ],
+            "name": "requestRefund",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "_contributor",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "depositIndex",
+                    "type": "uint256"
+                }
+            ],
+            "name": "revokeApproval",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "_contributor",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "depositIndex",
+                    "type": "uint256"
+                }
+            ],
+            "name": "revokeRefundRequest",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "token",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "withdrawAllApprovedFundsEshop",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "withdrawAllApprovedFundsShop",
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"

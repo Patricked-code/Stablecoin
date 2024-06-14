@@ -137,3 +137,6 @@ Utilisation de Mapbox dans votre composant :
 
     export default MapComponent;
 ## FIN
+
+## POP UP DE PAIEMENT EN ATTENTE ECOMMERCE 
+Il se trouve dans Composant/Profil/Payment/PaiementEboutik.js

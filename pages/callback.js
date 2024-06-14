@@ -14,6 +14,7 @@ export default function Callback() {
           Authorization: 'Bearer ' + didToken,
         },
       });
+      console.log("res=>",res)
       res.status === 200 && Router.push('/profil/dashboard/');
       setTimeout(() => {
         window.location.reload()

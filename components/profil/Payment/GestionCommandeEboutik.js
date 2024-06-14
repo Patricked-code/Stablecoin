@@ -69,18 +69,109 @@ const GestionCommandeEboutik = () => {
      // États pour stocker les commandes par statut
      const [paidOrders, setPaidOrders] = useState([]);
      const [confirmedPayments, setConfirmedPayments] = useState([]);
+     const [confirmedWithProof, setConfirmedWithProof] = useState([]);
      const [refundRequests, setRefundRequests] = useState([]);
      const [acceptedRefunds, setAcceptedRefunds] = useState([]);
-     const [rejectedRefunds, setRejectedRefunds] = useState([]);
-     const [completedRefunds, setCompletedRefunds] = useState([]);
      const [cancelledOrders, setCancelledOrders] = useState([]);
+     const [rejectedAndCompletedRefunds, setRejectedAndCompletedRefunds] = useState([]);
+
+     const [orderId, setOrderId] = useState();
+
     
-console.log("confirmedPayments=>",confirmedPayments)
-console.log("refundRequests=>",refundRequests)
-console.log("acceptedRefunds=>",acceptedRefunds)
-console.log("rejectedRefunds=>",rejectedRefunds)
-console.log("completedRefunds=>",completedRefunds)
-console.log("cancelledOrders=>",cancelledOrders)
+    // POUR L'IMAGE DE PREUVE
+    const [pictureProof, setPictureProof] = useState(null);
+    const [uploadStatus, setUploadStatus] = useState(null);
+
+    /**
+      * État de contrôle pour afficher ou masquer la modal d'ajout de la photo de preuve.
+      * @type {boolean}
+      */
+    const [showChangePictureProof, setShowChangePictureProof] = useState(false);
+ 
+    /**
+     * Fonction pour fermer du changement de photo.
+     * @function
+     * @returns {void}
+     */
+    const handleCloseChangePictureProof = () => setShowChangePictureProof(false);
+
+    /**
+     * Fonction pour afficher du changement de photo.
+     * @function
+     * @returns {void}
+     */
+    const handleShowChangePictureProof = () => setShowChangePictureProof(true);
+
+
+    const handleFileChange = (event) => {
+        setPictureProof(event.target.files[0]);
+    };
+
+    // FONCTION DU CHANGEMENT DE LA PHOTO DE L'AVATAR
+    const handleUpdatePictureProof = async (event) => {
+        event.preventDefault();
+        // setIsLoggingIn(true);
+        
+        if (!pictureProof) {
+        setUploadStatus('Vous devez sélectionner un fichier.');
+        return;
+        }
+
+        const formData = new FormData();
+        formData.append('pictureProof', pictureProof);
+
+        // Obtenir le token en cours
+        const token = localStorage.getItem('tokenEnCours');
+
+        try {
+        const response = await fetch(`${API_URL}/api/eshop/add-picture-proof-eshop/${orderId}`, {
+            method: 'PUT',
+            body: formData,
+            headers: {
+                // 'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const responseData = await response.json();
+
+        if (response.ok) {
+            setUploadStatus(responseData.message);
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                html: `<p>${responseData.message}</p>` ,
+                showConfirmButton: false,
+                timer: 5000
+            })
+            setTimeout(() => {
+                window.location.reload()
+            }, 5000)
+        } else {
+            console.error('Error updating picture:', responseData.message);
+            setIsLoggingIn(false);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p>Une erreur s'est produite lors de l'ajout de la photo</p>` ,
+                showConfirmButton: false,
+                timer: 6000
+            })
+        }
+        } catch (error) {
+            console.error('Error updating picture:', error);
+            setIsLoggingIn(false);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p>Une erreur s'est produite lors de l'ajout de la photo</p>` ,
+                showConfirmButton: false,
+                timer: 6000
+            })
+        }
+    };
+    //Fin
 
     // States de tab
     const [toggleState, setToggleState] = useState(1);
@@ -98,7 +189,7 @@ console.log("cancelledOrders=>",cancelledOrders)
 
 
     // States de tab des remboursements
-    const [toggleStateRefund, setToggleStateRefund] = useState(1);
+    const [toggleStateRefund, setToggleStateRefund] = useState();
     const toggleTabRefund = (index) => {
         setToggleStateRefund(index);
     };
@@ -273,14 +364,24 @@ console.log("cancelledOrders=>",cancelledOrders)
                 const orders = await response.json();
                 // Filtrer et stocker les commandes par statut
                 setPaidOrders(orders.filter(order => order.status === 'Paiement effectué'));
-                setConfirmedPayments(orders.filter(order => order.status === 'Paiement confirmé'));
+                // setConfirmedPayments(orders.filter(order => order.status === 'Paiement confirmé'));
+                // Modifier le filtre pour inclure condition sur pictureProof vide
+                setConfirmedPayments(orders.filter(order => order.status === 'Paiement confirmé' && !order.pictureProof));
+
+                // Ajouter un nouveau filtre pour orders avec pictureProof non vide
+                const confirmedWithProof = orders.filter(order => order.status === 'Paiement confirmé' && order.pictureProof);
+                setConfirmedWithProof(confirmedWithProof);
+
                 setRefundRequests(orders.filter(order => order.status === 'Demande de remboursement'));
                 setAcceptedRefunds(orders.filter(order => order.status === 'Demande de remboursement acceptée'));
-                setRejectedRefunds(orders.filter(order => order.status === 'Demande de remboursement rejetée'));
-                setCompletedRefunds(orders.filter(order => order.status === 'Remboursement effectué'));
-                setCancelledOrders(orders.filter(order => order.status === 'Commande annulée'));
-                console.log("orders=>",paidOrders)
-            
+                  
+                // Combinez les commandes de remboursements rejetés et effectués
+                const rejectedAndCompletedRefunds = orders.filter(order => order.status === 'Demande de remboursement rejetée' || order.status === 'Remboursement effectué');
+                setRejectedAndCompletedRefunds(rejectedAndCompletedRefunds); // Ajout de cet état
+  
+                setCancelledOrders(orders.filter(order => order.status === 'Paiement échoué'));
+             
+              
             } catch (error) {
                 console.error('Error fetching orders:', error);
             }
@@ -405,16 +506,20 @@ console.log("cancelledOrders=>",cancelledOrders)
                     <div className="bloc-tabs-utilite ">
                         <button
                             className={toggleState === 1 ? "tabs active-tabs gr-text-8 text-color-opacity " : "tabs gr-text-8 text-color-opacity"}
-                            onClick={() => toggleTab(1)}
+                            onClick={()=>setToggleStateRefund(0)}
                         >
-                            <span className='colorBlue'>Paiements</span>
+                            <div onClick={() => toggleTab(1)} >
+                                <span className='colorBlue'>Paiements</span>
+                            </div>
                         </button>
 
                         <button
                             className={toggleState === 2 ? "tabs active-tabs gr-text-8 text-color-opacity" : "tabs gr-text-8 text-color-opacity"}
-                            onClick={() => toggleTab(2)}
+                            onClick={()=>setToggleStatePaiment(0)}
                         >
-                            <span className='colorRed'>Remboursements</span>
+                            <div onClick={() => toggleTab(2)} >
+                                <span className='colorRed' >Remboursements</span>
+                            </div>
                         </button>
                     </div>
                     {/* Fin L'entête des tabs Paiements et Remboursement */}
@@ -451,7 +556,14 @@ console.log("cancelledOrders=>",cancelledOrders)
                                     className={toggleStatePaiment === 3 ? "tabs active-tabs gr-text-8 text-color-opacity" : "tabs gr-text-8 text-color-opacity"}
                                     onClick={() => toggleTabPaiment(3)}
                                 >
-                                    <span className=''>Paiements annulés </span>
+                                    <span className=''>Commandes livrées </span>
+                                </button>
+
+                                <button
+                                    className={toggleStatePaiment === 4 ? "tabs active-tabs gr-text-8 text-color-opacity" : "tabs gr-text-8 text-color-opacity"}
+                                    onClick={() => toggleTabPaiment(4)}
+                                >
+                                    <span className=''>Commandes annulées </span>
                                 </button>
                             </div>
                             {/* FIN L'entête des tabs de Paiements*/}
@@ -465,7 +577,7 @@ console.log("cancelledOrders=>",cancelledOrders)
 
 
 
-
+                    
                     {/* ***************************************************** */}
                         {/* LE CONTENU QUI CONTIENT LES DIFFERENTES PARTIES DE PAIEMENT */}
                     {/* ********************************************************* */}
@@ -475,107 +587,60 @@ console.log("cancelledOrders=>",cancelledOrders)
                         <div
                             className={toggleStatePaiment === 1 ? "content  active-content" : "content"}
                         >
-
-                            {/* Les cards à revoir */}
                             <div className='cryptocurrency-search-box'>
-    <div className='row'>
+                                <div className='row'>
+                                    <div className='col-lg-12 col-md-12'>
+                                        <div className='currency-selection'>
+                                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='col-lg-12 col-md-12 row justify-content-between'>
+                                                    {!paidOrders?.length==0?(
+                                                        <Table
+                                                            aria-label="Example table with static content"
+                                                            css={{
+                                                                height: "auto",
+                                                                minWidth: "100%",
+                                                            }}
+                                                        >
+                                                            <Table.Header>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nom client</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0">Numéro commande</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0">Email Client</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
+                                                            </Table.Header>
 
-            <div className='col-lg-12 col-md-12'>
-                <div className='currency-selection'>
-                    <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                            <div className='col-lg-12 col-md-12 row justify-content-between'>
-                                {/* {!paymentPendingLength==0?( */}
-                                    <Table
-                                        aria-label="Example table with static content"
-                                        css={{
-                                            height: "auto",
-                                            minWidth: "100%",
-                                        }}
-                                    >
-                                    <Table.Header>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom client</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Numéro commande</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Email Client</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
-                                    </Table.Header>
-                                        <Table.Body>
-                                            {/* {dataPaymentPending?.map(
-                                                (
-                                                {id, objet, amount,senderEmail, senderAddress, nameEntreprise, senderId, createdAt, valid},
-                                                index
-                                                ) => ( */}
-                                                    <Table.Row >
-                                                        {/* Default Admin */}
-                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent("Arouna",30,"characters")}</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 "> 57437637657</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 "> arouna@gmail.com</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 "> 200</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 "> En cours</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 "> 21/03/2024</small></Table.Cell>
-                                                        {/* <Table.Cell ><small className=" py-0 ">{amount}</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent(objet,15,"characters")}</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 ">{valid == 1?(<i className='colorGreen'>Payé</i>):valid == 2 ? (<i className='colorBlue'>Remboursé</i>) :valid == 3? (<i className='colorRed'>Rejeté </i>) :<i>En cours</i>}</small></Table.Cell>
-
-                                                        <Table.Cell ><small className=" py-0 ">{formatDate(createdAt)}</small></Table.Cell> */}
-                                                    
-                                                        <Table.Cell>
-                                                            <div className="d-flex py-0 ">
-                                                                <p className="text-center">
-
-                                                                <button  className="py-0 mx-2 btn btn-success">
-                                                                    Evaluer
-                                                                </button>
-                                                                    
-                                                                    {/* <button  onClick={()=>setCurrentAmount(amount)} disabled={valid === 1 || valid === 3}  className={`py-0 mx-2 btn ${valid === 1 || valid === 3 ? 'btn-secondary' : 'btn-danger'}`}>
-                                                                        <div onClick={()=>setIdPaymentPending(id)}>
-                                                                            <div onClick={()=>setCurrentSenderId(senderId)}>
-                                                                                <div onClick={handleDeleteShow}>
-                                                                                    Rejeter
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </button> */}
-
-                                                                    {/* <small  onClick={()=>setCurrentAmount(amount)} className='py-0 px-0 mx-2 btn btn-primary'>
-                                                                        <div onClick={()=>setIdPaymentPending(id)}>
-                                                                            <div onClick={()=>setCurrentSenderId(senderId)}>
-                                                                                <div>
-                                                                                    Rembourser
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </small> */}
-                                                                </p>
-                                                            </div>
-                                                        </Table.Cell>
-                                                    </Table.Row >
-                                                {/* )
-                                            )} */}
-
-                                            {/* <Table.Pagination
-                                                shadow
-                                                noMargin
-                                                align="center"
-                                                rowsPerPage={3}
-                                                onPageChange={(page) => console.log({ page })}
-                                            /> */}
-                                        </Table.Body>
-                                    </Table>
-                                {/* ):(
-                                    <div className="text-center my-5">
-                                        Aucune demande de paiement en attente
+                                                            <Table.Body>
+                                                                {paidOrders?.map((data) => (
+                                                                    <Table.Row key={data?.id}>
+                                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent(data?.customerName,30,"characters")}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.orderNumber}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.customerEmail}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.amount}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {formatDate(data?.createdAt)}</small></Table.Cell>
+                                                                    </Table.Row >
+                                                                ))}
+                                                            </Table.Body>
+                                                            {paidOrders?.length>10 ? (
+                                                                <Table.Pagination
+                                                                    shadow
+                                                                    noMargin
+                                                                    align="center"
+                                                                    rowsPerPage={10}
+                                                                    onPageChange={(page) => console.log({ page })}
+                                                                />
+                                                            ) : ("")}
+                                                        </Table>
+                                                    ):(
+                                                        <div className="text-center my-5">
+                                                            Aucun paiement effectué
+                                                        </div>
+                                                    )} 
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                )} */}
+                                </div>
                             </div>
-                        {/* </form> */}
-                    </div>
-                </div>
-            </div>
-    </div>
-</div>
 
                         </div>
                     </div>
@@ -583,225 +648,210 @@ console.log("cancelledOrders=>",cancelledOrders)
                     {/* ***************************FIN******************************* */}
 
 
-{/************* Le corps de tab des Paiements effectués***************/}
-<div className="content-tabs">
+                    {/************* Le corps de tab des Paiements effectués***************/}
+                    <div className="content-tabs">
                         <div
                             className={toggleStatePaiment === 2 ? "content  active-content" : "content"}
                         >
 
-                            {/* Les cards à revoir */}
                             <div className='cryptocurrency-search-box'>
-    <div className='row'>
+                                <div className='row'>
+                                    <div className='col-lg-12 col-md-12'>
+                                        <div className='currency-selection'>
+                                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='col-lg-12 col-md-12 row justify-content-between'>
+                                                    {!confirmedPayments?.length==0?(
+                                                        <Table
+                                                            aria-label="Example table with static content"
+                                                            css={{
+                                                                height: "auto",
+                                                                minWidth: "100%",
+                                                            }}
+                                                        >
+                                                            <Table.Header>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nom client</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0">Numéro commande</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0">Email Client</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actions</p></Table.Column>
+                                                            </Table.Header>
 
-            <div className='col-lg-12 col-md-12'>
-                <div className='currency-selection'>
-                    <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                            <div className='col-lg-12 col-md-12 row justify-content-between'>
-                                {/* {!paymentPendingLength==0?( */}
-                                    <Table
-                                        aria-label="Example table with static content"
-                                        css={{
-                                            height: "auto",
-                                            minWidth: "100%",
-                                        }}
-                                    >
-                                    <Table.Header>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom client</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Numéro commande</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Email Client</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
-                                    </Table.Header>
-                                        <Table.Body>
-                                            {/* {dataPaymentPending?.map(
-                                                (
-                                                {id, objet, amount,senderEmail, senderAddress, nameEntreprise, senderId, createdAt, valid},
-                                                index
-                                                ) => ( */}
-                                                    <Table.Row >
-                                                        {/* Default Admin */}
-                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent("Arouna",30,"characters")}</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 "> 57437637657</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 "> arouna@gmail.com</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 "> 200</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 "> En cours</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 "> 21/03/2024</small></Table.Cell>
-                                                        {/* <Table.Cell ><small className=" py-0 ">{amount}</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent(objet,15,"characters")}</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 ">{valid == 1?(<i className='colorGreen'>Payé</i>):valid == 2 ? (<i className='colorBlue'>Remboursé</i>) :valid == 3? (<i className='colorRed'>Rejeté </i>) :<i>En cours</i>}</small></Table.Cell>
-
-                                                        <Table.Cell ><small className=" py-0 ">{formatDate(createdAt)}</small></Table.Cell> */}
-                                                    
-                                                        <Table.Cell>
-                                                            <div className="d-flex py-0 ">
-                                                                <p className="text-center">
-
-                                                                <button  className="py-0 mx-2 btn btn-success">
-                                                                    Evaluer
-                                                                </button>
-                                                                    
-                                                                    {/* <button  onClick={()=>setCurrentAmount(amount)} disabled={valid === 1 || valid === 3}  className={`py-0 mx-2 btn ${valid === 1 || valid === 3 ? 'btn-secondary' : 'btn-danger'}`}>
-                                                                        <div onClick={()=>setIdPaymentPending(id)}>
-                                                                            <div onClick={()=>setCurrentSenderId(senderId)}>
-                                                                                <div onClick={handleDeleteShow}>
-                                                                                    Rejeter
-                                                                                </div>
+                                                            <Table.Body>
+                                                                {confirmedPayments?.map((data) => (
+                                                                    <Table.Row key={data?.id}>
+                                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent(data?.customerName,30,"characters")}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.orderNumber}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.customerEmail}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.amount}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {formatDate(data?.createdAt)}</small></Table.Cell>
+                                                                        <Table.Cell>
+                                                                            <div className="d-flex py-0 ">
+                                                                                <p className="text-center">
+                                                                                    <button onClick={()=>setOrderId(data?.id)} className="py-0 mx-2 btn btn-success">
+                                                                                        <div onClick={handleShowChangePictureProof}>
+                                                                                            Confirmer
+                                                                                        </div>
+                                                                                    </button>
+                                                                                </p>
                                                                             </div>
-                                                                        </div>
-                                                                    </button> */}
-
-                                                                    {/* <small  onClick={()=>setCurrentAmount(amount)} className='py-0 px-0 mx-2 btn btn-primary'>
-                                                                        <div onClick={()=>setIdPaymentPending(id)}>
-                                                                            <div onClick={()=>setCurrentSenderId(senderId)}>
-                                                                                <div>
-                                                                                    Rembourser
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </small> */}
-                                                                </p>
-                                                            </div>
-                                                        </Table.Cell>
-                                                    </Table.Row >
-                                                {/* )
-                                            )} */}
-
-                                            {/* <Table.Pagination
-                                                shadow
-                                                noMargin
-                                                align="center"
-                                                rowsPerPage={3}
-                                                onPageChange={(page) => console.log({ page })}
-                                            /> */}
-                                        </Table.Body>
-                                    </Table>
-                                {/* ):(
-                                    <div className="text-center my-5">
-                                        Aucune demande de paiement en attente
+                                                                        </Table.Cell>
+                                                                    </Table.Row >
+                                                                ))}
+                                                            </Table.Body>
+                                                            {confirmedPayments?.length>10 ? (
+                                                                <Table.Pagination
+                                                                    shadow
+                                                                    noMargin
+                                                                    align="center"
+                                                                    rowsPerPage={10}
+                                                                    onPageChange={(page) => console.log({ page })}
+                                                                />
+                                                            ) : ("")}
+                                                        </Table>
+                                                    ):(
+                                                        <div className="text-center my-5">
+                                                            Aucun paiement confirmé
+                                                        </div>
+                                                    )} 
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                )} */}
+                                </div>
                             </div>
-                        {/* </form> */}
-                    </div>
-                </div>
-            </div>
-    </div>
-</div>
 
                         </div>
                     </div>
 
                     {/* ***************************FIN******************************* */}
 
-{/************* Le corps de tab des Paiements effectués***************/}
-<div className="content-tabs">
+                    {/************* Le corps de tab des Paiements effectués***************/}
+                    <div className="content-tabs">
                         <div
                             className={toggleStatePaiment === 3 ? "content  active-content" : "content"}
                         >
 
-                            {/* Les cards à revoir */}
                             <div className='cryptocurrency-search-box'>
-    <div className='row'>
+                                <div className='row'>
+                                    <div className='col-lg-12 col-md-12'>
+                                        <div className='currency-selection'>
+                                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='col-lg-12 col-md-12 row justify-content-between'>
+                                                    {!confirmedWithProof?.length==0?(
+                                                        <Table
+                                                            aria-label="Example table with static content"
+                                                            css={{
+                                                                height: "auto",
+                                                                minWidth: "100%",
+                                                            }}
+                                                        >
+                                                            <Table.Header>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nom client</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0">Numéro commande</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0">Email Client</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
+                                                            </Table.Header>
 
-            <div className='col-lg-12 col-md-12'>
-                <div className='currency-selection'>
-                    <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
-                            <div className='col-lg-12 col-md-12 row justify-content-between'>
-                                {/* {!paymentPendingLength==0?( */}
-                                    <Table
-                                        aria-label="Example table with static content"
-                                        css={{
-                                            height: "auto",
-                                            minWidth: "100%",
-                                        }}
-                                    >
-                                    <Table.Header>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Nom client</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Numéro commande</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 mx-3 ">Email Client</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
-                                        <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Actions</p></Table.Column>
-                                    </Table.Header>
-                                        <Table.Body>
-                                            {/* {dataPaymentPending?.map(
-                                                (
-                                                {id, objet, amount,senderEmail, senderAddress, nameEntreprise, senderId, createdAt, valid},
-                                                index
-                                                ) => ( */}
-                                                    <Table.Row >
-                                                        {/* Default Admin */}
-                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent("Arouna",30,"characters")}</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 "> 57437637657</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 "> arouna@gmail.com</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 "> 200</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 "> En cours</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 "> 21/03/2024</small></Table.Cell>
-                                                        {/* <Table.Cell ><small className=" py-0 ">{amount}</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent(objet,15,"characters")}</small></Table.Cell>
-                                                        <Table.Cell ><small className=" py-0 ">{valid == 1?(<i className='colorGreen'>Payé</i>):valid == 2 ? (<i className='colorBlue'>Remboursé</i>) :valid == 3? (<i className='colorRed'>Rejeté </i>) :<i>En cours</i>}</small></Table.Cell>
-
-                                                        <Table.Cell ><small className=" py-0 ">{formatDate(createdAt)}</small></Table.Cell> */}
-                                                    
-                                                        <Table.Cell>
-                                                            <div className="d-flex py-0 ">
-                                                                <p className="text-center">
-
-                                                                <button  className="py-0 mx-2 btn btn-success">
-                                                                    Evaluer
-                                                                </button>
-                                                                    
-                                                                    {/* <button  onClick={()=>setCurrentAmount(amount)} disabled={valid === 1 || valid === 3}  className={`py-0 mx-2 btn ${valid === 1 || valid === 3 ? 'btn-secondary' : 'btn-danger'}`}>
-                                                                        <div onClick={()=>setIdPaymentPending(id)}>
-                                                                            <div onClick={()=>setCurrentSenderId(senderId)}>
-                                                                                <div onClick={handleDeleteShow}>
-                                                                                    Rejeter
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </button> */}
-
-                                                                    {/* <small  onClick={()=>setCurrentAmount(amount)} className='py-0 px-0 mx-2 btn btn-primary'>
-                                                                        <div onClick={()=>setIdPaymentPending(id)}>
-                                                                            <div onClick={()=>setCurrentSenderId(senderId)}>
-                                                                                <div>
-                                                                                    Rembourser
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </small> */}
-                                                                </p>
-                                                            </div>
-                                                        </Table.Cell>
-                                                    </Table.Row >
-                                                {/* )
-                                            )} */}
-
-                                            {/* <Table.Pagination
-                                                shadow
-                                                noMargin
-                                                align="center"
-                                                rowsPerPage={3}
-                                                onPageChange={(page) => console.log({ page })}
-                                            /> */}
-                                        </Table.Body>
-                                    </Table>
-                                {/* ):(
-                                    <div className="text-center my-5">
-                                        Aucune demande de paiement en attente
+                                                            <Table.Body>
+                                                                {confirmedWithProof?.map((data) => (
+                                                                    <Table.Row key={data?.id}>
+                                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent(data?.customerName,30,"characters")}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.orderNumber}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.customerEmail}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.amount}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {formatDate(data?.updateAt)}</small></Table.Cell>
+                                                                    </Table.Row >
+                                                                ))}
+                                                            </Table.Body>
+                                                            {confirmedWithProof?.length>10 ? (
+                                                                <Table.Pagination
+                                                                    shadow
+                                                                    noMargin
+                                                                    align="center"
+                                                                    rowsPerPage={10}
+                                                                    onPageChange={(page) => console.log({ page })}
+                                                                />
+                                                            ) : ("")}
+                                                        </Table>
+                                                    ):(
+                                                        <div className="text-center my-5">
+                                                            Aucun paiement confirmé avec preuve
+                                                        </div>
+                                                    )} 
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                )} */}
+                                </div>
                             </div>
-                        {/* </form> */}
-                    </div>
-                </div>
-            </div>
-    </div>
-</div>
 
+                        </div>
+                    </div>
+
+                    {/* ***************************FIN******************************* */}
+
+                    {/************* Le corps de tab des commande annulés***************/}
+                    <div className="content-tabs">
+                        <div
+                            className={toggleStatePaiment === 4 ? "content  active-content" : "content"}
+                        >
+
+                            <div className='cryptocurrency-search-box'>
+                                <div className='row'>
+                                    <div className='col-lg-12 col-md-12'>
+                                        <div className='currency-selection'>
+                                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='col-lg-12 col-md-12 row justify-content-between'>
+                                                    {!cancelledOrders?.length==0?(
+                                                        <Table
+                                                            aria-label="Example table with static content"
+                                                            css={{
+                                                                height: "auto",
+                                                                minWidth: "100%",
+                                                            }}
+                                                        >
+                                                            <Table.Header>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nom client</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0">Numéro commande</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0">Email Client</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
+                                                            </Table.Header>
+
+                                                            <Table.Body>
+                                                                {cancelledOrders?.map((data) => (
+                                                                    <Table.Row key={data?.id}>
+                                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent(data?.customerName,30,"characters")}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.orderNumber}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.customerEmail}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.amount}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {formatDate(data?.createdAt)}</small></Table.Cell>
+                                                                    </Table.Row >
+                                                                ))}
+                                                            </Table.Body>
+                                                            {cancelledOrders?.length>10 ? (
+                                                                <Table.Pagination
+                                                                    shadow
+                                                                    noMargin
+                                                                    align="center"
+                                                                    rowsPerPage={10}
+                                                                    onPageChange={(page) => console.log({ page })}
+                                                                />
+                                                            ) : ("")}
+                                                        </Table>
+                                                    ):(
+                                                        <div className="text-center my-5">
+                                                            Aucune commande annulée
+                                                        </div>
+                                                    )} 
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -845,16 +895,9 @@ console.log("cancelledOrders=>",cancelledOrders)
                                     onClick={() => toggleTabRefund(3)}
                                     
                                 >
-                                    <span className=''>Remboursements Effectués</span>
+                                    <span className=''>Historique remboursement</span>
                                 </button>
-
-                                <button
-                                    className={toggleStateRefund === 4 ? "tabs active-tabs  gr-text-8 text-color-opacity" : "tabs  gr-text-8 text-color-opacity"}
-                                    onClick={() => toggleTabRefund(4)}
-                                    
-                                >
-                                    <span className=''>Remboursements Rejetés</span>
-                                </button> 
+                               
                             </div>
                             {/* FIN L'entête des tabs de remboursement*/}
                         </div>
@@ -862,6 +905,209 @@ console.log("cancelledOrders=>",cancelledOrders)
                     {/* Fin Le corps de tab des remboursement */}
 
 
+                     {/* *********************************************************************** */}
+                        {/* LE CONTENU QUI CONTIENT LES DIFFERENTES PARTIES DE REMBOURSEMENT */}
+                    {/* *************************************************************************** */}
+
+                    {/************* Le corps de tab des Demandes de remboursement***************/}
+                    <div className="content-tabs">
+                        <div
+                            className={toggleStateRefund === 1 ? "content  active-content" : "content"}
+                        >
+                            <div className='cryptocurrency-search-box'>
+                                <div className='row'>
+                                    <div className='col-lg-12 col-md-12'>
+                                        <div className='currency-selection'>
+                                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='col-lg-12 col-md-12 row justify-content-between'>
+                                                    {!refundRequests?.length==0?(
+                                                        <Table
+                                                            aria-label="Example table with static content"
+                                                            css={{
+                                                                height: "auto",
+                                                                minWidth: "100%",
+                                                            }}
+                                                        >
+                                                            <Table.Header>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nom client</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0">Numéro commande</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0">Email Client</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
+                                                            </Table.Header>
+
+                                                            <Table.Body>
+                                                                {refundRequests?.map((data) => (
+                                                                    <Table.Row key={data?.id}>
+                                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent(data?.customerName,30,"characters")}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.orderNumber}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.customerEmail}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.amount}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {formatDate(data?.createdAt)}</small></Table.Cell>
+                                                                    </Table.Row >
+                                                                ))}
+                                                            </Table.Body>
+                                                            {refundRequests?.length>10 ? (
+                                                                <Table.Pagination
+                                                                    shadow
+                                                                    noMargin
+                                                                    align="center"
+                                                                    rowsPerPage={10}
+                                                                    onPageChange={(page) => console.log({ page })}
+                                                                />
+                                                            ) : ("")}
+                                                        </Table>
+                                                    ):(
+                                                        <div className="text-center my-5">
+                                                            Aucune demande de remboursement
+                                                        </div>
+                                                    )} 
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {/* ***************************FIN******************************* */}
+
+
+                    
+                     {/************* Le corps de tab des Demandes de remboursement accepter***************/}
+                     <div className="content-tabs">
+                        <div
+                            className={toggleStateRefund === 2 ? "content  active-content" : "content"}
+                        >
+                            <div className='cryptocurrency-search-box'>
+                                <div className='row'>
+                                    <div className='col-lg-12 col-md-12'>
+                                        <div className='currency-selection'>
+                                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='col-lg-12 col-md-12 row justify-content-between'>
+                                                    {!acceptedRefunds?.length==0?(
+                                                        <Table
+                                                            aria-label="Example table with static content"
+                                                            css={{
+                                                                height: "auto",
+                                                                minWidth: "100%",
+                                                            }}
+                                                        >
+                                                            <Table.Header>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nom client</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0">Numéro commande</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0">Email Client</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
+                                                            </Table.Header>
+
+                                                            <Table.Body>
+                                                                {acceptedRefunds?.map((data) => (
+                                                                    <Table.Row key={data?.id}>
+                                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent(data?.customerName,30,"characters")}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.orderNumber}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.customerEmail}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.amount}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {formatDate(data?.createdAt)}</small></Table.Cell>
+                                                                    </Table.Row >
+                                                                ))}
+                                                            </Table.Body>
+                                                            {acceptedRefunds?.length>10 ? (
+                                                                <Table.Pagination
+                                                                    shadow
+                                                                    noMargin
+                                                                    align="center"
+                                                                    rowsPerPage={10}
+                                                                    onPageChange={(page) => console.log({ page })}
+                                                                />
+                                                            ) : ("")}
+                                                        </Table>
+                                                    ):(
+                                                        <div className="text-center my-5">
+                                                            Aucune demande de remboursement acceptée
+                                                        </div>
+                                                    )} 
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {/* ***************************FIN******************************* */}
+
+
+                    {/************* Le corps de tab des Demandes de remboursement rejetée et Remboursement effectué***************/}
+                    <div className="content-tabs">
+                        <div
+                            className={toggleStateRefund === 3 ? "content  active-content" : "content"}
+                        >
+                            <div className='cryptocurrency-search-box'>
+                                <div className='row'>
+                                    <div className='col-lg-12 col-md-12'>
+                                        <div className='currency-selection'>
+                                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                                <div className='col-lg-12 col-md-12 row justify-content-between'>
+                                                    {!rejectedAndCompletedRefunds?.length==0?(
+                                                        <Table
+                                                            aria-label="Example table with static content"
+                                                            css={{
+                                                                height: "auto",
+                                                                minWidth: "100%",
+                                                            }}
+                                                        >
+                                                            <Table.Header>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Nom client</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0">Numéro commande</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0">Email Client</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Montant</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
+                                                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Date</p></Table.Column>
+                                                            </Table.Header>
+
+                                                            <Table.Body>
+                                                                {rejectedAndCompletedRefunds?.map((data) => (
+                                                                    <Table.Row key={data?.id}>
+                                                                        <Table.Cell ><small className=" py-0 ">{displayLimitedContent(data?.customerName,30,"characters")}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.orderNumber}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.customerEmail}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.amount}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {data?.status ==="Demande de remboursement rejetée"? (<i className='colorRed'>Demande rejetée</i>):data?.status ==="Remboursement effectué"?(<i className='colorGreen'>Rembourser</i>):""}</small></Table.Cell>
+                                                                        <Table.Cell ><small className=" py-0 "> {formatDate(data?.createdAt)}</small></Table.Cell>
+                                                                    </Table.Row >
+                                                                ))}
+                                                            </Table.Body>
+                                                            {rejectedAndCompletedRefunds?.length>10 ? (
+                                                                <Table.Pagination
+                                                                    shadow
+                                                                    noMargin
+                                                                    align="center"
+                                                                    rowsPerPage={10}
+                                                                    onPageChange={(page) => console.log({ page })}
+                                                                />
+                                                            ) : ("")}
+                                                        </Table>
+                                                    ):(
+                                                        <div className="text-center my-5">
+                                                            Aucune donnée disponible
+                                                        </div>
+                                                    )} 
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {/* ***************************FIN******************************* */}
 
 
                     
@@ -945,6 +1191,29 @@ console.log("cancelledOrders=>",cancelledOrders)
             
 
 
+        {/* ********************************************************************************** */}
+                {/* MODAL DU CHANGEMENT DE L'AVATAR'*/}
+            {/* ********************************************************************************** */}
+            <Modal show={showChangePictureProof} className="mt-15" onHide={handleCloseChangePictureProof}>
+                <Modal.Header closeButton className="bgColorGreen">
+                    <Modal.Title className="text-white" >Ajouter la photo de preuve de livraison</Modal.Title>                
+                </Modal.Header>
+                    <form onSubmit={handleUpdatePictureProof}>
+                        <Modal.Body>
+                            <input type="file" onChange={handleFileChange} accept="image/*" />
+                            
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button className="text-white" color="danger" onClick={handleCloseChangePictureProof}>
+                                Fermer
+                            </Button>
+                            <Button  type='submit'  color="success" disabled={isLoggingIn}>
+                                Ajouter 
+                            </Button>
+                        </Modal.Footer>
+                    </form>
+            </Modal>
+            {/* *****************************************FIN****************************************** */}
 
 
 

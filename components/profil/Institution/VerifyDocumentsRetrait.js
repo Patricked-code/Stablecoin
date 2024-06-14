@@ -83,23 +83,7 @@ const VerifyDocumentsRetrait = () => {
     const [montantRetirerAvecFrais, setMontantRetirerAvecFrais] = useState(0);
     const [percent, setPercent] = useState(10);
 
-    // *************************MAP*************************
-    const [position, setPosition] = useState({ lat:5.3510144, lng: -3.997696});
-    const [agences, setAgences] = useState([]);
-  const [directions, setDirections] = useState(null);
-
-   const fetchDirections = () => {
-      const request = {
-        origin: position,
-        destination: new google.maps.LatLng(5.444957, -4.017247),
-        travelMode: google.maps.TravelMode.DRIVING
-      };
-      setDirections(request);
-      console.log("request=>",request)
-    };
-    
-    // ********************FIN MAP*****************
-
+   
      // Calcule des frais de transaction
     //  const frais = montantRetirer*percent/100
     //  const montantRetirerAvecFrais =  parseFloat(montantRetirer) + frais 
@@ -671,7 +655,7 @@ const formatDate = (_updatedAt) =>{
                     >
                      {/* Formulaire de la partie avec adresse blockchain  */}
                      <form onSubmit={handleSubmit}>
-                        <div className="form-group my-6 ">
+                        {/* <div className="form-group my-6 "> */}
 
                           <div className='row'>
                             <div className='col-lg-6 col-md-6' onClick={()=>setShowInput(0)}>
@@ -768,7 +752,7 @@ const formatDate = (_updatedAt) =>{
                                   </Col>
                                 </Row>
                               ) : ("")}
-                        </div>
+                        {/* </div> */}
                         
                       </form>
                     </div>
@@ -1053,40 +1037,6 @@ const formatDate = (_updatedAt) =>{
             ) : ("")}
             {/* FIN */}
 
-            {/* ***************MAP******************************************* */}
-            <div>
-              <button onClick={fetchDirections}>MAPPPPP</button>
-              {/* <button onClick={handleLocaliser}>Trouver les agences les plus proches</button> */}
-              {/* <LoadScript googleMapsApiKey="AIzaSyD__tSpG_bXz0g7AmATXo0qAJpxXvjl24E"> */}
-              
-              {/* <LoadScript googleMapsApiKey="AIzaSyCnzsXAyLQ6v9eyH2FBjAJ5k0-gsbngkzU"> */}
-              <LoadScript googleMapsApiKey="AIzaSyC9_BES9oQPtVZ-tZ9_o9qSIuHGdg0zIrM">
-              
-                <GoogleMap
-                  mapContainerStyle={containerStyle}
-                  center={position}
-                  zoom={10}
-                >
-                  {position && <Marker position={position} />}
-                  {/* {agences.map((agence, index) => (
-                    <Marker key={index} position={{ lat: parseFloat(oneKycForParticular?.latitude), lng: parseFloat(oneKycForParticular?.longitude) }}
-                            onClick={() => fetchDirections(agence)} />
-                  ))} */}
-                  <DirectionsRenderer directions={directions} />
-                  {directions && (
-                    <DirectionsService
-                      options={directions}
-                      callback={(result, status) => {
-                        if (status === google.maps.DirectionsStatus.OK) {
-                          setDirections(result);
-                        }
-                      }}
-                    />
-                  )}
-                </GoogleMap>
-              </LoadScript>
-            </div>
-            {/* *********************************************** */}
         </div>
 
 

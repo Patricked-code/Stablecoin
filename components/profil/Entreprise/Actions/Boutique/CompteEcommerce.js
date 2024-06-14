@@ -656,7 +656,7 @@ const CompteEcommerce = () => {
                                                         <div className="form-group my-6">
                                                           <div className="d-flex justify-content-between my-1">
                                                             <label htmlFor="notificationsLink" className="mt-3">
-                                                              Lien de notifications <sup className="colorRed">*</sup>
+                                                              Endpoint de notifications (URL de webhook)  <sup className="colorRed">*</sup>
                                                             </label>
                                                             <button type="button" onClick={() => toggleDescription('notificationsLink')} className="bgColorblue text-white btn-sm ">
                                                               {showDescription.notificationsLink ? 'Fermer' : 'Détails'}

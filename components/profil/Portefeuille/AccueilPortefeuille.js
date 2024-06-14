@@ -33,6 +33,8 @@ const CAccueilPortefeuille = () => {
     const [userMetadata, setUserMetadata] = useState("...");
     const [provider, setProvider] = useState(null);
     const [signer, setSigner] = useState();
+    const [walletRelayer, setWalletRelayer] = useState();
+    
     
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [showWallet, setShowWallet] = useState(null);
@@ -144,7 +146,7 @@ const CAccueilPortefeuille = () => {
           // *************************************************************************
           // Créer un portefeuille Web3 avec la clé privée.
           const walletRelay = new ethers.Wallet(PRIVATE_KEY, provider);
-
+          setWalletRelayer(walletRelay)
           // Créer une instance du contrat de stablecoin.
           const contractStablecoin = new ethers.Contract(
             ADDRESS_CONTRAT_EWARI,
@@ -499,6 +501,223 @@ const CAccueilPortefeuille = () => {
     // ***************************************************************************************
   
     // Functions de transfert de Stablecoin avec l'adresse Blockchain
+    const transferStablecoinNO3 = async () => {
+      setIsLoggingIn(true);
+      try {
+        const tosting = String(montantEnvoyer);
+        const amountWei = ethers.utils.parseUnits(tosting, decimalStablecoin);
+    
+        // Vérifier si magicCurrentAddress a suffisamment de fonds à transférer
+        const convertAmount = parseFloat(montantEnvoyer);
+        if (balanceStablecoinNoFormat <= convertAmount) {
+          // Afficher un message indiquant que magicCurrentAddress n'a pas suffisamment de fonds
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            title: 'Erreur',
+            html: 'Vous n\'avez pas suffisamment de fonds pour effectuer cette transaction.',
+            showConfirmButton: false,
+            timer: 5000
+          });
+          setIsLoggingIn(false);
+          return;
+        }
+    
+        // Vérifier si l'exécuteur a suffisamment de frais de gas
+        const gasEstimate = await contractStablecoin.estimateGas.metaTransfer(magicCurrentAddress, addressTo, amountWei);
+        const gasPrice = await provider.getGasPrice();
+        const gasCost = gasEstimate.mul(gasPrice);
+        const senderBalance = await walletRelayer.getBalance();
+    
+        console.log("Gas Estimate:", gasEstimate.toString());
+        console.log("Gas Price:", gasPrice.toString());
+        console.log("Gas Cost:", gasCost.toString());
+        console.log("Sender Balance:", senderBalance.toString());
+    
+        if (gasCost.gt(senderBalance)) {
+          setIsLoggingIn(false);
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            html: `<p> L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.</p>`,
+            showConfirmButton: false,
+            timer: 5000
+          });
+          throw new Error("L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.");
+        }
+    
+        // Effectuer la transaction
+        const transferResult = await contractStablecoin.metaTransfer(magicCurrentAddress, addressTo, amountWei);
+        console.log("Transfer Result:", transferResult);
+        await transferResult.wait(1);
+    
+        // Appel de la fonction d'ajout des données du transfert dans l'historique 
+        addHistorical(transferResult.hash);
+    
+      } catch (error) {
+        setIsLoggingIn(false);
+        console.error("Erreur:", error.message);
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          html: 'Une erreur s\'est produite lors de la transaction.',
+          showConfirmButton: false,
+          timer: 5000
+        });
+    
+        // Afficher des détails supplémentaires sur l'erreur pour le débogage
+        console.error("Transaction failed with error:", error);
+        if (error.transaction) {
+          console.error("Transaction details:", error.transaction);
+        }
+        if (error.receipt) {
+          console.error("Transaction receipt:", error.receipt);
+        }
+      }
+    };
+    
+    const transferStablecoinNO2 = async () => {
+      setIsLoggingIn(true);
+      try {
+        const tosting = String(montantEnvoyer);
+        const amountWei = ethers.utils.parseUnits(tosting, decimalStablecoin);
+    
+        // Vérifier si magicCurrentAddress a suffisamment de fonds à transférer
+        const convertAmount = parseFloat(montantEnvoyer);
+        if (balanceStablecoinNoFormat <= convertAmount) {
+          // Afficher un message indiquant que magicCurrentAddress n'a pas suffisamment de fonds
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            title: 'Erreur',
+            html: 'Vous n\'avez pas suffisamment de fonds pour effectuer cette transaction.',
+            showConfirmButton: false,
+            timer: 5000
+          });
+          setIsLoggingIn(false);
+          return;
+        }
+
+        
+        // Vérifier si l'exécuteur a suffisamment de frais de gas
+        const gasEstimate = await contractStablecoin.estimateGas.metaTransfer(magicCurrentAddress, addressTo, amountWei);
+        const gasPrice = await provider.getGasPrice();
+        const gasCost = gasEstimate.mul(gasPrice);
+        const senderBalance = await walletRelayer.getBalance();
+    
+        console.log("Gas Estimate:", gasEstimate.toString());
+        console.log("Gas Price:", gasPrice.toString());
+        console.log("Gas Cost:", gasCost.toString());
+        console.log("Sender Balance:", senderBalance.toString());
+    
+        if (gasCost.gt(senderBalance)) {
+          setIsLoggingIn(false);
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            html: `<p> L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.</p>`,
+            showConfirmButton: false,
+            timer: 5000
+          });
+          throw new Error("L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.");
+        }
+    
+        // Effectuer la transaction
+        const transferResult = await contractStablecoin.metaTransfer(magicCurrentAddress, addressTo, amountWei);
+        console.log("transferResult=>",transferResult)
+        await transferResult.wait(1);
+    
+        // Appel de la fonction d'ajout des données du transfert dans l'historique 
+        addHistorical(transferResult.hash);
+    
+      } catch (error) {
+        setIsLoggingIn(false);
+        console.error("Erreur:", error.message);
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          html: 'Une erreur s\'est produite lors de la transaction.',
+          showConfirmButton: false,
+          timer: 5000
+        });
+    
+        // Afficher des détails supplémentaires sur l'erreur pour le débogage
+        console.error("Transaction failed with error:", error);
+        if (error.transaction) {
+          console.error("Transaction details:", error.transaction);
+        }
+        if (error.receipt) {
+          console.error("Transaction receipt:", error.receipt);
+        }
+      }
+    };
+    
+    const transferStablecoinNO1 = async () => {
+      setIsLoggingIn(true);
+      try {
+          const tosting = String(montantEnvoyer);
+          const amountWei = ethers.utils.parseUnits(tosting, decimalStablecoin);
+          
+          // Vérifier si magicCurrentAddress a suffisamment de fonds à transférer
+          const convertAmount = parseFloat(montantEnvoyer);
+          if (balanceStablecoinNoFormat <= convertAmount) {
+              // Afficher un message indiquant que magicCurrentAddress n'a pas suffisamment de fonds
+              Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  title: 'Erreur',
+                  html: 'Vous n\'avez pas suffisamment de fonds pour effectuer cette transaction.',
+                  showConfirmButton: false,
+                  timer: 5000
+              });
+              setIsLoggingIn(false);
+              return;
+          }
+          
+          // Vérifier si l'exécuteur a suffisamment de frais de gas
+          const gasEstimate = await contractStablecoin.estimateGas.metaTransfer(magicCurrentAddress, addressTo, amountWei);
+          const gasPrice = await provider.getGasPrice();
+          const gasCost = gasEstimate.mul(gasPrice);
+          const senderBalance = await walletRelayer.getBalance();
+  
+          console.log("Gas Estimate:", gasEstimate.toString());
+          console.log("Gas Price:", gasPrice.toString());
+          console.log("Gas Cost:", gasCost.toString());
+          console.log("Sender Balance:", senderBalance.toString());
+  
+          if (gasCost.gt(senderBalance)) {
+              setIsLoggingIn(false);
+              Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  html: `<p> L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.</p>`,
+                  showConfirmButton: false,
+                  timer: 5000
+              });
+              throw new Error("L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.");
+          }
+  
+          // Effectuer la transaction
+          const transferResult = await contractStablecoin.metaTransfer(magicCurrentAddress, addressTo, amountWei);
+          await transferResult.wait();
+          
+          // Appel de la fonction d'ajout des données du transfert dans l'historique 
+          addHistorical(transferResult.hash);
+  
+      } catch (error) {
+          setIsLoggingIn(false);
+          console.error("Erreur:", error.message);
+          Swal.fire({
+              position: 'center',
+              icon: 'error',
+              html: 'Une erreur s\'est produite lors de la transaction.',
+              showConfirmButton: false,
+              timer: 5000
+          });
+      }
+  };
+
+  
     const transferStablecoin = async () => {
         setIsLoggingIn(true);
         try {
@@ -525,9 +744,9 @@ const CAccueilPortefeuille = () => {
             // Vérifier si l'exécuteur a suffisamment de frais de gas
             const gasEstimate = await contractStablecoin.estimateGas.metaTransfer(magicCurrentAddress, addressTo, amountWei);
             const gasCost = gasEstimate.mul(await provider.getGasPrice());
-            const senderBalance = await signer.getBalance();
+            const senderBalance = await walletRelayer.getBalance();
 
-            if (gasCost?._hex>senderBalance?._hex) {
+            if (gasCost.gt(senderBalance)) {
                 setIsLoggingIn(false)
                 Swal.fire({
                     position: 'center',
@@ -564,6 +783,95 @@ const CAccueilPortefeuille = () => {
   
     // **********Fonction pour effectuer le transfert en payant les frais de transaction***************************************************************
     const transferBatch = async () => {
+      setIsLoggingIn(true);
+    
+      // Parser le montant à recevoir à l'expéditeur
+      const tostingReceiver = String(montantRecevoir);
+      const amountWeiReceiver = ethers.utils.parseUnits(tostingReceiver, decimalStablecoin);
+    
+      // Parser le montant de commission de remboursement de transfert de WTI
+      const tostingWti = String(feeTransfer);
+      const amountWeiWti = ethers.utils.parseUnits(tostingWti, decimalStablecoin);
+    
+      const dataForm = {
+        addressTo: magicCurrentAddress,
+        recipients: [addressTo, ADDRESS_COMMISSION_TRANSFER],
+        amounts: [amountWeiReceiver, amountWeiWti],
+      };
+    
+      try {
+        // Vérifie que les tableaux ont la même longueur
+        if (dataForm?.recipients.length !== dataForm?.amounts.length) {
+          setIsLoggingIn(false);
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            html: `<p> Les tableaux doivent avoir la même longueur.</p>`,
+            showConfirmButton: false,
+            timer: 5000,
+          });
+          throw new Error("Les tableaux doivent avoir la même longueur");
+        }
+    
+        // Vérifie si l'abonné a suffisamment de jetons pour effectuer le remboursement
+        const convertAmount = parseFloat(montantEnvoyer);
+        if (balanceStablecoin <= convertAmount) {
+          setIsLoggingIn(false);
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            html: "Votre solde est insuffisant pour effectuer le transfert.",
+            showConfirmButton: false,
+            timer: 5000,
+          });
+          throw new Error("Solde insuffisant pour effectuer le transfert.");
+        }
+    
+        // Vérifie que l'expéditeur a suffisamment de DEV pour les frais de gas
+        const gasEstimate = await contractStablecoin.estimateGas.transferBatch(dataForm?.addressTo, dataForm?.recipients, dataForm?.amounts);
+        const gasPrice = await provider.getGasPrice();
+        const gasCost = gasEstimate.mul(gasPrice);
+        const senderBalance = await walletRelayer.getBalance();
+    
+        console.log("Gas Estimate:", gasEstimate.toString());
+        console.log("Gas Price:", gasPrice.toString());
+        console.log("Gas Cost:", gasCost.toString());
+        console.log("Sender Balance:", senderBalance.toString());
+    
+        if (gasCost.gt(senderBalance)) {
+          setIsLoggingIn(false);
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            html: `<p> L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.</p>`,
+            showConfirmButton: false,
+            timer: 5000,
+          });
+          throw new Error("L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.");
+        }
+    
+        // Effectue le transfert pour chaque destinataire dans une seule transaction
+        const transferBatchTx = await contractStablecoin.transferBatch(dataForm?.addressTo, dataForm?.recipients, dataForm?.amounts);
+        await transferBatchTx.wait();
+    
+        // Appel de la fonction de la mise à jour de l'historique de transaction
+        addHistoricalTransferBatch(transferBatchTx?.hash);
+      } catch (error) {
+        setIsLoggingIn(false);
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          html: `<p> Une erreur s'est produite lors de la transaction.</p>`,
+          showConfirmButton: false,
+          timer: 5000,
+        });
+        console.error("Erreur:", error.message);
+      }
+    };
+    
+    
+    
+    const transferBatchNO = async () => {
       setIsLoggingIn(true)
   
       // Parser le montant à recevoir à l'expéditeur
@@ -575,7 +883,7 @@ const CAccueilPortefeuille = () => {
       const amountWeiWti = ethers.utils.parseUnits(tostingWti, decimalStablecoin);
   
      
-  // return
+      // return
       const dataForm = {
         addressTo:magicCurrentAddress,
         recipients: [addressTo, ADDRESS_COMMISSION_TRANSFER],
@@ -613,7 +921,7 @@ const CAccueilPortefeuille = () => {
         // Vérifie que l'expéditeur a suffisamment de DEV pour les frais de gas
         const gasEstimate = await contractStablecoin.estimateGas.transferBatch(dataForm?.addressTo, dataForm?.recipients, dataForm?.amounts);
         const gasCost = gasEstimate.mul(await provider.getGasPrice());
-        const senderBalance = await signer.getBalance();
+        const senderBalance = await walletRelayer.getBalance();
   
         if (gasCost?._hex>senderBalance?._hex) {
           setIsLoggingIn(false)
@@ -937,10 +1245,9 @@ const CAccueilPortefeuille = () => {
                                                                     <a className=" text-white aNoDecor px-3">Retrait</a> 
                                                                     </Link>
                                                                 </small>
-                                                                {/* <small className=" py-0 mx-2 px-0 btn btn-primary" onClick={!stateOfSubscription || stateOfSubscription==0 ? warnOnSubscription : handleTransfertShow}> */}
-                                                                <small className=" py-0 mx-2 px-0 btn btn-primary" onClick={!stateOfSubscription || stateOfSubscription==0 ? handleTransfertShowNoSubscribe : handleTransfertShow}>
+                                                                {/* <small className=" py-0 mx-2 px-0 btn btn-primary" onClick={!stateOfSubscription || stateOfSubscription==0 ? handleTransfertShowNoSubscribe : handleTransfertShow}> */}
                                                                 
-                                                                {/* <small className=" py-0 mx-2 px-0 btn btn-primary" onClick={ handleTransfertShow}> */}
+                                                                <small className=" py-0 mx-2 px-0 btn btn-primary" onClick={ handleTransfertShowNoSubscribe}>
                                                                     <a className=" text-white aNoDecor  px-3">Transfert</a> 
                                                                 </small>
                                                                 <small className=" py-0 mx-2 px-0 btn btn-secondary">
@@ -989,8 +1296,6 @@ const CAccueilPortefeuille = () => {
                                         {/* Portefeuille crowdfunding */}
                                         
                                         {/* L'entête de tab*/}
-                                        {/* <div className='row'> */}
-                                            {/* <div className='col-lg-3 col-md-3'></div> */}
                                         <div className="bloc-tabs-utilite ">
                                             
                                             <button

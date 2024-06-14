@@ -158,7 +158,9 @@ function RegisterForm() {
             method:"POST",
             body: JSON.stringify(dataa),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'x-api-key': `${API_KEY_STABLECOIN}`,
+
             }
         })
         // .then(data => {

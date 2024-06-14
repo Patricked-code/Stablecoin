@@ -149,7 +149,7 @@ const AccueilCommeMoyenPaiement = () => {
                                                 <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
                                             </div> */}
                                             <div className='title'>
-                                                <h3>Demandes d'utilisation de stablecoin sur la plateforme</h3>
+                                                <h3>Demandes d'utilisation de stablecoin comme moyen de paiment de commerce direct.</h3>
                                             </div>
                                             </div>
                                             <div className='btn-box'>
@@ -181,6 +181,34 @@ const AccueilCommeMoyenPaiement = () => {
                                         </div>
                                         <div className='btn-box'>
                                             <Link href='/admin/wealthtech/stablecoin/comme-moyen-paiement/sur-ecommerces'>
+                                                <Button
+                                                    block
+                                                    color="primary"
+                                                    type="button"
+                                                >
+                                                    Voir plus
+                                                </Button>
+                                            </Link>
+                                        {/* Fin */}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className='col-lg-6 col-md-6'>
+                        <div className='currency-selection text-center'>
+                            <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                            <div className='cryptocurrency-slides'>
+                                    <div className='single-cryptocurrency-box'>
+                                        <div className='d-flex align-items-center'>
+                                        <div className='title'>
+                                            <h3>Gestion de paiements E-commerces</h3>
+                                        </div>
+                                        </div>
+                                        <div className='btn-box'>
+                                            <Link href='/admin/wealthtech/stablecoin/comme-moyen-paiement/gestion-paiement-ecommerces'>
                                                 <Button
                                                     block
                                                     color="primary"

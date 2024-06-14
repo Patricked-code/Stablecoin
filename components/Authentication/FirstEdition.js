@@ -25,6 +25,7 @@ const FirstEdition = () => {
   const API_URL =process.env.NEXT_PUBLIC_URL_API
    // Variable de l'api key de stablecoin
    const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
+  
 
   // Form particulier
   const [firstName, setFirstName] = useState('');
@@ -711,7 +712,7 @@ const [serviceD, setServiceD] = useState([]);
           {/* SI LE TYPE DE PROFIL EST PARTICULIER */}
           {currentUser?.codeTypeProfil=="part" ? (
             <>
-              <h4 className='text-center'>Activation de compte (Paticulier)</h4>
+              <h4 className='text-center'>Activation de compte (Particulier)</h4>
 
               <form className='login-form'>
                 <div className="form-group mb-6 mt-3">

@@ -139,65 +139,70 @@ const PaymentRequest = () => {
 
 
   // FONCTION DE LA DEMANDE DE PAIEMENT
-  const addPaymentRequest= async(event) =>{
-      event.preventDefault();
-      setIsLoggingIn(true)
-      
-      const dataa = {
-        objet:objet,
-        amount:montantEnvoyer,
-        receiverId:infosOtherUser.id
-         
-      }
-
-      // Obtenir le token en cours
-      const token = localStorage.getItem('tokenEnCours');
-
-      const result = await fetch(`${API_URL}/api/payment-request/add-payment-request`, {
-            method:"POST",
-            body: JSON.stringify(dataa),
-            headers: {
-                'Content-Type': 'application/json',
-                'x-api-key': `${API_KEY_STABLECOIN}`,
-                Authorization:  `Bearer ${token}`
-            }
-        })
-        .then(res=>{
-        const data =  res.json();
-          if (res.status==200) {
-            Swal.fire({
-              position: 'center',
-              icon: 'success',
-              html: "<p> La demande de paiement a été envoyée avec succès.<br/> Un email de confirmation vous a été envoyé en ce sens et dès que l'utilisateur effectuera la transaction, vous serez notifié.</p>" ,
-              showConfirmButton: false,
-              timer: 10000
-            })
-
-            //  Actualiser après l'affichage 
-            setTimeout(() => {
-              window.location.reload()
-            }, 10000) 
-            // Fin
-          }else{
-            setIsLoggingIn(false)
-
-            Swal.fire({
-              position: 'center',
-              icon: 'error',
-              html: "<p> La demande de paiement a échouée. </p>" ,
-              showConfirmButton: false,
-              timer: 15000
-          })
-        }
-      })
-      .catch(error => {
-        setIsLoggingIn(false)
-
-        //handle error
-        console.log(error);
+  const addPaymentRequest = async (event) => {
+    event.preventDefault();
+    setIsLoggingIn(true);
   
+    const data = {
+      objet: objet,
+      amount: montantEnvoyer,
+      receiverId: infosOtherUser.id
+    };
+  
+    // Obtenir le token en cours
+    const token = localStorage.getItem('tokenEnCours');
+  
+    try {
+      const response = await fetch(`${API_URL}/api/payment-request/add-payment-request`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': `${API_KEY_STABLECOIN}`,
+          Authorization: `Bearer ${token}`
+        }
       });
-  }
+  
+      if (response.ok) { // Si la requête est réussie
+        const responseData = await response.json(); // Convertit la réponse en JSON
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          html: "<p> La demande de paiement a été envoyée avec succès.<br/> Un email de confirmation vous a été envoyé en ce sens et dès que l'utilisateur effectuera la transaction, vous serez notifié.</p>",
+          showConfirmButton: false,
+          timer: 10000
+        });
+  
+        // Actualiser après l'affichage
+        setTimeout(() => {
+          window.location.reload();
+        }, 10000);
+      } else {
+        // Gestion des réponses non-OK
+        const errorData = await response.json(); // Assurez-vous que le serveur envoie une réponse JSON
+        setIsLoggingIn(false);
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          html: `<p> La demande de paiement a échouée. <br/> ${errorData.message ? errorData.message : "Erreur inconnue" } </p>`,
+          showConfirmButton: false,
+          timer: 15000
+        });
+      }
+    } catch (error) {
+      setIsLoggingIn(false);
+      // Gestion des erreurs réseau ou de parsing JSON
+      console.error("Erreur lors de la requête :", error);
+      Swal.fire({
+        position: 'center',
+        icon: 'error',
+        title: 'Erreur réseau',
+        text: 'Un problème est survenu lors de l\'envoi de la demande de paiement.',
+        showConfirmButton: true
+      });
+    }
+  };
+
   // FIN
 
 
@@ -285,15 +290,15 @@ const PaymentRequest = () => {
                     >
                      {/* Formulaire de la partie avec adresse blockchain  */}
                      <form onSubmit={handleSubmit}>
-                        <div className="form-group my-6 ">
+                        {/* <div className="form-group my-6 "> */}
 
                           <div className='row'>
                             <div className='col-lg-6 col-md-6' onClick={()=>setShowInput(0)}>
-                              <button className='my-3 py-4' onClick={()=>setShowScanner(1)} disabled={isLoggingIn}>cliquez ici pour scanner le QR code</button>
+                              <button className='my-3 ' onClick={()=>setShowScanner(1)} disabled={isLoggingIn}>Cliquez ici pour scanner le QR code<br/><br/></button>
                             </div>
                               
                             <div className='col-lg-6 col-md-6' onClick={()=>setShowScanner(0)}>
-                              <button className='my-3' onClick={()=>setShowInput(1)} disabled={isLoggingIn}>cliquez ici pour saisir l'adresse blockchain du recepteur</button>
+                              <button className='my-3' onClick={()=>setShowInput(1)} disabled={isLoggingIn}>Cliquez ici pour saisir l'adresse blockchain du recepteur</button>
                             </div>
 
                             <div className='col-lg-3 col-md-3'></div>
@@ -340,7 +345,7 @@ const PaymentRequest = () => {
                               </div>
                             </>
                           ) : ("")}
-                        </div>
+                        {/* </div> */}
                         {infosOtherUser?.entreprise ? (
                           <p className="gr-text-8 " id="addon-wrapping">
                             Nom de l'entreprise : {infosOtherUser?.entreprise}

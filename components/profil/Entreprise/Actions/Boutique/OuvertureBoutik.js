@@ -156,7 +156,7 @@ const OuvertureBoutik = () => {
 
     // Liste des types de services disponibles
     const serviceOptions = [
-        { value: 'Dépôt', label: 'Dépôt' },
+        // { value: 'Dépôt', label: 'Dépôt' },
         { value: 'Retrait', label: 'Retrait' },
     ];
     
@@ -1183,7 +1183,7 @@ const mapContainerStyle = {
                                                                     className="form-control"
                                                                     id="description"
                                                                     placeholder="Description"
-                                                                    rows={7}
+                                                                    rows={10}
                                                                     maxLength={maxLength} // Empêche de saisir plus de 500 caractères
                                                                     defaultValue={description} 
                                                                     onChange={handleChange}
@@ -1230,6 +1230,7 @@ const mapContainerStyle = {
                                     </LoadScript>
                                 )}
                             </div>
+                            {/* FIN */}
                         </div>
                     </div>
                     <div className='col-lg-2 col-md-2'></div>

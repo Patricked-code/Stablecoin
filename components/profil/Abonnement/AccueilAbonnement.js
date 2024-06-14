@@ -38,6 +38,8 @@ const CAccueilAbonnement = () => {
     // ******************************************************************
     const [contractStablecoin, setContractStablecoin] = useState();
     const [signer, setSigner] = useState();
+    const [walletRelayer, setWalletRelayer] = useState();
+
     const [nameStablecoin, setNameStablecoin] = useState();
     const [symbolStablecoin, setSymbolStablecoin] = useState();
     const [balanceStablecoin, setBalanceStablecoin] = useState();
@@ -84,6 +86,7 @@ const CAccueilAbonnement = () => {
                 // INTERACTION AVEC LE SMART CONTRAT DE STABLECOIN
             // *************************************************************************
             const walletRelay = new ethers.Wallet(PRIVATE_KEY, provider);
+            setWalletRelayer(walletRelay)
 
             const contractStablecoin = new ethers.Contract(ADDRESS_CONTRAT_EWARI,ABI_TOKEN_EWARI.abi,walletRelay);
             setContractStablecoin(contractStablecoin);
@@ -367,6 +370,95 @@ const CAccueilAbonnement = () => {
 
     // La fonction d'abonnement du smart contrat
     const subscribe = async () => {
+      setIsLoggingIn(true);
+      
+      // Parser le montant d'abonnement
+      const tostingA = String(dataOneRateSubsription?.subscriptionCost);
+      const feeWei = ethers.utils.parseUnits(tostingA, decimalStablecoin);
+      
+      const dataForm = {
+        addressSubscriber: magicCurrentAddress,
+        addressCommission: ADDRESS_COMMISSION,
+        subscriptionCost: feeWei,
+        subscriptionDays: dataOneRateSubsription?.subscriptionDays
+      };
+    
+      try {
+        // Vérifie si l'abonné a suffisamment de jetons pour payer le coût d'abonnement
+        const convertAmount = parseFloat(dataOneRateSubsription?.subscriptionCost);
+        if (balanceStablecoin <= convertAmount) {
+          setIsLoggingIn(false);
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            html: "Votre solde est insuffisant pour couvrir le coût d'abonnement.",
+            showConfirmButton: false,
+            timer: 5000,
+          });
+          throw new Error("Solde insuffisant pour l'abonnement.");
+        }
+    
+        // Vérifie si l'exécuteur a suffisamment de frais de gas
+        const gasEstimate = await contractStablecoin.estimateGas.subscribe(
+          dataForm?.addressSubscriber,
+          dataForm?.addressCommission,
+          dataForm?.subscriptionCost,
+          dataForm?.subscriptionDays
+        );
+        const gasPrice = await signer.getGasPrice();
+        const gasCost = gasEstimate.mul(gasPrice);
+        const senderBalance = await walletRelayer.getBalance();
+    
+        console.log("Gas Estimate:", gasEstimate.toString());
+        console.log("Gas Price:", gasPrice.toString());
+        console.log("Gas Cost:", gasCost.toString());
+        console.log("Sender Balance:", senderBalance.toString());
+    
+        if (gasCost.gt(senderBalance)) {
+          setIsLoggingIn(false);
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            html: "L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.",
+            showConfirmButton: false,
+            timer: 5000,
+          });
+          throw new Error("L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.");
+        }
+    
+        // Exécute la fonction subscribe
+        const subscribeTx = await contractStablecoin.subscribe(
+          dataForm?.addressSubscriber,
+          dataForm?.addressCommission,
+          dataForm?.subscriptionCost,
+          dataForm?.subscriptionDays,
+        );
+        await subscribeTx.wait();
+        
+        // Appel de la fonction de la mise à jour des infos d'abonnement ou de réabonnement dans la base de données
+        if (infoSubsriptionOfUser?.userId || !infoSubsriptionOfUser?.userId == undefined) {
+          resubscription(magicCurrentAddress, ADDRESS_COMMISSION, dataOneRateSubsription?.subscriptionCost, dataForm?.subscriptionDays, subscribeTx?.hash);
+        } else {
+          addSubscription(magicCurrentAddress, ADDRESS_COMMISSION, dataOneRateSubsription?.subscriptionCost, dataForm?.subscriptionDays, subscribeTx?.hash);
+        }
+    
+        return subscribeTx; // Vous pouvez également retourner le résultat si nécessaire
+      } catch (error) {
+        // Affiche une notification d'erreur avec Swal
+        setIsLoggingIn(false);
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          html: 'Une erreur s\'est produite lors de l\'abonnement.',
+          showConfirmButton: false,
+          timer: 5000,
+        });
+    
+        console.error("Erreur:", error.message);
+      }
+    };
+    
+    const subscribeNo = async () => {
       setIsLoggingIn(true)
       
        // Parser le montant d'abonnement
@@ -407,7 +499,7 @@ const CAccueilAbonnement = () => {
         dataForm?.subscriptionDays
       );
       const gasCost = gasEstimate.mul(await signer.getGasPrice());
-      const senderBalance = await signer.getBalance();
+      const senderBalance = await walletRelayer.getBalance();
   
       if (gasCost?._hex>senderBalance?._hex) {
       setIsLoggingIn(false);

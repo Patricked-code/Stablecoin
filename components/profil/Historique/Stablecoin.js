@@ -95,6 +95,22 @@ const CHistoriqueStablecoin = () => {
     const handleShowRefundEcommerce = () => setShowRefundEcommerce(true);
     // Fin
 
+    
+    // Modal de la demande de remboursement
+    // const [amountRefund, setAmountRefund] = useState();
+    const [showRequestRefundEshop, setShowRequestRefundEshop] = useState(false);
+    const handleCloseRequestRefundEshop = () => setShowRequestRefundEshop(false);
+    const handleShowRequestRefundEshop = () => setShowRequestRefundEshop(true);
+    // Fin
+
+     // Modal de la demande de remboursement
+    // const [amountRefund, setAmountRefund] = useState();
+    const [showApproveWithdrawal, setShowApproveWithdrawal] = useState(false);
+    const handleCloseApproveWithdrawal = () => setShowApproveWithdrawal(false);
+    const handleShowApproveWithdrawal = () => setShowApproveWithdrawal(true);
+    // Fin
+
+    
     /**
      * Hook d'effet pour initialiser le fournisseur Web3 en fonction de l'instance Magic.
      * @function
@@ -150,11 +166,13 @@ const CHistoriqueStablecoin = () => {
           const userAddress = await signer.getAddress();
           setMagicCurrentAddress(userAddress);
 
+          console.log("userAddress=>",userAddress)
           // *************************************************************************
           // INTERACTION AVEC LE SMART CONTRAT DE STABLECOIN
           // *************************************************************************
           // Créer un portefeuille Web3 avec la clé privée.
           const walletRelay = new ethers.Wallet(PRIVATE_KEY, provider);
+          setWalletRelayer(walletRelay)
           /**
             * Smart contrat du factory d'escrow.
             * @type {string}
@@ -314,7 +332,7 @@ const CHistoriqueStablecoin = () => {
         // PARTIE D'IMPLEMENTATION DES FONCTIONS DU SMART CONTRAT D'ESCROW
     // ********************************************************************
         // FONCTION SMART CONTRAT POUR CONFIRMER LE PAIEMENT ou APPROUVER PAIMENT
-        async function approveWithdrawal() {
+        async function approveWithdrawalNo() {
             setIsLoggingIn(true)
         
             try {
@@ -328,7 +346,7 @@ const CHistoriqueStablecoin = () => {
                 
                     // Vérifier si l'exécutant a un solde gas suffisant pour le gaz d'apprabation de retrait
                     const approveWithdrawalEstimateGas = await contractEscrow.estimateGas.approveWithdrawal(dataForm?.ownerAddress);
-                    const executorBalanceAfterTransfer = await signer.getBalance();
+                    const executorBalanceAfterTransfer = await walletRelayer.getBalance();
                     if (executorBalanceAfterTransfer.gte(approveWithdrawalEstimateGas)) {
                         // Fonction d'approbation de retrait
                         const approveWithdrawalTx = await contractEscrow.approveWithdrawal(dataForm?.ownerAddress);
@@ -355,8 +373,89 @@ const CHistoriqueStablecoin = () => {
             }
         }
 
+        
+
+        async function approveWithdrawal() {
+            setIsLoggingIn(true);
+            // depositIndex: String(oneEshopOrderById?.numberTx)
+
+            const dataForm = {
+                contributor: magicCurrentAddress,
+                depositIndex: oneEshopOrderById?.numberTx
+            };
+
+            console.log("dataForm=>",dataForm)
+            try {
+                // Vérifier le solde de magicCurrentAddress
+                const magicCurrentBalance = await contractStablecoin.balanceOf(magicCurrentAddress);
+                console.log("magicCurrentBalance=>", magicCurrentBalance);
+    
+        
+                // Vérifier si l'exécutant a un solde gas suffisant pour le gaz d'approbation de retrait
+                const approveWithdrawalEstimateGas = await contractEscrow.estimateGas.approveWithdrawal(dataForm?.contributor, dataForm?.depositIndex);
+                const executorBalanceAfterTransfer = await walletRelayer.getBalance();
+                console.log("approveWithdrawalEstimateGas=>", approveWithdrawalEstimateGas);
+                console.log("executorBalanceAfterTransfer=>", executorBalanceAfterTransfer);
+        
+                if (!executorBalanceAfterTransfer.gte(approveWithdrawalEstimateGas)) {
+                    setIsLoggingIn(false);
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        html: `<p>Solde insuffisant pour couvrir les frais de gaz d'approbation du retrait.</p>`,
+                        showConfirmButton: false,
+                        timer: 5000
+                    });
+                    console.error("Solde insuffisant pour couvrir les frais de gaz d'approveWithdrawal.");
+                    return;
+                }
+        
+                // Fonction d'approbation de retrait
+                try {
+                    const gasLimit = approveWithdrawalEstimateGas.add(ethers.BigNumber.from("100000")); // Adding extra gas as a buffer
+                    const approveWithdrawalTx = await contractEscrow.approveWithdrawal(dataForm?.contributor, dataForm?.depositIndex, { gasLimit });
+                    const receipt = await approveWithdrawalTx.wait(1);
+        
+                    console.log("Transaction approved:", receipt);
+                    confirmPaiementEshop(); // Appel de la fonction de confirmation de la transaction dans la base de données
+                    setIsLoggingIn(false);
+                } catch (error) {
+                    // Vérifier si l'erreur contient "Indice de depot invalide"
+                    if (error.message.includes("Indice de depot invalide")) {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            html: `<p>Indice de dépôt invalide. Veuillez vérifier l'index du dépôt et réessayer.</p>`,
+                            showConfirmButton: true
+                        });
+                        console.error("Erreur lors de l'approbation : Indice de dépôt invalide");
+                    } else {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            html: `<p>Erreur lors de l'approbation: ${error.message}</p>`,
+                            showConfirmButton: true
+                        });
+                        console.error("Erreur lors de l'approbation :", error);
+                    }
+                    setIsLoggingIn(false);
+                }
+            } catch (error) {
+                setIsLoggingIn(false);
+                console.error("Erreur lors de l'exécution de la transaction :", error);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p>Erreur lors de l'exécution de la transaction: ${error.message}</p>`,
+                    showConfirmButton: true
+                });
+            }
+        }
+        
+
+
         // FONCTION SMART CONTRAT POUR DEMANDE DE REMBOURSEMENT
-        async function requestRefund() {
+        async function requestRefundNo() {
             setIsLoggingInRefund(true)
         
             try {
@@ -368,7 +467,7 @@ const CHistoriqueStablecoin = () => {
                 
                     // Vérifier si l'exécutant a un solde gas suffisant pour le gaz d'apprabation de retrait
                     const requestRefundEstimateGas = await contractEscrow.estimateGas.requestRefund(dataForm?.ownerAddress);
-                    const executorBalanceAfterTransfer = await signer.getBalance();
+                    const executorBalanceAfterTransfer = await walletRelayer.getBalance();
                     if (executorBalanceAfterTransfer.gte(requestRefundEstimateGas)) {
                         // Fonction d'approbation de retrait
                         const requestRefundTx = await contractEscrow.approveWithdrawal(dataForm?.ownerAddress);
@@ -395,7 +494,97 @@ const CHistoriqueStablecoin = () => {
             }
         }
 
-
+        async function requestRefund() {
+            setIsLoggingInRefund(true);
+        
+            const dataForm = {
+                contributor: magicCurrentAddress,
+                depositIndex: oneEshopOrderById?.numberTx // Assurez-vous que numberTx a une valeur valide
+            };
+            console.log("dataForm=>",dataForm)
+            try {
+                // Vérifier le solde de magicCurrentAddress
+                const magicCurrentBalance = await contractStablecoin.balanceOf(magicCurrentAddress);
+                console.log("magicCurrentBalance=>", magicCurrentBalance);
+        
+                // Vérifier si l'exécutant a un solde suffisant pour le gaz de la demande de remboursement
+                const requestRefundEstimateGas = await contractEscrow.estimateGas.requestRefund(dataForm?.contributor, dataForm?.depositIndex);
+                const executorBalanceAfterTransfer = await walletRelayer.getBalance();
+                console.log("requestRefundEstimateGas=>", requestRefundEstimateGas);
+                console.log("executorBalanceAfterTransfer=>", executorBalanceAfterTransfer);
+        
+                if (!executorBalanceAfterTransfer.gte(requestRefundEstimateGas)) {
+                    setIsLoggingInRefund(false);
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        html: `<p>Solde insuffisant pour couvrir les frais de gaz de la demande de remboursement.</p>`,
+                        showConfirmButton: false,
+                        timer: 5000
+                    });
+                    console.error("Solde insuffisant pour couvrir les frais de gaz de la demande de remboursement.");
+                    return;
+                }
+        
+                // Fonction de demande de remboursement
+                try {
+                    const gasLimit = requestRefundEstimateGas.add(ethers.BigNumber.from("100000")); // Adding extra gas as a buffer
+                    const requestRefundTx = await contractEscrow.requestRefund(dataForm?.contributor, dataForm?.depositIndex, { gasLimit });
+                    const receipt = await requestRefundTx.wait(1);
+        
+                    console.log("Transaction approved:", receipt);
+                    
+                    requestRefundPaymentEshop(); // Appel de la fonction de la demande de remboursement dans la base de données
+                    setIsLoggingInRefund(false);
+                } catch (error) {
+                    // Vérifier si l'erreur contient des messages spécifiques
+                    if (error.message.includes("Index de depot invalide")) {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            html: `<p>Index de dépôt invalide. Veuillez vérifier l'index du dépôt et réessayer.</p>`,
+                            showConfirmButton: true
+                        });
+                        console.error("Erreur lors de la demande de remboursement : Index de dépôt invalide");
+                    } else if (error.message.includes("Aucune contribution trouvee pour ce depot.")) {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            html: `<p>Aucun paiement trouvé. Veuillez vérifier que vous aviez bien effectuer le paiement.</p>`,
+                            showConfirmButton: true
+                        });
+                        console.error("Aucun transfert trouvé. Veuillez vérifier que vous aviez bien effectuer le transfert");
+                    } else if (error.message.includes("Le depot a deja ete approuve ou retire.")) {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            html: `<p>Le paiement a déjà été approuvé ou retiré.</p>`,
+                            showConfirmButton: true
+                        });
+                        console.error("Erreur lors de la demande de remboursement : Le dépôt a déjà été approuvé ou retiré");
+                    } else {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            html: `<p>Erreur lors de la demande de remboursement: ${error.message}</p>`,
+                            showConfirmButton: true
+                        });
+                        console.error("Erreur lors de la demande de remboursement :", error);
+                    }
+                    setIsLoggingInRefund(false);
+                }
+            } catch (error) {
+                setIsLoggingInRefund(false);
+                console.error("Erreur lors de l'exécution de la transaction :", error);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p>Erreur lors de l'exécution de la transaction: ${error.message}</p>`,
+                    showConfirmButton: true
+                });
+            }
+        }
+        
 
 
         // FONCTION POUR CONFIRMER LE PAIEMENT DANS LA BASE DE DONNEE (Appélée dans la fonction approveWithdrawal())
@@ -405,7 +594,7 @@ const CHistoriqueStablecoin = () => {
             // Obtenir le token en cours
             const token = localStorage.getItem('tokenEnCours');
 
-            const result = await fetch(`${API_URL}/api/eshop/confirm-paiement-eshop/${dataPaymentPending?.id}`, {
+            const result = await fetch(`${API_URL}/api/eshop/confirm-paiement-eshop/${oneEshopOrderById?.id}`, {
                 method:"PUT",
                 headers: {
                     'Content-Type': 'application/json',
@@ -419,7 +608,7 @@ const CHistoriqueStablecoin = () => {
                    Swal.fire({
                     position: 'center',
                     icon: 'success',
-                    html: `<p> Vous avez confirmé me paiement avec succès.</p>`,
+                    html: `<p> Vous avez confirmé que vous avez reçu le colis avec succès.</p>`,
                     showConfirmButton: false,
                     timer: 5000
                 });
@@ -452,7 +641,7 @@ const CHistoriqueStablecoin = () => {
             // Obtenir le token en cours
             const token = localStorage.getItem('tokenEnCours');
 
-            const result = await fetch(`${API_URL}/api/eshop/request-refund-payment-eshop/${dataPaymentPending?.id}`, {
+            const result = await fetch(`${API_URL}/api/eshop/request-refund-payment-eshop/${oneEshopOrderById?.id}`, {
                 method:"PUT",
                 headers: {
                     'Content-Type': 'application/json',
@@ -466,7 +655,7 @@ const CHistoriqueStablecoin = () => {
                    Swal.fire({
                     position: 'center',
                     icon: 'success',
-                    html: `<p> Vous demande de remboursement a été envoyé avec succès.</p>`,
+                    html: `<p> Votre demande de remboursement a été envoyé avec succès.</p>`,
                     showConfirmButton: false,
                     timer: 5000
                 });
@@ -649,6 +838,13 @@ const isButtonVisible = (createdAt) => {
         return  maDate
     }
     //  FIN
+
+    // Fonction pour vérifier si la date de livraison est passée
+    const isDeliveryDatePassed = (_deliveryDate) => {
+        const now = moment(); // Date et heure actuelles
+        const deliveryDate = moment(_deliveryDate); // Convertir la date de livraison en format moment
+        return deliveryDate.isBefore(now); // Retourne true si la date de livraison est passée
+      };
 
     // FONCTION POUR COPIER UNE ADRESSE PUBLIC 
     const copyToClipboard = () => {
@@ -889,7 +1085,7 @@ const isButtonVisible = (createdAt) => {
         </Modal>
         {/* *****************************************FIN****************************************** */}
             
-         {/* ********************************************************************************** */}
+        {/* ********************************************************************************** */}
             {/* MODAL DE DEMANDE DE REMBOURSEMENT  '*/}
         {/* ********************************************************************************** */}
         <Modal show={showRefund} className="mt-15" onHide={handleCloseRefund}>
@@ -941,7 +1137,7 @@ const isButtonVisible = (createdAt) => {
                             >
                             <Table.Header>
                                 <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Numéro commande</p></Table.Column>
-                                <Table.Column><p className="gr-text-8 pt-3 pb-0 text-center">Statut</p></Table.Column>
+                                <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Statut</p></Table.Column>
                                 <Table.Column><p className="gr-text-8 pt-3 pb-0 ">Actions</p></Table.Column>
                             </Table.Header>
                             <Table.Body>
@@ -987,7 +1183,7 @@ const isButtonVisible = (createdAt) => {
                                                     <p className='colorGreen'>Remboursement effectué </p>
                                                 </div>
                                             </>
-                                        ):oneEshopOrderById?.status=="Commande annulée"? (
+                                        ):oneEshopOrderById?.status=="Paiement échoué"? (
                                             <>
                                                 <div className='input-group-alternative my-3 col-lg-6 col-md-6 '>
                                                     <p className='colorRed'>Commande annulée </p>
@@ -1000,15 +1196,14 @@ const isButtonVisible = (createdAt) => {
                                         <div className="d-flex py-0 ">
                                         {oneEshopOrderById?.status=="Paiement effectué"? (
                                             <>
-                                                <Button onClick={approveWithdrawal} className="text-white py-0 px-4 mx-1" disabled={isLoggingIn} color="success">
+                                                <Button onClick={handleShowApproveWithdrawal} className="text-white py-0 px-4 mx-1"  color="success">
                                                     Colis reçu
-                                                    {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
                                                 </Button>
-
-                                                <Button onClick={requestRefund} className="text-white py-0 px-2" disabled={isLoggingInRefund} color="primary">
-                                                    Colis non reçu
-                                                    {isLoggingInRefund === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
-                                                </Button>
+                                                {isDeliveryDatePassed(oneEshopOrderById?.deliveryDate)?(
+                                                    <Button onClick={ handleShowRequestRefundEshop} className="text-white py-0 px-2"  color="primary">
+                                                        Colis non reçu
+                                                    </Button>
+                                                ):""}
                                             </>
                                         ):oneEshopOrderById?.status=="Paiement confirmé"? (
                                             <>
@@ -1040,7 +1235,7 @@ const isButtonVisible = (createdAt) => {
                                                     Aucune
                                                 </Button>
                                             </>
-                                        ):oneEshopOrderById?.status=="Commande annulée"? (
+                                        ):oneEshopOrderById?.status=="Paiement échoué"? (
                                             <>
                                                 <Button disabled className="text-white py-0 px-1" color="primary">
                                                     Aucune
@@ -1069,7 +1264,83 @@ const isButtonVisible = (createdAt) => {
             {/* </Form> */}
         </Modal>
         {/* *****************************************FIN****************************************** */}
+
+
+
+
+
+
+
+        {/* ********************************************************************************** */}
+            {/* MODAL DE DEMANDE DE REMBOURSEMENT  AU CAS OU LE COLIS N'A ETE LIVRE'*/}
+        {/* ********************************************************************************** */}
+        <Modal show={showRequestRefundEshop} className="mt-15" onHide={handleCloseRequestRefundEshop}>
+            <Modal.Header closeButton className='bgColorblue'>
+                <Modal.Title className="text-white" >Colis non livré</Modal.Title>                
+            </Modal.Header>
+            {/* <Form role="form" onSubmit={hant}> */}
+                <Modal.Body>
+                    <div className="input-group flex-nowrap">
+                        <div className='col-lg-12 col-md-12 row justify-content-between'>
+                            <div className='input-group-alternative my-3  '>
+                                Voulez-vous initier une demande remboursement des <b className='colorGreen'>{formatNumber(parseFloat(oneEshopOrderById?.amount))} {symbolStablecoin}?</b>
+                            </div>
+                        </div>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button className="text-white" color="danger" onClick={handleCloseRequestRefundEshop}>
+                        Non
+                    </Button>
+                    <Button  type='button' onClick={requestRefund}  color="success"  disabled={isLoggingInRefund}>
+                        Oui
+                        {isLoggingInRefund === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
+
+                    </Button>
+                </Modal.Footer>
+            {/* </Form> */}
+        </Modal>
+        {/* *****************************************FIN****************************************** */}
             
+
+        {/* ********************************************************************************** */}
+            {/* MODAL POUR CONFIRMER QUE LE COLIS A ETE LIVRE'*/}
+        {/* ********************************************************************************** */}
+        <Modal show={showApproveWithdrawal} className="mt-15" onHide={handleCloseApproveWithdrawal}>
+            <Modal.Header closeButton className='bgColorGreen'>
+                <Modal.Title className="text-white" >Colis livré</Modal.Title>                
+            </Modal.Header>
+            {/* <Form role="form" onSubmit={hant}> */}
+                <Modal.Body>
+                    <div className="input-group flex-nowrap">
+                        <div className='col-lg-12 col-md-12 row justify-content-between'>
+                            <div className='input-group-alternative my-3  '>
+                                Confirmez-vous vraiment d'avoir été livré pour votre commande de <b className='colorGreen'>{formatNumber(parseFloat(oneEshopOrderById?.amount))} {symbolStablecoin}?</b>
+                            </div>
+                        </div>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button className="text-white" color="danger" onClick={handleCloseApproveWithdrawal}>
+                        Non
+                    </Button>
+                    <Button  type='button' onClick={approveWithdrawal}  color="success"  disabled={isLoggingIn}>
+                        Oui
+                        {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
+                         
+                    </Button>
+                </Modal.Footer>
+            {/* </Form> */}
+        </Modal>
+        {/* *****************************************FIN****************************************** */}
+
+
+
+
+
+
+
+
         </>
     );
 };

@@ -18,7 +18,7 @@ import ABI_ESCROW_STABLECOIN from "../../../../../components/Contrats/Abi/AbiFac
 
 
 /**
- * Composant SurPlateforme pour la gestion des demandes d'utilisation de stablecoin sur la plateforme.
+ * Composant SurPlateforme pour la gestion des Demandes d'utilisation de stablecoin comme moyen de paiment de commerce direct..
  * Il permet d'afficher les demandes, de répondre à ces demandes, et de visualiser les informations détaillées.
  * @component
  * @returns {React.Component} Le composant SurPlateforme.
@@ -28,6 +28,7 @@ const SurPlateforme = () => {
     const API_URL =process.env.NEXT_PUBLIC_URL_API
      // Variable de l'api key de stablecoin
      const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
+     const ADDRESS_COMMISSION_AGENCY_WITHDRAWAL = process.env.NEXT_PUBLIC_ADDRESS_COMMISSION_AGENCY_WITHDRAWAL
 
     // Pour les smart contrats
     const ADDRESS_CONTRAT_FACTORY_ESCROW = process.env.NEXT_PUBLIC_ADDRESS_CONTRAT_FACTORY_ESCROW
@@ -41,6 +42,10 @@ const SurPlateforme = () => {
     const [messageError, setMessageError] = useState();
     const [allDataRequestUseStablecoin, setAllDataRequestUseStablecoin] = useState();
 
+    const [percentageWithdrawal, setPercentageWithdrawal] = useState();
+    const [percentageWithdrawalAgency, setPercentageWithdrawalAgency] = useState();
+
+     
     
     const [contractFactoryEscrow, setContractFactoryEscrow] = useState();
     
@@ -263,6 +268,8 @@ const SurPlateforme = () => {
         fetchData();
     }, [provider, magic]);
 
+    
+
 
     /**
      * Récupère toutes les demandes d'utilisation de stablecoin et met à jour l'état correspondant.
@@ -317,7 +324,7 @@ const SurPlateforme = () => {
      * @async
      * @param {string} _addressEscrow - L'adresse du contrat d'escrow associée à la demande.
      */
-    const acceptRequest = async (_addressEscrow) => {
+    const acceptRequest = async () => {
         setIsLoggingIn(true);
         
         if (!contractUnsigned) {
@@ -325,12 +332,17 @@ const SurPlateforme = () => {
             return;
             }
     
+             
             
-
+            console.log("ADDRESS_COMMISSION_AGENCY_WITHDRAWAL=>",ADDRESS_COMMISSION_AGENCY_WITHDRAWAL)
         try {
             const formData = new FormData();
             formData.append('contract', contractUnsigned);
-            formData.append('addressEscrow', _addressEscrow);
+            // formData.append('addressEscrow', _addressEscrow);
+            formData.append('percentageWithdrawal',percentageWithdrawal);
+            formData.append('percentageWithdrawalAgency',percentageWithdrawalAgency);
+            formData.append('agencyCommissionAddress',userById.address);
+            formData.append('wealthtechCommissionAddress',ADDRESS_COMMISSION_AGENCY_WITHDRAWAL);
             
             console.log("formData=>",formData)
             // Obtenir le token en cours
@@ -367,9 +379,9 @@ const SurPlateforme = () => {
                 });
   
                 // Actualiser après l'affichage
-                // setTimeout(() => {
-                //     window.location.reload();
-                // }, 7000);
+                setTimeout(() => {
+                    window.location.reload();
+                }, 7000);
                 // Fin
             } else {
                 setMessageError(data.message);
@@ -545,7 +557,8 @@ const SurPlateforme = () => {
     
                     // Stockez l'adresse du contrat en utilisant setAddressEscrow
                     setAddressEscrow(escrowContractAddress);
-                    acceptRequest(escrowContractAddress); // Call the function to accept the request in the database
+                    validContratSign(escrowContractAddress)
+                    // acceptRequest(); // Call the function to accept the request in the database
                     return escrowContractAddress; // Retournez l'adresse du contrat
                 } else {
                     setIsLoggingIn(false);
@@ -577,11 +590,13 @@ const SurPlateforme = () => {
      *
      * @async
      */
-     const validContratSign = async () => {
+     const validContratSign = async (_addressEscrow) => {
         setIsLoggingIn(true);
         
         try {
-           
+           const dataRequest= {
+            addressEscrow: _addressEscrow
+           }
   
             // Obtenir le token en cours
             const token = localStorage.getItem('tokenEnCours');
@@ -591,6 +606,7 @@ const SurPlateforme = () => {
              */
             const response = await fetch(`${API_URL}/api/payment-request/valid-contract-for-shop/${requestId}`, {
                 method: 'PUT',
+                body: JSON.stringify(dataRequest),
                 headers: {
                     'Content-Type': 'application/json',
                     'x-api-key': `${API_KEY_STABLECOIN}`,
@@ -772,7 +788,7 @@ const SurPlateforme = () => {
                         <div className='col-lg-10 col-md-10'>
                             <div className=' mx-15'>
                                 <div className='py-10'>
-                                    <h3 className='text-center'>Demandes d'utilisation de stablecoin sur la plateforme</h3>
+                                    <h3 className='text-center'>Demandes d'utilisation de stablecoin comme moyen de paiment de commerce direct.</h3>
                                 </div>
                             </div>
 
@@ -815,8 +831,7 @@ const SurPlateforme = () => {
                                                 <Table.Cell >
                                                     <small className=" py-0 ">
                                                         {
-                                                            data?.allow == 0?(
-                                                            <i className=''>Pas encore acceptée</i>
+                                                            data?.allow == 0?(<i className=''>Pas encore acceptée</i>
                                                             ):data?.allow == 1 && data?.validContract == 2 ?(<i className='colorGreen'>Déjà acceptée</i>
                                                             ):data?.allow === 1 && data?.validContract === 0 ?(<i className='colorBlue'>Contrat envoyé au marchand</i>
                                                             ):data?.allow == 1 && data?.validContract == 1 ?(<i className='colorBlue'>Le marchand a envoyé le contrat </i>
@@ -895,12 +910,29 @@ const SurPlateforme = () => {
                         </div>
                         <input type="file" onChange={handleFileChange} accept=".pdf" />
 
+                        {dataRequestById?.partnerWithdrawal ==="Oui" ? (
+                            <>
+                                <div className=" my-3">
+                                    <label className="">Pourcentage par retrait</label>
+                                    <div className="input-group">
+                                        <input type="number" defaultValue={percentageWithdrawal} onChange={(e)=>setPercentageWithdrawal(e.target.value)} placeholder=""  className="input input-sm input-bordered form-control" />
+                                    </div>
+                                </div>
+
+                                <div className=" mb-3">
+                                    <label className="">Pourcentage de l'agence par retrait</label>
+                                    <div className="input-group">
+                                        <input type="number" defaultValue={percentageWithdrawalAgency} onChange={(e)=>setPercentageWithdrawalAgency(e.target.value)} placeholder=""  className="input input-sm input-bordered form-control" />
+                                    </div>
+                                </div>
+                            </>
+                        ) : ('')}
                         {/* <div className=" mb-3">
-                            <label className="">Nombre limite de requêtes</label>
-                            <div className="input-group">
-                                <input type="number" defaultValue={limit} onChange={(e)=>setLimit(e.target.value)} placeholder="20"  className="input input-sm input-bordered form-control" />
-                            </div>
-                        </div>
+                                    <label className="">Nombre limite de requêtes</label>
+                                    <div className="input-group">
+                                        <input type="number" defaultValue={limit} onChange={(e)=>setLimit(e.target.value)} placeholder="20"  className="input input-sm input-bordered form-control" />
+                                    </div>
+                                </div>
                         <div className=" mb-3">
                             <label className="" >La durée de disponibilité en heure(24h)</label>
                             <div className="input-group">
@@ -912,7 +944,7 @@ const SurPlateforme = () => {
                         <Button className="text-white" color="danger" onClick={handleCloseForm}>
                             Fermer
                         </Button>
-                        <Button  onClick={createEscrowStablecoin}  color="success" disabled={isLoggingIn}>
+                        <Button  onClick={acceptRequest}  color="success" disabled={isLoggingIn}>
                             Envoyer
                             {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-2"></i>) : ("")}
                         </Button>
@@ -939,6 +971,10 @@ const SurPlateforme = () => {
                                 {dataRequestById?.emailShop}
                             </div>
                             <div className=''>
+                                <b>Numéro de téléphone:</b> <br/>
+                                {dataRequestById?.shopContact}
+                            </div>
+                            <div className=''>
                                 <b>Voulez-vous avoir une agence de retrait?</b> <br/>
                                 {dataRequestById?.partnerWithdrawal}
                             </div>
@@ -949,6 +985,24 @@ const SurPlateforme = () => {
                             <div className=''>
                                 <b>Les types de commerce:</b> <br/>
                                 {formatProductTypes(dataRequestById?.productType)}
+                            </div>
+
+                            <div className=''>
+                                <b>Voulez-vous être partenaire pour assurer les retraits de stablecoin?</b> <br/>
+                                {dataRequestById?.partnerWithdrawal}
+                            </div>
+                            <div className=''>
+                                <b>Voulez-vous être partenaire pour assurer les retraits de stablecoin?</b> <br/>
+                                {dataRequestById?.partnerWithdrawal}
+                            </div>
+
+                            <div className=''>
+                                <b>Les types de services:</b> <br/>
+                                {formatProductTypes(dataRequestById?.serviceType)}
+                            </div>
+                            <div className=''>
+                                <b>La tranche de prix de retrait:</b> <br/>
+                                {formatProductTypes(dataRequestById?.withdrawalAmount)}
                             </div>
 
                             <div className=''>
@@ -974,7 +1028,7 @@ const SurPlateforme = () => {
             {/* ********************************************************************************** */}
             <Modal show={showContrat} className="mt-15" onHide={handleCloseContrat}>
                 <Modal.Header closeButton id="bgcolor">
-                    <Modal.Title className="" >Voici le contrat final.</Modal.Title>                
+                    <Modal.Title className="" >Voici le contrat.</Modal.Title>                
                 </Modal.Header>
                     <form>
                     <Modal.Body>
@@ -1012,7 +1066,7 @@ const SurPlateforme = () => {
                         ):(
                             <Button 
                             className={` mx-2 btn ${dataRequestById?.allow === 1 && dataRequestById?.validContract === 2? 'btn-secondary' : 'btn-success'} d`}
-                            onClick={validContratSign}
+                            onClick={createEscrowStablecoin}
                             disabled={dataRequestById?.allow === 1 && dataRequestById?.validContract === 2}
                         >
                             Valider

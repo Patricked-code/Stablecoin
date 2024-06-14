@@ -57,6 +57,8 @@ const PaiementEboutik = () => {
     // ******************************************************************
     const [contractStablecoin, setContractStablecoin] = useState();
     const [signer, setSigner] = useState();
+    const [walletRelayer, setWalletRelayer] = useState();
+    
     const [nameStablecoin, setNameStablecoin] = useState();
     const [symbolStablecoin, setSymbolStablecoin] = useState();
     const [balanceStablecoin, setBalanceStablecoin] = useState();
@@ -100,6 +102,7 @@ const PaiementEboutik = () => {
                  * @type {string}
                  */
                  const walletRelay = new ethers.Wallet(PRIVATE_KEY, provider);
+                 setWalletRelayer(walletRelay)
                  if (dataMerchantByIdentifier?.addressEscrow) {
                     const contractEscrow = new ethers.Contract(dataMerchantByIdentifier?.addressEscrow, ABI_ESCROW_STABLECOIN?.abi, walletRelay);
                     setContractEscrow(contractEscrow)
@@ -273,7 +276,7 @@ const PaiementEboutik = () => {
      * Transfère les stablecoins vers le smart contract d'escrow pour effectuer le paiement.
      * Cette fonction interagit avec le smart contract de stablecoin pour approuver et transférer les fonds.
    */
-    async function transferToEscrow() {
+    async function transferToEscrowNo() {
         setIsLoggingIn(true)
 
         try {
@@ -305,7 +308,7 @@ const PaiementEboutik = () => {
                     );
             
                     // Obtenir le solde de l'exécutant
-                    const executorBalance = await signer.getBalance();
+                    const executorBalance = await walletRelayer.getBalance();
             
                     // Vérifier si l'exécutant a un solde Ether suffisant pour le gaz d'approbation
                     if (executorBalance.gte(approveEstimateGas)) {
@@ -394,22 +397,169 @@ const PaiementEboutik = () => {
             console.error("Erreur lors de l'exécution de la transaction :", error);
         }
     }
+
+
+
+
+    async function transferToEscrowEshop() {
+    setIsLoggingIn(true);
+
+    try {
+        if (dataMerchantByIdentifier?.addressEscrow) {
+            // Vérifier le solde de magicCurrentAddress
+            const magicCurrentBalance = await contractStablecoin.balanceOf(magicCurrentAddress);
+            const amountWei = ethers.utils.parseUnits(String(dataPaymentPending?.amount), decimalStablecoin);
+            console.log("magicCurrentBalance=>", magicCurrentBalance);
+            console.log("amountWei=>", amountWei);
+
+            // Vérifier si magicCurrentAddress a des fonds suffisants
+            if (!magicCurrentBalance.gte(amountWei)) {
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> Fonds insuffisants sur votre compte. <br/> Votre solde est: ${ethers.utils.formatUnits(magicCurrentBalance, decimalStablecoin)}</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+                console.error("Fonds insuffisants sur votre compte.");
+                cancelPayment('solde'); // Appel de la fonction d'annulation de transaction
+                return;
+            }
+
+            const dataForm = {
+                spenderAddress: dataMerchantByIdentifier?.addressEscrow,
+                ownerAddress: magicCurrentAddress,
+                amount: amountWei,
+            };
+
+            // Estimer le coût en gaz pour l'approbation
+            const approveEstimateGas = await contractStablecoin.estimateGas.approveFrom(
+                dataForm?.ownerAddress,
+                dataForm?.spenderAddress,
+                dataForm?.amount
+            );
+
+            const executorBalance = await walletRelayer.getBalance();
+
+            // Vérifier si l'exécutant a un solde Ether suffisant pour le gaz d'approbation
+            if (!executorBalance.gte(approveEstimateGas)) {
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> Solde insuffisant pour couvrir les frais de gaz d'approbation.</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+                console.error("Solde insuffisant pour couvrir les frais de gaz d'approbation.");
+                return;
+            }
+
+            // Effectuer l'approbation
+            try {
+                const gasLimit = approveEstimateGas.add(ethers.BigNumber.from("100000")); // Adding extra gas as a buffer
+                const approveTx = await contractStablecoin.approveFrom(
+                    dataForm?.ownerAddress,
+                    dataForm?.spenderAddress,
+                    dataForm?.amount,
+                    { gasLimit }
+                );
+                await approveTx.wait(1);
+            } catch (error) {
+                console.error("Erreur lors de l'approbation :", error.message);
+                setIsLoggingIn(false);
+                return;
+            }
+
+            // Estimer le coût en gaz pour le dépôt
+            const asyncTransferEstimateGas = await contractEscrow.estimateGas.asyncTransferEshop(
+                dataForm?.ownerAddress,
+                dataForm?.amount
+            );
+
+            // Vérifier si l'exécutant a un solde Ether suffisant pour le gaz de dépôt
+            if (!executorBalance.gte(asyncTransferEstimateGas)) {
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p> Solde insuffisant pour couvrir les frais de gaz d'asyncTransfer.</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+                console.error("Solde insuffisant pour couvrir les frais de gaz d'asyncTransfer.");
+                return;
+            }
+
+            // Exécuter le transfert asynchrone vers l'escrow
+            try {
+                const asyncTransferTx = await contractEscrow.asyncTransferEshop(dataForm?.ownerAddress, dataForm?.amount);
+                console.log("asyncTransferTx=>", asyncTransferTx);
+                const receipt = await asyncTransferTx.wait(1);
+
+                const depositEvent = receipt.events.find(event => event.event === 'AsyncTransfer');
+                const depositIndex = depositEvent.args.depositIndex.toNumber(); // Convertir en nombre décimal
+                console.log("depositEvent:", depositEvent);
+                console.log("Deposit Index:", depositIndex);
+
+                addHistorical(asyncTransferTx.hash, depositIndex) //Appel de la fonction addHistorical pour ajouter les données dans l'historique
+
+            } catch (error) {
+                console.error("Erreur lors du transfert asynchrone :", error);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p>Erreur lors du transfert asynchrone: ${error.message}</p>`,
+                    showConfirmButton: true
+                });
+                setIsLoggingIn(false);
+                return;
+            }
+
+            setIsLoggingIn(false);
+        } else {
+            setIsLoggingIn(false);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                html: `<p> Recepteur introuvable</p>`,
+                showConfirmButton: false,
+                timer: 5000
+            });
+            console.error("Recepteur introuvable.");
+        }
+    } catch (error) {
+        setIsLoggingIn(false);
+        // Gestion spécifique de l'erreur de solde insuffisant
+        if (error.message.includes("Le montant doit etre superieur a 0")) {
+            cancelPayment('solde'); // Appel de la fonction d'annulation de transaction
+        }
+        console.error("Erreur lors de l'exécution de la transaction :", error);
+    }
+}
+
   
 
     /**
      * Confirme le paiement dans la base de données via une requête API.
    */
-    const transferAmount= async() =>{
+    const transferAmount= async(_numberTx) =>{
         setIsLoggingIn(true)
 
+        const dataBody={
+            numberTx:_numberTx
+        }
         // Obtenir le token en cours
         const token = localStorage.getItem('tokenEnCours');
 
         const result = await fetch(`${API_URL}/api/eshop/transfer-amount-eshop/${dataPaymentPending?.id}`, {
             method:"PUT",
+            body: JSON.stringify(dataBody),
+
             headers: {
                 'Content-Type': 'application/json',
-                    'x-api-key': `${API_KEY_STABLECOIN}`,
+                'x-api-key': `${API_KEY_STABLECOIN}`,
                 Authorization:  `Bearer ${token}`
             }
         })
@@ -516,12 +666,12 @@ const PaiementEboutik = () => {
      * Enregistre les informations de la transaction dans l'historique via une requête API.
      * @param {string} _hash - Le hash de la transaction à enregistrer.
    */
-    const addHistorical = async (_hash) => {
+    const addHistorical = async (_hash, _numberTx) => {
         setIsLoggingIn(true);
 
         let nameSender =""
         if (currentUser?.codeTypeProfil=="part") {
-            nameSender = currentUser?.lastName + '' + currentUser?.firstName
+            nameSender = currentUser?.lastName + ' ' + currentUser?.firstName
         } else {
             nameSender = currentUser?.entreprise
         }
@@ -567,7 +717,7 @@ const PaiementEboutik = () => {
             */
             if (data.message==200) {
                 //Appele de la fonction de confirmation de la transaction dans la base de donnée 
-                transferAmount()
+                transferAmount(_numberTx)
             } else {
                 setIsLoggingIn(false);
                 Swal.fire({
@@ -725,7 +875,7 @@ const PaiementEboutik = () => {
                                 Non .
                             </Button>
                         )}
-                        <Button className='px-4' type='button' onClick={transferToEscrow}  color="success" disabled={isLoggingIn}>
+                        <Button className='px-4' type='button' onClick={transferToEscrowEshop}  color="success" disabled={isLoggingIn}>
                             Oui .
                             {isLoggingIn === true ? (<i className="fas fa-spinner fa-spin fa-lg mx-3"></i>) : ("")}
                         </Button>
@@ -743,11 +893,11 @@ const PaiementEboutik = () => {
         <Modal show={showPayer} width='2000' fullscreen={true} >
         {/* <Modal show={showPayer} className="mt-15" onHide={handleClosePayer}> */}
             <Modal.Header closeButton className='bgColorblue'>
-                <Modal.Title className="text-white" >Paiements en attente (Temps restant: {formatTime(secondsRemaining)})</Modal.Title>                
+                <Modal.Title className="text-white"> (Temps restant: {formatTime(secondsRemaining)})</Modal.Title>                
             </Modal.Header>
             {/* <Form role="form" onSubmit={hant}> */}
                 <Modal.Body>
-                    <div className='col-lg-12 col-md-12  row justify-content-center'>
+                    <div className='col-lg-12 col-md-12  row justifPaiements en attentey-content-center'>
                         <div className='col-lg-6 col-md-6 mt-3'>
                             <b>Marchand : </b> <br/> {dataPaymentPending?.eshopName}
                         </div>
@@ -783,11 +933,11 @@ const PaiementEboutik = () => {
                             </Button>
                         </div>
                         <div className='col-lg-6 col-md-6 col-sm-6 mt-3 '>
+                            {magicCurrentAddress? (
                             <Button className='px-4'  type='button'  color="success" onClick={handleConfirmPaymentShow} disabled={isLoggingIn}>
-                            {/* <Button className='px-4'  type='button'  color="success" onClick={transferAmount} disabled={isLoggingIn}> */}
-                                
                                 Payer 
                             </Button>
+                            ) : ('...')}
                         </div>
                     </div>
                 </Modal.Body>

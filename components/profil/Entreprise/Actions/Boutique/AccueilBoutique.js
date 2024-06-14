@@ -272,7 +272,7 @@ const AccueilBoutique = () => {
     // Fin
 
     // Fonction pour gérer le retrait depuis l'escrow du commerce directe
-    const withdrawAllApprovedFunds = async () => {
+    const withdrawAllApprovedFundsNo = async () => {
         setIsLoggingIn(true)
 
         try {
@@ -281,7 +281,7 @@ const AccueilBoutique = () => {
             const executorBalance = await signer.getBalance();
 
             // Estimer le coût en gaz pour le retrait
-            const withdrawAllApprovedFundEstimateGas = await contractEscrow.estimateGas.withdrawAllApprovedFunds();
+            const withdrawAllApprovedFundEstimateGas = await contractEscrow.estimateGas.withdrawAllApprovedFundsShop();
             
             if (executorBalance.lt(withdrawAllApprovedFundEstimateGas)) {
                     setIsLoggingIn(false)
@@ -298,14 +298,14 @@ const AccueilBoutique = () => {
            
         
             // Appeler la fonction de retrait
-            const transactionTx = await contractEscrow.withdrawAllApprovedFunds();
+            const transactionTx = await contractEscrow.withdrawAllApprovedFundsShop();
             // Attendre la confirmation de la transaction
             await transactionTx.wait();
             addHistorical(transactionTx?.hash)
         } catch (error) {
             setIsLoggingIn(false)
             // Trie les messages d'erreur
-            if (error.message.includes("Aucun montant approuve")) {
+            if (error.message.includes("Aucun fonds approuve a retirer")) {
                 Swal.fire({
                     position: 'center',
                     icon: 'error',
@@ -333,17 +333,108 @@ const AccueilBoutique = () => {
     };
 
 
+    const withdrawAllApprovedFunds = async () => {
+        setIsLoggingIn(true);
+    
+        try {
+            // Vérifier l'adresse de l'exécutant
+            const signerAddress = await walletRelayer.getAddress();
+            console.log("Signer Address:", signerAddress);
+    
+            // Obtenir le solde de l'exécutant
+            const executorBalance = await walletRelayer.getBalance();
+            console.log("Executor Balance (ETH):", ethers.utils.formatEther(executorBalance));
+    
+            if (executorBalance.isZero()) {
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p>Le solde de l'exécutant est nul. Assurez-vous que l'adresse dispose de fonds suffisants.</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+                console.error("Le solde de l'exécutant est nul.");
+                return;
+            }
+    
+            // Estimer le coût en gaz pour le retrait
+            const withdrawAllApprovedFundEstimateGas = await contractEscrow.estimateGas.withdrawAllApprovedFundsShop();
+            const gasPrice = await signer.getGasPrice();
+            const estimatedGasCost = withdrawAllApprovedFundEstimateGas.mul(gasPrice);
+            console.log("Estimated Gas (units):", withdrawAllApprovedFundEstimateGas.toString());
+            console.log("Gas Price (Gwei):", ethers.utils.formatUnits(gasPrice, 'gwei'));
+            console.log("Estimated Gas Cost (ETH):", ethers.utils.formatEther(estimatedGasCost));
+    
+            // Ajouter un tampon au gaz estimé
+            const gasBuffer = ethers.BigNumber.from("500000");
+            const totalEstimatedGasCost = estimatedGasCost.add(gasBuffer.mul(gasPrice));
+            console.log("Total Estimated Gas Cost with Buffer (ETH):", ethers.utils.formatEther(totalEstimatedGasCost));
+    
+            if (executorBalance.lt(totalEstimatedGasCost)) {
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p>Solde insuffisant pour couvrir les frais de gaz</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+                console.error("Solde insuffisant pour couvrir les frais de gaz.");
+                return;
+            }
+    
+            // Appeler la fonction de retrait
+            const transactionTx = await contractEscrow.withdrawAllApprovedFundsShop({
+                gasLimit: withdrawAllApprovedFundEstimateGas.add(gasBuffer)
+            });
+            // Attendre la confirmation de la transaction
+            const receipt = await transactionTx.wait();
+            console.log("Transaction Receipt:", receipt);
+            addHistorical(transactionTx?.hash);
+        } catch (error) {
+            setIsLoggingIn(false);
+            // Trie les messages d'erreur
+            if (error.message.includes("Aucun fonds approuve a retirer")) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p>Aucun montant approuvé à retirer</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+                console.error("Aucun montant approuvé à retirer");
+            } else if (error.message.includes("Solde insuffisant dans le contrat")) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p>Solde insuffisant dans le contrat</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+                console.error("Solde insuffisant dans le contrat");
+            } else {
+                // Gère les autres erreurs
+                console.error("Erreur lors du retrait :", error);
+                // Vous pouvez afficher un message générique ou gérer d'autres types d'erreurs ici
+            }
+        }
+    };
+    
+    
+
+
     // Fonction pour gérer le retrait depuis l'escrow ecommerce 
-    const withdrawAllApprovedFundsEshop = async () => {
+    const withdrawAllApprovedFundsEshopNo = async () => {
         setIsLoggingIn(true)
 
         try {
 
             // Obtenir le solde de l'exécutant
-            const executorBalance = await signer.getBalance();
+            const executorBalance = await walletRelayer.getBalance();
 
             // Estimer le coût en gaz pour le retrait
-            const withdrawAllApprovedFundEstimateGas = await contractEscrowEshop.estimateGas.withdrawAllApprovedFunds();
+            const withdrawAllApprovedFundEstimateGas = await contractEscrowEshop.estimateGas.withdrawAllApprovedFundsEshop();
             
             if (executorBalance.lt(withdrawAllApprovedFundEstimateGas)) {
                     setIsLoggingIn(false)
@@ -360,14 +451,14 @@ const AccueilBoutique = () => {
            
         
             // Appeler la fonction de retrait
-            const transactionTx = await contractEscrowEshop.withdrawAllApprovedFunds();
+            const transactionTx = await contractEscrowEshop.withdrawAllApprovedFundsEshop();
             // Attendre la confirmation de la transaction
             await transactionTx.wait();
             addHistoricalEshop(transactionTx?.hash)
         } catch (error) {
             setIsLoggingIn(false)
             // Trie les messages d'erreur
-            if (error.message.includes("Aucun montant approuve")) {
+            if (error.message.includes("Aucun fonds approuve a retirer")) {
                 Swal.fire({
                     position: 'center',
                     icon: 'error',
@@ -394,6 +485,93 @@ const AccueilBoutique = () => {
         }
     };
 
+    const withdrawAllApprovedFundsEshop = async () => {
+        setIsLoggingIn(true);
+    
+        try {
+            // Vérifier l'adresse de l'exécutant
+            const signerAddress = await walletRelayer.getAddress();
+    
+            // Obtenir le solde de l'exécutant
+            const executorBalance = await walletRelayer.getBalance();
+            console.log("Executor Balance (ETH):", ethers.utils.formatEther(executorBalance));
+    
+            if (executorBalance.isZero()) {
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p>Le solde de l'exécutant est nul. Assurez-vous que l'adresse dispose de fonds suffisants.</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+                console.error("Le solde de l'exécutant est nul.");
+                return;
+            }
+    
+            // Estimer le coût en gaz pour le retrait
+            const withdrawAllApprovedFundEstimateGas = await contractEscrowEshop.estimateGas.withdrawAllApprovedFundsEshop();
+            const gasPrice = await walletRelayer.getGasPrice();
+            const estimatedGasCost = withdrawAllApprovedFundEstimateGas.mul(gasPrice);
+            console.log("Estimated Gas (units):", withdrawAllApprovedFundEstimateGas.toString());
+            console.log("Gas Price (Gwei):", ethers.utils.formatUnits(gasPrice, 'gwei'));
+            console.log("Estimated Gas Cost (ETH):", ethers.utils.formatEther(estimatedGasCost));
+    
+            // Ajouter un tampon au gaz estimé
+            const gasBuffer = ethers.BigNumber.from("500000");
+            const totalEstimatedGasCost = estimatedGasCost.add(gasBuffer.mul(gasPrice));
+            console.log("Total Estimated Gas Cost with Buffer (ETH):", ethers.utils.formatEther(totalEstimatedGasCost));
+    
+            if (executorBalance.lt(totalEstimatedGasCost)) {
+                setIsLoggingIn(false);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p>Solde insuffisant pour couvrir les frais de gaz</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+                console.error("Solde insuffisant pour couvrir les frais de gaz.");
+                return;
+            }
+    
+            // Appeler la fonction de retrait
+            const transactionTx = await contractEscrowEshop.withdrawAllApprovedFundsEshop({
+                gasLimit: withdrawAllApprovedFundEstimateGas.add(gasBuffer)
+            });
+            // Attendre la confirmation de la transaction
+            const receipt = await transactionTx.wait();
+            console.log("Transaction Receipt:", receipt);
+            addHistoricalEshop(transactionTx?.hash);
+        } catch (error) {
+            setIsLoggingIn(false);
+            // Trie les messages d'erreur
+            if (error.message.includes("Aucun fonds approuve a retirer")) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p>Aucun montant approuvé à retirer</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+                console.error("Aucun montant approuvé à retirer");
+            } else if (error.message.includes("Solde insuffisant dans le contrat")) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    html: `<p>Solde insuffisant dans le contrat</p>`,
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+                console.error("Solde insuffisant dans le contrat");
+            } else {
+                // Gère les autres erreurs
+                console.error("Erreur lors du retrait :", error);
+                // Vous pouvez afficher un message générique ou gérer d'autres types d'erreurs ici
+            }
+        }
+    };
+    
 
 
      // Fonction d'enregistrement des données du retrait de l'escrow du commerce directe dans l'historique
@@ -403,7 +581,7 @@ const AccueilBoutique = () => {
         try {
             
             const dataBody = {
-                typeTransaction: "Retrait Escrow",
+                typeTransaction: "Retrait Escrow shop",
                 activeName: nameStablecoin,
                 activeSymbol: symbolStablecoin,
                 emailReceiver: currentUser?.email,
@@ -473,7 +651,7 @@ const AccueilBoutique = () => {
         try {
             
             const dataBody = {
-                typeTransaction: "Retrait Escrow",
+                typeTransaction: "Retrait Escrow Eshop",
                 activeName: nameStablecoin,
                 activeSymbol: symbolStablecoin,
                 emailReceiver: currentUser?.email,
@@ -515,9 +693,9 @@ const AccueilBoutique = () => {
                 });
 
                 // Actualiser après l'affichage
-                setTimeout(() => {
-                    window.location.reload();
-                }, 7000);
+                // setTimeout(() => {
+                //     window.location.reload();
+                // }, 7000);
                 // Fin
             } else {
                 setMessageError(data.message);
@@ -681,8 +859,8 @@ const AccueilBoutique = () => {
                                         </div>
                                         <div className='title pb-0'>
                                             <h3>{nameStablecoin}</h3>
-                                            <p>Mon solde de vente sur e-commerce non récupérable: <br/><b className='colorRed'>{balanceEscrowApprovedEshop}</b> {symbolStablecoin}</p>
-                                            <p>Mon solde de vente sur e-commerce récupérable: <br/><b className='colorBlue'>{balanceEscrowNoApprovedEshop}</b> {symbolStablecoin}</p>
+                                            <p>Mon solde de vente sur e-commerce non récupérable: <br/><b className='colorRed'>{balanceEscrowNoApprovedEshop}</b> {symbolStablecoin}</p>
+                                            <p>Mon solde de vente sur e-commerce récupérable: <br/><b className='colorBlue'>{balanceEscrowApprovedEshop} </b> {symbolStablecoin}</p>
                                             {/* <p>Mon solde : <br/> <b className='colorGreen'>{balanceStablecoin}</b> {symbolStablecoin}</p> */}
                                         </div>
                                         </div>
@@ -732,7 +910,7 @@ const AccueilBoutique = () => {
                                                 type="button"
                                                 className='mt-0'
                                                 disabled={balanceEscrowApprovedEshop == 0}
-                                                onClick={handleShow}
+                                                onClick={handleShowEshop}
                                             >
                                                 Retirer
                                             </Button>
@@ -761,7 +939,7 @@ const AccueilBoutique = () => {
                     <div className="input-group flex-nowrap">
                         <div className='col-lg-12 col-md-12 row justify-content-between'>
                             <div className='input-group-alternative my-3 '>
-                                Veuillez cliquer sur valider pour effectuer le retrait des <b>{balanceEscrow} {symbolStablecoin}</b> de votre vente vers votre solde
+                                Veuillez cliquer sur valider pour effectuer le retrait des <b>{balanceEscrow} {symbolStablecoin}</b> de votre vente de commerce direct vers votre solde
                             </div>
                         </div>
                     </div>
@@ -793,7 +971,7 @@ const AccueilBoutique = () => {
                     <div className="input-group flex-nowrap">
                         <div className='col-lg-12 col-md-12 row justify-content-between'>
                             <div className='input-group-alternative my-3 '>
-                                Veuillez cliquer sur valider pour effectuer le retrait des <b>{balanceEscrow} {symbolStablecoin}</b> de votre vente vers votre solde
+                                Veuillez cliquer sur le bouton valider pour effectuer le retrait des <b>{balanceEscrowApprovedEshop} {symbolStablecoin}</b> de votre vente E-commerce vers votre solde
                             </div>
                         </div>
                     </div>

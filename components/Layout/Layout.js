@@ -163,6 +163,8 @@ const Layout = ({ children }) => {
 
       // LES ROUTES DE LA PARTIE DU PROFIL ENTREPRISE / COMMERCANT
       pathname === "/profil/entreprise/actions/demande-paiement"||
+      pathname === "/profil/entreprise/actions/agence-retrait"||
+      pathname === "/profil/entreprise/actions/agence-retrait/verification-documents-agence"||
       pathname === "/profil/entreprise/actions/boutique"||
       pathname === "/profil/entreprise/actions/boutique/ouverture-boutique"||
       pathname === "/profil/entreprise/actions/boutique/compte-ecommerce"||
@@ -185,7 +187,9 @@ const Layout = ({ children }) => {
       pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement"||
       pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement/sur-plateforme"||
       pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement/sur-ecommerces"||
+      pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement/gestion-paiement-ecommerces"||
 
+      
       pathname === "/admin/wealthtech/stablecoin/distributeur"||
       pathname === "/admin/wealthtech/stablecoin/portefeuille/conversion"||
       pathname === "/admin/wealthtech/stablecoin/abonnement/tarifs"||
@@ -334,6 +338,8 @@ const Layout = ({ children }) => {
 
       // LES ROUTES DE LA PARTIE DU PROFIL ENTREPRISE / COMMERCANT
       pathname === "/profil/entreprise/actions/demande-paiement"||
+      pathname === "/profil/entreprise/actions/agence-retrait"||
+      pathname === "/profil/entreprise/actions/agence-retrait/verification-documents-agence"||
       pathname === "/profil/entreprise/actions/boutique"||
       pathname === "/profil/entreprise/actions/boutique/ouverture-boutique"||
       pathname === "/profil/entreprise/actions/boutique/compte-ecommerce"||
@@ -354,6 +360,7 @@ const Layout = ({ children }) => {
       pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement"||
       pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement/sur-plateforme"||
       pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement/sur-ecommerces"||
+      pathname === "/admin/wealthtech/stablecoin/comme-moyen-paiement/gestion-paiement-ecommerces"||
 
       pathname === "/admin/wealthtech/stablecoin/distributeur"||
       pathname === "/admin/wealthtech/stablecoin/portefeuille/conversion"||

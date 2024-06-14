@@ -11,6 +11,7 @@ import Router from 'next/router';
 import Dropdown from 'react-bootstrap/Dropdown';
 import PaiementEboutik from '../Payment/PaiementEboutik';
 import ModalTransfertRemboursementRecepteur from '../commun/ModalTransfertRemboursementRecepteur';
+import ModalConfirmationRetrait from '../Entreprise/Actions/Agence/ModalConfirmationRetrait';
 
 
 
@@ -648,6 +649,10 @@ useEffect(async() => {
 
             {/* POUR DELENCHER LE POP UP DE PAIEMENT EN ATTENTE FAIRE SUR LES SITES ECOMMERCES */}
               <PaiementEboutik/>
+            {/* FIN */}
+
+            {/* POUR DEECLANCHER LE POP DE CONFIRMATION DU RETRAIT CASH */}
+              <ModalConfirmationRetrait/>
             {/* FIN */}
 
             {/* POUR DELENCHER LE POP UP DE REMBOURSEMENT DE TRANSFERT ENTRE UTILISATEUR*/}

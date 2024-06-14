@@ -401,12 +401,13 @@ const SurEcommerces = () => {
         }
         };
     
-        if (requestId) {
-        getUserById(requestId);
+        if (dataRequestById?.userId) {
+        getUserById(dataRequestById?.userId);
         }
-    }, [requestId]);
+    }, [dataRequestById?.userId]);
     // FIN
-
+    
+    
 
      // FONCTION POUR RECUPERER LES INFOS D'UNE DEMANDE D'ACCESS SPECIFIQUE
      useEffect(() => {
@@ -906,7 +907,7 @@ const SurEcommerces = () => {
             {/* ********************************************************************************** */}
             <Modal show={showContrat} className="mt-15" onHide={handleCloseContrat}>
                 <Modal.Header closeButton id="bgcolor">
-                    <Modal.Title className="" >Voici le contrat final.</Modal.Title>                
+                    <Modal.Title className="" >Voici le contrat.</Modal.Title>                
                 </Modal.Header>
                     <form>
                     <Modal.Body>
@@ -921,7 +922,7 @@ const SurEcommerces = () => {
                                     color="primary"
                                     type="button"
                                 >
-                                    Télécharger contrat final
+                                    {dataRequestById?.allow === 1 && dataRequestById?.validContract === 0 ? "Télécharger contrat non signé":"Télécharger contrat final"}
                                 </Button>
                             </a>
                         </div>

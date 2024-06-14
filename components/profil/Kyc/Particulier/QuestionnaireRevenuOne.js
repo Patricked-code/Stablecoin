@@ -128,7 +128,7 @@ const CQuestionnaireRevenuOne = () => {
                 
             }
             // Condition pour forcer l'utilisateur à choisir au moins une reponse
-            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
+            // if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
                 
                 
                 const token = localStorage.getItem('tokenEnCours') //Le token récuperé
@@ -172,16 +172,16 @@ const CQuestionnaireRevenuOne = () => {
                     }, 5000)
                 }
                 // Fin condition 
-            }else{
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-            }
+            // }else{
+            //     setIsLoggingIn(false);
+            //     Swal.fire({
+            //         position: 'center',
+            //         icon: 'error',
+            //         html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
+            //         showConfirmButton: false,
+            //         timer: 10000
+            //     })
+            // }
             
             } catch {
             setIsLoggingIn(false);
@@ -224,7 +224,7 @@ const CQuestionnaireRevenuOne = () => {
                 
             }
             // Condition pour forcer l'utilisateur à choisir au moins une reponse
-            if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
+            // if (dataa?.spentA||dataa?.spentB||dataa?.spentC||dataa?.spentD||dataa?.spentE||dataa?.spentF||dataa?.frequencyA||dataa?.frequencyB||dataa?.frequencyC||dataa?.incomeTypeA||dataa?.incomeTypeB||dataa?.incomeTypeC) {
                 
                 
                 const token = localStorage.getItem('tokenEnCours') //Le token récuperé
@@ -271,16 +271,16 @@ const CQuestionnaireRevenuOne = () => {
                     }, 5000)
                 }
                 // Fin condition 
-            }else{
-                setIsLoggingIn(false);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
-                    showConfirmButton: false,
-                    timer: 10000
-                })
-            }
+            // }else{
+            //     setIsLoggingIn(false);
+            //     Swal.fire({
+            //         position: 'center',
+            //         icon: 'error',
+            //         html: `<p> Désolé, vous devez repondre à une question au moins. </p>` ,
+            //         showConfirmButton: false,
+            //         timer: 10000
+            //     })
+            // }
             
             } catch {
             setIsLoggingIn(false);

@@ -743,7 +743,7 @@ const [montantAchat, setMontantAchat] = useState(0)
     
                 // Obtenir la longueur des éléments filtrés
                 const pendingRequestsLength = pendingRequests.length;
-    
+                    console.log("pendingRequestsLength=>",data)
                 // Mettre à jour les états
                 setDataPaymentPending(data);
                 setPaymentPendingLength(pendingRequestsLength);
@@ -1265,7 +1265,7 @@ const [montantAchat, setMontantAchat] = useState(0)
     // FIN
 
 
-    // Recupérer les données de concernant l'escrow de l'utilisateur connecté
+    // Recupérer les données  concernant l'escrow de commerce direct de l'utilisateur connecté
     useEffect(async () => {
         const getDataRequestUseStablecoinForUser= async () => {
             const token = localStorage.getItem('tokenEnCours');
@@ -1581,7 +1581,7 @@ const [montantAchat, setMontantAchat] = useState(0)
                                     </div>
                                     <div className='title text-center'>
                                     <h3 className='my-2'>
-                                        <p className='rounded-circle mb-4  colorBlue'><b>{paymentPendingLength?(paymentPendingLength):("0")}</b></p>
+                                        <p className='rounded-circle mb-4  colorBlue'><b>{dataPaymentPending?(dataPaymentPending?.length):("0")}</b></p>
                                         Paiements en attente
                                     </h3>
                                     </div>

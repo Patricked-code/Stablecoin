@@ -45,6 +45,8 @@ import {
 const InfosUtilisateur = () => {
     // Variable de l'url de l'api
     const API_URL =process.env.NEXT_PUBLIC_URL_API
+    const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN
+
 
     const [currentUser, setCurrentUser] = useState();
     const [currentUserAddress, setCurrentUserAddress] = useState();

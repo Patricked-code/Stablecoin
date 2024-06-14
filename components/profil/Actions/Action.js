@@ -122,7 +122,6 @@ const Action = () => {
                 // Vérifier si la réponse n'est pas vide avant de la parser en JSON
                 const text = await result.text();
                 const data = text ? JSON.parse(text) : null;
-    
                 setStateOfRequestUseStablecoin(data);
             }
         };
@@ -131,11 +130,18 @@ const Action = () => {
     }, []);
     // FIN
 
+    // Fonction d'alerte si le commerçant n'a pas l'autorisation  pour effectuer les demandes de paiement
     const warnOnRequestStatusUseStablecoin = async () =>{
         Swal.fire({
             position: 'center',
             icon: 'error',
-            html: `${stateOfRequestUseStablecoin ==0 ? "Votre demande d'accès à cette partie est en cours de traitement":stateOfRequestUseStablecoin ==2 ? "Desolé, votre demande d'accès à cette partie a été rejetée":"Vous devez effectuer une demande pour obtenir une autorisation pour accéder à cette partie."}` ,
+            html: `
+                    ${stateOfRequestUseStablecoin?.allow == 2 ? "Votre demande d'accès à cette partie est en cours de traitement":stateOfRequestUseStablecoin ==2 ? "Desolé, votre demande d'accès à cette partie a été rejetée":
+                    stateOfRequestUseStablecoin?.allow === 1 && stateOfRequestUseStablecoin?.validContract === 0 ?"Votre demande d'accès à cette partie est en cours de traitement":
+                    stateOfRequestUseStablecoin?.allow == 1 && stateOfRequestUseStablecoin?.validContract == 1? "Votre demande d'accès à cette partie est en cours de traitement":"Vous devez effectuer une demande pour obtenir une autorisation pour accéder à cette partie"
+                    }
+            `,
+            // html: `${stateOfRequestUseStablecoin ==0 ? "Votre demande d'accès à cette partie est en cours de traitement":stateOfRequestUseStablecoin ==2 ? "Desolé, votre demande d'accès à cette partie a été rejetée":"Vous devez effectuer une demande pour obtenir une autorisation pour accéder à cette partie."}` ,
             showConfirmButton: false,
             timer: 15000
         })
@@ -229,7 +235,7 @@ const Action = () => {
                                             </div>
                                             </div>
                                             <div className='btn-box'>
-                                                {stateOfRequestUseStablecoin==1 ? (
+                                                {stateOfRequestUseStablecoin?.allow==1 && stateOfRequestUseStablecoin?.validContract  ? (
                                                     <a href='/profil/entreprise/actions/demande-paiement/'>
                                                         <Button
                                                         block
@@ -258,6 +264,52 @@ const Action = () => {
                                 </div>
                             </div>
                         </div>
+
+                        {stateOfRequestUseStablecoin?.partnerWithdrawal==="Oui" ? (
+                            <div className='col-lg-6 col-md-6'>
+                                <div className='currency-selection text-center'>
+                                    <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
+                                        <div className='cryptocurrency-slides'>
+                                            <div className='single-cryptocurrency-box'>
+                                                <div className='d-flex align-items-center'>
+                                                {/* <div className='bestseller-coin-image'>
+                                                    <img src="/images/ecfa/logo/logo_ewari1.jpg" className="rounded-circle"  alt='image' />
+                                                </div> */}
+                                                <div className='title'>
+                                                    <h3>Agence retrait</h3><br/>
+                                                </div>
+                                                </div>
+                                                <div className='btn-box'>
+                                                    {stateOfRequestUseStablecoin?.allow==1 && stateOfRequestUseStablecoin?.validContract  ? (
+                                                        <a href='/profil/entreprise/actions/agence-retrait/'>
+                                                            <Button
+                                                            block
+                                                            color="primary"
+                                                            type="button"
+                                                            >
+                                                                Voir plus 
+                                                            </Button>
+                                                        </a> 
+                                                    ):(
+                                                        <Button
+                                                            block
+                                                            color="primary"
+                                                            type="button"
+                                                            onClick={warnOnRequestStatusUseStablecoin}
+                                                            >
+                                                                Voir plus
+                                                        </Button>
+                                                    )}
+                                                    
+                                                
+                                                {/* Fin */}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : ("")}
                         <div className='col-lg-6 col-md-6'>
                             <div className='currency-selection text-center'>
                                 <div className="m-4 credit-card w-full lg:w-3/4 sm:w-auto shadow-lg  rounded-xl bg-white">
@@ -294,7 +346,7 @@ const Action = () => {
                                         <div className='single-cryptocurrency-box'>
                                             <div className='d-flex align-items-center'>
                                             <div className='title'>
-                                                <h3>Demande d'utilisation de stablecoin comme moyen de paiement direct</h3>
+                                                <h3>Demandes d'utilisation de stablecoin comme moyen de paiment de commerce direct.</h3>
                                             </div>
                                             </div>
                                             
