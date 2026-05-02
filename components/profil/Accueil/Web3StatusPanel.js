@@ -3,7 +3,12 @@ import { Button, Card, Col, Row } from 'reactstrap';
 import Swal from 'sweetalert2';
 import {
   connectInjectedWallet,
+  connectMagicWalletWithEmail,
+  getMagicWalletAddress,
+  getMagicMetadata,
   hasInjectedWallet,
+  hasMagicWallet,
+  isMagicLoggedIn,
   readStablecoinInfoForAddress,
   getDefaultRpcUrl,
   getStablecoinAddress,
@@ -25,8 +30,24 @@ const formatTokenBalance = (value) => {
   });
 };
 
+function getStoredUserEmail() {
+  if (typeof window === 'undefined') return '';
+
+  const candidates = [
+    localStorage.getItem('email'),
+    localStorage.getItem('userEmail'),
+    localStorage.getItem('emailEnCours'),
+    localStorage.getItem('currentUserEmail'),
+  ];
+
+  const found = candidates.find((candidate) => candidate && candidate.includes('@'));
+  return found || '';
+}
+
 export default function Web3StatusPanel({ currentUser }) {
   const [walletAddress, setWalletAddress] = useState('');
+  const [walletSource, setWalletSource] = useState('');
+  const [magicEmail, setMagicEmail] = useState(currentUser?.email || '');
   const [stablecoinInfo, setStablecoinInfo] = useState(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [isReading, setIsReading] = useState(false);
@@ -50,13 +71,46 @@ export default function Web3StatusPanel({ currentUser }) {
     }
   }, []);
 
-  const connectWallet = useCallback(async () => {
+  const connectMagicWallet = useCallback(async () => {
+    setIsConnecting(true);
+    setError('');
+
+    try {
+      const email = currentUser?.email || magicEmail || getStoredUserEmail();
+      const connectedAddress = await connectMagicWalletWithEmail(email);
+      const metadata = await getMagicMetadata();
+
+      setWalletAddress(connectedAddress);
+      setWalletSource('Magic');
+
+      if (metadata?.email && !magicEmail) {
+        setMagicEmail(metadata.email);
+      }
+
+      await loadStablecoinInfo(connectedAddress);
+    } catch (connectError) {
+      const message = connectError?.message || 'Connexion au wallet Magic impossible.';
+      setError(message);
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Connexion Magic impossible',
+        html: `<p>${message}</p>`,
+        showConfirmButton: true,
+      });
+    } finally {
+      setIsConnecting(false);
+    }
+  }, [currentUser?.email, loadStablecoinInfo, magicEmail]);
+
+  const connectInjected = useCallback(async () => {
     setIsConnecting(true);
     setError('');
 
     try {
       const connectedAddress = await connectInjectedWallet();
       setWalletAddress(connectedAddress);
+      setWalletSource('Wallet injecté');
       await loadStablecoinInfo(connectedAddress);
     } catch (connectError) {
       const message = connectError?.message || 'Connexion wallet impossible.';
@@ -74,6 +128,37 @@ export default function Web3StatusPanel({ currentUser }) {
   }, [loadStablecoinInfo]);
 
   useEffect(() => {
+    const hydrateMagicWallet = async () => {
+      if (!hasMagicWallet()) return;
+
+      try {
+        const loggedIn = await isMagicLoggedIn();
+        const metadata = await getMagicMetadata();
+
+        if (metadata?.email) {
+          setMagicEmail(metadata.email);
+        } else if (currentUser?.email) {
+          setMagicEmail(currentUser.email);
+        } else {
+          const storedEmail = getStoredUserEmail();
+          if (storedEmail) setMagicEmail(storedEmail);
+        }
+
+        if (loggedIn) {
+          const address = await getMagicWalletAddress();
+          setWalletAddress(address);
+          setWalletSource('Magic');
+          await loadStablecoinInfo(address);
+        }
+      } catch (magicError) {
+        setError(magicError?.message || 'Impossible de synchroniser le wallet Magic.');
+      }
+    };
+
+    hydrateMagicWallet();
+  }, [currentUser?.email, loadStablecoinInfo]);
+
+  useEffect(() => {
     const ethereum = typeof window !== 'undefined' ? window.ethereum : null;
 
     if (!ethereum) {
@@ -85,12 +170,13 @@ export default function Web3StatusPanel({ currentUser }) {
         const accounts = await ethereum.request({ method: 'eth_accounts' });
         const firstAccount = accounts?.[0];
 
-        if (isValidAddress(firstAccount)) {
+        if (isValidAddress(firstAccount) && !walletAddress) {
           setWalletAddress(firstAccount);
+          setWalletSource('Wallet injecté');
           loadStablecoinInfo(firstAccount);
         }
       } catch (syncError) {
-        setError(syncError?.message || 'Impossible de lire le wallet connecté.');
+        setError(syncError?.message || 'Impossible de lire le wallet injecté connecté.');
       }
     };
 
@@ -98,10 +184,8 @@ export default function Web3StatusPanel({ currentUser }) {
       const firstAccount = accounts?.[0];
       if (isValidAddress(firstAccount)) {
         setWalletAddress(firstAccount);
+        setWalletSource('Wallet injecté');
         loadStablecoinInfo(firstAccount);
-      } else {
-        setWalletAddress('');
-        setStablecoinInfo(null);
       }
     };
 
@@ -129,6 +213,7 @@ export default function Web3StatusPanel({ currentUser }) {
           <h4 className='mb-2'>Connexion blockchain</h4>
           <p className='mb-1'>
             Wallet connecté : <strong>{formatShortAddress(walletAddress)}</strong>
+            {walletSource ? <span className='ml-2'>({walletSource})</span> : null}
           </p>
           <p className='mb-1'>
             Contrat stablecoin : <strong>{formatShortAddress(stablecoinInfo?.contractAddress || getStablecoinAddress())}</strong>
@@ -136,9 +221,9 @@ export default function Web3StatusPanel({ currentUser }) {
           <p className='mb-1'>
             RPC : <strong>{getDefaultRpcUrl()}</strong>
           </p>
-          {currentUser?.email ? (
+          {currentUser?.email || magicEmail ? (
             <p className='mb-1'>
-              Compte applicatif : <strong>{currentUser.email}</strong>
+              Email wallet Magic : <strong>{currentUser?.email || magicEmail}</strong>
             </p>
           ) : null}
           {stablecoinInfo ? (
@@ -153,13 +238,28 @@ export default function Web3StatusPanel({ currentUser }) {
           <Button
             color='primary'
             type='button'
-            onClick={connectWallet}
-            disabled={isConnecting || !hasInjectedWallet()}
+            onClick={connectMagicWallet}
+            disabled={isConnecting || !hasMagicWallet()}
+            className='mb-2'
+            block
           >
-            {isConnecting ? 'Connexion...' : walletAddress ? 'Reconnecter wallet' : 'Connecter wallet'}
+            {isConnecting ? 'Connexion...' : walletAddress && walletSource === 'Magic' ? 'Reconnecter Magic' : 'Connecter wallet Magic'}
           </Button>
-          {!hasInjectedWallet() ? (
-            <p className='small mt-2 mb-0'>MetaMask ou un wallet compatible est requis.</p>
+
+          {hasInjectedWallet() ? (
+            <Button
+              color='secondary'
+              type='button'
+              onClick={connectInjected}
+              disabled={isConnecting}
+              block
+            >
+              Wallet externe / MetaMask
+            </Button>
+          ) : null}
+
+          {!hasMagicWallet() ? (
+            <p className='small mt-2 mb-0'>Magic SDK n'est pas initialisé.</p>
           ) : null}
         </Col>
       </Row>
