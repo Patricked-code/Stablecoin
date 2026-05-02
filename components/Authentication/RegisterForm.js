@@ -17,11 +17,12 @@ import Swal from 'sweetalert2';
  * 5. L'API métier reste la source principale d'authentification et renvoie le token applicatif.
  *
  * Correction importante :
- * - La connexion ne dépend plus obligatoirement de Magic Link, car le service Magic peut bloquer
- *   le flux sur la vérification nouvel appareil avec un 401 côté api.toaster.magic.link.
- * - Magic peut être réactivé volontairement avec NEXT_PUBLIC_ENABLE_MAGIC_AUTH=true.
- * - Par défaut, le token métier renvoyé par /api/session/login permet de rediriger directement
- *   vers le dashboard, ce qui évite de bloquer toute connexion quand Magic refuse email_otp/start.
+ * - La connexion applicative ne dépend plus obligatoirement de Magic Link, car le service Magic
+ *   peut bloquer le flux sur la vérification nouvel appareil avec un 401 côté api.toaster.magic.link.
+ * - Magic n'est pas supprimé : il reste disponible pour le wallet blockchain intégré et peut aussi
+ *   être réactivé comme authentification obligatoire avec NEXT_PUBLIC_ENABLE_MAGIC_AUTH=true.
+ * - Le formulaire conserve maintenant l'email utilisateur dans localStorage afin que le dashboard
+ *   puisse initialiser correctement le wallet Magic et récupérer l'adresse blockchain Moonbase Alpha.
  * - Les boutons empêchent le submit HTML implicite.
  * - Les erreurs API texte/JSON sont gérées proprement.
  */
@@ -40,6 +41,18 @@ function RegisterForm() {
 
   const [allTypeProfil, setAllTypeProfil] = useState('');
   const [infosOtherUser, setInfosOtherUser] = useState('');
+
+  const persistUserEmail = useCallback((value) => {
+    if (typeof window === 'undefined') return;
+
+    const safeEmail = String(value || '').trim().toLowerCase();
+    if (!safeEmail || !safeEmail.includes('@')) return;
+
+    localStorage.setItem('email', safeEmail);
+    localStorage.setItem('userEmail', safeEmail);
+    localStorage.setItem('emailEnCours', safeEmail);
+    localStorage.setItem('currentUserEmail', safeEmail);
+  }, []);
 
   const showError = useCallback((message) => {
     const finalMessage = message || 'Une erreur est survenue. Merci de réessayer.';
@@ -80,7 +93,7 @@ function RegisterForm() {
         }
       }
     } catch (error) {
-      console.log("Erreur pendant la déconnexion Magic =>", error);
+      console.log('Erreur pendant la déconnexion Magic =>', error);
     }
   }, [ENABLE_MAGIC_AUTH]);
 
@@ -99,6 +112,8 @@ function RegisterForm() {
   }, [API_URL, API_KEY_STABLECOIN, ENABLE_MAGIC_AUTH]);
 
   const completeLoginAfterBackendSuccess = useCallback(async (data) => {
+    persistUserEmail(email);
+
     if (data?.token) {
       localStorage.setItem('tokenEnCours', data.token);
     }
@@ -115,9 +130,11 @@ function RegisterForm() {
       email,
       redirectURI: new URL(redirectPath, window.location.origin).href,
     });
-  }, [ENABLE_MAGIC_AUTH, email, safeMagicLogout]);
+  }, [ENABLE_MAGIC_AUTH, email, persistUserEmail, safeMagicLogout]);
 
   const completeRegisterAfterBackendSuccess = useCallback(async () => {
+    persistUserEmail(email);
+
     if (!ENABLE_MAGIC_AUTH) {
       await Router.push('/account/firstEdition/');
       return;
@@ -128,7 +145,7 @@ function RegisterForm() {
       email,
       redirectURI: new URL('/callback_register/', window.location.origin).href,
     });
-  }, [ENABLE_MAGIC_AUTH, email, safeMagicLogout]);
+  }, [ENABLE_MAGIC_AUTH, email, persistUserEmail, safeMagicLogout]);
 
   const login = useCallback(async (event) => {
     if (event) {
@@ -144,6 +161,8 @@ function RegisterForm() {
       if (!email || !password) {
         throw new Error('Veuillez renseigner votre email et votre mot de passe.');
       }
+
+      persistUserEmail(email);
 
       const response = await fetch(`${API_URL}/api/session/login`, {
         method: 'POST',
@@ -165,7 +184,7 @@ function RegisterForm() {
       setIsLoggingIn(false);
       showError(error?.message || 'Erreur pendant la connexion.');
     }
-  }, [API_URL, API_KEY_STABLECOIN, assertRuntimeConfig, completeLoginAfterBackendSuccess, email, password, showError]);
+  }, [API_URL, API_KEY_STABLECOIN, assertRuntimeConfig, completeLoginAfterBackendSuccess, email, password, persistUserEmail, showError]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -182,6 +201,8 @@ function RegisterForm() {
       if (!email || !password || !confirmPassword) {
         throw new Error('Veuillez renseigner tous les champs obligatoires.');
       }
+
+      persistUserEmail(email);
 
       const result = await fetch(`${API_URL}/api/session/register`, {
         method: 'POST',
@@ -272,6 +293,7 @@ function RegisterForm() {
 
     try {
       assertRuntimeConfig();
+      persistUserEmail(email);
 
       const result = await fetch(`${API_URL}/api/user/find-user-by-email?email=${encodeURIComponent(email)}`, {
         headers: {
@@ -290,6 +312,12 @@ function RegisterForm() {
     } catch (error) {
       showError(error?.message || 'Impossible de vérifier cet email.');
     }
+  };
+
+  const handleEmailChange = (event) => {
+    const nextEmail = event.target.value;
+    setEmail(nextEmail);
+    persistUserEmail(nextEmail);
   };
 
   return (
@@ -319,7 +347,7 @@ function RegisterForm() {
               placeholder='Email'
               className='form-control'
               value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              onChange={handleEmailChange}
             />
           </div>
 
