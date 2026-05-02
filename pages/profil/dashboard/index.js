@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Dashboard from '../../../components/profil/Accueil/Dashboard';
+import Web3StatusPanel from '../../../components/profil/Accueil/Web3StatusPanel';
 import SidebarProfil from '../../../components/profil/SideBar/Sidebar';
 
 
@@ -22,6 +23,9 @@ const index = () => {
           </aside>
 
           {/* CONTENU PROFIL */}
+          <div className='container-fluid px-4'>
+            <Web3StatusPanel />
+          </div>
           <Dashboard />
           {/* FIN */}
 
