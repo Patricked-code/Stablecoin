@@ -14,22 +14,23 @@ import Swal from 'sweetalert2';
  * 2. Le front vérifie si l'utilisateur existe déjà côté API métier.
  * 3. Si l'utilisateur existe, le formulaire affiche la connexion par mot de passe.
  * 4. Si l'utilisateur n'existe pas, le formulaire affiche l'inscription.
- * 5. L'API métier reste la source principale d'authentification et renvoie le token applicatif.
+ * 5. L'API métier valide les identifiants et renvoie le token applicatif.
+ * 6. Magic Link reste l'étape d'authentification et d'initialisation wallet blockchain.
  *
- * Correction importante :
- * - La connexion applicative ne dépend plus obligatoirement de Magic Link, car le service Magic
- *   peut bloquer le flux sur la vérification nouvel appareil avec un 401 côté api.toaster.magic.link.
- * - Magic n'est pas supprimé : il reste disponible pour le wallet blockchain intégré et peut aussi
- *   être réactivé comme authentification obligatoire avec NEXT_PUBLIC_ENABLE_MAGIC_AUTH=true.
- * - Le formulaire conserve maintenant l'email utilisateur dans localStorage afin que le dashboard
- *   puisse initialiser correctement le wallet Magic et récupérer l'adresse blockchain Moonbase Alpha.
+ * Restauration importante :
+ * - Magic Link est de nouveau activé par défaut afin de préserver le fonctionnement historique
+ *   du projet Stablecoin / E-WARI et la génération/récupération des adresses blockchain Magic.
+ * - Le contournement sans Magic n'est conservé qu'en mode secours explicite avec
+ *   NEXT_PUBLIC_ENABLE_MAGIC_AUTH=false.
+ * - Le formulaire conserve l'email utilisateur dans localStorage afin que le dashboard puisse
+ *   initialiser correctement le wallet Magic et récupérer l'adresse blockchain Moonbase Alpha.
  * - Les boutons empêchent le submit HTML implicite.
  * - Les erreurs API texte/JSON sont gérées proprement.
  */
 function RegisterForm() {
   const API_URL = process.env.NEXT_PUBLIC_URL_API;
   const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN;
-  const ENABLE_MAGIC_AUTH = process.env.NEXT_PUBLIC_ENABLE_MAGIC_AUTH === 'true';
+  const ENABLE_MAGIC_AUTH = process.env.NEXT_PUBLIC_ENABLE_MAGIC_AUTH !== 'false';
 
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [messageError, setMessageError] = useState('');
