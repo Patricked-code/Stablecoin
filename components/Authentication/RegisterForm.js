@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Router from 'next/router';
 import { useCallback, useState, useEffect } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { magic } from '../../magic';
@@ -11,17 +12,23 @@ import Swal from 'sweetalert2';
  * Flux fonctionnel :
  * 1. L'utilisateur saisit son email.
  * 2. Le front vérifie si l'utilisateur existe déjà côté API métier.
- * 3. Si l'utilisateur existe, le formulaire affiche la connexion par mot de passe + Magic Link.
- * 4. Si l'utilisateur n'existe pas, le formulaire affiche l'inscription puis déclenche Magic Link.
+ * 3. Si l'utilisateur existe, le formulaire affiche la connexion par mot de passe.
+ * 4. Si l'utilisateur n'existe pas, le formulaire affiche l'inscription.
+ * 5. L'API métier reste la source principale d'authentification et renvoie le token applicatif.
  *
  * Correction importante :
- * - Les boutons dans les formulaires empêchent maintenant le submit HTML implicite.
- * - Les callbacks Magic sont appelés avec des URLs cohérentes avec trailingSlash.
- * - Les erreurs ne sont plus silencieuses ; l'utilisateur reçoit un message exploitable.
+ * - La connexion ne dépend plus obligatoirement de Magic Link, car le service Magic peut bloquer
+ *   le flux sur la vérification nouvel appareil avec un 401 côté api.toaster.magic.link.
+ * - Magic peut être réactivé volontairement avec NEXT_PUBLIC_ENABLE_MAGIC_AUTH=true.
+ * - Par défaut, le token métier renvoyé par /api/session/login permet de rediriger directement
+ *   vers le dashboard, ce qui évite de bloquer toute connexion quand Magic refuse email_otp/start.
+ * - Les boutons empêchent le submit HTML implicite.
+ * - Les erreurs API texte/JSON sont gérées proprement.
  */
 function RegisterForm() {
   const API_URL = process.env.NEXT_PUBLIC_URL_API;
   const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN;
+  const ENABLE_MAGIC_AUTH = process.env.NEXT_PUBLIC_ENABLE_MAGIC_AUTH === 'true';
 
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [messageError, setMessageError] = useState('');
@@ -46,7 +53,25 @@ function RegisterForm() {
     });
   }, []);
 
+  const parseApiResponse = async (response, fallbackMessage) => {
+    const rawText = await response.text();
+
+    if (!rawText) {
+      return {};
+    }
+
+    try {
+      return JSON.parse(rawText);
+    } catch (error) {
+      throw new Error(rawText || fallbackMessage || 'Réponse API invalide.');
+    }
+  };
+
   const safeMagicLogout = useCallback(async () => {
+    if (!ENABLE_MAGIC_AUTH) {
+      return;
+    }
+
     try {
       if (magic) {
         const isLoggedIn = await magic.user.isLoggedIn();
@@ -57,7 +82,7 @@ function RegisterForm() {
     } catch (error) {
       console.log("Erreur pendant la déconnexion Magic =>", error);
     }
-  }, []);
+  }, [ENABLE_MAGIC_AUTH]);
 
   const assertRuntimeConfig = useCallback(() => {
     if (!API_URL) {
@@ -68,10 +93,42 @@ function RegisterForm() {
       throw new Error('Configuration manquante : NEXT_PUBLIC_API_KEY_STABLECOIN');
     }
 
-    if (!magic) {
+    if (ENABLE_MAGIC_AUTH && !magic) {
       throw new Error('Magic SDK non initialisé. Vérifiez NEXT_PUBLIC_MAGIC_PUBLISHABLE_KEY.');
     }
-  }, [API_URL, API_KEY_STABLECOIN]);
+  }, [API_URL, API_KEY_STABLECOIN, ENABLE_MAGIC_AUTH]);
+
+  const completeLoginAfterBackendSuccess = useCallback(async (data) => {
+    if (data?.token) {
+      localStorage.setItem('tokenEnCours', data.token);
+    }
+
+    if (!ENABLE_MAGIC_AUTH) {
+      await Router.push('/profil/dashboard/');
+      return;
+    }
+
+    const redirectPath = data?.auth === 1 ? '/callback/' : '/callback_register/';
+
+    await safeMagicLogout();
+    await magic.auth.loginWithMagicLink({
+      email,
+      redirectURI: new URL(redirectPath, window.location.origin).href,
+    });
+  }, [ENABLE_MAGIC_AUTH, email, safeMagicLogout]);
+
+  const completeRegisterAfterBackendSuccess = useCallback(async () => {
+    if (!ENABLE_MAGIC_AUTH) {
+      await Router.push('/account/firstEdition/');
+      return;
+    }
+
+    await safeMagicLogout();
+    await magic.auth.loginWithMagicLink({
+      email,
+      redirectURI: new URL('/callback_register/', window.location.origin).href,
+    });
+  }, [ENABLE_MAGIC_AUTH, email, safeMagicLogout]);
 
   const login = useCallback(async (event) => {
     if (event) {
@@ -88,8 +145,6 @@ function RegisterForm() {
         throw new Error('Veuillez renseigner votre email et votre mot de passe.');
       }
 
-      await safeMagicLogout();
-
       const response = await fetch(`${API_URL}/api/session/login`, {
         method: 'POST',
         body: JSON.stringify({ email, password }),
@@ -99,27 +154,18 @@ function RegisterForm() {
         },
       });
 
-      const data = await response.json();
+      const data = await parseApiResponse(response, 'Connexion impossible.');
 
       if (!response.ok || data?.message) {
         throw new Error(data?.message || 'Connexion impossible.');
       }
 
-      if (data?.token) {
-        localStorage.setItem('tokenEnCours', data.token);
-      }
-
-      const redirectPath = data?.auth === 1 ? '/callback/' : '/callback_register/';
-
-      await magic.auth.loginWithMagicLink({
-        email,
-        redirectURI: new URL(redirectPath, window.location.origin).href,
-      });
+      await completeLoginAfterBackendSuccess(data);
     } catch (error) {
       setIsLoggingIn(false);
       showError(error?.message || 'Erreur pendant la connexion.');
     }
-  }, [API_URL, API_KEY_STABLECOIN, assertRuntimeConfig, email, password, safeMagicLogout, showError]);
+  }, [API_URL, API_KEY_STABLECOIN, assertRuntimeConfig, completeLoginAfterBackendSuccess, email, password, showError]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -152,7 +198,7 @@ function RegisterForm() {
         },
       });
 
-      const data = await result.json();
+      const data = await parseApiResponse(result, 'Inscription impossible.');
 
       if (data?.message === 'Utilisateur déjà existant') {
         setIsLoggingIn(false);
@@ -171,10 +217,7 @@ function RegisterForm() {
       }
 
       if (data?.success === true) {
-        await magic.auth.loginWithMagicLink({
-          email,
-          redirectURI: new URL('/callback_register/', window.location.origin).href,
-        });
+        await completeRegisterAfterBackendSuccess();
         return;
       }
 
@@ -200,10 +243,15 @@ function RegisterForm() {
           },
         });
 
-        const profil = await resProfil.json();
+        const profil = await parseApiResponse(resProfil, 'Impossible de charger les types de profil.');
+
+        if (!resProfil.ok) {
+          throw new Error(profil?.message || 'Impossible de charger les types de profil.');
+        }
+
         setAllTypeProfil(profil);
       } catch (error) {
-        setMessageError('Impossible de charger les types de profil.');
+        setMessageError(error?.message || 'Impossible de charger les types de profil.');
       }
     };
 
@@ -232,7 +280,12 @@ function RegisterForm() {
         },
       });
 
-      const user = await result.json();
+      const user = await parseApiResponse(result, 'Impossible de vérifier cet email.');
+
+      if (!result.ok) {
+        throw new Error(user?.message || 'Impossible de vérifier cet email.');
+      }
+
       setInfosOtherUser(user);
     } catch (error) {
       showError(error?.message || 'Impossible de vérifier cet email.');
