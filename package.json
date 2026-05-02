@@ -25,7 +25,7 @@
     "ethers": "^5.6.4",
     "jsdoc": "^4.0.2",
     "jwt-next-auth": "^3.0.0",
-    "magic-sdk": "^30.0.0",
+    "magic-sdk": "^4.1.1",
     "mapbox-gl": "^2.15.0",
     "moment": "^2.29.4",
     "next": "^10.0.6",
