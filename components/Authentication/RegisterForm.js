@@ -22,6 +22,8 @@ import Swal from 'sweetalert2';
  * - Le flux Email OTP n'est plus choisi automatiquement, car il change l'expérience utilisateur et peut rester bloqué
  *   avec l'ancien SDK Magic utilisé par ce projet Next 10.
  * - Les URLs callback /callback/ et /callback_register/ restent nécessaires dans Magic Dashboard.
+ * - Un filet de sécurité détecte maintenant que la session Magic est bien créée même lorsque l'ancien SDK
+ *   ne résout pas correctement la promesse ou ne redirige pas immédiatement après validation du code.
  * - L'email utilisateur est conservé dans localStorage afin que le dashboard puisse initialiser le wallet Magic
  *   et récupérer l'adresse blockchain Moonbase Alpha.
  * - Les boutons empêchent le submit HTML implicite.
@@ -42,6 +44,8 @@ function RegisterForm() {
 
   const [allTypeProfil, setAllTypeProfil] = useState('');
   const [infosOtherUser, setInfosOtherUser] = useState('');
+
+  const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
   const persistUserEmail = useCallback((value) => {
     if (typeof window === 'undefined') return;
@@ -112,7 +116,74 @@ function RegisterForm() {
     }
   }, [API_URL, API_KEY_STABLECOIN, ENABLE_MAGIC_AUTH]);
 
-  const runMagicLinkRedirect = useCallback(async (redirectPath) => {
+  const waitForMagicSession = useCallback(async (timeoutMs = 180000) => {
+    const startedAt = Date.now();
+
+    while (Date.now() - startedAt < timeoutMs) {
+      try {
+        if (magic) {
+          const isLoggedIn = await magic.user.isLoggedIn();
+          if (isLoggedIn) {
+            return true;
+          }
+        }
+      } catch (error) {
+        console.log('Session Magic pas encore disponible =>', error);
+      }
+
+      await sleep(1000);
+    }
+
+    return false;
+  }, []);
+
+  const validateCurrentMagicSession = useCallback(async () => {
+    try {
+      if (!magic) {
+        return null;
+      }
+
+      const isLoggedIn = await magic.user.isLoggedIn();
+      if (!isLoggedIn) {
+        return null;
+      }
+
+      const didToken = await magic.user.getIdToken();
+      if (!didToken) {
+        return null;
+      }
+
+      const res = await fetch('/api/login/', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${didToken}`,
+        },
+      });
+
+      const data = await parseApiResponse(res, 'Authentification Magic impossible.');
+
+      if (!res.ok || !data?.authenticated) {
+        console.log('Validation serveur Magic non bloquante =>', data?.message || data);
+        return null;
+      }
+
+      if (data?.email) {
+        persistUserEmail(data.email);
+      }
+
+      if (data?.publicAddress) {
+        localStorage.setItem('magicPublicAddress', data.publicAddress);
+      }
+
+      return data;
+    } catch (error) {
+      console.log('Validation serveur Magic non bloquante =>', error);
+      return null;
+    }
+  }, [persistUserEmail]);
+
+  const runMagicLinkRedirect = useCallback(async (redirectPath, fallbackPath) => {
     if (!ENABLE_MAGIC_AUTH) {
       return;
     }
@@ -126,12 +197,34 @@ function RegisterForm() {
 
     await safeMagicLogout();
 
-    await magic.auth.loginWithMagicLink({
+    const redirectURI = new URL(redirectPath, window.location.origin).href;
+
+    const loginPromise = magic.auth.loginWithMagicLink({
       email: safeEmail,
       showUI: true,
-      redirectURI: new URL(redirectPath, window.location.origin).href,
-    });
-  }, [ENABLE_MAGIC_AUTH, email, persistUserEmail, safeMagicLogout]);
+      redirectURI,
+    }).then(() => true);
+
+    const sessionPromise = waitForMagicSession(180000);
+
+    const magicSucceeded = await Promise.race([
+      loginPromise,
+      sessionPromise,
+    ]);
+
+    if (!magicSucceeded) {
+      throw new Error('La validation Magic n’a pas été détectée. Merci de réessayer la connexion.');
+    }
+
+    await validateCurrentMagicSession();
+
+    const currentPath = window.location.pathname.replace(/\/$/, '');
+    const authPath = '/auth/authentication';
+
+    if (currentPath === authPath && fallbackPath) {
+      await Router.push(fallbackPath);
+    }
+  }, [ENABLE_MAGIC_AUTH, email, persistUserEmail, safeMagicLogout, validateCurrentMagicSession, waitForMagicSession]);
 
   const completeLoginAfterBackendSuccess = useCallback(async (data) => {
     persistUserEmail(email);
@@ -146,7 +239,8 @@ function RegisterForm() {
     }
 
     const redirectPath = data?.auth === 1 ? '/callback/' : '/callback_register/';
-    await runMagicLinkRedirect(redirectPath);
+    const fallbackPath = data?.auth === 1 ? '/profil/dashboard/' : '/account/firstEdition/';
+    await runMagicLinkRedirect(redirectPath, fallbackPath);
   }, [ENABLE_MAGIC_AUTH, email, persistUserEmail, runMagicLinkRedirect]);
 
   const completeRegisterAfterBackendSuccess = useCallback(async () => {
@@ -157,7 +251,7 @@ function RegisterForm() {
       return;
     }
 
-    await runMagicLinkRedirect('/callback_register/');
+    await runMagicLinkRedirect('/callback_register/', '/account/firstEdition/');
   }, [ENABLE_MAGIC_AUTH, email, persistUserEmail, runMagicLinkRedirect]);
 
   const login = useCallback(async (event) => {
