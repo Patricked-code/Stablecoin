@@ -6,11 +6,19 @@ import { magic } from '../../../../magic';
 import Loading from '../../../../components/loading';
 import Router from 'next/router';
 
+const getUserProfileId = (user) => {
+  const rawProfileId = user?.profileId ?? user?.ProfileId;
+  const numericProfileId = Number(rawProfileId);
+
+  return Number.isFinite(numericProfileId) ? numericProfileId : null;
+};
+
 const DasbaordWti = () => {
   const API_URL = process.env.NEXT_PUBLIC_URL_API;
   const API_KEY_STABLECOIN = process.env.NEXT_PUBLIC_API_KEY_STABLECOIN;
 
   const [currentUser, setCurrentUser] = useState(null);
+  const [currentProfileId, setCurrentProfileId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -50,13 +58,17 @@ const DasbaordWti = () => {
           throw new Error(user?.message || 'Impossible de récupérer le compte connecté.');
         }
 
+        const profileId = getUserProfileId(user);
+
         if (!isMounted) return;
 
-        if (Number(user?.profileId) === 2 || Number(user?.profileId) === 3) {
+        if (profileId === 2 || profileId === 3) {
           setCurrentUser(user);
+          setCurrentProfileId(profileId);
           return;
         }
 
+        setCurrentProfileId(profileId);
         setErrorMessage("Ce compte n'a pas les droits nécessaires pour accéder au panel Wealthtech.");
       } catch (error) {
         if (!isMounted) return;
@@ -103,6 +115,9 @@ const DasbaordWti = () => {
         <div className='m-4 credit-card shadow-lg rounded-xl bg-white p-4'>
           <h3>Accès au panel Wealthtech impossible</h3>
           <p className='colorRed'>{errorMessage}</p>
+          {currentProfileId !== null ? (
+            <p>Profil applicatif détecté : {currentProfileId}</p>
+          ) : null}
           <Button color='primary' type='button' onClick={() => Router.push('/profil/dashboard/')}>
             Retour au dashboard
           </Button>
@@ -131,7 +146,7 @@ const DasbaordWti = () => {
 
         <div className='cryptocurrency-search-box'>
           <div className='row'>
-            {Number(currentUser?.profileId) === 2 ? (
+            {currentProfileId === 2 ? (
               <>
                 <AdminCard title='Attribuer des rôles' href='/admin/wealthtech/roles/attribution/' />
                 <AdminCard title='Stablecoin comme moyen de payement' href='/admin/wealthtech/stablecoin/comme-moyen-paiement' />
