@@ -15,16 +15,15 @@ import Swal from 'sweetalert2';
  * 3. Si l'utilisateur existe, le formulaire affiche la connexion par mot de passe.
  * 4. Si l'utilisateur n'existe pas, le formulaire affiche l'inscription.
  * 5. L'API métier valide les identifiants et renvoie le token applicatif.
- * 6. Magic reste l'étape d'authentification et d'initialisation wallet blockchain.
+ * 6. Magic Link reste l'étape d'authentification et d'initialisation wallet blockchain.
  *
- * Correction importante :
- * - Magic reste activé par défaut afin de préserver le fonctionnement Web3 du projet Stablecoin / E-WARI.
- * - Le flux Magic est maintenant finalisé dans la même page au lieu de dépendre exclusivement
- *   d'une redirection externe vers /callback ou /callback_register.
- * - Cette stratégie évite le blocage observé sur auth.magic.link après email OTP / device verification,
- *   tout en gardant les pages callback historiques disponibles en secours.
- * - Le formulaire conserve l'email utilisateur dans localStorage afin que le dashboard puisse
- *   initialiser correctement le wallet Magic et récupérer l'adresse blockchain Moonbase Alpha.
+ * Restauration importante :
+ * - Magic Link est forcé explicitement avec loginWithMagicLink afin de conserver le comportement historique.
+ * - Le flux Email OTP n'est plus choisi automatiquement, car il change l'expérience utilisateur et peut rester bloqué
+ *   avec l'ancien SDK Magic utilisé par ce projet Next 10.
+ * - Les URLs callback /callback/ et /callback_register/ restent nécessaires dans Magic Dashboard.
+ * - L'email utilisateur est conservé dans localStorage afin que le dashboard puisse initialiser le wallet Magic
+ *   et récupérer l'adresse blockchain Moonbase Alpha.
  * - Les boutons empêchent le submit HTML implicite.
  * - Les erreurs API texte/JSON sont gérées proprement.
  */
@@ -82,17 +81,6 @@ function RegisterForm() {
     }
   };
 
-  const withTimeout = (promise, timeoutMs, message) => new Promise((resolve, reject) => {
-    const timer = setTimeout(() => {
-      reject(new Error(message));
-    }, timeoutMs);
-
-    promise
-      .then(resolve)
-      .catch(reject)
-      .finally(() => clearTimeout(timer));
-  });
-
   const safeMagicLogout = useCallback(async () => {
     if (!ENABLE_MAGIC_AUTH) {
       return;
@@ -124,59 +112,26 @@ function RegisterForm() {
     }
   }, [API_URL, API_KEY_STABLECOIN, ENABLE_MAGIC_AUTH]);
 
-  const validateMagicTokenWithApplication = useCallback(async (didToken) => {
-    if (!didToken) {
-      throw new Error('Magic n’a pas retourné de DID token.');
-    }
-
-    const res = await fetch('/api/login/', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${didToken}`,
-      },
-    });
-
-    const data = await parseApiResponse(res, 'Authentification Magic impossible.');
-
-    if (!res.ok || !data?.authenticated) {
-      throw new Error(data?.message || 'Authentification Magic impossible.');
-    }
-
-    if (data?.token) {
-      localStorage.setItem('tokenEnCours', data.token);
-    }
-
-    return data;
-  }, []);
-
-  const runMagicAuthentication = useCallback(async () => {
+  const runMagicLinkRedirect = useCallback(async (redirectPath) => {
     if (!ENABLE_MAGIC_AUTH) {
-      return null;
+      return;
     }
 
     if (!magic) {
       throw new Error('Magic SDK non initialisé. Vérifiez NEXT_PUBLIC_MAGIC_PUBLISHABLE_KEY.');
     }
 
-    await safeMagicLogout();
-
     const safeEmail = String(email || '').trim().toLowerCase();
     persistUserEmail(safeEmail);
 
-    const magicLoginPromise = typeof magic.auth.loginWithEmailOTP === 'function'
-      ? magic.auth.loginWithEmailOTP({ email: safeEmail, showUI: true })
-      : magic.auth.loginWithMagicLink({ email: safeEmail, showUI: true });
+    await safeMagicLogout();
 
-    const didToken = await withTimeout(
-      magicLoginPromise,
-      180000,
-      'La validation Magic n’a pas été terminée. Merci de relancer la connexion et de saisir le code reçu par email dans la fenêtre Magic.'
-    );
-
-    await validateMagicTokenWithApplication(didToken);
-    return didToken;
-  }, [ENABLE_MAGIC_AUTH, email, persistUserEmail, safeMagicLogout, validateMagicTokenWithApplication]);
+    await magic.auth.loginWithMagicLink({
+      email: safeEmail,
+      showUI: true,
+      redirectURI: new URL(redirectPath, window.location.origin).href,
+    });
+  }, [ENABLE_MAGIC_AUTH, email, persistUserEmail, safeMagicLogout]);
 
   const completeLoginAfterBackendSuccess = useCallback(async (data) => {
     persistUserEmail(email);
@@ -190,15 +145,9 @@ function RegisterForm() {
       return;
     }
 
-    await runMagicAuthentication();
-
-    if (data?.auth === 1) {
-      await Router.push('/profil/dashboard/');
-      return;
-    }
-
-    await Router.push('/account/firstEdition/');
-  }, [ENABLE_MAGIC_AUTH, email, persistUserEmail, runMagicAuthentication]);
+    const redirectPath = data?.auth === 1 ? '/callback/' : '/callback_register/';
+    await runMagicLinkRedirect(redirectPath);
+  }, [ENABLE_MAGIC_AUTH, email, persistUserEmail, runMagicLinkRedirect]);
 
   const completeRegisterAfterBackendSuccess = useCallback(async () => {
     persistUserEmail(email);
@@ -208,9 +157,8 @@ function RegisterForm() {
       return;
     }
 
-    await runMagicAuthentication();
-    await Router.push('/account/firstEdition/');
-  }, [ENABLE_MAGIC_AUTH, email, persistUserEmail, runMagicAuthentication]);
+    await runMagicLinkRedirect('/callback_register/');
+  }, [ENABLE_MAGIC_AUTH, email, persistUserEmail, runMagicLinkRedirect]);
 
   const login = useCallback(async (event) => {
     if (event) {
