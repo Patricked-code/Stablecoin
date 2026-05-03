@@ -1,3 +1,12 @@
+
+/*
+  SECURITE 2026-05-03 :
+  Les anciennes credentials Defender / relayer qui etaient presentes cote frontend
+  ont ete neutralisees. Aucune credential de relayer ne doit etre stockee dans React.
+  Les operations relayer doivent passer par une route backend securisee, notamment
+  pages/api/metaTransfer.js avec EWARI_RELAYER_PRIVATE_KEY cote serveur uniquement.
+*/
+
 // *******************LES IMPORTATIONS****************************************************
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Collapse, Button, Modal,Form } from "react-bootstrap";
@@ -447,8 +456,8 @@ const [codeOtherUser, setCodeOtherUser] = useState();
 const transfer = async()=>{
   const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
   // const { ethers } = require('ethers');
-  // const YOUR_API_KEY = "9J8guXHwAQ5Pg4vv17cnEgH72AhLsTYz"
-  // const YOUR_API_SECRET = "5ghqfeHdMySZ2fBzPy9kB1SkW2rLRSPdKvLfjKLE8qbZY2jZG8QqmSXwTGRrzRep"
+  // const YOUR_API_KEY = ""
+  // const YOUR_API_SECRET = ""
   const credentials = { apiKey: YOUR_API_KEY, apiSecret: YOUR_API_SECRET };
   const providerlay = new DefenderRelayProvider(credentials);
   const beneficiary = ""
@@ -492,10 +501,10 @@ const providerUrl = 'https://rpc.testnet.moonbeam.network'
 const providerRe = new ethers.providers.JsonRpcProvider(provider);
 console.log("provider=>",provider)
 
-// const YOUR_API_KEY = "9J8guXHwAQ5Pg4vv17cnEgH72AhLsTYz"
-//   const YOUR_API_SECRET = "5ghqfeHdMySZ2fBzPy9kB1SkW2rLRSPdKvLfjKLE8qbZY2jZG8QqmSXwTGRrzRep"
-const YOUR_API_KEY = "GWmEwe1fwV2f383dExKeRUVPL9ZYKKFu"
-const YOUR_API_SECRET = "QXdiWAUUF1PkhAqjJYMBLpxu57cwKwP7XjisUJfj6RQmyTf3d5PURGy9aQ4aXKzC"
+// const YOUR_API_KEY = ""
+//   const YOUR_API_SECRET = ""
+const YOUR_API_KEY = ""
+const YOUR_API_SECRET = ""
 
 // Créer une instance du contrat ERC20 avec le Defender Relayer Signer
 const defenderRelaySigner = new DefenderRelaySigner({ 
@@ -705,9 +714,9 @@ const transferRelayer = async() =>{
 
 const NETWORK = 'moonbase';
 const RELAY_ID = "8279505a-ebf4-4265-93e9-c0c47f5c2db0";
-const DEFENDER_API_KEY = "AHP4oU1BzcuKLsaqi9chu1qobgV8zAGr";
+const DEFENDER_API_KEY = "";
 // const TOKEN_ADDRESS = process.env.TOKEN_ADDRESS;
-const PRIVATE_KEY = "36ba8d431646b33e370eac06979af488bdddb6341bd067a676e5d33a8d72a1e1";
+const PRIVATE_KEY = "0x0000000000000000000000000000000000000000000000000000000000000001";
 const DESTINATION_ADDRESS = '0x496Dd9744c3a1B0Ec4C2998656BEA67DbCec888B'; // Adresse de destination pour le transfert de jeton
 const AMOUNT = 5; // Montant de jeton à transférer
 
@@ -799,8 +808,8 @@ const transferFromAtoC = async () => {
 
   // Récupération de v, r, s à partir de la signature 
   const v = 27;
-  const r = "0xca88bc0aa69d873e05ca99a8352157135e259d55f5a6cae241646f0d69b94749";
-  const s = "0x7763ae42584aabfa22f3f2e8a581a5bb37024d4422d414ce77ab05895051c44f";
+  const r = "";
+  const s = "";
   const deadline = ""; // +1 heure
 
   const ownerA = "0x496Dd9744c3a1B0Ec4C2998656BEA67DbCec888B";
@@ -1004,8 +1013,8 @@ return txResponse;
 
 // AUTRES
 const sendMetaTransactionA = async () => {
-const RelayerPrivateKeyNO = "2QyWScCUTGLW6peR4cHnjkx7p5ZJ6YPxi28zog3uSyoCs8jPpwMEfLuLJPQcY78v"
-const RelayerPrivateKey ="36ba8d431646b33e370eac06979af488bdddb6341bd067a676e5d33a8d72a1e1"
+const RelayerPrivateKeyNO = ""
+const RelayerPrivateKey ="0x0000000000000000000000000000000000000000000000000000000000000001"
 
 const from ="0x09439864ddaA177C80396353Cd98e6EaDa996a39"
 const to = "0x496Dd9744c3a1B0Ec4C2998656BEA67DbCec888B";

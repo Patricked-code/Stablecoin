@@ -144,14 +144,14 @@ const CHistoriqueOpcvm = () => {
                                         <Table.Row >                       
                                             <Table.Cell ><small className=" py-0 ">Achat<br/>KOREE</small></Table.Cell>
                                             <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>Konaté Ali</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>[hash-masque]</small></Table.Cell>
                                             <Table.Cell ><small className=" py-0 "><br/>1 000 000<br/>22/09/2023</small></Table.Cell>
                                         </Table.Row >
 
                                         <Table.Row >                       
                                             <Table.Cell ><small className=" py-0 ">Vente<br/>KOREE</small></Table.Cell>
                                             <Table.Cell ><small className=" py-0 ">Koné Arouna<br/>Konaté Ali</small></Table.Cell>
-                                            <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>0x78f3e606898836d13c9d02d58665c40c84b4dc6a07a17133f10ba46d0e2363fb</small></Table.Cell>
+                                            <Table.Cell ><small className=" py-0 ">0x09439864ddaA177C80396353Cd98e6EaDa996a39<br/>0xa31f3d5d0d8a412084a3f83d253340524f7f8897<br/>[hash-masque]</small></Table.Cell>
                                             <Table.Cell ><small className=" py-0 ">1 000 000<br/>22/09/2023</small></Table.Cell>
                                         </Table.Row >
 
