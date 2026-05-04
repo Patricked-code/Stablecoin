@@ -278,12 +278,82 @@ function getOpenZeppelinRelayerApiBaseUrl() {
   return DEFAULT_OPENZEPPELIN_RELAYER_API_BASE_URL;
 }
 
+function readRuntimeEnvValueFromKnownFiles6BA(key) {
+  const normalizedKey = String(key || "").trim();
+
+  if (!normalizedKey || !SERVER_RUNTIME_ENV_ALLOWED_KEYS.has(normalizedKey)) {
+    return "";
+  }
+
+  const candidates = [
+    process.env.STABLECOIN_RUNTIME_ENV_FILE,
+    DEFAULT_STABLECOIN_RUNTIME_ENV_FILE,
+    path.join(process.cwd(), ".env.local"),
+    path.resolve(process.cwd(), ".env.local"),
+    path.resolve(__dirname, "../../../..", ".env.local"),
+    path.resolve(__dirname, "../../..", ".env.local"),
+  ].filter(Boolean);
+
+  for (const filePath of candidates) {
+    try {
+      if (!filePath || !fs.existsSync(filePath)) {
+        continue;
+      }
+
+      const content = fs.readFileSync(filePath, "utf8");
+      const lines = content.split(/\r?\n/);
+
+      for (const line of lines) {
+        const trimmed = String(line || "").trim();
+
+        if (!trimmed || trimmed.startsWith("#")) {
+          continue;
+        }
+
+        const match = trimmed.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/);
+
+        if (!match) {
+          continue;
+        }
+
+        const envKey = match[1];
+
+        if (envKey !== normalizedKey) {
+          continue;
+        }
+
+        return cleanRuntimeEnvValue(stripRuntimeEnvQuotes(match[2]));
+      }
+    } catch (_) {
+      // Ne jamais bloquer l'API sur une erreur de lecture locale.
+      // Les validations existantes remonteront ensuite une erreur explicite
+      // si une variable obligatoire reste absente.
+    }
+  }
+
+  return "";
+}
+
 function getOpenZeppelinRelayerApiKey() {
-  return String(
+  const currentValue = cleanRuntimeEnvValue(
     process.env.OPENZEPPELIN_RELAYER_API_KEY ||
       process.env.OZ_RELAYER_API_KEY ||
       ""
-  ).trim();
+  );
+
+  if (currentValue) {
+    return currentValue;
+  }
+
+  const fileValue =
+    readRuntimeEnvValueFromKnownFiles6BA("OPENZEPPELIN_RELAYER_API_KEY") ||
+    readRuntimeEnvValueFromKnownFiles6BA("OZ_RELAYER_API_KEY");
+
+  if (fileValue) {
+    process.env.OPENZEPPELIN_RELAYER_API_KEY = fileValue;
+  }
+
+  return fileValue;
 }
 
 function getOpenZeppelinRelayerId() {
