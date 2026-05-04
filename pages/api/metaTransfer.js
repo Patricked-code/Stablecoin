@@ -1,5 +1,7 @@
 // pages/api/metaTransfer.js
 import { ethers } from "ethers";
+import fs from "fs";
+import path from "path";
 import ABI_TOKEN_EWARI from "./../../components/Contrats/Abi/AbiStablecoin.json";
 
 /*
@@ -23,6 +25,142 @@ const DEFAULT_BACKEND_API_URL = "https://api.stablecoin.chainsolutions.fr";
 const DEFAULT_OPENZEPPELIN_RELAYER_API_BASE_URL = "http://127.0.0.1:18080/api/v1";
 const DEFAULT_OPENZEPPELIN_RELAYER_ID = "ewari-moonbase-relayer";
 const DEFAULT_RELAYER_SPEED = "average";
+const DEFAULT_STABLECOIN_RUNTIME_ENV_FILE = "/var/www/vhosts/chainsolutions.fr/stablecoin.chainsolutions.fr/stablecoin/.env.local";
+const DEFAULT_EWARI_RELAYER_ADDRESS = "0x87E792E9064568361D88F8738221F8e659B0abB1";
+
+
+/*
+  ============================================================================
+  CHARGEMENT RUNTIME SERVEUR .ENV.LOCAL
+  ============================================================================
+  Contexte :
+  - En production Passenger/Plesk, le process Node peut ne pas recevoir les
+    variables serveur ajoutees dans .env.local apres le build.
+  - Cette route API reste strictement cote serveur.
+  - Les variables chargees ci-dessous ne sont jamais exposees au frontend.
+  - Le chargement est volontairement limite a une allowlist necessaire a cette
+    route pour eviter d'importer tout le fichier d'environnement.
+  ============================================================================
+*/
+
+const SERVER_RUNTIME_ENV_ALLOWED_KEYS = new Set([
+  "API_URL",
+  "NEXT_PUBLIC_API_URL",
+  "NEXT_PUBLIC_API_STABLECOIN_URL",
+  "NEXT_PUBLIC_BACKEND_API_URL",
+  "API_KEY_STABLECOIN",
+  "WTI_API_KEY",
+  "NEXT_PUBLIC_API_KEY_STABLECOIN",
+  "NEXT_PUBLIC_WTI_API_KEY",
+  "NEXT_PUBLIC_RPC_PROVIDER",
+  "NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI",
+  "EWARI_RELAYER_MODE",
+  "EWARI_RELAYER_ADDRESS",
+  "EWARI_RELAYER_PRIVATE_KEY",
+  "OPENZEPPELIN_RELAYER_URL",
+  "OPENZEPPELIN_RELAYER_API_BASE_URL",
+  "OPENZEPPELIN_RELAYER_API_KEY",
+  "OPENZEPPELIN_RELAYER_ID",
+  "OPENZEPPELIN_RELAYER_ADDRESS",
+  "OPENZEPPELIN_RELAYER_SPEED",
+  "OZ_RELAYER_URL",
+  "OZ_RELAYER_API_KEY",
+  "OZ_RELAYER_ID",
+  "OZ_RELAYER_ADDRESS",
+]);
+
+function cleanRuntimeEnvValue(rawValue) {
+  let value = String(rawValue ?? "").trim();
+
+  if (value.endsWith("\r")) {
+    value = value.slice(0, -1).trim();
+  }
+
+  if (
+    (value.startsWith('"') && value.endsWith('"')) ||
+    (value.startsWith("'") && value.endsWith("'"))
+  ) {
+    value = value.slice(1, -1);
+  }
+
+  return value.trim();
+}
+
+
+let serverRuntimeEnvLoaded = false;
+
+function stripRuntimeEnvQuotes(value) {
+  const trimmed = String(value || "").trim();
+
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    return trimmed.slice(1, -1);
+  }
+
+  return trimmed;
+}
+
+function loadServerRuntimeEnvFromLocalFile() {
+  if (serverRuntimeEnvLoaded) {
+    return;
+  }
+
+  serverRuntimeEnvLoaded = true;
+
+  const candidates = [
+      process.env.STABLECOIN_RUNTIME_ENV_FILE,
+      DEFAULT_STABLECOIN_RUNTIME_ENV_FILE,
+      path.join(process.cwd(), ".env.local"),
+      path.resolve(process.cwd(), ".env.local"),
+      path.resolve(__dirname, "../../../..", ".env.local"),
+      path.resolve(__dirname, "../../..", ".env.local"),
+    ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    try {
+      if (!candidate || !fs.existsSync(candidate)) {
+        continue;
+      }
+
+      const content = fs.readFileSync(candidate, "utf8");
+      const lines = content.split(/\r?\n/);
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+
+        if (!trimmed || trimmed.startsWith("#")) {
+          continue;
+        }
+
+        const match = trimmed.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/);
+
+        if (!match) {
+          continue;
+        }
+
+        const key = match[1];
+        const value = stripRuntimeEnvQuotes(match[2]);
+
+        if (!SERVER_RUNTIME_ENV_ALLOWED_KEYS.has(key)) {
+          continue;
+        }
+
+        if (!process.env[key]) {
+          process.env[key] = cleanRuntimeEnvValue(value);
+        }
+      }
+
+      return;
+    } catch (_) {
+      // Ne jamais bloquer l'API sur une erreur de lecture locale.
+      // Les validations existantes remonteront ensuite une erreur explicite
+      // si une variable obligatoire reste absente.
+    }
+  }
+}
+
 
 const DUMMY_PRIVATE_KEYS = new Set([
   "",
@@ -88,12 +226,22 @@ function normalizePrivateKey(raw) {
   return "";
 }
 
+
+
+function normalizeLoadedRuntimeEnvValues() {
+  for (const key of SERVER_RUNTIME_ENV_ALLOWED_KEYS) {
+    if (typeof process.env[key] === "string") {
+      process.env[key] = cleanRuntimeEnvValue(process.env[key]);
+    }
+  }
+}
+
 function getRelayerPrivateKey() {
   return normalizePrivateKey(process.env.EWARI_RELAYER_PRIVATE_KEY || "");
 }
 
 function getRelayerMode() {
-  return String(process.env.EWARI_RELAYER_MODE || "LOCAL_PRIVATE_KEY")
+  return String(process.env.EWARI_RELAYER_MODE || "OPENZEPPELIN_RELAYER")
     .trim()
     .toUpperCase();
 }
@@ -147,12 +295,12 @@ function getOpenZeppelinRelayerId() {
 }
 
 function getConfiguredRelayerAddress() {
-  return String(
+  return cleanRuntimeEnvValue(
     process.env.EWARI_RELAYER_ADDRESS ||
       process.env.OPENZEPPELIN_RELAYER_ADDRESS ||
       process.env.OZ_RELAYER_ADDRESS ||
-      ""
-  ).trim();
+      DEFAULT_EWARI_RELAYER_ADDRESS
+  );
 }
 
 function jsonError(res, status, code, message, extra = {}) {
@@ -762,6 +910,9 @@ async function executeMetaTransferWithLocalPrivateKey({
 }
 
 export default async function handler(req, res) {
+  loadServerRuntimeEnvFromLocalFile();
+  normalizeLoadedRuntimeEnvValues();
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return jsonError(
