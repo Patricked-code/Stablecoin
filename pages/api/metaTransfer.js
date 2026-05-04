@@ -7,17 +7,22 @@ import ABI_TOKEN_EWARI from "./../../components/Contrats/Abi/AbiStablecoin.json"
   ROUTE BACKEND SECURISEE - E-WARI metaTransfer
   ============================================================================
   Objectif :
-  - Ne plus exposer de clé privée côté frontend.
-  - Ne plus utiliser d'adresse de contrat hardcodée obsolète.
+  - Ne pas exposer de clé privée côté frontend.
+  - Ne pas utiliser d'adresse de contrat hardcodée obsolète.
   - Utiliser le nouveau proxy E-WARI défini par NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI.
   - Vérifier que l'utilisateur authentifié possède bien l'adresse `from`.
-  - Refuser toute transaction si la clé relayer serveur est absente.
-  - Refuser toute transaction si le relayer n'a pas RELAYER_ROLE on-chain.
+  - Vérifier le solde E-WARI de l'utilisateur avant émission.
+  - Vérifier que l'adresse relayer possède RELAYER_ROLE on-chain.
+  - Mode cible : OpenZeppelin Relayer local, appelé uniquement côté serveur.
+  - Fallback temporaire : mode local_private_key conservé pour rollback contrôlé.
   ============================================================================
 */
 
 const DEFAULT_RPC_URL = "https://rpc.testnet.moonbeam.network";
 const DEFAULT_BACKEND_API_URL = "https://api.stablecoin.chainsolutions.fr";
+const DEFAULT_OPENZEPPELIN_RELAYER_API_BASE_URL = "http://127.0.0.1:18080/api/v1";
+const DEFAULT_OPENZEPPELIN_RELAYER_ID = "ewari-moonbase-relayer";
+const DEFAULT_RELAYER_SPEED = "average";
 
 const DUMMY_PRIVATE_KEYS = new Set([
   "",
@@ -87,6 +92,69 @@ function getRelayerPrivateKey() {
   return normalizePrivateKey(process.env.EWARI_RELAYER_PRIVATE_KEY || "");
 }
 
+function getRelayerMode() {
+  return String(process.env.EWARI_RELAYER_MODE || "LOCAL_PRIVATE_KEY")
+    .trim()
+    .toUpperCase();
+}
+
+function isOpenZeppelinRelayerMode() {
+  const mode = getRelayerMode();
+  return (
+    mode === "OPENZEPPELIN_RELAYER" ||
+    mode === "OZ_RELAYER" ||
+    mode === "OPENZEPPELIN" ||
+    mode === "OZ"
+  );
+}
+
+function getOpenZeppelinRelayerApiBaseUrl() {
+  const explicit = String(process.env.OPENZEPPELIN_RELAYER_API_BASE_URL || "").trim();
+
+  if (explicit) {
+    return explicit.replace(/\/+$/, "");
+  }
+
+  const baseUrl = String(
+    process.env.OPENZEPPELIN_RELAYER_URL ||
+      process.env.OZ_RELAYER_URL ||
+      ""
+  )
+    .trim()
+    .replace(/\/+$/, "");
+
+  if (baseUrl) {
+    return `${baseUrl}/api/v1`;
+  }
+
+  return DEFAULT_OPENZEPPELIN_RELAYER_API_BASE_URL;
+}
+
+function getOpenZeppelinRelayerApiKey() {
+  return String(
+    process.env.OPENZEPPELIN_RELAYER_API_KEY ||
+      process.env.OZ_RELAYER_API_KEY ||
+      ""
+  ).trim();
+}
+
+function getOpenZeppelinRelayerId() {
+  return String(
+    process.env.OPENZEPPELIN_RELAYER_ID ||
+      process.env.OZ_RELAYER_ID ||
+      DEFAULT_OPENZEPPELIN_RELAYER_ID
+  ).trim();
+}
+
+function getConfiguredRelayerAddress() {
+  return String(
+    process.env.EWARI_RELAYER_ADDRESS ||
+      process.env.OPENZEPPELIN_RELAYER_ADDRESS ||
+      process.env.OZ_RELAYER_ADDRESS ||
+      ""
+  ).trim();
+}
+
 function jsonError(res, status, code, message, extra = {}) {
   return res.status(status).json({
     ok: false,
@@ -94,6 +162,14 @@ function jsonError(res, status, code, message, extra = {}) {
     message,
     ...extra,
   });
+}
+
+function makeHttpError(statusCode, code, message, extra = {}) {
+  const error = new Error(message);
+  error.statusCode = statusCode;
+  error.code = code;
+  Object.assign(error, extra);
+  return error;
 }
 
 function normalizeAddress(value, fieldName) {
@@ -285,12 +361,404 @@ async function assertRelayerHasRole(contract, relayerAddress) {
   const hasRole = await contract.hasRole(roleBytes, relayerAddress);
 
   if (!hasRole) {
-    const error = new Error("Le wallet relayer serveur n'a pas RELAYER_ROLE sur le nouveau contrat.");
+    const error = new Error("Le relayer serveur n'a pas RELAYER_ROLE sur le nouveau contrat.");
     error.statusCode = 500;
     error.code = "RELAYER_ROLE_MISSING";
     error.relayer = relayerAddress;
     throw error;
   }
+}
+
+async function readJsonResponse(response) {
+  const rawBody = await response.text();
+
+  let payload = null;
+  try {
+    payload = rawBody ? JSON.parse(rawBody) : null;
+  } catch (_) {
+    payload = { rawBody };
+  }
+
+  return {
+    rawBody,
+    payload,
+  };
+}
+
+async function callOpenZeppelinRelayerApi(path, options = {}) {
+  const apiBaseUrl = getOpenZeppelinRelayerApiBaseUrl();
+  const apiKey = getOpenZeppelinRelayerApiKey();
+
+  if (!apiKey) {
+    throw makeHttpError(
+      500,
+      "OPENZEPPELIN_RELAYER_API_KEY_MISSING",
+      "OpenZeppelin Relayer API key absente côté serveur."
+    );
+  }
+
+  const url = `${apiBaseUrl}${path}`;
+
+  const response = await fetch(url, {
+    method: options.method || "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+      ...(options.headers || {}),
+    },
+    body: options.body ? JSON.stringify(options.body) : undefined,
+  });
+
+  const { rawBody, payload } = await readJsonResponse(response);
+
+  if (!response.ok) {
+    throw makeHttpError(
+      502,
+      "OPENZEPPELIN_RELAYER_HTTP_ERROR",
+      "OpenZeppelin Relayer a retourne une erreur HTTP.",
+      {
+        relayerHttpStatus: response.status,
+        relayerPayload: sanitizeRelayerPayload(payload),
+        relayerRawBody: typeof rawBody === "string" ? rawBody.slice(0, 1000) : "",
+      }
+    );
+  }
+
+  if (payload && payload.success === false) {
+    throw makeHttpError(
+      502,
+      "OPENZEPPELIN_RELAYER_API_ERROR",
+      "OpenZeppelin Relayer a refuse la requete.",
+      {
+        relayerPayload: sanitizeRelayerPayload(payload),
+      }
+    );
+  }
+
+  return payload;
+}
+
+function sanitizeRelayerPayload(payload) {
+  if (!payload || typeof payload !== "object") return payload;
+
+  try {
+    return JSON.parse(
+      JSON.stringify(payload, (key, value) => {
+        if (/key|secret|password|token|authorization/i.test(key)) {
+          return "[MASKED]";
+        }
+        return value;
+      })
+    );
+  } catch (_) {
+    return { sanitized: true };
+  }
+}
+
+function extractRelayerData(payload) {
+  if (!payload || typeof payload !== "object") return {};
+  if (payload.data && typeof payload.data === "object") return payload.data;
+  return payload;
+}
+
+function extractTransactionId(payload) {
+  const data = extractRelayerData(payload);
+
+  return (
+    data.id ||
+    data.transaction_id ||
+    data.transactionId ||
+    data.uuid ||
+    data.request_id ||
+    data.requestId ||
+    payload?.id ||
+    payload?.transaction_id ||
+    payload?.transactionId ||
+    ""
+  );
+}
+
+function extractTransactionHash(payload) {
+  const data = extractRelayerData(payload);
+
+  const direct =
+    data.hash ||
+    data.tx_hash ||
+    data.transaction_hash ||
+    data.transactionHash ||
+    data.txHash ||
+    data.network_hash ||
+    payload?.hash ||
+    payload?.tx_hash ||
+    payload?.transaction_hash ||
+    payload?.transactionHash ||
+    payload?.txHash ||
+    "";
+
+  if (direct) return direct;
+
+  if (Array.isArray(data.hashes) && data.hashes.length > 0) {
+    return data.hashes[0];
+  }
+
+  if (Array.isArray(payload?.hashes) && payload.hashes.length > 0) {
+    return payload.hashes[0];
+  }
+
+  return "";
+}
+
+function extractTransactionStatus(payload) {
+  const data = extractRelayerData(payload);
+  return data.status || payload?.status || "";
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function pollOpenZeppelinTransactionIfPossible(transactionId) {
+  if (!transactionId) return null;
+
+  const relayerId = getOpenZeppelinRelayerId();
+
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    await sleep(1000);
+
+    try {
+      const payload = await callOpenZeppelinRelayerApi(
+        `/relayers/${encodeURIComponent(relayerId)}/transactions/${encodeURIComponent(transactionId)}`
+      );
+
+      const txHash = extractTransactionHash(payload);
+      const status = extractTransactionStatus(payload);
+
+      if (txHash || status) {
+        return {
+          payload,
+          txHash,
+          status,
+        };
+      }
+    } catch (_) {
+      return null;
+    }
+  }
+
+  return null;
+}
+
+function buildOpenZeppelinTransactionBody({ contractAddress, data, gasLimit }) {
+  const body = {
+    to: contractAddress,
+    value: "0",
+    data,
+    speed: process.env.OPENZEPPELIN_RELAYER_SPEED || DEFAULT_RELAYER_SPEED,
+  };
+
+  if (gasLimit) {
+    const gasLimitString = ethers.BigNumber.from(gasLimit).toString();
+    const gasLimitNumber = Number(gasLimitString);
+
+    if (Number.isSafeInteger(gasLimitNumber) && gasLimitNumber > 0) {
+      body.gas_limit = gasLimitNumber;
+    }
+  }
+
+  return body;
+}
+
+async function sendViaOpenZeppelinRelayer({ contractAddress, data, gasLimit }) {
+  const relayerId = getOpenZeppelinRelayerId();
+
+  if (!relayerId) {
+    throw makeHttpError(
+      500,
+      "OPENZEPPELIN_RELAYER_ID_MISSING",
+      "Identifiant OpenZeppelin Relayer absent côté serveur."
+    );
+  }
+
+  const body = buildOpenZeppelinTransactionBody({
+    contractAddress,
+    data,
+    gasLimit,
+  });
+
+  const submitPayload = await callOpenZeppelinRelayerApi(
+    `/relayers/${encodeURIComponent(relayerId)}/transactions`,
+    {
+      method: "POST",
+      body,
+    }
+  );
+
+  const transactionId = extractTransactionId(submitPayload);
+  let txHash = extractTransactionHash(submitPayload);
+  let transactionStatus = extractTransactionStatus(submitPayload);
+  let detailPayload = null;
+
+  if (transactionId && !txHash) {
+    const detail = await pollOpenZeppelinTransactionIfPossible(transactionId);
+
+    if (detail) {
+      detailPayload = detail.payload;
+      txHash = detail.txHash || txHash;
+      transactionStatus = detail.status || transactionStatus;
+    }
+  }
+
+  return {
+    submitPayload,
+    detailPayload,
+    transactionId,
+    txHash,
+    transactionStatus,
+  };
+}
+
+async function executeMetaTransferWithOpenZeppelinRelayer({
+  provider,
+  contractAddress,
+  fromAddress,
+  toAddress,
+  amount,
+}) {
+  const configuredRelayerAddress = normalizeAddress(
+    getConfiguredRelayerAddress(),
+    "EWARI_RELAYER_ADDRESS"
+  );
+
+  const contract = new ethers.Contract(
+    contractAddress,
+    getStablecoinAbi(),
+    provider
+  );
+
+  await assertRelayerHasRole(contract, configuredRelayerAddress);
+
+  const balance = await contract.balanceOf(fromAddress);
+
+  if (balance.lt(amount)) {
+    throw makeHttpError(
+      400,
+      "INSUFFICIENT_BALANCE",
+      "Solde E-WARI insuffisant pour exécuter ce transfert.",
+      {
+        balanceRaw: balance.toString(),
+        requestedRaw: amount.toString(),
+      }
+    );
+  }
+
+  const gasEstimate = await contract.estimateGas.metaTransfer(
+    fromAddress,
+    toAddress,
+    amount,
+    {
+      from: configuredRelayerAddress,
+    }
+  );
+
+  const gasLimit = gasEstimate.mul(120).div(100);
+
+  const data = contract.interface.encodeFunctionData("metaTransfer", [
+    fromAddress,
+    toAddress,
+    amount,
+  ]);
+
+  const relayerResult = await sendViaOpenZeppelinRelayer({
+    contractAddress,
+    data,
+    gasLimit,
+  });
+
+  return {
+    ok: true,
+    mode: "OPENZEPPELIN_RELAYER",
+    txHash: relayerResult.txHash || null,
+    relayerTransactionId: relayerResult.transactionId || null,
+    relayerTransactionStatus: relayerResult.transactionStatus || null,
+    contractAddress,
+    relayerAddress: configuredRelayerAddress,
+    from: fromAddress,
+    to: toAddress,
+    value: amount.toString(),
+    gasLimit: gasLimit.toString(),
+    blockNumber: null,
+    relayerAccepted: true,
+  };
+}
+
+async function executeMetaTransferWithLocalPrivateKey({
+  provider,
+  contractAddress,
+  fromAddress,
+  toAddress,
+  amount,
+}) {
+  const relayerPrivateKey = getRelayerPrivateKey();
+
+  if (!relayerPrivateKey) {
+    throw makeHttpError(
+      500,
+      "RELAYER_PRIVATE_KEY_MISSING",
+      "Relayer serveur non configuré. Définissez EWARI_RELAYER_PRIVATE_KEY côté serveur, sans NEXT_PUBLIC."
+    );
+  }
+
+  const wallet = new ethers.Wallet(relayerPrivateKey, provider);
+  const contract = new ethers.Contract(contractAddress, getStablecoinAbi(), wallet);
+
+  await assertRelayerHasRole(contract, wallet.address);
+
+  const balance = await contract.balanceOf(fromAddress);
+
+  if (balance.lt(amount)) {
+    throw makeHttpError(
+      400,
+      "INSUFFICIENT_BALANCE",
+      "Solde E-WARI insuffisant pour exécuter ce transfert.",
+      {
+        balanceRaw: balance.toString(),
+        requestedRaw: amount.toString(),
+      }
+    );
+  }
+
+  const gasEstimate = await contract.estimateGas.metaTransfer(
+    fromAddress,
+    toAddress,
+    amount
+  );
+
+  const gasLimit = gasEstimate.mul(120).div(100);
+
+  const tx = await contract.metaTransfer(
+    fromAddress,
+    toAddress,
+    amount,
+    {
+      gasLimit,
+    }
+  );
+
+  const receipt = await tx.wait();
+
+  return {
+    ok: true,
+    mode: "LOCAL_PRIVATE_KEY",
+    txHash: receipt.transactionHash,
+    contractAddress,
+    relayerAddress: wallet.address,
+    from: fromAddress,
+    to: toAddress,
+    value: amount.toString(),
+    gasLimit: gasLimit.toString(),
+    blockNumber: receipt.blockNumber,
+  };
 }
 
 export default async function handler(req, res) {
@@ -325,17 +793,6 @@ export default async function handler(req, res) {
       "NEXT_PUBLIC_ADDRESS_CONTRAT_EWARI"
     );
 
-    const relayerPrivateKey = getRelayerPrivateKey();
-
-    if (!relayerPrivateKey) {
-      return jsonError(
-        res,
-        500,
-        "RELAYER_PRIVATE_KEY_MISSING",
-        "Relayer serveur non configuré. Définissez EWARI_RELAYER_PRIVATE_KEY côté serveur, sans NEXT_PUBLIC."
-      );
-    }
-
     const { userAddress } = await callBackendCurrentUser(req);
 
     if (userAddress.toLowerCase() !== fromAddress.toLowerCase()) {
@@ -351,55 +808,24 @@ export default async function handler(req, res) {
     }
 
     const provider = new ethers.providers.JsonRpcProvider(getRpcUrl());
-    const wallet = new ethers.Wallet(relayerPrivateKey, provider);
-    const contract = new ethers.Contract(contractAddress, getStablecoinAbi(), wallet);
 
-    await assertRelayerHasRole(contract, wallet.address);
+    const result = isOpenZeppelinRelayerMode()
+      ? await executeMetaTransferWithOpenZeppelinRelayer({
+          provider,
+          contractAddress,
+          fromAddress,
+          toAddress,
+          amount,
+        })
+      : await executeMetaTransferWithLocalPrivateKey({
+          provider,
+          contractAddress,
+          fromAddress,
+          toAddress,
+          amount,
+        });
 
-    const balance = await contract.balanceOf(fromAddress);
-
-    if (balance.lt(amount)) {
-      return jsonError(
-        res,
-        400,
-        "INSUFFICIENT_BALANCE",
-        "Solde E-WARI insuffisant pour exécuter ce transfert.",
-        {
-          balanceRaw: balance.toString(),
-          requestedRaw: amount.toString(),
-        }
-      );
-    }
-
-    const gasEstimate = await contract.estimateGas.metaTransfer(
-      fromAddress,
-      toAddress,
-      amount
-    );
-
-    const gasLimit = gasEstimate.mul(120).div(100);
-
-    const tx = await contract.metaTransfer(
-      fromAddress,
-      toAddress,
-      amount,
-      {
-        gasLimit,
-      }
-    );
-
-    const receipt = await tx.wait();
-
-    return res.status(200).json({
-      ok: true,
-      txHash: receipt.transactionHash,
-      contractAddress,
-      relayerAddress: wallet.address,
-      from: fromAddress,
-      to: toAddress,
-      value: amount.toString(),
-      blockNumber: receipt.blockNumber,
-    });
+    return res.status(200).json(result);
   } catch (error) {
     const status = error?.statusCode || 500;
 
@@ -407,13 +833,29 @@ export default async function handler(req, res) {
       code: error?.code || "UNKNOWN_ERROR",
       message: error?.message || "Erreur inconnue",
       status,
+      mode: getRelayerMode(),
+      relayerHttpStatus: error?.relayerHttpStatus,
     });
 
     return jsonError(
       res,
       status,
       error?.code || "META_TRANSFER_FAILED",
-      error?.message || "Erreur lors de la transaction metaTransfer."
+      error?.message || "Erreur lors de la transaction metaTransfer.",
+      {
+        ...(error?.relayerHttpStatus
+          ? { relayerHttpStatus: error.relayerHttpStatus }
+          : {}),
+        ...(error?.relayerPayload
+          ? { relayerPayload: error.relayerPayload }
+          : {}),
+        ...(error?.balanceRaw
+          ? { balanceRaw: error.balanceRaw }
+          : {}),
+        ...(error?.requestedRaw
+          ? { requestedRaw: error.requestedRaw }
+          : {}),
+      }
     );
   }
 }
