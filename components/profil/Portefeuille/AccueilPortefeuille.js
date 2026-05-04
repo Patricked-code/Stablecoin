@@ -241,6 +241,155 @@ const CAccueilPortefeuille = () => {
     }
     // FIN
 
+
+    // ****************************************************************************
+    // META TRANSFER SECURISE VIA BACKEND OPENZEPPELIN RELAYER - 6AR
+    // ****************************************************************************
+    /*
+      Objectif :
+      - Ne plus envoyer metaTransfer directement depuis le navigateur.
+      - Ne plus faire porter au frontend la logique de relayer pour metaTransfer.
+      - Passer par la route serveur /api/metaTransfer.
+      - Conserver le token Bearer utilisateur afin que le backend vérifie que
+        l'adresse `from` correspond bien à l'utilisateur authentifié.
+      - Laisser le backend vérifier :
+        * l'adresse from ;
+        * le solde E-WARI ;
+        * le rôle RELAYER_ROLE ;
+        * l'appel OpenZeppelin Relayer local.
+    */
+
+    const getMetaTransferAuthToken = () => {
+        if (typeof window === "undefined") {
+            return "";
+        }
+
+        return localStorage.getItem("tokenEnCours") || "";
+    };
+
+    const extractMetaTransferReference = (result) => {
+        return (
+            result?.txHash ||
+            result?.transactionHash ||
+            result?.hash ||
+            result?.relayerTransactionId ||
+            result?.relayerTransactionStatus ||
+            "OPENZEPPELIN_RELAYER_ACCEPTED"
+        );
+    };
+
+    const getMetaTransferUserMessage = (data) => {
+        const code = data?.code || "";
+
+        if (code === "INSUFFICIENT_BALANCE") {
+            return "Votre solde E-WARI est insuffisant pour exécuter ce transfert.";
+        }
+
+        if (code === "FROM_ADDRESS_NOT_AUTHENTICATED_USER") {
+            return "L'adresse source ne correspond pas à l'adresse blockchain de votre session.";
+        }
+
+        if (code === "AUTH_TOKEN_MISSING") {
+            return "Votre session est expirée ou invalide. Veuillez vous reconnecter.";
+        }
+
+        if (code === "AUTH_USER_BLOCKCHAIN_ADDRESS_MISSING") {
+            return "Votre compte ne contient pas encore d'adresse blockchain valide.";
+        }
+
+        if (code === "OPENZEPPELIN_RELAYER_API_KEY_MISSING") {
+            return "Le service de relayer sécurisé n'est pas correctement configuré côté serveur.";
+        }
+
+        if (code === "OPENZEPPELIN_RELAYER_HTTP_ERROR" || code === "OPENZEPPELIN_RELAYER_API_ERROR") {
+            return "Le service de relayer sécurisé n'a pas accepté la transaction. Veuillez réessayer.";
+        }
+
+        if (code === "RELAYER_ROLE_MISSING") {
+            return "Le relayer serveur n'a pas le rôle nécessaire pour exécuter cette transaction.";
+        }
+
+        return data?.message || "Une erreur s'est produite lors de la transaction sécurisée.";
+    };
+
+    const callBackendMetaTransfer = async ({ from, to, value }) => {
+        const token = getMetaTransferAuthToken();
+
+        if (!token) {
+            const error = new Error("Token d'authentification manquant.");
+            error.code = "AUTH_TOKEN_MISSING";
+            throw error;
+        }
+
+        const response = await fetch("/api/metaTransfer/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                from,
+                to,
+                value: ethers.BigNumber.from(value).toString(),
+            }),
+        });
+
+        let data = null;
+
+        try {
+            data = await response.json();
+        } catch (_) {
+            data = {
+                ok: false,
+                code: "META_TRANSFER_RESPONSE_INVALID",
+                message: "Réponse serveur metaTransfer non reconnue.",
+            };
+        }
+
+        if (!response.ok || data?.ok === false) {
+            const error = new Error(getMetaTransferUserMessage(data));
+            error.code = data?.code || "META_TRANSFER_BACKEND_FAILED";
+            error.status = response.status;
+            error.payload = data;
+            throw error;
+        }
+
+        return data;
+    };
+
+    const executeMetaTransferViaBackend = async (amountWei) => {
+        const convertAmount = parseFloat(montantEnvoyer);
+
+        if (balanceStablecoinNoFormat <= convertAmount) {
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Erreur',
+                html: "Vous n'avez pas suffisamment de fonds pour effectuer cette transaction.",
+                showConfirmButton: false,
+                timer: 5000
+            });
+
+            setIsLoggingIn(false);
+            return null;
+        }
+
+        const result = await callBackendMetaTransfer({
+            from: magicCurrentAddress,
+            to: addressTo,
+            value: amountWei,
+        });
+
+        const txReference = extractMetaTransferReference(result);
+
+        await addHistorical(txReference);
+
+        return result;
+    };
+
+    // FIN META TRANSFER SECURISE VIA BACKEND OPENZEPPELIN RELAYER - 6AR
+
+
     // *******************************************************************
     // LES FONCTIONS DE RECHERCHE DE L'UTILISATEUR
     // **********************************************************************
@@ -515,7 +664,7 @@ const CAccueilPortefeuille = () => {
             position: 'center',
             icon: 'error',
             title: 'Erreur',
-            html: 'Vous n\'avez pas suffisamment de fonds pour effectuer cette transaction.',
+            html: "Vous n'avez pas suffisamment de fonds pour effectuer cette transaction.",
             showConfirmButton: false,
             timer: 5000
           });
@@ -523,36 +672,10 @@ const CAccueilPortefeuille = () => {
           return;
         }
     
-        // Vérifier si l'exécuteur a suffisamment de frais de gas
-        const gasEstimate = await contractStablecoin.estimateGas.metaTransfer(magicCurrentAddress, addressTo, amountWei);
-        const gasPrice = await provider.getGasPrice();
-        const gasCost = gasEstimate.mul(gasPrice);
-        const senderBalance = await walletRelayer.getBalance();
-    
-        console.log("Gas Estimate:", gasEstimate.toString());
-        console.log("Gas Price:", gasPrice.toString());
-        console.log("Gas Cost:", gasCost.toString());
-        console.log("Sender Balance:", senderBalance.toString());
-    
-        if (gasCost.gt(senderBalance)) {
-          setIsLoggingIn(false);
-          Swal.fire({
-            position: 'center',
-            icon: 'error',
-            html: `<p> L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.</p>`,
-            showConfirmButton: false,
-            timer: 5000
-          });
-          throw new Error("L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.");
-        }
-    
-        // Effectuer la transaction
-        const transferResult = await contractStablecoin.metaTransfer(magicCurrentAddress, addressTo, amountWei);
-        console.log("Transfer Result:", transferResult);
-        await transferResult.wait(1);
-    
-        // Appel de la fonction d'ajout des données du transfert dans l'historique 
-        addHistorical(transferResult.hash);
+        // Transmission securisee cote serveur via OpenZeppelin Relayer.
+        // Le frontend n'envoie plus directement metaTransfer sur la blockchain.
+        const relayerResult = await executeMetaTransferViaBackend(amountWei);
+        console.log("MetaTransfer OpenZeppelin Relayer:", relayerResult);
     
       } catch (error) {
         setIsLoggingIn(false);
@@ -560,7 +683,7 @@ const CAccueilPortefeuille = () => {
         Swal.fire({
           position: 'center',
           icon: 'error',
-          html: 'Une erreur s\'est produite lors de la transaction.',
+          html: "Une erreur s'est produite lors de la transaction.",
           showConfirmButton: false,
           timer: 5000
         });
@@ -590,7 +713,7 @@ const CAccueilPortefeuille = () => {
             position: 'center',
             icon: 'error',
             title: 'Erreur',
-            html: 'Vous n\'avez pas suffisamment de fonds pour effectuer cette transaction.',
+            html: "Vous n'avez pas suffisamment de fonds pour effectuer cette transaction.",
             showConfirmButton: false,
             timer: 5000
           });
@@ -599,36 +722,10 @@ const CAccueilPortefeuille = () => {
         }
 
         
-        // Vérifier si l'exécuteur a suffisamment de frais de gas
-        const gasEstimate = await contractStablecoin.estimateGas.metaTransfer(magicCurrentAddress, addressTo, amountWei);
-        const gasPrice = await provider.getGasPrice();
-        const gasCost = gasEstimate.mul(gasPrice);
-        const senderBalance = await walletRelayer.getBalance();
-    
-        console.log("Gas Estimate:", gasEstimate.toString());
-        console.log("Gas Price:", gasPrice.toString());
-        console.log("Gas Cost:", gasCost.toString());
-        console.log("Sender Balance:", senderBalance.toString());
-    
-        if (gasCost.gt(senderBalance)) {
-          setIsLoggingIn(false);
-          Swal.fire({
-            position: 'center',
-            icon: 'error',
-            html: `<p> L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.</p>`,
-            showConfirmButton: false,
-            timer: 5000
-          });
-          throw new Error("L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.");
-        }
-    
-        // Effectuer la transaction
-        const transferResult = await contractStablecoin.metaTransfer(magicCurrentAddress, addressTo, amountWei);
-        console.log("transferResult=>",transferResult)
-        await transferResult.wait(1);
-    
-        // Appel de la fonction d'ajout des données du transfert dans l'historique 
-        addHistorical(transferResult.hash);
+        // Transmission securisee cote serveur via OpenZeppelin Relayer.
+        // Le frontend n'envoie plus directement metaTransfer sur la blockchain.
+        const relayerResult = await executeMetaTransferViaBackend(amountWei);
+        console.log("MetaTransfer OpenZeppelin Relayer:", relayerResult);
     
       } catch (error) {
         setIsLoggingIn(false);
@@ -636,7 +733,7 @@ const CAccueilPortefeuille = () => {
         Swal.fire({
           position: 'center',
           icon: 'error',
-          html: 'Une erreur s\'est produite lors de la transaction.',
+          html: "Une erreur s'est produite lors de la transaction.",
           showConfirmButton: false,
           timer: 5000
         });
@@ -666,7 +763,7 @@ const CAccueilPortefeuille = () => {
                   position: 'center',
                   icon: 'error',
                   title: 'Erreur',
-                  html: 'Vous n\'avez pas suffisamment de fonds pour effectuer cette transaction.',
+                  html: "Vous n'avez pas suffisamment de fonds pour effectuer cette transaction.",
                   showConfirmButton: false,
                   timer: 5000
               });
@@ -674,35 +771,10 @@ const CAccueilPortefeuille = () => {
               return;
           }
           
-          // Vérifier si l'exécuteur a suffisamment de frais de gas
-          const gasEstimate = await contractStablecoin.estimateGas.metaTransfer(magicCurrentAddress, addressTo, amountWei);
-          const gasPrice = await provider.getGasPrice();
-          const gasCost = gasEstimate.mul(gasPrice);
-          const senderBalance = await walletRelayer.getBalance();
-  
-          console.log("Gas Estimate:", gasEstimate.toString());
-          console.log("Gas Price:", gasPrice.toString());
-          console.log("Gas Cost:", gasCost.toString());
-          console.log("Sender Balance:", senderBalance.toString());
-  
-          if (gasCost.gt(senderBalance)) {
-              setIsLoggingIn(false);
-              Swal.fire({
-                  position: 'center',
-                  icon: 'error',
-                  html: `<p> L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.</p>`,
-                  showConfirmButton: false,
-                  timer: 5000
-              });
-              throw new Error("L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.");
-          }
-  
-          // Effectuer la transaction
-          const transferResult = await contractStablecoin.metaTransfer(magicCurrentAddress, addressTo, amountWei);
-          await transferResult.wait();
-          
-          // Appel de la fonction d'ajout des données du transfert dans l'historique 
-          addHistorical(transferResult.hash);
+          // Transmission securisee cote serveur via OpenZeppelin Relayer.
+          // Le frontend n'envoie plus directement metaTransfer sur la blockchain.
+          const relayerResult = await executeMetaTransferViaBackend(amountWei);
+          console.log("MetaTransfer OpenZeppelin Relayer:", relayerResult);
   
       } catch (error) {
           setIsLoggingIn(false);
@@ -710,7 +782,7 @@ const CAccueilPortefeuille = () => {
           Swal.fire({
               position: 'center',
               icon: 'error',
-              html: 'Une erreur s\'est produite lors de la transaction.',
+              html: "Une erreur s'est produite lors de la transaction.",
               showConfirmButton: false,
               timer: 5000
           });
@@ -733,7 +805,7 @@ const CAccueilPortefeuille = () => {
                     position: 'center',
                     icon: 'error',
                     title: 'Erreur',
-                    html: 'Vous n\'avez pas suffisamment de fonds pour effectuer cette transaction.',
+                    html: "Vous n'avez pas suffisamment de fonds pour effectuer cette transaction.",
                     showConfirmButton: false,
                     timer: 5000
                 });
@@ -741,31 +813,10 @@ const CAccueilPortefeuille = () => {
                 return;
             }
             
-            // Vérifier si l'exécuteur a suffisamment de frais de gas
-            const gasEstimate = await contractStablecoin.estimateGas.metaTransfer(magicCurrentAddress, addressTo, amountWei);
-            const gasCost = gasEstimate.mul(await provider.getGasPrice());
-            const senderBalance = await walletRelayer.getBalance();
-
-            if (gasCost.gt(senderBalance)) {
-                setIsLoggingIn(false)
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    html: `<p> L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.</p>`,
-                    showConfirmButton: false,
-                    timer: 5000
-                });
-                throw new Error("L'exécuteur n'a pas suffisamment de frais de gas pour exécuter cette transaction.");
-
-            }
-    
-
-    
-            // Effectuer la transaction
-            const transferResult = await contractStablecoin.metaTransfer(magicCurrentAddress, addressTo, amountWei);
-            await transferResult.wait();
-            // Appel de la fonction d'ajout des données du transfert dans l'historique 
-            addHistorical(transferResult.hash)
+            // Transmission securisee cote serveur via OpenZeppelin Relayer.
+            // Le frontend n'envoie plus directement metaTransfer sur la blockchain.
+            const relayerResult = await executeMetaTransferViaBackend(amountWei);
+            console.log("MetaTransfer OpenZeppelin Relayer:", relayerResult);
     
         } catch (error) {
             setIsLoggingIn(false);

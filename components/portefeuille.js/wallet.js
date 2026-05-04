@@ -318,7 +318,90 @@ const [codeOtherUser, setCodeOtherUser] = useState();
   // FIN
 
 
-    // ***************************************************************************************
+  
+  // ****************************************************************************
+  // META TRANSFER SECURISE VIA BACKEND OPENZEPPELIN RELAYER - 6AU
+  // ****************************************************************************
+  /*
+    Objectif :
+    - Ne plus laisser la page /profil/wallet embarquer d'anciens essais frontend
+      de metaTransfer, Defender Relayer, signature locale ou private key.
+    - Conserver la page et son affichage existant.
+    - Pour tout metaTransfer futur, utiliser uniquement la route serveur :
+      /api/metaTransfer/
+    - Le backend verifie l'utilisateur, l'adresse from, le solde, le role relayer
+      et transmet au OpenZeppelin Relayer local.
+  */
+
+  const getMetaTransferAuthToken = () => {
+    if (typeof window === "undefined") {
+      return "";
+    }
+
+    return localStorage.getItem("tokenEnCours") || "";
+  };
+
+  const callBackendMetaTransfer = async ({ from, to, value }) => {
+    const token = getMetaTransferAuthToken();
+
+    if (!token) {
+      const error = new Error("Token d'authentification manquant.");
+      error.code = "AUTH_TOKEN_MISSING";
+      throw error;
+    }
+
+    const response = await fetch("/api/metaTransfer/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        from,
+        to,
+        value: ethers.BigNumber.from(value).toString(),
+      }),
+    });
+
+    let data = null;
+
+    try {
+      data = await response.json();
+    } catch (_) {
+      data = {
+        ok: false,
+        code: "META_TRANSFER_RESPONSE_INVALID",
+        message: "Réponse serveur metaTransfer non reconnue.",
+      };
+    }
+
+    if (!response.ok || data?.ok === false) {
+      const error = new Error(data?.message || "Erreur lors du metaTransfer sécurisé.");
+      error.code = data?.code || "META_TRANSFER_BACKEND_FAILED";
+      error.status = response.status;
+      error.payload = data;
+      throw error;
+    }
+
+    return data;
+  };
+
+  const showLegacyMetaTransferDisabled = async () => {
+    Swal.fire({
+      position: "center",
+      icon: "info",
+      title: "Transfert sécurisé",
+      html: "Cette ancienne action frontend a été désactivée. Les metaTransfer passent désormais par le backend sécurisé OpenZeppelin Relayer.",
+      showConfirmButton: false,
+      timer: 6000,
+    });
+    return null;
+  };
+
+  // FIN META TRANSFER SECURISE VIA BACKEND OPENZEPPELIN RELAYER - 6AU
+
+
+  // ***************************************************************************************
     // IMPLEMENTATIONS DES FONCTIONS DU SMART CONTRAT DU TOKEN DE STABLECOIN
   // ***************************************************************************************
   
@@ -716,7 +799,7 @@ const NETWORK = 'moonbase';
 const RELAY_ID = "8279505a-ebf4-4265-93e9-c0c47f5c2db0";
 const DEFENDER_API_KEY = "";
 // const TOKEN_ADDRESS = process.env.TOKEN_ADDRESS;
-const PRIVATE_KEY = "0x0000000000000000000000000000000000000000000000000000000000000001";
+const PRIVATE_KEY = ""; // Neutralise 6AU : aucune private key frontend.
 const DESTINATION_ADDRESS = '0x496Dd9744c3a1B0Ec4C2998656BEA67DbCec888B'; // Adresse de destination pour le transfert de jeton
 const AMOUNT = 5; // Montant de jeton à transférer
 
@@ -971,7 +1054,9 @@ async function sendMetaTransactionNo() {
   const value = ethers.utils.parseUnits("10", decimalStablecoin);
   
 
-  const txData = contractStablecoin.methods.metaTransfer(from, to, value).encodeABI();
+  const backendMetaTransferResult = await callBackendMetaTransfer({ from, to, value });
+  console.log("backendMetaTransferResult=>", backendMetaTransferResult);
+  return backendMetaTransferResult;
   const tx = {
       to: ADDRESS_CONTRAT_EWARI,
       data: txData,
@@ -992,7 +1077,9 @@ async function sendMetaTransactionNON() {
   const recipientC = "0x2eb9B095202f515388973c78d8308C478f8AA6C2 ";
   const value = ethers.utils.parseUnits("10", decimalStablecoin);
 // Construire les données de la transaction
-const txData = contractStablecoin.interface.encodeFunctionData("metaTransfer", [from, to, value]);
+const backendMetaTransferResult = await callBackendMetaTransfer({ from, to, value });
+  console.log("backendMetaTransferResult=>", backendMetaTransferResult);
+  return backendMetaTransferResult;
 
 // Créer l'objet de transaction
 const tx = {
@@ -1032,7 +1119,9 @@ console.log("OK=>1")
   const contractStablecoin = new ethers.Contract(ADDRESS_CONTRAT_EWARI, ABI_TOKEN_EWARI.abi, connectedWallet);
 
   // Construire les données de la transaction
-  const txData = contractStablecoin.interface.encodeFunctionData("metaTransfer", [from, to, value]);
+  const backendMetaTransferResult = await callBackendMetaTransfer({ from, to, value });
+  console.log("backendMetaTransferResult=>", backendMetaTransferResult);
+  return backendMetaTransferResult;
   console.log("OK=>2",txData)
 
   // Créer l'objet de transaction
@@ -1081,7 +1170,9 @@ const sendMetaTransactionB = async () => {
   const contractStablecoin = new ethers.Contract(ADDRESS_CONTRAT_EWARI, ABI_TOKEN_EWARI.abi, wallet); // Remplacez ABI_DU_CONTRAT par l'ABI de votre contrat stablecoin
 
   // Construire les données de la transaction
-  const txData = contractStablecoin.interface.encodeFunctionData("metaTransfer", [from, to, value]);
+  const backendMetaTransferResult = await callBackendMetaTransfer({ from, to, value });
+  console.log("backendMetaTransferResult=>", backendMetaTransferResult);
+  return backendMetaTransferResult;
 
   // Créer l'objet de transaction
   const tx = {
@@ -1135,7 +1226,7 @@ const sendMetaTransactionC = async () => {
     }
     console.log("response=>",formData)
 
-    const result = await fetch(`/api/metaTransfer`, {
+    const result = await fetch(`/api/metaTransfer/`, {
       method:"POST",
       body: JSON.stringify(formData),
       headers: {
@@ -1170,8 +1261,8 @@ const value = ethers.utils.parseUnits("10", decimalStablecoin);
   const contract = new ethers.Contract(contractAddress, ABI_TOKEN_EWARI.abi, wallet);
     console.log("contract111=>",contract)
   try {
-    const tx = await contract.metaTransfer(from, to, value);
-    const receipt = await tx.wait();
+    const tx = await callBackendMetaTransfer({ from, to, value });
+    const receipt = tx?.wait ? await tx.wait() : tx;
     console.log("receipt=>",receipt)
   } catch (error) {
     console.error(error);
