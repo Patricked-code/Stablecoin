@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "repository": "Patricked-code/Stablecoin",
+  "project": "Stablecoin",
+  "role": "application_repository",
+  "defaultBranch": "main",
+  "governance": {
+    "persistentMemory": true,
+    "zeroRegression": true,
+    "loopEngineering": true,
+    "sourceOfTruth": "SOURCE_OF_TRUTH.md"
+  },
+  "requiredFiles": [
+    "GOVERNANCE.md",
+    "SOURCE_OF_TRUTH.md",
+    "AGENTS.md",
+    "SUIVI.md",
+    "TODO.md",
+    "DECISIONS.md",
+    "ARCHITECTURE.md",
+    "LOOP_ENGINEERING.md",
+    "docs/STABLECOIN_PLESK_DEPLOYMENT_RUNBOOK.md"
+  ],
+  "memoryRoles": {
+    "governance": "GOVERNANCE.md",
+    "sourceOfTruth": "SOURCE_OF_TRUTH.md",
+    "agentRules": "AGENTS.md",
+    "currentStateAndHistory": "SUIVI.md",
+    "backlog": "TODO.md",
+    "decisions": "DECISIONS.md",
+    "architecture": "ARCHITECTURE.md",
+    "loopEngineering": "LOOP_ENGINEERING.md",
+    "deploymentRunbook": "docs/STABLECOIN_PLESK_DEPLOYMENT_RUNBOOK.md"
+  },
+  "historicalEvidence": {
+    "branch": "codex/wealthtech-mcp-conversation-memory",
+    "classification": "HISTORICAL_EVIDENCE_NOT_CURRENT_AUTHORITY"
+  },
+  "runtime": {
+    "documented": true,
+    "managed": true,
+    "verificationStatus": "DOCUMENTED_UNVERIFIED",
+    "requiresFreshVerificationBeforeMutation": true
+  },
+  "mcpIntegration": {
+    "mode": "repository_adapter",
+    "coreModificationRequired": false,
+    "registrationStatus": "NOT_ATTESTED_BY_LIVE_MCP_IN_THIS_CHANGE"
+  }
+}
