@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "writePolicy": {
+    "canonicalBranch": "main",
+    "directMainPush": true,
+    "branchCreation": "OWNER_EXPLICIT_ONLY",
+    "branchSwitch": "OWNER_EXPLICIT_ONLY",
+    "pullRequestRequired": false,
+    "forcePush": false,
+    "historyRewrite": false,
+    "secretReadingForbidden": true,
+    "runtimeMutationRequiresFreshVerification": true,
+    "destructiveRuntimeActionRequiresHumanApproval": true
+  },
+  "forbiddenPaths": [
+    ".env",
+    ".env.*",
+    "secrets/",
+    "keys/",
+    "*.pem",
+    "*.key",
+    "*.p12",
+    "*.dump"
+  ],
+  "governanceFiles": [
+    "GOVERNANCE.md",
+    "SOURCE_OF_TRUTH.md",
+    "AGENTS.md",
+    "SUIVI.md",
+    "DECISIONS.md",
+    "TODO.md",
+    "LOOP_ENGINEERING.md"
+  ]
+}
