@@ -41,7 +41,7 @@ Elle ne doit être ni supprimée, ni fusionnée, ni utilisée pour déclencher u
 
 ## 3. Gouvernance installée
 
-Le 2026-08-29, le dépôt a commencé à recevoir une mémoire locale gouvernée inspirée des invariants éprouvés sur les autres repos matures, sans copier leur structure :
+Le 2026-08-29, le dépôt a reçu une mémoire locale gouvernée inspirée des invariants éprouvés sur les autres repos matures, sans copier leur structure :
 
 - `GOVERNANCE.md` ;
 - `SOURCE_OF_TRUTH.md` ;
@@ -93,11 +93,21 @@ Le runbook documente un risque potentiel autour d'une variable `NEXT_PUBLIC_PRIV
 
 Ne pas corriger ou rotater de clé sans observation live et plan dédié.
 
-## 6. MCP
+## 6. Contrat MCP repository-side
 
-Objectif repo-side : permettre à un MCP récent de découvrir correctement l'identité, la gouvernance, les agents, permissions, onboarding et runtime du repo via `.mcp/*`, tout en conservant les sources de vérité locales.
+Les cinq fichiers attendus par la procédure repo bootstrap actuellement documentée côté MCP sont présents :
 
-Le contrat MCP doit distinguer :
+- `.mcp/manifest.json` ;
+- `.mcp/permissions.json` ;
+- `.mcp/agents.json` ;
+- `.mcp/server-map.json` ;
+- `.mcp/onboarding.json`.
+
+Ils exposent l'identité, les rôles sémantiques, les permissions, les frontières agents et une cartographie serveur bornée par la preuve.
+
+**Statut :** `REPOSITORY_READY_FOR_MCP_RECONCILIATION / LIVE_MCP_REGISTRATION_NOT_ATTESTED_IN_THIS_CHANGE`.
+
+Le contrat distingue :
 
 - runtime documenté ;
 - runtime vérifié ;
@@ -105,22 +115,40 @@ Le contrat MCP doit distinguer :
 - droits de mutation ;
 - branche canonique locale.
 
-## 7. Point de reprise courant
+## 7. Vérification du bootstrap
+
+Une comparaison Git fraîche entre la baseline applicative `6216755d318677ed9a56c36731a57531d02bf751` et le checkpoint `b124f3526033d96073240cad226875f8347888e3` montre :
+
+```text
+STATUS = ahead
+COMMITS = 14
+APPLICATION_CODE_FILES_CHANGED = 0
+GOVERNANCE_DOCS_AND_MCP_FILES_ONLY = true
+```
+
+Les changements sont limités aux documents de gouvernance/mémoire, au README et aux cinq fichiers `.mcp/*`. Aucun fichier JavaScript, Solidity, ABI, route ou configuration applicative existante n'a été modifié.
+
+## 8. Point de reprise courant
 
 ```text
 WORKSTREAM = GOVERNED_REPOSITORY_EVOLUTION
-STATE = IN_PROGRESS
-NEXT = CREATE_MCP_REPOSITORY_CONTRACT_THEN_REFRESH_README_AND_ATTEST_FINAL_HEAD
+STATE = READY_FOR_SERVER_RECONCILIATION
+NEXT = RECONCILE_LIVE_SERVER_FOLDER_WITH_GITHUB_MAIN_AND_UPDATE_SERVER_MAP
+MCP_REPOSITORY_CONTRACT = READY_NOT_LIVE_ATTESTED
+APPLICATION_CODE_MUTATION = NONE
 RUNTIME_MUTATION = FORBIDDEN_UNTIL_FRESH_SERVER_VERIFICATION
 ```
 
-## 8. Definition of Done du bootstrap
+### Prochaine action exacte
 
-Le bootstrap sera clos lorsque :
+Lorsque les informations/accès serveur sont fournis :
 
-- la mémoire canonique est présente ;
-- `.mcp/*` minimal est présent et syntaxiquement valide ;
-- README pointe vers les nouvelles vérités sans perte des références utiles ;
-- le HEAD distant final est reverifié ;
-- aucun code applicatif n'a été modifié ;
-- le point de reprise final est enregistré ici.
+1. identifier serveur, vhost et dossier réellement actifs ;
+2. relever branche, HEAD, remotes et working tree ;
+3. comparer serveur ↔ `Patricked-code/Stablecoin/main` ;
+4. identifier le backend API réellement actif et son repo/HEAD ;
+5. vérifier Passenger/Node et les réponses HTTP/API ;
+6. mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et le présent `SUIVI.md` avec les preuves live ;
+7. préparer la liaison gouvernée GitHub → serveur consommable par MCP, sans synchronisation destructive.
+
+Le HEAD courant doit toujours être relu depuis Git au début d'une nouvelle session ; il ne doit jamais être déduit de ce document.
