@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "status": "repository_ready_for_reconciliation",
+  "repository": "Patricked-code/Stablecoin",
+  "canonicalBranch": "main",
+  "entrypoint": "GOVERNANCE.md",
+  "orderedRead": [
+    "GOVERNANCE.md",
+    "SOURCE_OF_TRUTH.md",
+    "AGENTS.md",
+    "README.md",
+    "SUIVI.md",
+    "DECISIONS.md",
+    "TODO.md",
+    "ARCHITECTURE.md",
+    "LOOP_ENGINEERING.md"
+  ],
+  "semanticRoles": {
+    "governance": "GOVERNANCE.md",
+    "source_of_truth": "SOURCE_OF_TRUTH.md",
+    "agent_rules": "AGENTS.md",
+    "current_state": "SUIVI.md",
+    "history": "SUIVI.md",
+    "next_action": "SUIVI.md#7-point-de-reprise-courant",
+    "backlog": "TODO.md",
+    "decisions": "DECISIONS.md",
+    "architecture": "ARCHITECTURE.md",
+    "loop_engineering": "LOOP_ENGINEERING.md",
+    "runtime_runbook": "docs/STABLECOIN_PLESK_DEPLOYMENT_RUNBOOK.md"
+  },
+  "procedure": [
+    "verify_repository_branch_and_head",
+    "read_ordered_memory",
+    "reconcile_documented_state_with_current_git",
+    "classify_runtime_as_documented_unverified_until_live_check",
+    "reuse_existing_work_before_creating",
+    "execute_loop_engineering",
+    "persist_state_and_exact_next_action",
+    "verify_remote_head"
+  ],
+  "mcpCompatibility": {
+    "targetResource": "mcp://wealthtech/current-state/inventory",
+    "liveRegistrationAttested": false,
+    "coreChangesRequired": false,
+    "parallelMcpMechanismsForbidden": true
+  },
+  "runtimeBootstrap": {
+    "allowedBeforeFreshServerVerification": false,
+    "nextRequiredAction": "RECONCILE_LIVE_SERVER_WITH_GITHUB_WHEN_SERVER_ACCESS_IS_PROVIDED"
+  }
+}
