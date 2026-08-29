@@ -1,142 +1,132 @@
-# stablecoin
+# Stablecoin / E-WARI
 
+Dépôt GitHub canonique du frontend Stablecoin / E-WARI et de ses composants associés.
 
+> **Branche canonique de travail normal :** `main`  
+> **Gouvernance :** lire `GOVERNANCE.md` avant toute mutation.  
+> **Mémoire projet :** `SUIVI.md`  
+> **Runbook production :** `docs/STABLECOIN_PLESK_DEPLOYMENT_RUNBOOK.md`
 
-## Getting started
+## Démarrage obligatoire pour un agent
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Lire dans cet ordre :
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+1. `GOVERNANCE.md`
+2. `SOURCE_OF_TRUTH.md`
+3. `AGENTS.md`
+4. `README.md`
+5. `SUIVI.md`
+6. `DECISIONS.md`
+7. `TODO.md`
+8. `ARCHITECTURE.md`
+9. `LOOP_ENGINEERING.md`
+10. le runbook de production si le runtime est concerné
+11. `.mcp/*` si MCP/orchestration est concerné
 
-## Add your files
+Ne jamais reprendre une ancienne conversation comme source de vérité sans la réconcilier avec Git et, pour le runtime, avec l'état live.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## Stack versionnée actuelle
 
+Le `package.json` contient notamment :
+
+- Next.js `10.0.6` ;
+- React `17.0.1` ;
+- ethers / Web3 ;
+- Magic SDK ;
+- OpenZeppelin Defender Relayer ;
+- Redux ;
+- Mapbox / Google Maps ;
+- NextUI / Bootstrap.
+
+Le dépôt contient également des ABI et du code Solidity sous `components/Contrats/`.
+
+## Runtime documenté
+
+Le runbook existant documente historiquement :
+
+- frontend : `stablecoin.chainsolutions.fr` ;
+- API métier : `api.stablecoin.chainsolutions.fr` ;
+- frontend Plesk / Phusion Passenger ;
+- backend Express / Sequelize distinct ;
+- build historique Next.js 10 sous Node 18 avec `NODE_OPTIONS=--openssl-legacy-provider`.
+
+Ces éléments sont actuellement classés `DOCUMENTED_UNVERIFIED` jusqu'à une nouvelle observation serveur. Ne jamais effectuer de déploiement ou de restart depuis cette seule description.
+
+## Développement local
+
+```bash
+npm install
+npm run dev
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/wealthtech1/stablecoin/stablecoin.git
-git branch -M main
-git push -uf origin main
+
+Scripts disponibles :
+
+```text
+npm run dev
+npm run build
+npm run start
 ```
 
-## Integrate with your tools
+Le `postbuild` appelle `scripts/generate-sitemap.js`.
 
-- [ ] [Set up project integrations](https://gitlab.com/wealthtech1/stablecoin/stablecoin/-/settings/integrations)
+## Sécurité
 
-## Collaborate with your team
+Ne jamais committer de secret, clé API, Magic Secret Key, credential base ou clé privée blockchain.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+Le runbook documente un risque potentiel autour de `NEXT_PUBLIC_PRIVATE_KEY`. Toute exposition réelle doit être vérifiée et traitée dans un chantier de sécurité séparé avec rotation contrôlée ; ne jamais copier la valeur dans Git ou dans un rapport.
 
-## Test and Deploy
+## MCP
 
-Use the built-in continuous integration in GitLab.
+Le dossier `.mcp/` expose le contrat repository-side :
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+- identité du repo ;
+- permissions ;
+- frontières des agents ;
+- onboarding / rôles sémantiques ;
+- runtime documenté et état de réconciliation serveur.
 
-***
+MCP reste l'orchestrateur externe. Le dépôt ne recrée aucun Live State, Operational Memory, session engine, task engine ou lock engine.
 
-# Editing this README
+## Mémoire historique MCP
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+La branche `codex/wealthtech-mcp-conversation-memory` contient une compilation WealthTech/S1/S2/MCP du 2026-07-01. Elle est conservée comme **evidence historique** et n'est pas la mémoire canonique actuelle du projet.
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+## Références historiques de développement conservées
 
-## Name
-Choose a self-explaining name for your project.
+Les références spécifiques présentes dans l'ancien README sont conservées ici pour ne pas perdre le contexte :
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+- Modal Next/Argon Dashboard : https://www.creative-tim.com/learning-lab/nextjs/modal/argon-dashboard
+- Tables NextUI : https://nextui.org/docs/components/table
+- Chart.js / Next.js : https://towardsdev.com/chart-js-next-js-beautiful-data-driven-dashboards-how-to-create-them-fast-and-efficiently-a59e313a3153
+- Google Analytics / Next.js : https://www.makeuseof.com/nextjs-google-analytics/
+- Mapbox : https://www.mapbox.com/
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+L'ancien dépôt/remoting GitLab référencé historiquement était :
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+```text
+https://gitlab.com/wealthtech1/stablecoin/stablecoin.git
+```
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+Le runbook actuel précise que GitHub `Patricked-code/Stablecoin`, branche `main`, est la source utilisée pour les corrections récentes ; vérifier néanmoins les remotes live avant toute synchronisation serveur.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+### Note historique Mapbox
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+L'intégration utilisait `mapbox-gl`, avec un token fourni par configuration et jamais hardcodé. Toute réutilisation doit continuer à charger les credentials depuis un environnement approprié.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+### Note historique paiement e-commerce
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+L'ancien README indiquait le pop-up de paiement en attente e-commerce dans :
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+```text
+Composant/Profil/Payment/PaiementEboutik.js
+```
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+Ce chemin doit être vérifié dans l'arbre courant avant toute modification.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+## Boucle de travail
 
-## License
-For open source projects, say how it is licensed.
+Toute évolution suit :
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+`DISCOVER → BASELINE → SELECT → IMPACT_ANALYSIS → IMPLEMENT_COMPATIBLY → VERIFY → REGRESSION_CHECK → PERSIST_STATE → VERIFY_REMOTE_STATE → SELECT_NEXT`.
 
-
-## References
-next Modal de bootstrap : https://www.creative-tim.com/learning-lab/nextjs/modal/argon-dashboard
-
-Lien des tables utilisées: https://nextui.org/docs/components/table 
-
-Lien d'ajout des graphs de next js et cahrt js : https://towardsdev.com/chart-js-next-js-beautiful-data-driven-dashboards-how-to-create-them-fast-and-efficiently-a59e313a3153
-
-Lien d'ajout de google analytic : https://www.makeuseof.com/nextjs-google-analytics/
-
-## POUR INTEGRER LA MAPBOX (LA CARTE DE LOCALISATION)
-    Inscription et Configuration de Mapbox :
-
-    Allez sur le site web de Mapbox ( https://www.mapbox.com/ ) et créez un compte.
-    Une fois connecté, créez un nouveau projet et générez une clé d'accès à l'API.
-    Installation de la dépendance Mapbox GL JS :
-
-    Ouvrez un terminal à la racine de votre projet Next.js et exécutez la commande suivante pour installer la bibliothèque Mapbox GL JS :
-    npm install mapbox-gl
-
-Utilisation de Mapbox dans votre composant :
-
-    import React, { useRef, useEffect } from 'react';
-    import mapboxgl from 'mapbox-gl';
-
-    const MapComponent = ({ latitude, longitude }) => {
-    const mapContainerRef = useRef(null);
-
-    useEffect(() => {
-        mapboxgl.accessToken = 'VOTRE_CLE_MAPBOX'; // Remplacez par votre propre clé d'accès Mapbox
-        const map = new mapboxgl.Map({
-        container: mapContainerRef.current,
-        style: 'mapbox://styles/mapbox/streets-v11', // Style de la carte (vous pouvez en choisir un autre)
-        center: [longitude, latitude],
-        zoom: 13,
-        });
-
-        // Ajoutez un marqueur
-        new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map);
-    }, [latitude, longitude]);
-
-    return <div ref={mapContainerRef} style={{ width: '100%', height: '400px' }} />;
-    };
-
-    export default MapComponent;
-## FIN
-
-## POP UP DE PAIEMENT EN ATTENTE ECOMMERCE 
-Il se trouve dans Composant/Profil/Payment/PaiementEboutik.js
+Voir `LOOP_ENGINEERING.md` pour le contrat complet.
