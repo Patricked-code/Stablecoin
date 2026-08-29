@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "verificationStatus": "DOCUMENTED_UNVERIFIED",
+  "sourceDocument": "docs/STABLECOIN_PLESK_DEPLOYMENT_RUNBOOK.md",
+  "runtime": {
+    "managed": true,
+    "freshVerificationRequiredBeforeMutation": true,
+    "serverIdentity": "TO_BE_VERIFIED",
+    "frontend": {
+      "domain": "stablecoin.chainsolutions.fr",
+      "documentedMode": "Plesk/Phusion Passenger",
+      "documentedPath": "/var/www/vhosts/chainsolutions.fr/stablecoin.chainsolutions.fr/stablecoin",
+      "activePathMustBeVerified": true,
+      "documentedRestart": "touch tmp/restart.txt"
+    },
+    "backend": {
+      "domain": "api.stablecoin.chainsolutions.fr",
+      "documentedMode": "Express/Sequelize",
+      "documentedPath": "/var/www/vhosts/chainsolutions.fr/api.stablecoin.chainsolutions.fr",
+      "repository": "UNKNOWN_UNTIL_SERVER_RECONCILIATION",
+      "head": "UNKNOWN_UNTIL_SERVER_RECONCILIATION"
+    }
+  },
+  "gitLinkage": {
+    "canonicalRepository": "Patricked-code/Stablecoin",
+    "canonicalBranch": "main",
+    "serverRemoteState": "TO_BE_VERIFIED",
+    "serverHeadState": "TO_BE_VERIFIED",
+    "workingTreeState": "TO_BE_VERIFIED",
+    "desiredReconciliation": "VERIFY_SERVER_THEN_COMPARE_WITH_GITHUB_BEFORE_SYNC"
+  },
+  "safety": {
+    "noSecretsInRepository": true,
+    "noRuntimeMutationFromDocumentedStateOnly": true,
+    "noDestructiveSync": true
+  }
+}
