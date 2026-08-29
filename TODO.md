@@ -5,9 +5,9 @@
 
 ## P0 — Gouvernance / reprise
 
-- [ ] Finaliser le contrat `.mcp/*` côté repository et vérifier sa validité JSON.
-- [ ] Réécrire le haut de `README.md` pour présenter l'état réel et pointer vers la mémoire canonique, sans supprimer les références historiques utiles.
-- [ ] Vérifier le HEAD distant final après le bootstrap de gouvernance et enregistrer le checkpoint dans `SUIVI.md`.
+- [x] Finaliser le contrat `.mcp/*` côté repository.
+- [x] Réécrire le haut de `README.md` pour présenter l'état réel et pointer vers la mémoire canonique, sans supprimer les références historiques utiles.
+- [x] Vérifier par comparaison Git que le bootstrap n'a modifié aucun fichier applicatif et enregistrer le checkpoint dans `SUIVI.md`.
 
 ## P1 — Réconciliation serveur ↔ GitHub
 
