@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "policySource": "AGENTS.md",
+  "agents": [
+    {
+      "name": "ChatGPT",
+      "type": "ai_agent",
+      "canReadRepository": true,
+      "canWriteCanonicalBranch": true,
+      "canCreateBranch": false,
+      "canSwitchBranchWithoutOwnerApproval": false,
+      "canDeploy": false,
+      "requiresGovernanceReadBeforeWrite": true,
+      "requiresFreshRuntimeVerificationBeforeRuntimeAction": true
+    },
+    {
+      "name": "Claude",
+      "type": "ai_agent",
+      "canReadRepository": true,
+      "canWriteCanonicalBranch": true,
+      "canCreateBranch": false,
+      "canSwitchBranchWithoutOwnerApproval": false,
+      "canDeploy": false,
+      "requiresGovernanceReadBeforeWrite": true,
+      "requiresFreshRuntimeVerificationBeforeRuntimeAction": true
+    },
+    {
+      "name": "Codex",
+      "type": "ai_agent",
+      "canReadRepository": true,
+      "canWriteCanonicalBranch": true,
+      "canCreateBranch": false,
+      "canSwitchBranchWithoutOwnerApproval": false,
+      "canDeploy": false,
+      "requiresGovernanceReadBeforeWrite": true,
+      "requiresFreshRuntimeVerificationBeforeRuntimeAction": true
+    }
+  ]
+}
