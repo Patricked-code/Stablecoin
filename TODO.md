@@ -22,18 +22,21 @@ Tâche gouvernée : `STB-TASK-20260915-001`.
 - [x] ajouter GitHub Actions `Governance Consistency` ;
 - [x] attester le premier run CI réussi avec son SHA exact et clôturer la tâche dans `SUIVI.md`.
 
-## P0 — Connecteur SSH gouverné
+## P0 — Révalidation de la liaison GitHub ↔ serveur existante
 
 Tâche gouvernée : `STB-TASK-20260915-002`.
 
-- [x] ajouter le contrat `.mcp/ssh-connector.json` ;
-- [x] ajouter le ruleset `.mcp/ssh-ruleset.json` ;
-- [x] ajouter des actions SSH strictement allowlistées en lecture seule ;
-- [x] ajouter le workflow manuel `Governed SSH Readonly` ;
-- [x] interdire shell arbitraire, root, sudo, fetch/pull/reset/switch/restart/deploy ;
-- [ ] configurer les GitHub Actions Secrets SSH sans les versionner ;
-- [ ] exécuter `full_readonly` et attester le run GitHub Actions ;
-- [ ] mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et `SUIVI.md` avec les preuves live.
+- [x] retrouver dans le runbook la liaison historique serveur → GitHub via remote `github` ;
+- [x] retrouver la procédure historique de mise à jour `git fetch github main` + `git merge --ff-only github/main` ;
+- [x] retrouver la preuve historique du pont externe `wealthtech_ssh_bridge` vers S1/S2 ;
+- [x] identifier le connecteur GitHub Actions SSH ajouté récemment comme mécanisme parallèle non nécessaire ;
+- [x] retirer ce mécanisme parallèle et conserver l'orchestrateur externe MCP ;
+- [ ] reconnecter le `wealthtech_ssh_bridge` existant ;
+- [ ] observer S2 en lecture seule : serveur, vhost, dossier actif, remotes, branche, HEAD, working tree, Passenger/Node et HTTP ;
+- [ ] comparer le HEAD serveur à `Patricked-code/Stablecoin/main` ;
+- [ ] classifier le résultat : `IN_SYNC`, `SERVER_BEHIND`, `SERVER_AHEAD`, `DIVERGED`, `DIRTY_WORKTREE`, `WRONG_BRANCH` ou `WRONG_REMOTE` ;
+- [ ] mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et `SUIVI.md` avec les preuves live ;
+- [ ] seulement ensuite préparer, si nécessaire, un plan de mise à jour non destructif utilisant la liaison existante.
 
 ## P1 — Réconciliation serveur ↔ GitHub
 
