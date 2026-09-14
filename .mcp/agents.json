@@ -11,7 +11,8 @@
       "canSwitchBranchWithoutOwnerApproval": false,
       "canDeploy": false,
       "requiresGovernanceReadBeforeWrite": true,
-      "requiresFreshRuntimeVerificationBeforeRuntimeAction": true
+      "requiresFreshRuntimeVerificationBeforeRuntimeAction": true,
+      "liveCapabilityMustBeVerifiedBeforeWrite": true
     },
     {
       "name": "Claude",
@@ -22,7 +23,8 @@
       "canSwitchBranchWithoutOwnerApproval": false,
       "canDeploy": false,
       "requiresGovernanceReadBeforeWrite": true,
-      "requiresFreshRuntimeVerificationBeforeRuntimeAction": true
+      "requiresFreshRuntimeVerificationBeforeRuntimeAction": true,
+      "liveCapabilityMustBeVerifiedBeforeWrite": true
     },
     {
       "name": "Codex",
@@ -33,7 +35,14 @@
       "canSwitchBranchWithoutOwnerApproval": false,
       "canDeploy": false,
       "requiresGovernanceReadBeforeWrite": true,
-      "requiresFreshRuntimeVerificationBeforeRuntimeAction": true
+      "requiresFreshRuntimeVerificationBeforeRuntimeAction": true,
+      "liveCapabilityMustBeVerifiedBeforeWrite": true
     }
-  ]
+  ],
+  "interpretation": {
+    "canWriteCanonicalBranchMeans": "REPOSITORY_POLICY_CEILING_ONLY",
+    "provesLiveConnectorWriteCapability": false,
+    "liveCapabilityMustBeVerifiedBeforeWrite": true,
+    "currentTaskScopeMustAuthorizeMutation": true
+  }
 }
