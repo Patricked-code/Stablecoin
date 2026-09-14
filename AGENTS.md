@@ -24,10 +24,13 @@ Avant toute mutation :
 Ne jamais repartir de zéro. Avant d'agir :
 
 - vérifier `main` et le HEAD actuel ;
-- lire le point de reprise de `SUIVI.md` ;
+- lire le bloc `Current State Block` et le point de reprise de `SUIVI.md` ;
+- identifier la `CURRENT_TASK`, son statut, sa baseline, son checkpoint et son `EXACT_NEXT_ACTION` ;
 - vérifier si les commits récents ont déjà réalisé tout ou partie du travail ;
 - réutiliser les structures, routes, conventions, ABI, scripts et documents existants ;
-- distinguer état documenté et état live.
+- distinguer état documenté et état live ;
+- si le HEAD observé diffère de la baseline/checkpoint, classer l'état précédent `STALE` et réconcilier avant toute écriture ;
+- vérifier la capacité live de l'agent/connector ; une permission repository-side ne vaut pas preuve de capacité.
 
 ## 3. Branche
 
@@ -79,14 +82,15 @@ Aucune évolution de ce dépôt ne doit servir de prétexte à modifier le cœur
 
 Toute intervention suit `LOOP_ENGINEERING.md` :
 
-`DISCOVER → BASELINE → SELECT → IMPACT_ANALYSIS → IMPLEMENT_COMPATIBLY → VERIFY → REGRESSION_CHECK → PERSIST_STATE → VERIFY_REMOTE_STATE → SELECT_NEXT`.
+`DISCOVER → BASELINE → SELECT → IMPACT_ANALYSIS → IMPLEMENT_COMPATIBLY → VERIFY → REGRESSION_CHECK → CORRECT_IF_REQUIRED → VERIFY_AGAIN → PERSIST_STATE → COMMIT → VERIFY_REMOTE_STATE → SELECT_NEXT`.
 
 ## 9. Fin de chantier
 
 Avant de déclarer terminé :
 
 - vérifier l'état Git distant ;
-- vérifier les résultats réellement exécutés ;
+- vérifier les résultats réellement exécutés et conserver les identifiants de preuve ;
+- ne déclarer une CI réussie que pour le SHA exact réellement observé ;
 - mettre à jour `SUIVI.md` ;
 - mettre à jour `TODO.md` / `DECISIONS.md` si nécessaire ;
 - écrire un point de reprise exact si du travail reste.
