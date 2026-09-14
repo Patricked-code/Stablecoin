@@ -67,3 +67,12 @@
 **Décision :** Stablecoin possède un validateur dependency-free et une GitHub Action dédiés à la cohérence de ses autorités repository-side.
 
 **Conséquence :** ce contrôle vérifie la cohérence de gouvernance mais ne remplace pas les tests applicatifs, blockchain, paiement, authentification ou runtime.
+
+
+## DEC-2026-09-15-012 — Connecteur SSH gouverné en lecture seule d'abord
+
+**Décision :** Stablecoin utilise un transport SSH gouverné via GitHub Actions avec actions allowlistées, vérification stricte de la clé d'hôte et aucun shell distant arbitraire.
+
+**Conséquence :** les secrets SSH restent exclusivement dans GitHub Actions Secrets. Le dépôt ne contient ni clé privée, ni mot de passe, ni valeur secrète. Les actions de déploiement, restart, synchronisation ou mutation runtime restent désactivées jusqu'à réconciliation live complète et plan de mutation approuvé.
+
+**Surface :** `.mcp/ssh-connector.json`, `.mcp/ssh-ruleset.json`, `scripts/ssh/governed-readonly.sh`, `.github/workflows/governed-ssh-readonly.yml`.
