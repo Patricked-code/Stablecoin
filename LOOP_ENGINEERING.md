@@ -33,6 +33,8 @@ Identifier repo, branche, HEAD, règles, mémoire persistante, architecture pert
 
 Choisir une action bornée, légitime et compatible avec le point de reprise. Une nouvelle idée ne remplace pas silencieusement une tâche déjà engagée.
 
+La sélection doit être matérialisée par une `CURRENT_TASK` avec identifiant, statut, baseline, scope et `EXACT_NEXT_ACTION`.
+
 ## 4. IMPACT_ANALYSIS
 
 Identifier consommateurs, routes, contrats, ABI, configuration, dépendances, base/API, runtime, sécurité et documentation potentiellement impactés. Pour une modification à risque, élargir les vérifications avant d'écrire.
@@ -44,6 +46,8 @@ Modifier le minimum nécessaire. Réutiliser l'existant. Préférer migration/ad
 ## 6. VERIFY
 
 Exécuter les contrôles adaptés : tests, build, lint/typecheck s'ils existent, vérification Git, contrôles HTTP/API/runtime si le scope le nécessite. Une vérification historique ne prouve pas un nouveau SHA.
+
+Chaque résultat invoqué doit être relié à un `EVIDENCE_ID` ou à une preuve externe identifiable. Une CI n'est valide que pour le SHA exact observé.
 
 ## 7. REGRESSION_CHECK
 
@@ -62,9 +66,13 @@ Toute régression introduite doit être corrigée avant de poursuivre. Rejouer l
 
 Mettre à jour `SUIVI.md`, `TODO.md`, `DECISIONS.md` ou l'architecture lorsque le changement modifie leur vérité. Conserver les preuves et limites.
 
+`PERSIST_STATE` produit ou met à jour un `CHECKPOINT_ID` contenant la tâche, la baseline observée, le dernier résultat prouvé, le blocker éventuel, les evidence IDs et l'action suivante.
+
 ## 10. COMMIT / VERIFY_REMOTE_STATE
 
 Utiliser `main` pour le travail normal sauf instruction explicite contraire. Après écriture, vérifier le HEAD distant et que les fichiers attendus existent réellement.
+
+Avant le commit, revalider que le HEAD source n'a pas changé. Après le commit, `VERIFY_REMOTE_STATE` produit une attestation du SHA distant observé. Si le HEAD a divergé de la baseline/checkpoint, arrêter toute nouvelle écriture et réconcilier d'abord.
 
 ## 11. SELECT_NEXT
 
