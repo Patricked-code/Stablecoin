@@ -11,9 +11,7 @@
     "sourceOfTruth": "SOURCE_OF_TRUTH.md",
     "machineValidated": true,
     "governanceValidator": "scripts/verify-governance-consistency.js",
-    "governanceCI": ".github/workflows/governance-consistency.yml",
-    "governedSshConnector": ".mcp/ssh-connector.json",
-    "governedSshRuleset": ".mcp/ssh-ruleset.json"
+    "governanceCI": ".github/workflows/governance-consistency.yml"
   },
   "requiredFiles": [
     "GOVERNANCE.md",
@@ -26,11 +24,7 @@
     "LOOP_ENGINEERING.md",
     "docs/STABLECOIN_PLESK_DEPLOYMENT_RUNBOOK.md",
     "scripts/verify-governance-consistency.js",
-    ".github/workflows/governance-consistency.yml",
-    ".mcp/ssh-connector.json",
-    ".mcp/ssh-ruleset.json",
-    "scripts/ssh/governed-readonly.sh",
-    ".github/workflows/governed-ssh-readonly.yml"
+    ".github/workflows/governance-consistency.yml"
   ],
   "memoryRoles": {
     "governance": "GOVERNANCE.md",
@@ -58,6 +52,6 @@
     "mode": "repository_adapter",
     "coreModificationRequired": false,
     "registrationStatus": "NOT_ATTESTED_BY_LIVE_MCP_IN_THIS_CHANGE",
-    "sshTransport": "GITHUB_ACTIONS_OPENSSH_READONLY_FIRST"
+    "existingExternalSshBridgePolicy": "REUSE_AND_REVALIDATE_EXISTING_WEALTHTECH_SSH_BRIDGE_NO_PARALLEL_TRANSPORT"
   }
 }
