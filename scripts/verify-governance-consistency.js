@@ -57,12 +57,8 @@ const requiredFiles = [
   ".mcp/agents.json",
   ".mcp/server-map.json",
   ".mcp/onboarding.json",
-  ".mcp/ssh-connector.json",
-  ".mcp/ssh-ruleset.json",
   "scripts/verify-governance-consistency.js",
-  "scripts/ssh/governed-readonly.sh",
-  ".github/workflows/governance-consistency.yml",
-  ".github/workflows/governed-ssh-readonly.yml"
+  ".github/workflows/governance-consistency.yml"
 ];
 
 for (const file of requiredFiles) {
@@ -74,8 +70,6 @@ const permissions = json(".mcp/permissions.json");
 const agents = json(".mcp/agents.json");
 const onboarding = json(".mcp/onboarding.json");
 const serverMap = json(".mcp/server-map.json");
-const sshConnector = json(".mcp/ssh-connector.json");
-const sshRuleset = json(".mcp/ssh-ruleset.json");
 
 ok(manifest.repository === "Patricked-code/Stablecoin", "manifest repository identity mismatch");
 ok(manifest.defaultBranch === "main", "manifest default branch must be main");
@@ -143,52 +137,9 @@ ok(
 );
 
 ok(
-  sshConnector.repository === "Patricked-code/Stablecoin",
-  "SSH connector repository identity mismatch"
-);
-ok(
-  sshConnector.canonicalBranch === "main",
-  "SSH connector canonical branch must be main"
-);
-ok(
-  sshConnector.transport?.rawShellInputAllowed === false,
-  "SSH connector must not allow raw shell input"
-);
-ok(
-  sshConnector.transport?.strictHostKeyChecking === true,
-  "SSH connector must enforce strict host key checking"
-);
-ok(
-  sshConnector.actions?.deploy?.enabled === false,
-  "SSH deploy action must remain disabled before live reconciliation"
-);
-ok(
-  sshConnector.actions?.restart?.enabled === false,
-  "SSH restart action must remain disabled before live reconciliation"
-);
-ok(
-  sshRuleset.mode === "READ_ONLY_FIRST",
-  "SSH ruleset must remain READ_ONLY_FIRST"
-);
-ok(
-  sshRuleset.rules?.allowRawRemoteCommands === false,
-  "SSH ruleset must forbid raw remote commands"
-);
-ok(
-  sshRuleset.rules?.allowRootLogin === false,
-  "SSH ruleset must forbid root login"
-);
-ok(
-  sshRuleset.rules?.allowSudo === false,
-  "SSH ruleset must forbid sudo"
-);
-ok(
-  sshRuleset.rules?.runtimeMutationBeforeFreshVerification === false,
-  "SSH ruleset must forbid runtime mutation before fresh verification"
-);
-ok(
-  sshRuleset.activationGateForMutationActions?.status === "CLOSED",
-  "SSH mutation gate must remain CLOSED until live reconciliation"
+  manifest.mcpIntegration?.existingExternalSshBridgePolicy ===
+    "REUSE_AND_REVALIDATE_EXISTING_WEALTHTECH_SSH_BRIDGE_NO_PARALLEL_TRANSPORT",
+  "existing external SSH bridge reuse policy missing"
 );
 
 for (const [role, target] of Object.entries(onboarding.semanticRoles || {})) {
