@@ -117,11 +117,11 @@ Le contrat distingue :
 
 ## 7. Vérification du bootstrap
 
-Une comparaison Git fraîche entre la baseline applicative `6216755d318677ed9a56c36731a57531d02bf751` et le checkpoint `b124f3526033d96073240cad226875f8347888e3` montre :
+Une comparaison Git fraîche entre la baseline applicative `6216755d318677ed9a56c36731a57531d02bf751` et le HEAD observé avant durcissement `1ade2609cb14f0ec8f1a3c916e1fe5f446a46d81` montre :
 
 ```text
 STATUS = ahead
-COMMITS = 14
+COMMITS = 16
 APPLICATION_CODE_FILES_CHANGED = 0
 GOVERNANCE_DOCS_AND_MCP_FILES_ONLY = true
 ```
@@ -130,25 +130,42 @@ Les changements sont limités aux documents de gouvernance/mémoire, au README e
 
 ## 8. Point de reprise courant
 
+### Current State Block
+
 ```text
-WORKSTREAM = GOVERNED_REPOSITORY_EVOLUTION
-STATE = READY_FOR_SERVER_RECONCILIATION
-NEXT = RECONCILE_LIVE_SERVER_FOLDER_WITH_GITHUB_MAIN_AND_UPDATE_SERVER_MAP
-MCP_REPOSITORY_CONTRACT = READY_NOT_LIVE_ATTESTED
+CURRENT_WORKSTREAM = STABLECOIN_GOVERNANCE_HARDENING
+CURRENT_TASK = STB-TASK-20260915-001
+CURRENT_TASK_STATUS = IN_PROGRESS
+TASK_BASELINE_SHA = 1ade2609cb14f0ec8f1a3c916e1fe5f446a46d81
+SOURCE_HEAD_OBSERVED = 1ade2609cb14f0ec8f1a3c916e1fe5f446a46d81
+LAST_COMPLETED_ACTION = CORE_GOVERNANCE_AND_MCP_SEMANTICS_HARDENED
+CURRENT_BLOCKER = NONE
+EXACT_NEXT_ACTION = ADD_AND_VERIFY_GOVERNANCE_VALIDATOR_AND_CI
+RUNTIME_STATUS = DOCUMENTED_UNVERIFIED
+CI_STATUS = NOT_YET_ATTESTED_FOR_THIS_TASK
+MCP_REGISTRATION_STATUS = READY_NOT_LIVE_ATTESTED
+SECURITY_WARNINGS = SEE_SECTION_5_REQUIRES_SEPARATE_VERIFICATION
+CHECKPOINT_ID = STB-CHK-20260915-001
+EVIDENCE_IDS = EVID-GH-HEAD-20260915-001,EVID-GH-PERM-20260915-001,EVID-NONREG-20260915-001
 APPLICATION_CODE_MUTATION = NONE
-RUNTIME_MUTATION = FORBIDDEN_UNTIL_FRESH_SERVER_VERIFICATION
+RUNTIME_MUTATION = NONE
+MCP_CORE_MUTATION = NONE
 ```
 
-### Prochaine action exacte
+Le checkpoint est une mémoire de reprise et doit être réconcilié avec Git, la CI et le runtime avant toute nouvelle mutation.
 
-Lorsque les informations/accès serveur sont fournis :
+### Portée de la tâche courante
 
-1. identifier serveur, vhost et dossier réellement actifs ;
-2. relever branche, HEAD, remotes et working tree ;
-3. comparer serveur ↔ `Patricked-code/Stablecoin/main` ;
-4. identifier le backend API réellement actif et son repo/HEAD ;
-5. vérifier Passenger/Node et les réponses HTTP/API ;
-6. mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et le présent `SUIVI.md` avec les preuves live ;
-7. préparer la liaison gouvernée GitHub → serveur consommable par MCP, sans synchronisation destructive.
+`STB-TASK-20260915-001` renforce la gouvernance d'ingénierie de Stablecoin en réutilisant les autorités existantes. `chainsolutions-wealthtech/Regulatory` sert uniquement de référence de maturité générique. Aucune règle métier ou architecture métier Regulatory n'est transférée.
+
+### Work log gouverné
+
+- `2026-09-15 / EVID-GH-HEAD-20260915-001` : `main` observé à `1ade2609cb14f0ec8f1a3c916e1fe5f446a46d81` avant écriture.
+- `2026-09-15 / EVID-GH-PERM-20260915-001` : connexion GitHub active observée avec `pull=true`, `push=true`, `admin=false` ; preuve limitée à la session.
+- `2026-09-15 / EVID-NONREG-20260915-001` : baseline applicative vers HEAD pré-durcissement = gouvernance uniquement, aucun fichier applicatif modifié.
+
+### Action suivante exacte
+
+Ajouter puis vérifier le validateur de cohérence et la GitHub Action associée. Après un run réussi, enregistrer le SHA exact validé, clôturer `STB-TASK-20260915-001`, puis reprendre la réconciliation serveur ↔ GitHub déjà prévue sans mutation runtime avant observation live.
 
 Le HEAD courant doit toujours être relu depuis Git au début d'une nouvelle session ; il ne doit jamais être déduit de ce document.
