@@ -134,18 +134,18 @@ Les changements sont limités aux documents de gouvernance/mémoire, au README e
 
 ```text
 CURRENT_WORKSTREAM = GOVERNED_REPOSITORY_EVOLUTION
-CURRENT_TASK = STB-TASK-20260915-001
-CURRENT_TASK_STATUS = COMPLETED
-TASK_BASELINE_SHA = 1ade2609cb14f0ec8f1a3c916e1fe5f446a46d81
-SOURCE_HEAD_OBSERVED = 1ade2609cb14f0ec8f1a3c916e1fe5f446a46d81
-LAST_COMPLETED_ACTION = GOVERNANCE_HARDENING_IMPLEMENTED_AND_CI_ATTESTED
-CURRENT_BLOCKER = NONE
-EXACT_NEXT_ACTION = RECONCILE_LIVE_SERVER_FOLDER_WITH_GITHUB_MAIN_AND_UPDATE_SERVER_MAP
+CURRENT_TASK = STB-TASK-20260915-002
+CURRENT_TASK_STATUS = CONFIGURATION_REQUIRED
+TASK_BASELINE_SHA = 7a8882b2531621abb5eb95cb6b7744a6977b9c16
+SOURCE_HEAD_OBSERVED = 7a8882b2531621abb5eb95cb6b7744a6977b9c16
+LAST_COMPLETED_ACTION = GOVERNED_SSH_CONNECTOR_RULESET_AND_READONLY_ACTIONS_ADDED
+CURRENT_BLOCKER = GITHUB_ACTIONS_SSH_SECRETS_NOT_CONFIGURED
+EXACT_NEXT_ACTION = CONFIGURE_SSH_ACTIONS_SECRETS_AND_RUN_FULL_READONLY
 RUNTIME_STATUS = DOCUMENTED_UNVERIFIED
 CI_STATUS = PASS_FOR_IMPLEMENTATION_SHA_be144938ae325cfc2348228b645dfada80b8b12d
 MCP_REGISTRATION_STATUS = READY_NOT_LIVE_ATTESTED
 SECURITY_WARNINGS = SEE_SECTION_5_REQUIRES_SEPARATE_VERIFICATION
-CHECKPOINT_ID = STB-CHK-20260915-002
+CHECKPOINT_ID = STB-CHK-20260915-003
 EVIDENCE_IDS = EVID-GH-HEAD-20260915-001,EVID-GH-PERM-20260915-001,EVID-NONREG-20260915-001,EVID-CI-20260915-001
 APPLICATION_CODE_MUTATION = NONE
 RUNTIME_MUTATION = NONE
@@ -156,7 +156,7 @@ Le checkpoint est une mémoire de reprise et doit être réconcilié avec Git, l
 
 ### Portée de la tâche courante
 
-`STB-TASK-20260915-001` renforce la gouvernance d'ingénierie de Stablecoin en réutilisant les autorités existantes. `chainsolutions-wealthtech/Regulatory` sert uniquement de référence de maturité générique. Aucune règle métier ou architecture métier Regulatory n'est transférée.
+`STB-TASK-20260915-002` ajoute un connecteur SSH gouverné, strictement en lecture seule dans sa première phase, pour permettre la réconciliation serveur ↔ GitHub sans contourner la gouvernance. Les actions de mutation restent fermées tant que le runtime n'a pas été attesté live.
 
 ### Work log gouverné
 
@@ -167,7 +167,9 @@ Le checkpoint est une mémoire de reprise et doit être réconcilié avec Git, l
 
 ### Action suivante exacte
 
-La tâche `STB-TASK-20260915-001` est clôturée. La prochaine action projet est de réconcilier le serveur live avec GitHub : identifier serveur/vhost/dossier actifs, relever branche/HEAD/remotes/working tree, comparer à `main`, identifier le backend API et vérifier les services/HTTP avant toute mutation runtime.
+Configurer dans GitHub Actions, sans jamais les versionner, les secrets SSH nécessaires au connecteur : hôte, utilisateur non-root, clé privée dédiée et `known_hosts` épinglé. Puis lancer l'action manuelle `Governed SSH Readonly` avec `full_readonly`.
+
+Le run doit seulement observer identité serveur, état Git et processus applicatifs. Il ne doit ni fetch, ni pull, ni switch, ni reset, ni restart, ni déployer. Une fois le run réussi, enregistrer son run ID comme preuve, mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et ce `SUIVI.md`, puis décider du plan de réconciliation.
 
 Le checkpoint n'embarque volontairement pas son propre SHA de commit : le HEAD Git distant observé reste l'autorité pour la version du checkpoint. Toute nouvelle session doit donc réobserver Git et la CI avant écriture.
 
