@@ -24,6 +24,9 @@ La règle générale est : **preuve la plus proche du fait observé + fraîcheur
 | état runtime actuel | observation live du serveur concerné |
 | état CI actuel | run CI lié au SHA observé |
 | état MCP | Governed Context / Current-State / Live State du MCP lorsqu'ils sont disponibles |
+| permission autorisée par le dépôt | `GOVERNANCE.md` + `.mcp/permissions.json` |
+| capacité réelle d'un agent/connector | observation live de la connexion active |
+| autorisation de l'opération courante | tâche/checkpoint courant dans `SUIVI.md` + règles supérieures |
 
 ## 3. Fraîcheur
 
@@ -59,3 +62,19 @@ Elle doit être consultée lorsqu'elle apporte une information historique, mais 
 ## 6. Runtime Stablecoin
 
 Le runbook de production documente notamment des domaines, chemins Plesk/Passenger, variables attendues et procédures de build/restart. Lors d'une future connexion serveur, ces éléments servent de **baseline à confirmer**, pas de vérité live présumée.
+
+
+## 7. Politique ≠ capacité live ≠ autorisation courante
+
+Une permission déclarée dans `.mcp/permissions.json` ou `.mcp/agents.json` exprime un **plafond de politique repository-side**. Elle ne prouve ni les scopes OAuth/GitHub App, ni le droit effectif de la connexion active, ni l'autorisation d'une mutation donnée.
+
+Avant chaque session d'écriture :
+
+1. observer la capacité live ;
+2. la comparer à la politique locale ;
+3. vérifier que la tâche courante autorise l'opération ;
+4. appliquer l'intersection la plus restrictive.
+
+## 8. Checkpoint et fraîcheur
+
+Le bloc courant de `SUIVI.md` porte la tâche active, la baseline observée, le checkpoint, les preuves et l'action suivante. Le checkpoint est une mémoire de reprise, pas une vérité auto-actualisée : si le HEAD distant, la CI, le runtime ou une autorité supérieure a changé, il doit être classé `STALE` jusqu'à réconciliation.
