@@ -11,7 +11,9 @@
     "sourceOfTruth": "SOURCE_OF_TRUTH.md",
     "machineValidated": true,
     "governanceValidator": "scripts/verify-governance-consistency.js",
-    "governanceCI": ".github/workflows/governance-consistency.yml"
+    "governanceCI": ".github/workflows/governance-consistency.yml",
+    "governedSshConnector": ".mcp/ssh-connector.json",
+    "governedSshRuleset": ".mcp/ssh-ruleset.json"
   },
   "requiredFiles": [
     "GOVERNANCE.md",
@@ -24,7 +26,11 @@
     "LOOP_ENGINEERING.md",
     "docs/STABLECOIN_PLESK_DEPLOYMENT_RUNBOOK.md",
     "scripts/verify-governance-consistency.js",
-    ".github/workflows/governance-consistency.yml"
+    ".github/workflows/governance-consistency.yml",
+    ".mcp/ssh-connector.json",
+    ".mcp/ssh-ruleset.json",
+    "scripts/ssh/governed-readonly.sh",
+    ".github/workflows/governed-ssh-readonly.yml"
   ],
   "memoryRoles": {
     "governance": "GOVERNANCE.md",
@@ -51,6 +57,7 @@
   "mcpIntegration": {
     "mode": "repository_adapter",
     "coreModificationRequired": false,
-    "registrationStatus": "NOT_ATTESTED_BY_LIVE_MCP_IN_THIS_CHANGE"
+    "registrationStatus": "NOT_ATTESTED_BY_LIVE_MCP_IN_THIS_CHANGE",
+    "sshTransport": "GITHUB_ACTIONS_OPENSSH_READONLY_FIRST"
   }
 }
