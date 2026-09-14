@@ -18,9 +18,9 @@ Tâche gouvernée : `STB-TASK-20260915-001`.
 - [x] distinguer permission repository-side, capacité live et autorisation de l'opération ;
 - [x] corriger l'ancre de reprise `.mcp/onboarding.json` et enrichir les rôles sémantiques ;
 - [x] renforcer `LOOP_ENGINEERING.md` sans modifier sa boucle canonique ;
-- [ ] ajouter un validateur dependency-free de cohérence de gouvernance ;
-- [ ] ajouter GitHub Actions `Governance Consistency` ;
-- [ ] attester le premier run CI réussi avec son SHA exact et clôturer la tâche dans `SUIVI.md`.
+- [x] ajouter un validateur dependency-free de cohérence de gouvernance ;
+- [x] ajouter GitHub Actions `Governance Consistency` ;
+- [x] attester le premier run CI réussi avec son SHA exact et clôturer la tâche dans `SUIVI.md`.
 
 ## P1 — Réconciliation serveur ↔ GitHub
 
@@ -49,7 +49,7 @@ Tâche gouvernée : `STB-TASK-20260915-001`.
 - [ ] cartographier les routes frontend/API réellement utilisées ;
 - [ ] documenter la base de données et le backend après découverte vérifiée ;
 - [ ] inventorier les contrats/réseaux/déploiements blockchain actuels ;
-- [ ] finaliser et attester la CI de cohérence de gouvernance ; toute CI externe éventuelle reste `UNKNOWN` jusqu'à preuve.
+- [x] CI de cohérence de gouvernance ajoutée et premier run réussi ; toute CI externe éventuelle reste `UNKNOWN` jusqu'à preuve.
 
 ## Archive à préserver
 
