@@ -42,3 +42,28 @@
 ## DEC-2026-08-29-007 — Sécurité des secrets
 
 **Décision :** aucun secret ou credential réel ne doit être versionné. Toute clé privée blockchain réellement exposée au frontend doit être traitée dans un chantier de sécurité séparé avec vérification et rotation contrôlée.
+
+
+## DEC-2026-09-15-008 — Regulatory est une référence de maturité, pas une source métier
+
+**Décision :** `chainsolutions-wealthtech/Regulatory` peut servir à comparer la maturité générique de gouvernance d'ingénierie. Aucun métier ou workflow propre à Regulatory ne doit être transféré dans Stablecoin.
+
+**Conséquence :** la méthode est `READ → REOBSERVE → RECONCILE → MAP → COMPARE → GAP_ANALYSIS → STRENGTHEN → VERIFY → PERSIST`, jamais une copie structurelle aveugle.
+
+## DEC-2026-09-15-009 — Permission repository-side distincte de la capacité live
+
+**Décision :** les champs `directMainPush` et `canWriteCanonicalBranch` expriment un plafond de politique locale. Ils ne prouvent pas les scopes ou permissions de la connexion active.
+
+**Conséquence :** toute session d'écriture revalide la capacité live et applique l'intersection la plus restrictive entre gouvernance, capacité réelle et scope de la tâche courante.
+
+## DEC-2026-09-15-010 — Pas de famille documentaire parallèle
+
+**Décision :** Stablecoin ne crée pas `STATUS.md`, `NEXT_ACTION.md`, `CURRENT_ITERATION.md`, `HANDOFF.md` ou `WORK_LOG.md` uniquement pour imiter un autre dépôt tant que leurs rôles sont correctement portés par `SUIVI.md`, `TODO.md`, `AGENTS.md` et Git.
+
+**Conséquence :** le bloc courant, les checkpoints et le work log borné restent dans `SUIVI.md`.
+
+## DEC-2026-09-15-011 — Cohérence de gouvernance vérifiée automatiquement
+
+**Décision :** Stablecoin possède un validateur dependency-free et une GitHub Action dédiés à la cohérence de ses autorités repository-side.
+
+**Conséquence :** ce contrôle vérifie la cohérence de gouvernance mais ne remplace pas les tests applicatifs, blockchain, paiement, authentification ou runtime.
