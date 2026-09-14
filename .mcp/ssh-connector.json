@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "id": "stablecoin-governed-ssh",
+  "status": "CONFIG_REQUIRED",
+  "repository": "Patricked-code/Stablecoin",
+  "canonicalBranch": "main",
+  "transport": {
+    "type": "openssh_via_github_actions",
+    "workflow": ".github/workflows/governed-ssh-readonly.yml",
+    "strictHostKeyChecking": true,
+    "rawShellInputAllowed": false
+  },
+  "requiredSecrets": [
+    "STABLECOIN_SSH_HOST",
+    "STABLECOIN_SSH_USER",
+    "STABLECOIN_SSH_PRIVATE_KEY",
+    "STABLECOIN_SSH_KNOWN_HOSTS"
+  ],
+  "optionalRepositoryVariables": {
+    "STABLECOIN_SSH_PORT": "22"
+  },
+  "actions": {
+    "inventory": {
+      "enabled": true,
+      "mutation": false,
+      "purpose": "Observe server identity and basic runtime facts"
+    },
+    "git_state": {
+      "enabled": true,
+      "mutation": false,
+      "purpose": "Observe repository branch, HEAD, worktree and sanitized origin"
+    },
+    "runtime_processes": {
+      "enabled": true,
+      "mutation": false,
+      "purpose": "Observe process names without command-line arguments or environment"
+    },
+    "full_readonly": {
+      "enabled": true,
+      "mutation": false,
+      "purpose": "Run all allowlisted read-only observations"
+    },
+    "deploy": {
+      "enabled": false,
+      "mutation": true,
+      "requires": [
+        "FRESH_LIVE_SERVER_RECONCILIATION",
+        "CLEAN_WORKTREE",
+        "CANONICAL_REPOSITORY_MATCH",
+        "CANONICAL_BRANCH_MATCH",
+        "EXACT_SOURCE_SHA",
+        "HUMAN_APPROVAL"
+      ]
+    },
+    "restart": {
+      "enabled": false,
+      "mutation": true,
+      "requires": [
+        "FRESH_RUNTIME_ATTESTATION",
+        "EXPLICIT_APPROVAL"
+      ]
+    }
+  },
+  "evidence": {
+    "githubActionsRunIdIsEvidence": true,
+    "exactShaRequired": true,
+    "persistIntoSuiviAfterVerifiedRun": true
+  }
+}
