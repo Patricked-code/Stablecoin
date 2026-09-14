@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "repository_ready_for_reconciliation",
+  "status": "governance_hardening_in_progress",
   "repository": "Patricked-code/Stablecoin",
   "canonicalBranch": "main",
   "entrypoint": "GOVERNANCE.md",
@@ -21,22 +21,28 @@
     "agent_rules": "AGENTS.md",
     "current_state": "SUIVI.md",
     "history": "SUIVI.md",
-    "next_action": "SUIVI.md#7-point-de-reprise-courant",
+    "next_action": "SUIVI.md#current-state-block",
     "backlog": "TODO.md",
     "decisions": "DECISIONS.md",
     "architecture": "ARCHITECTURE.md",
     "loop_engineering": "LOOP_ENGINEERING.md",
-    "runtime_runbook": "docs/STABLECOIN_PLESK_DEPLOYMENT_RUNBOOK.md"
+    "runtime_runbook": "docs/STABLECOIN_PLESK_DEPLOYMENT_RUNBOOK.md",
+    "current_task": "SUIVI.md#current-state-block",
+    "current_blocker": "SUIVI.md#current-state-block",
+    "checkpoint": "SUIVI.md#current-state-block",
+    "ci_status": "SUIVI.md#current-state-block",
+    "security_warnings": "SUIVI.md#current-state-block"
   },
   "procedure": [
     "verify_repository_branch_and_head",
+    "verify_live_agent_capability_before_write",
     "read_ordered_memory",
-    "reconcile_documented_state_with_current_git",
+    "reconcile_current_task_checkpoint_and_documented_state_with_current_git",
     "classify_runtime_as_documented_unverified_until_live_check",
     "reuse_existing_work_before_creating",
     "execute_loop_engineering",
-    "persist_state_and_exact_next_action",
-    "verify_remote_head"
+    "persist_state_checkpoint_evidence_and_exact_next_action",
+    "verify_remote_head_and_exact_sha_ci_evidence"
   ],
   "mcpCompatibility": {
     "targetResource": "mcp://wealthtech/current-state/inventory",
