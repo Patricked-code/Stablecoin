@@ -135,18 +135,18 @@ Les changements sont limités aux documents de gouvernance/mémoire, au README e
 ```text
 CURRENT_WORKSTREAM = GOVERNED_REPOSITORY_EVOLUTION
 CURRENT_TASK = STB-TASK-20260915-002
-CURRENT_TASK_STATUS = CONFIGURATION_REQUIRED
-TASK_BASELINE_SHA = 7a8882b2531621abb5eb95cb6b7744a6977b9c16
-SOURCE_HEAD_OBSERVED = 7a8882b2531621abb5eb95cb6b7744a6977b9c16
-LAST_COMPLETED_ACTION = GOVERNED_SSH_CONNECTOR_RULESET_AND_READONLY_ACTIONS_ADDED
-CURRENT_BLOCKER = GITHUB_ACTIONS_SSH_SECRETS_NOT_CONFIGURED
-EXACT_NEXT_ACTION = CONFIGURE_SSH_ACTIONS_SECRETS_AND_RUN_FULL_READONLY
+CURRENT_TASK_STATUS = IN_PROGRESS
+TASK_BASELINE_SHA = 45f440d304022dd06d9f7f68e98fb38bc568488a
+SOURCE_HEAD_OBSERVED = 45f440d304022dd06d9f7f68e98fb38bc568488a
+LAST_COMPLETED_ACTION = PARALLEL_SSH_MECHANISM_IDENTIFIED_AND_REMOVAL_IN_PROGRESS
+CURRENT_BLOCKER = EXISTING_WEALTHTECH_SSH_BRIDGE_NOT_AVAILABLE_IN_CURRENT_SESSION
+EXACT_NEXT_ACTION = RECONNECT_EXISTING_WEALTHTECH_SSH_BRIDGE_AND_REOBSERVE_S2_STABLECOIN_RUNTIME
 RUNTIME_STATUS = DOCUMENTED_UNVERIFIED
 CI_STATUS = PASS_FOR_IMPLEMENTATION_SHA_be144938ae325cfc2348228b645dfada80b8b12d
 MCP_REGISTRATION_STATUS = READY_NOT_LIVE_ATTESTED
 SECURITY_WARNINGS = SEE_SECTION_5_REQUIRES_SEPARATE_VERIFICATION
-CHECKPOINT_ID = STB-CHK-20260915-003
-EVIDENCE_IDS = EVID-GH-HEAD-20260915-001,EVID-GH-PERM-20260915-001,EVID-NONREG-20260915-001,EVID-CI-20260915-001
+CHECKPOINT_ID = STB-CHK-20260915-004
+EVIDENCE_IDS = EVID-GH-HEAD-20260915-001,EVID-GH-PERM-20260915-001,EVID-NONREG-20260915-001,EVID-CI-20260915-001,EVID-LINKAGE-20260915-001,EVID-MCP-BRIDGE-20260915-001,EVID-CORRECTION-20260915-001
 APPLICATION_CODE_MUTATION = NONE
 RUNTIME_MUTATION = NONE
 MCP_CORE_MUTATION = NONE
@@ -156,7 +156,7 @@ Le checkpoint est une mémoire de reprise et doit être réconcilié avec Git, l
 
 ### Portée de la tâche courante
 
-`STB-TASK-20260915-002` ajoute un connecteur SSH gouverné, strictement en lecture seule dans sa première phase, pour permettre la réconciliation serveur ↔ GitHub sans contourner la gouvernance. Les actions de mutation restent fermées tant que le runtime n'a pas été attesté live.
+`STB-TASK-20260915-002` révalide et gouverne la liaison GitHub ↔ serveur déjà documentée : remote serveur `github` vers `Patricked-code/Stablecoin`, procédure fast-forward documentée, et pont externe `wealthtech_ssh_bridge`. Le connecteur GitHub Actions SSH ajouté récemment est retiré comme mécanisme parallèle non nécessaire.
 
 ### Work log gouverné
 
@@ -164,12 +164,15 @@ Le checkpoint est une mémoire de reprise et doit être réconcilié avec Git, l
 - `2026-09-15 / EVID-GH-PERM-20260915-001` : connexion GitHub active observée avec `pull=true`, `push=true`, `admin=false` ; preuve limitée à la session.
 - `2026-09-15 / EVID-NONREG-20260915-001` : baseline applicative vers HEAD pré-durcissement = gouvernance uniquement, aucun fichier applicatif modifié.
 - `2026-09-15 / EVID-CI-20260915-001` : GitHub Actions `Governance Consistency` run `34905505739` = SUCCESS pour le SHA exact `be144938ae325cfc2348228b645dfada80b8b12d` ; l'étape `Verify governance consistency` = SUCCESS.
+- `2026-09-15 / EVID-LINKAGE-20260915-001` : le runbook `main` documente un remote serveur `github = https://github.com/Patricked-code/Stablecoin.git` et une mise à jour `git fetch github main` + `git merge --ff-only github/main`.
+- `2026-09-15 / EVID-MCP-BRIDGE-20260915-001` : la branche historique documente `wealthtech_ssh_bridge` comme pont externe vers S1/S2 ; cette preuve reste historique jusqu'à reconnexion live.
+- `2026-09-15 / EVID-CORRECTION-20260915-001` : le transport GitHub Actions SSH ajouté ensuite est classé mécanisme parallèle non nécessaire et retiré conformément à la gouvernance existante.
 
 ### Action suivante exacte
 
-Configurer dans GitHub Actions, sans jamais les versionner, les secrets SSH nécessaires au connecteur : hôte, utilisateur non-root, clé privée dédiée et `known_hosts` épinglé. Puis lancer l'action manuelle `Governed SSH Readonly` avec `full_readonly`.
+Reconnecter le `wealthtech_ssh_bridge` existant puis observer S2 en lecture seule. Vérifier le vhost/dossier Passenger actif, `git remote -v`, la présence et l'URL du remote `github`, la branche, le HEAD, le working tree, le process Passenger/Node et les réponses HTTP. Comparer ensuite le HEAD serveur au `main` GitHub courant.
 
-Le run doit seulement observer identité serveur, état Git et processus applicatifs. Il ne doit ni fetch, ni pull, ni switch, ni reset, ni restart, ni déployer. Une fois le run réussi, enregistrer son run ID comme preuve, mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et ce `SUIVI.md`, puis décider du plan de réconciliation.
+Aucune commande `git fetch`, `git merge`, build, restart ou autre mutation serveur n'est autorisée avant cette attestation. Si le bridge n'est pas accessible, conserver `RUNTIME_STATUS = DOCUMENTED_UNVERIFIED` et s'arrêter au blocker au lieu de créer un transport parallèle.
 
 Le checkpoint n'embarque volontairement pas son propre SHA de commit : le HEAD Git distant observé reste l'autorité pour la version du checkpoint. Toute nouvelle session doit donc réobserver Git et la CI avant écriture.
 
