@@ -22,6 +22,19 @@ Tâche gouvernée : `STB-TASK-20260915-001`.
 - [x] ajouter GitHub Actions `Governance Consistency` ;
 - [x] attester le premier run CI réussi avec son SHA exact et clôturer la tâche dans `SUIVI.md`.
 
+## P0 — Connecteur SSH gouverné
+
+Tâche gouvernée : `STB-TASK-20260915-002`.
+
+- [x] ajouter le contrat `.mcp/ssh-connector.json` ;
+- [x] ajouter le ruleset `.mcp/ssh-ruleset.json` ;
+- [x] ajouter des actions SSH strictement allowlistées en lecture seule ;
+- [x] ajouter le workflow manuel `Governed SSH Readonly` ;
+- [x] interdire shell arbitraire, root, sudo, fetch/pull/reset/switch/restart/deploy ;
+- [ ] configurer les GitHub Actions Secrets SSH sans les versionner ;
+- [ ] exécuter `full_readonly` et attester le run GitHub Actions ;
+- [ ] mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et `SUIVI.md` avec les preuves live.
+
 ## P1 — Réconciliation serveur ↔ GitHub
 
 À exécuter lorsque l'accès/dossier serveur sera fourni :
