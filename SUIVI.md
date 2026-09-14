@@ -133,20 +133,20 @@ Les changements sont limités aux documents de gouvernance/mémoire, au README e
 ### Current State Block
 
 ```text
-CURRENT_WORKSTREAM = STABLECOIN_GOVERNANCE_HARDENING
+CURRENT_WORKSTREAM = GOVERNED_REPOSITORY_EVOLUTION
 CURRENT_TASK = STB-TASK-20260915-001
-CURRENT_TASK_STATUS = IN_PROGRESS
+CURRENT_TASK_STATUS = COMPLETED
 TASK_BASELINE_SHA = 1ade2609cb14f0ec8f1a3c916e1fe5f446a46d81
 SOURCE_HEAD_OBSERVED = 1ade2609cb14f0ec8f1a3c916e1fe5f446a46d81
-LAST_COMPLETED_ACTION = CORE_GOVERNANCE_AND_MCP_SEMANTICS_HARDENED
+LAST_COMPLETED_ACTION = GOVERNANCE_HARDENING_IMPLEMENTED_AND_CI_ATTESTED
 CURRENT_BLOCKER = NONE
-EXACT_NEXT_ACTION = ADD_AND_VERIFY_GOVERNANCE_VALIDATOR_AND_CI
+EXACT_NEXT_ACTION = RECONCILE_LIVE_SERVER_FOLDER_WITH_GITHUB_MAIN_AND_UPDATE_SERVER_MAP
 RUNTIME_STATUS = DOCUMENTED_UNVERIFIED
-CI_STATUS = NOT_YET_ATTESTED_FOR_THIS_TASK
+CI_STATUS = PASS_FOR_IMPLEMENTATION_SHA_be144938ae325cfc2348228b645dfada80b8b12d
 MCP_REGISTRATION_STATUS = READY_NOT_LIVE_ATTESTED
 SECURITY_WARNINGS = SEE_SECTION_5_REQUIRES_SEPARATE_VERIFICATION
-CHECKPOINT_ID = STB-CHK-20260915-001
-EVIDENCE_IDS = EVID-GH-HEAD-20260915-001,EVID-GH-PERM-20260915-001,EVID-NONREG-20260915-001
+CHECKPOINT_ID = STB-CHK-20260915-002
+EVIDENCE_IDS = EVID-GH-HEAD-20260915-001,EVID-GH-PERM-20260915-001,EVID-NONREG-20260915-001,EVID-CI-20260915-001
 APPLICATION_CODE_MUTATION = NONE
 RUNTIME_MUTATION = NONE
 MCP_CORE_MUTATION = NONE
@@ -163,9 +163,12 @@ Le checkpoint est une mémoire de reprise et doit être réconcilié avec Git, l
 - `2026-09-15 / EVID-GH-HEAD-20260915-001` : `main` observé à `1ade2609cb14f0ec8f1a3c916e1fe5f446a46d81` avant écriture.
 - `2026-09-15 / EVID-GH-PERM-20260915-001` : connexion GitHub active observée avec `pull=true`, `push=true`, `admin=false` ; preuve limitée à la session.
 - `2026-09-15 / EVID-NONREG-20260915-001` : baseline applicative vers HEAD pré-durcissement = gouvernance uniquement, aucun fichier applicatif modifié.
+- `2026-09-15 / EVID-CI-20260915-001` : GitHub Actions `Governance Consistency` run `34905505739` = SUCCESS pour le SHA exact `be144938ae325cfc2348228b645dfada80b8b12d` ; l'étape `Verify governance consistency` = SUCCESS.
 
 ### Action suivante exacte
 
-Ajouter puis vérifier le validateur de cohérence et la GitHub Action associée. Après un run réussi, enregistrer le SHA exact validé, clôturer `STB-TASK-20260915-001`, puis reprendre la réconciliation serveur ↔ GitHub déjà prévue sans mutation runtime avant observation live.
+La tâche `STB-TASK-20260915-001` est clôturée. La prochaine action projet est de réconcilier le serveur live avec GitHub : identifier serveur/vhost/dossier actifs, relever branche/HEAD/remotes/working tree, comparer à `main`, identifier le backend API et vérifier les services/HTTP avant toute mutation runtime.
+
+Le checkpoint n'embarque volontairement pas son propre SHA de commit : le HEAD Git distant observé reste l'autorité pour la version du checkpoint. Toute nouvelle session doit donc réobserver Git et la CI avant écriture.
 
 Le HEAD courant doit toujours être relu depuis Git au début d'une nouvelle session ; il ne doit jamais être déduit de ce document.
