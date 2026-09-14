@@ -76,3 +76,12 @@
 **Conséquence :** les secrets SSH restent exclusivement dans GitHub Actions Secrets. Le dépôt ne contient ni clé privée, ni mot de passe, ni valeur secrète. Les actions de déploiement, restart, synchronisation ou mutation runtime restent désactivées jusqu'à réconciliation live complète et plan de mutation approuvé.
 
 **Surface :** `.mcp/ssh-connector.json`, `.mcp/ssh-ruleset.json`, `scripts/ssh/governed-readonly.sh`, `.github/workflows/governed-ssh-readonly.yml`.
+
+
+## DEC-2026-09-15-013 — Réutiliser la liaison serveur/MCP existante, ne pas créer de canal SSH parallèle
+
+**Statut :** `SUPERSEDES DEC-2026-09-15-012`.
+
+**Décision :** après réinspection du dépôt, Stablecoin possède déjà deux éléments historiques à réconcilier : un remote serveur `github` pointant vers `Patricked-code/Stablecoin` avec mise à jour fast-forward documentée, et un pont externe `wealthtech_ssh_bridge` vers les serveurs. Le workflow GitHub Actions SSH ajouté le 2026-09-15 est donc retiré afin de respecter l'interdiction des mécanismes MCP/SSH parallèles.
+
+**Conséquence :** la suite réobserve et gouverne l'existant. Aucune nouvelle clé SSH GitHub Actions n'est à configurer pour Stablecoin à ce stade. Toute mutation serveur reste interdite jusqu'à observation live du remote, de la branche, du HEAD, du working tree et du runtime.
