@@ -30,7 +30,7 @@ MCP_CORE_MODIFICATION_FROM_THIS_REPO = FORBIDDEN_UNLESS_EXPLICITLY_REQUESTED
 
 Le dépôt doit évoluer en continu sans réinitialiser, remplacer ou simplifier aveuglément l'existant. Toute évolution suit l'ordre :
 
-`READ → MAP → RECONCILE → GAP → EVOLVE → VERIFY → PERSIST`.
+`READ → REOBSERVE → RECONCILE → MAP → COMPARE → GAP_ANALYSIS → EVOLVE_COMPATIBLY → VERIFY → PERSIST`.
 
 Préférer toujours :
 
@@ -93,16 +93,30 @@ MCP est l'autorité d'orchestration externe. Ce dépôt s'adapte au contrat MCP 
 
 Les informations `.mcp/server-map.json` doivent distinguer ce qui est documenté de ce qui est actuellement vérifié. Une information serveur non vérifiée est `DOCUMENTED_UNVERIFIED`, jamais `PRODUCTION_VERIFIED`.
 
+### 7.1 Politique, capacité live et autorisation d'opération
+
+Trois notions ne doivent jamais être confondues :
+
+- **repository policy permission** : ce que la gouvernance du dépôt autorise au maximum ;
+- **live agent capability** : ce que l'identité/connexion active peut réellement faire à cet instant ;
+- **current operation authorization** : ce que la tâche courante autorise effectivement dans son scope.
+
+Ainsi, `canWriteCanonicalBranch=true` ou `directMainPush=true` ne constitue jamais une preuve que la connexion courante possède `push=true`. Toute session d'écriture doit revalider la capacité live avant mutation. Une capacité live plus large que la politique locale ne permet jamais de dépasser la politique.
+
 ## 8. Definition of Done minimale
 
 Une intervention n'est terminée que si :
 
 - le repo, la branche et le HEAD ont été vérifiés ;
+- une tâche courante bornée existe avec identifiant, statut, baseline et prochaine action ;
 - l'existant pertinent a été lu et réutilisé ;
 - l'impact et les risques ont été analysés ;
-- les vérifications applicables ont été exécutées ;
+- les vérifications applicables ont été exécutées et reliées à des preuves identifiables ;
+- toute preuve CI invoquée est liée au SHA exact qu'elle valide ; une ancienne CI ne prouve jamais un nouveau SHA ;
 - les régressions introduites sont absentes ou corrigées ;
 - les limitations et échecs préexistants sont distingués ;
 - `SUIVI.md` et, si nécessaire, `TODO.md` / `DECISIONS.md` sont synchronisés ;
+- un checkpoint persistant indique au minimum la tâche, la baseline observée, le dernier résultat prouvé, le blocker éventuel et l'action suivante ;
+- le HEAD distant est réobservé après écriture et toute divergence rend le checkpoint potentiellement stale ;
 - un point de reprise exact existe si le chantier continue ;
 - aucune réussite, donnée, infrastructure ou validation n'a été inventée.
