@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "governance_hardening_in_progress",
+  "status": "governance_hardened_runtime_reconciliation_pending",
   "repository": "Patricked-code/Stablecoin",
   "canonicalBranch": "main",
   "entrypoint": "GOVERNANCE.md",
