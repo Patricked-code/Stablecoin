@@ -9,6 +9,19 @@
 - [x] Réécrire le haut de `README.md` pour présenter l'état réel et pointer vers la mémoire canonique, sans supprimer les références historiques utiles.
 - [x] Vérifier par comparaison Git que le bootstrap n'a modifié aucun fichier applicatif et enregistrer le checkpoint dans `SUIVI.md`.
 
+## P0 — Durcissement gouvernance 2026-09-15
+
+Tâche gouvernée : `STB-TASK-20260915-001`.
+
+- [x] réobserver `main`, le HEAD et la capacité GitHub live avant écriture ;
+- [x] formaliser tâche courante, checkpoint, evidence IDs et exact next action dans `SUIVI.md` ;
+- [x] distinguer permission repository-side, capacité live et autorisation de l'opération ;
+- [x] corriger l'ancre de reprise `.mcp/onboarding.json` et enrichir les rôles sémantiques ;
+- [x] renforcer `LOOP_ENGINEERING.md` sans modifier sa boucle canonique ;
+- [ ] ajouter un validateur dependency-free de cohérence de gouvernance ;
+- [ ] ajouter GitHub Actions `Governance Consistency` ;
+- [ ] attester le premier run CI réussi avec son SHA exact et clôturer la tâche dans `SUIVI.md`.
+
 ## P1 — Réconciliation serveur ↔ GitHub
 
 À exécuter lorsque l'accès/dossier serveur sera fourni :
@@ -36,7 +49,7 @@
 - [ ] cartographier les routes frontend/API réellement utilisées ;
 - [ ] documenter la base de données et le backend après découverte vérifiée ;
 - [ ] inventorier les contrats/réseaux/déploiements blockchain actuels ;
-- [ ] clarifier la CI actuellement utilisée ou son absence.
+- [ ] finaliser et attester la CI de cohérence de gouvernance ; toute CI externe éventuelle reste `UNKNOWN` jusqu'à preuve.
 
 ## Archive à préserver
 
