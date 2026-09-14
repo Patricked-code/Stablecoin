@@ -1,0 +1,105 @@
+name: Governed SSH Readonly
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Allowlisted read-only SSH action
+        required: true
+        type: choice
+        options:
+          - inventory
+          - git_state
+          - runtime_processes
+          - full_readonly
+        default: full_readonly
+      target_path:
+        description: Optional target path; leave blank to use the documented frontend path from .mcp/server-map.json
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stablecoin-governed-ssh-readonly
+  cancel-in-progress: false
+
+jobs:
+  governed-ssh-readonly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify governance consistency
+        run: node scripts/verify-governance-consistency.js
+
+      - name: Resolve governed target
+        id: target
+        shell: bash
+        env:
+          INPUT_TARGET_PATH: ${{ inputs.target_path }}
+        run: |
+          set -euo pipefail
+          if [ -n "$INPUT_TARGET_PATH" ]; then
+            TARGET_PATH="$INPUT_TARGET_PATH"
+          else
+            TARGET_PATH="$(node -e 'const x=require("./.mcp/server-map.json"); process.stdout.write(x.runtime.frontend.documentedPath || "")')"
+          fi
+          if [ -z "$TARGET_PATH" ]; then
+            echo "No target path available" >&2
+            exit 1
+          fi
+          printf 'target_path=%s\n' "$TARGET_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Configure ephemeral SSH client
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.STABLECOIN_SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.STABLECOIN_SSH_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          test -n "$SSH_PRIVATE_KEY"
+          test -n "$SSH_KNOWN_HOSTS"
+          install -d -m 700 "$HOME/.ssh"
+          printf '%s\n' "$SSH_PRIVATE_KEY" > "$HOME/.ssh/id_ed25519"
+          chmod 600 "$HOME/.ssh/id_ed25519"
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/known_hosts"
+
+      - name: Execute allowlisted read-only SSH action
+        shell: bash
+        env:
+          SSH_HOST: ${{ secrets.STABLECOIN_SSH_HOST }}
+          SSH_USER: ${{ secrets.STABLECOIN_SSH_USER }}
+          SSH_PORT: ${{ vars.STABLECOIN_SSH_PORT }}
+          ACTION: ${{ inputs.action }}
+          TARGET_PATH: ${{ steps.target.outputs.target_path }}
+        run: |
+          set -euo pipefail
+          test -n "$SSH_HOST"
+          test -n "$SSH_USER"
+          PORT="${SSH_PORT:-22}"
+
+          printf -v Q_ACTION '%q' "$ACTION"
+          printf -v Q_TARGET '%q' "$TARGET_PATH"
+          printf -v Q_REPO '%q' "Patricked-code/Stablecoin"
+
+          ssh \
+            -p "$PORT" \
+            -i "$HOME/.ssh/id_ed25519" \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile="$HOME/.ssh/known_hosts" \
+            -o ConnectTimeout=15 \
+            "$SSH_USER@$SSH_HOST" \
+            "bash -s -- $Q_ACTION $Q_TARGET $Q_REPO" \
+            < scripts/ssh/governed-readonly.sh
+
+      - name: Remove ephemeral SSH material
+        if: always()
+        shell: bash
+        run: rm -rf "$HOME/.ssh"
