@@ -10,7 +10,8 @@
     "historyRewrite": false,
     "secretReadingForbidden": true,
     "runtimeMutationRequiresFreshVerification": true,
-    "destructiveRuntimeActionRequiresHumanApproval": true
+    "destructiveRuntimeActionRequiresHumanApproval": true,
+    "liveCapabilityCheckRequiredBeforeEveryWriteSession": true
   },
   "forbiddenPaths": [
     ".env",
@@ -30,5 +31,12 @@
     "DECISIONS.md",
     "TODO.md",
     "LOOP_ENGINEERING.md"
-  ]
+  ],
+  "semantics": {
+    "scope": "repository_policy_ceiling",
+    "provesLiveAgentCapability": false,
+    "liveCapabilityCheckRequiredBeforeWrite": true,
+    "currentOperationAuthorizationRequired": true,
+    "effectivePermissionRule": "MOST_RESTRICTIVE_INTERSECTION"
+  }
 }
