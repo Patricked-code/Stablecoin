@@ -31,6 +31,15 @@ Tâche gouvernée : `STB-TASK-20260915-002`.
 - [x] retrouver la preuve historique du pont externe `wealthtech_ssh_bridge` vers S1/S2 ;
 - [x] identifier le connecteur GitHub Actions SSH ajouté récemment comme mécanisme parallèle non nécessaire ;
 - [x] retirer ce mécanisme parallèle et conserver l'orchestrateur externe MCP ;
+- [x] réobserver le MCP central après l'intégration GWC : `Patricked-code/MCP/main@847b775a0b64b42ba3bddfee518ca0a486d810ce` ;
+- [x] réconcilier la PR MCP #86 avec le `main` courant : candidat `DIVERGED`, 18 commits ahead / 588 behind, à ne pas fusionner tel quel ;
+- [x] confirmer que le MCP `main` courant n'expose plus `stablecoin_frontend` et ne contient pas `CS-STABLECOIN-001` dans le registre actif ;
+- [ ] réobserver les autorités MCP live applicables : Governed Work Queue, Governed Session, locks et Live State ;
+- [ ] reprendre une tâche compatible si elle existe, sinon enregistrer/claim une tâche Stablecoin dédiée issue de l'intention explicite courante ;
+- [ ] porter les invariants utiles de #86 sur une branche gouvernée issue du `main` MCP courant, sans réutiliser son historique stale ;
+- [ ] valider RED/GREEN, non-régression, CI exact-head et revue du candidat MCP réconcilié ;
+- [ ] fusionner puis déployer le MCP uniquement via le chemin gouverné GitHub → S1 et attester Live State exact-SHA ;
+- [ ] après activation, exécuter comme première action Stablecoin `git_status_project_s2(stablecoin_frontend)` en lecture seule ;
 - [ ] reconnecter le `wealthtech_ssh_bridge` existant ;
 - [ ] observer S2 en lecture seule : serveur, vhost, dossier actif, remotes, branche, HEAD, working tree, Passenger/Node et HTTP ;
 - [ ] comparer le HEAD serveur à `Patricked-code/Stablecoin/main` ;
