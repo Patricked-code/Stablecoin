@@ -139,9 +139,9 @@ CURRENT_TASK_STATUS = IN_PROGRESS
 TASK_BASELINE_SHA = 45f440d304022dd06d9f7f68e98fb38bc568488a
 SOURCE_HEAD_OBSERVED = fc935852da22d0fc7125464081935cc4e9c079db
 LAST_COMPLETED_ACTION = MCP_PR86_RECONCILED_AGAINST_CURRENT_MCP_MAIN_STALE_CANDIDATE_NO_RUNTIME_MUTATION
-CURRENT_BLOCKER = WEALTHTECH_SSH_BRIDGE_NOT_EXPOSED_IN_CURRENT_SESSION_AND_STABLECOIN_CAPABILITY_ABSENT_FROM_CURRENT_MCP_MAIN
-EXACT_NEXT_ACTION = REOBSERVE_MCP_LIVE_QUEUE_SESSION_LOCKS_THEN_PORT_PR86_STABLECOIN_CAPABILITY_TO_CURRENT_MCP_MAIN_AND_GOVERNED_DEPLOY_BEFORE_S2_READONLY_STATUS
-RUNTIME_STATUS = DOCUMENTED_UNVERIFIED
+CURRENT_BLOCKER = BACKEND_PROCESS_HTTP_STILL_UNVERIFIED_BEFORE_ANY_S2_WRITE
+EXACT_NEXT_ACTION = COLLECT_S2_BACKEND_PROCESS_HTTP_READONLY_EVIDENCE_THEN_REASSESS_FAST_FORWARD
+RUNTIME_STATUS = FRONTEND_GIT_CURRENT_BACKEND_PROCESS_HTTP_UNKNOWN
 CI_STATUS = PASS_FOR_CURRENT_STABLECOIN_MAIN_SHA_fc935852da22d0fc7125464081935cc4e9c079db_RUN_34906495480
 MCP_REGISTRATION_STATUS = READY_NOT_LIVE_ATTESTED
 SECURITY_WARNINGS = SEE_SECTION_5_REQUIRES_SEPARATE_VERIFICATION
@@ -190,3 +190,45 @@ Aucune commande `git fetch`, `git merge`, build, restart ou autre mutation serve
 Le checkpoint n'embarque volontairement pas son propre SHA de commit : le HEAD Git distant observé reste l'autorité pour la version du checkpoint. Toute nouvelle session doit donc réobserver Git et la CI avant écriture.
 
 Le HEAD courant doit toujours être relu depuis Git au début d'une nouvelle session ; il ne doit jamais être déduit de ce document.
+
+### Réconciliation S2 live via GitHub OIDC — 2026-09-20
+
+Preuve fraîche, strictement read-only :
+
+- `EVID-S2-FRONTEND-GIT-20260920-001`
+- transport : `github_oidc_mcp_readonly`
+- MCP workflow run : `35531961849`
+- artifact : `10612095179`
+- artifact digest : `sha256:85ce72d897d1ce7c805d89a86e15ae82322af9ee6eddb8aac6fac217d82efefb`
+- mutation serveur : `false`
+
+État observé du checkout frontend Stablecoin S2 :
+
+```text
+PATH = /var/www/vhosts/chainsolutions.fr/stablecoin.chainsolutions.fr/stablecoin
+BRANCH = main
+SERVER_HEAD = 6216755d318677ed9a56c36731a57531d02bf751
+WORKING_TREE_CHANGES = 0
+ORIGIN_FETCH = https://github.com/Patricked-code/Stablecoin.git
+ORIGIN_PUSH = https://github.com/Patricked-code/Stablecoin.git
+GITHUB_MAIN = 7c6e64d3486658feca9192bae7602b195f0537f8
+COMPARE_SERVER_TO_GITHUB = ahead
+GITHUB_AHEAD_BY = 53
+SERVER_AHEAD_BY = 0
+MERGE_BASE = SERVER_HEAD
+CLASSIFICATION = SERVER_BEHIND
+```
+
+Conséquences :
+
+- le chemin historique du frontend est confirmé live ;
+- le checkout est propre ;
+- la branche est correcte ;
+- le remote GitHub est correct ;
+- il n'y a aucune divergence Git : le serveur est un ancêtre direct de `main` ;
+- un fast-forward est techniquement possible, mais reste non autorisé à ce stade tant que backend, process Passenger/Node et HTTP/API ne sont pas attestés live ;
+- aucune commande `git fetch`, `git merge`, build ou restart n'a été exécutée.
+
+Le blocker précédent `WEALTHTECH_SSH_BRIDGE_NOT_EXPOSED...` est dépassé pour les preuves read-only : GitHub Actions OIDC fournit maintenant un canal gouverné sans exposition interactive du bridge.
+
+Prochaine action exacte : étendre/consommer les probes read-only pour attester le backend API Stablecoin, le process Passenger/Node et les réponses HTTP, puis décider si le fast-forward frontend documenté peut être préparé.
