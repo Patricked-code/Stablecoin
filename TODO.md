@@ -39,11 +39,11 @@ Tâche gouvernée : `STB-TASK-20260915-002`.
 - [ ] porter les invariants utiles de #86 sur une branche gouvernée issue du `main` MCP courant, sans réutiliser son historique stale ;
 - [ ] valider RED/GREEN, non-régression, CI exact-head et revue du candidat MCP réconcilié ;
 - [ ] fusionner puis déployer le MCP uniquement via le chemin gouverné GitHub → S1 et attester Live State exact-SHA ;
-- [ ] après activation, exécuter comme première action Stablecoin `git_status_project_s2(stablecoin_frontend)` en lecture seule ;
-- [ ] reconnecter le `wealthtech_ssh_bridge` existant ;
+- [x] après activation, exécuter comme première action Stablecoin un statut Git frontend S2 strictement read-only via GitHub OIDC ;
+- [x] établir un chemin read-only GitHub OIDC gouverné vers le MCP sans exposition interactive du bridge ;
 - [ ] observer S2 en lecture seule : serveur, vhost, dossier actif, remotes, branche, HEAD, working tree, Passenger/Node et HTTP ;
-- [ ] comparer le HEAD serveur à `Patricked-code/Stablecoin/main` ;
-- [ ] classifier le résultat : `IN_SYNC`, `SERVER_BEHIND`, `SERVER_AHEAD`, `DIVERGED`, `DIRTY_WORKTREE`, `WRONG_BRANCH` ou `WRONG_REMOTE` ;
+- [x] comparer le HEAD frontend serveur à `Patricked-code/Stablecoin/main` ;
+- [x] classifier le frontend : `SERVER_BEHIND` de 53 commits, sans divergence, worktree propre, branche/remote corrects ;
 - [ ] mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et `SUIVI.md` avec les preuves live ;
 - [ ] seulement ensuite préparer, si nécessaire, un plan de mise à jour non destructif utilisant la liaison existante.
 
@@ -53,8 +53,8 @@ Tâche gouvernée : `STB-TASK-20260915-002`.
 
 - [ ] identifier précisément le serveur et le vhost actifs ;
 - [ ] confirmer le dossier frontend actif au lieu de présumer le chemin historique ;
-- [ ] relever branche, HEAD, remotes et working tree côté serveur ;
-- [ ] comparer serveur ↔ `Patricked-code/Stablecoin/main` ;
+- [x] relever branche, HEAD, remotes et working tree du frontend côté serveur ;
+- [x] comparer le frontend serveur ↔ `Patricked-code/Stablecoin/main` ;
 - [ ] identifier le backend API réellement actif, son repo/remote/HEAD et son ownership ;
 - [ ] confirmer le process Passenger/Node actif et la procédure de restart ;
 - [ ] confirmer les domaines et réponses HTTP/API ;
