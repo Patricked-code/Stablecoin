@@ -85,3 +85,12 @@
 **Décision :** après réinspection du dépôt, Stablecoin possède déjà deux éléments historiques à réconcilier : un remote serveur `github` pointant vers `Patricked-code/Stablecoin` avec mise à jour fast-forward documentée, et un pont externe `wealthtech_ssh_bridge` vers les serveurs. Le workflow GitHub Actions SSH ajouté le 2026-09-15 est donc retiré afin de respecter l'interdiction des mécanismes MCP/SSH parallèles.
 
 **Conséquence :** la suite réobserve et gouverne l'existant. Aucune nouvelle clé SSH GitHub Actions n'est à configurer pour Stablecoin à ce stade. Toute mutation serveur reste interdite jusqu'à observation live du remote, de la branche, du HEAD, du working tree et du runtime.
+
+
+## DEC-2026-09-20-014 — Fast-forward frontend conditionné au diff applicatif
+
+**Décision :** un fast-forward du checkout frontend S2 peut omettre build et restart Passenger uniquement si le préflight immédiatement avant exécution démontre un worktree propre, une relation fast-forward sans divergence et zéro fichier applicatif modifié entre le HEAD serveur et le HEAD GitHub ciblé.
+
+**Preuve courante :** au 2026-09-20, `S2@6216755d318677ed9a56c36731a57531d02bf751` est 57 commits derrière `GitHub main@678656d84164f1aa7dadef8a3a627d0b905fe9e4`, avec 16 fichiers modifiés exclusivement dans la gouvernance, `.mcp`, CI, scripts de vérification et README ; zéro fichier applicatif.
+
+**Conséquence :** ce constat n'est pas une autorisation permanente. Toute évolution ultérieure de `main` impose une nouvelle comparaison. Si le diff applicatif devient non nul, le plan sans build/restart est automatiquement invalidé.

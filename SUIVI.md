@@ -81,9 +81,7 @@ Le runbook documente notamment :
 - un backend Express / Sequelize distinct ;
 - des chemins serveur historiques et une procédure de build/restart.
 
-**État de preuve actuel :** `DOCUMENTED_UNVERIFIED`.
-
-Aucune connexion live au serveur n'a été exécutée dans ce bootstrap. Les chemins, HEAD déployés, remotes, services et réponses HTTP doivent être reverifiés avant mutation runtime.
+**État de preuve actuel :** `PARTIAL_LIVE_VERIFICATION` sous un statut global conservateur `DOCUMENTED_UNVERIFIED`. Le frontend Git/Passenger/HTTP, le chemin backend et la joignabilité HTTP sont vérifiés live. La source/ownership process du backend, son restart et la base attachée restent inconnus.
 
 ## 5. Sécurité connue
 
@@ -137,19 +135,19 @@ CURRENT_WORKSTREAM = GOVERNED_REPOSITORY_EVOLUTION
 CURRENT_TASK = STB-TASK-20260915-002
 CURRENT_TASK_STATUS = IN_PROGRESS
 TASK_BASELINE_SHA = 45f440d304022dd06d9f7f68e98fb38bc568488a
-SOURCE_HEAD_OBSERVED = fc935852da22d0fc7125464081935cc4e9c079db
-LAST_COMPLETED_ACTION = MCP_PR86_RECONCILED_AGAINST_CURRENT_MCP_MAIN_STALE_CANDIDATE_NO_RUNTIME_MUTATION
-CURRENT_BLOCKER = BACKEND_PROCESS_HTTP_STILL_UNVERIFIED_BEFORE_ANY_S2_WRITE
-EXACT_NEXT_ACTION = COLLECT_S2_BACKEND_PROCESS_HTTP_READONLY_EVIDENCE_THEN_REASSESS_FAST_FORWARD
-RUNTIME_STATUS = FRONTEND_GIT_CURRENT_BACKEND_PROCESS_HTTP_UNKNOWN
-CI_STATUS = PASS_FOR_CURRENT_STABLECOIN_MAIN_SHA_fc935852da22d0fc7125464081935cc4e9c079db_RUN_34906495480
-MCP_REGISTRATION_STATUS = READY_NOT_LIVE_ATTESTED
+SOURCE_HEAD_OBSERVED = 678656d84164f1aa7dadef8a3a627d0b905fe9e4
+LAST_COMPLETED_ACTION = S2_LIVE_FRONTEND_BACKEND_RUNTIME_HTTP_AND_DIFF_SCOPE_ATTESTED_NO_RUNTIME_MUTATION
+CURRENT_BLOCKER = RUNTIME_WRITE_NOT_IN_CURRENT_TASK_SCOPE_PLAN_ONLY
+EXACT_NEXT_ACTION = REOBSERVE_EXACT_MAIN_AND_DIFF_THEN_REQUEST_RUNTIME_WRITE_AUTHORIZATION_FOR_METADATA_ONLY_FAST_FORWARD_NO_BUILD_NO_RESTART_IF_APP_DIFF_ZERO
+RUNTIME_STATUS = FRONTEND_GIT_PASSENGER_HTTP_CURRENT_BACKEND_PATH_HTTP_CURRENT_BACKEND_GIT_NOT_APPLICABLE_PROCESS_OWNERSHIP_UNKNOWN
+CI_STATUS = PASS_FOR_STABLECOIN_MAIN_SHA_678656d84164f1aa7dadef8a3a627d0b905fe9e4_RUN_35532249854
+MCP_REGISTRATION_STATUS = GITHUB_OIDC_READONLY_ACTIVE_MCP_MAIN_bb81baf7f8424bcb32c3e87b22018335461b1189_S1_ATTESTED
 SECURITY_WARNINGS = SEE_SECTION_5_REQUIRES_SEPARATE_VERIFICATION
-CHECKPOINT_ID = STB-CHK-20260920-006
-EVIDENCE_IDS = EVID-GH-HEAD-20260915-001,EVID-GH-PERM-20260915-001,EVID-NONREG-20260915-001,EVID-CI-20260915-001,EVID-LINKAGE-20260915-001,EVID-MCP-BRIDGE-20260915-001,EVID-CORRECTION-20260915-001,EVID-CI-CORRECTION-20260915-001
+CHECKPOINT_ID = STB-CHK-20260920-007
+EVIDENCE_IDS = EVID-GH-HEAD-20260915-001,EVID-GH-PERM-20260915-001,EVID-NONREG-20260915-001,EVID-CI-20260915-001,EVID-LINKAGE-20260915-001,EVID-MCP-BRIDGE-20260915-001,EVID-CORRECTION-20260915-001,EVID-CI-CORRECTION-20260915-001,EVID-S2-FRONTEND-GIT-20260920-001,EVID-S2-BACKEND-PATH-20260920-001,EVID-S2-RUNTIME-HTTP-20260920-001,EVID-S2-DIFF-NONREG-20260920-001
 APPLICATION_CODE_MUTATION = NONE
 RUNTIME_MUTATION = NONE
-MCP_CORE_MUTATION = NONE
+MCP_CORE_MUTATION = GOVERNED_READONLY_EVIDENCE_CAPABILITY_UPDATED_AND_DEPLOYED_ON_MCP_MAIN
 ```
 
 Le checkpoint est une mémoire de reprise et doit être réconcilié avec Git, la CI et le runtime avant toute nouvelle mutation.
@@ -232,3 +230,52 @@ Conséquences :
 Le blocker précédent `WEALTHTECH_SSH_BRIDGE_NOT_EXPOSED...` est dépassé pour les preuves read-only : GitHub Actions OIDC fournit maintenant un canal gouverné sans exposition interactive du bridge.
 
 Prochaine action exacte : étendre/consommer les probes read-only pour attester le backend API Stablecoin, le process Passenger/Node et les réponses HTTP, puis décider si le fast-forward frontend documenté peut être préparé.
+
+
+### Réconciliation S2 live complète — 2026-09-20
+
+Preuves read-only fraîches via GitHub OIDC :
+
+- `EVID-S2-FRONTEND-GIT-20260920-001` — run `35531961849`, artifact `10612095179`, digest `sha256:85ce72d897d1ce7c805d89a86e15ae82322af9ee6eddb8aac6fac217d82efefb` ;
+- `EVID-S2-BACKEND-PATH-20260920-001` — run `35533714750`, artifact `10611638096`, digest `sha256:34dfa858c9664908424ea4d6432b8bafe5b2f2422f24bd05ce6350623bead22f` ;
+- `EVID-S2-RUNTIME-HTTP-20260920-001` — run `35533765848`, artifact `10612397117`, digest `sha256:78ba9a228aad34a54a2cb566533a67514058233f7944361c18fa548713ca51b6` ;
+- `EVID-S2-DIFF-NONREG-20260920-001` — comparaison serveur `6216755d...` → GitHub `678656d8...`.
+
+État live consolidé :
+
+```text
+FRONTEND_PATH = /var/www/vhosts/chainsolutions.fr/stablecoin.chainsolutions.fr/stablecoin
+FRONTEND_BRANCH = main
+FRONTEND_SERVER_HEAD = 6216755d318677ed9a56c36731a57531d02bf751
+FRONTEND_WORKTREE = CLEAN
+FRONTEND_ORIGIN = https://github.com/Patricked-code/Stablecoin.git
+FRONTEND_PASSENGER_CWD = /var/www/vhosts/chainsolutions.fr/stablecoin.chainsolutions.fr/stablecoin
+FRONTEND_HTTP = 200
+
+BACKEND_PATH = /var/www/vhosts/chainsolutions.fr/api.stablecoin.chainsolutions.fr
+BACKEND_PATH_EXISTS = true
+BACKEND_GIT_REPOSITORY = false
+BACKEND_HTTP_ROOT = 401
+BACKEND_HTTP_HEALTH = 401
+BACKEND_REACHABILITY = REACHABLE_AUTH_PROTECTED
+BACKEND_PROCESS_OWNERSHIP = UNKNOWN
+
+GITHUB_MAIN_OBSERVED = 678656d84164f1aa7dadef8a3a627d0b905fe9e4
+GITHUB_AHEAD_BY = 57
+SERVER_AHEAD_BY = 0
+MERGE_BASE = SERVER_HEAD
+DIFF_CHANGED_FILES = 16
+APPLICATION_CODE_FILES_CHANGED = 0
+DIFF_SCOPE = GOVERNANCE_DOCS_MCP_CI_README_ONLY
+```
+
+Conséquence de non-régression : le fast-forward frontend est techniquement possible et, **sur le diff observé**, ne modifierait aucun fichier applicatif. Le plan de mise à jour devient donc :
+
+1. reobserver immédiatement avant exécution le HEAD GitHub exact, le HEAD S2, le worktree et le diff ;
+2. exiger encore `behind_by=0`, `merge_base=SERVER_HEAD`, worktree propre et `APPLICATION_CODE_FILES_CHANGED=0` ;
+3. exécuter uniquement un fast-forward strict du checkout frontend via son remote GitHub existant ;
+4. **ne pas lancer npm install, build ni restart Passenger** si le diff reste non applicatif ;
+5. réattester HEAD/worktree, frontend HTTP 200 et API protégée/joignable après le fast-forward ;
+6. si un fichier applicatif apparaît dans le diff au préflight, annuler ce plan et revenir à une procédure build/restart dédiée.
+
+Aucune mutation S2 n'a été exécutée pendant cette réconciliation. L'opération runtime reste hors du scope courant tant qu'elle n'est pas explicitement autorisée.

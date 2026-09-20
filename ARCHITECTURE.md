@@ -45,11 +45,11 @@ Le runbook `docs/STABLECOIN_PLESK_DEPLOYMENT_RUNBOOK.md` documente :
 - build historique sous Node 18 avec `NODE_OPTIONS=--openssl-legacy-provider` ;
 - restart frontend via `tmp/restart.txt`.
 
-**Classification actuelle :** `DOCUMENTED_UNVERIFIED` jusqu'à nouvelle observation serveur.
+**Classification actuelle :** `PARTIAL_LIVE_VERIFICATION`. Le frontend est vérifié live (chemin, branche, HEAD, remotes, worktree, Passenger et HTTP). Le chemin backend et sa joignabilité HTTP sont vérifiés, mais sa source/ownership process, sa procédure de restart et la base attachée restent `UNKNOWN` / `DOCUMENTED_UNVERIFIED`.
 
 ## 5. API / données
 
-Le runbook documente un backend Express / Sequelize et un contrôle d'API key via la table `Wtiapikeys`. La base et le code backend ne sont pas suffisamment cartographiés dans ce repository pour déclarer ici leur architecture complète ou leur ownership actuel.
+Le runbook documente un backend Express / Sequelize et un contrôle d'API key via la table `Wtiapikeys`. La preuve live du 2026-09-20 confirme que `/var/www/vhosts/chainsolutions.fr/api.stablecoin.chainsolutions.fr` existe mais n'est pas un dépôt Git. Les réponses `401` sur la racine API et `/health` prouvent une API joignable et protégée, pas une panne. La source exacte, l'ownership process/restart et la base attachée restent à cartographier.
 
 ## 6. Authentification
 
@@ -57,7 +57,7 @@ Le runbook documente un flux combinant API métier et Magic Link, avec callbacks
 
 ## 7. Déploiement et Git
 
-Le runbook indique historiquement un ancien remote GitLab et GitHub comme source des corrections récentes. L'état exact des remotes du serveur doit être revalidé avant toute synchronisation.
+Le checkout frontend S2 est vérifié live sur `main@6216755d318677ed9a56c36731a57531d02bf751`, worktree propre, avec `origin` fetch/push vers `https://github.com/Patricked-code/Stablecoin.git`. Le `main` GitHub observé à `678656d84164f1aa7dadef8a3a627d0b905fe9e4` est 57 commits devant, sans divergence. Le diff observé touche 16 fichiers de gouvernance/.mcp/CI/README et **0 fichier applicatif**. Un futur fast-forward peut donc être préparé sans build ni restart uniquement si une re-comparaison immédiatement avant exécution confirme encore `applicationCodeFilesChanged=0`.
 
 ## 8. MCP
 
@@ -73,10 +73,9 @@ Elle est conservée comme evidence historique, non comme architecture actuelle.
 
 À compléter uniquement avec preuves :
 
-- HEAD et état live du frontend sur le serveur ;
-- HEAD/remote/source du backend API ;
+- source/ownership Git et process du backend API (le chemin live existe mais n'est pas un dépôt Git) ;
 - base de données réellement attachée et schéma courant ;
-- processus/services effectivement actifs ;
+- ownership/restart du process backend ;
 - inventaire actuel des contrats déployés et réseaux ;
 - CI réellement utilisée ;
 - dépendances inter-repositories ;

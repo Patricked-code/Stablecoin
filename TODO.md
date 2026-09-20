@@ -41,24 +41,25 @@ Tâche gouvernée : `STB-TASK-20260915-002`.
 - [ ] fusionner puis déployer le MCP uniquement via le chemin gouverné GitHub → S1 et attester Live State exact-SHA ;
 - [x] après activation, exécuter comme première action Stablecoin un statut Git frontend S2 strictement read-only via GitHub OIDC ;
 - [x] établir un chemin read-only GitHub OIDC gouverné vers le MCP sans exposition interactive du bridge ;
-- [ ] observer S2 en lecture seule : serveur, vhost, dossier actif, remotes, branche, HEAD, working tree, Passenger/Node et HTTP ;
+- [x] observer S2 en lecture seule : serveur, vhost, dossier actif, remotes, branche, HEAD, working tree, Passenger/Node et HTTP ;
 - [x] comparer le HEAD frontend serveur à `Patricked-code/Stablecoin/main` ;
-- [x] classifier le frontend : `SERVER_BEHIND` de 53 commits, sans divergence, worktree propre, branche/remote corrects ;
-- [ ] mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et `SUIVI.md` avec les preuves live ;
-- [ ] seulement ensuite préparer, si nécessaire, un plan de mise à jour non destructif utilisant la liaison existante.
+- [x] classifier le frontend : `SERVER_BEHIND` de 57 commits à l'observation `main@678656d8...`, sans divergence, worktree propre, branche/remote corrects ;
+- [x] mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et `SUIVI.md` avec les preuves live ;
+- [x] préparer un plan de mise à jour non destructif : recheck exact-head/diff, fast-forward strict du checkout frontend seulement, aucun build/restart si le diff reste non applicatif, puis post-attestation ;
+- [ ] obtenir l'autorisation d'opération runtime explicite avant d'exécuter ce fast-forward sur S2.
 
 ## P1 — Réconciliation serveur ↔ GitHub
 
 À exécuter lorsque l'accès/dossier serveur sera fourni :
 
-- [ ] identifier précisément le serveur et le vhost actifs ;
-- [ ] confirmer le dossier frontend actif au lieu de présumer le chemin historique ;
+- [x] identifier précisément le serveur S2 et le vhost frontend actif ;
+- [x] confirmer le dossier frontend actif au lieu de présumer le chemin historique ;
 - [x] relever branche, HEAD, remotes et working tree du frontend côté serveur ;
 - [x] comparer le frontend serveur ↔ `Patricked-code/Stablecoin/main` ;
-- [ ] identifier le backend API réellement actif, son repo/remote/HEAD et son ownership ;
-- [ ] confirmer le process Passenger/Node actif et la procédure de restart ;
-- [ ] confirmer les domaines et réponses HTTP/API ;
-- [ ] mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et `SUIVI.md` avec les preuves live ;
+- [ ] identifier la source/ownership du backend API ; le chemin live existe mais n'est pas un dépôt Git ;
+- [ ] confirmer l'ownership/restart du backend ; le process Passenger frontend et son cwd sont vérifiés live ;
+- [x] confirmer les domaines et réponses HTTP/API (`frontend=200`, API racine/health=`401` protégés) ;
+- [x] mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et `SUIVI.md` avec les preuves live ;
 - [ ] préparer la liaison gouvernée GitHub → serveur adaptée au modèle MCP, sans écriture destructive.
 
 ## P1 — Sécurité

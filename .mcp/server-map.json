@@ -19,18 +19,30 @@
       "workingTreeChanges": 0,
       "remoteFetch": "https://github.com/Patricked-code/Stablecoin.git",
       "remotePush": "https://github.com/Patricked-code/Stablecoin.git",
-      "githubMainObserved": "7c6e64d3486658feca9192bae7602b195f0537f8",
-      "githubAheadBy": 53,
+      "githubMainObserved": "678656d84164f1aa7dadef8a3a627d0b905fe9e4",
+      "githubAheadBy": 57,
       "serverAheadBy": 0,
-      "reconciliationClass": "SERVER_BEHIND"
+      "reconciliationClass": "SERVER_BEHIND",
+      "verifiedProcessMode": "Plesk/Phusion Passenger",
+      "verifiedProcessCwd": "/var/www/vhosts/chainsolutions.fr/stablecoin.chainsolutions.fr/stablecoin",
+      "httpStatus": 200,
+      "observedDiffScope": "GOVERNANCE_DOCS_MCP_CI_README_ONLY",
+      "applicationCodeFilesChanged": 0
     },
     "backend": {
       "domain": "api.stablecoin.chainsolutions.fr",
       "documentedMode": "Express/Sequelize",
       "documentedPath": "/var/www/vhosts/chainsolutions.fr/api.stablecoin.chainsolutions.fr",
-      "repository": "UNKNOWN_UNTIL_SERVER_RECONCILIATION",
-      "head": "UNKNOWN_UNTIL_SERVER_RECONCILIATION",
-      "liveVerificationStatus": "UNKNOWN"
+      "repository": "NOT_APPLICABLE_AT_DOCUMENTED_PATH",
+      "head": "NOT_APPLICABLE_AT_DOCUMENTED_PATH",
+      "liveVerificationStatus": "PARTIAL_CURRENT",
+      "pathExists": true,
+      "gitRepository": false,
+      "httpRootStatus": 401,
+      "httpHealthStatus": 401,
+      "reachability": "REACHABLE_AUTH_PROTECTED",
+      "processOwnershipStatus": "UNKNOWN",
+      "restartProcedureStatus": "DOCUMENTED_UNVERIFIED"
     }
   },
   "gitLinkage": {
@@ -39,27 +51,57 @@
     "serverRemoteState": "CURRENT",
     "serverHeadState": "CURRENT",
     "workingTreeState": "CLEAN",
-    "desiredReconciliation": "VERIFY_BACKEND_PROCESS_HTTP_THEN_PREPARE_FAST_FORWARD",
+    "desiredReconciliation": "PREPARE_METADATA_ONLY_FAST_FORWARD_REVERIFY_DIFF_BEFORE_EXECUTION_NO_BUILD_NO_RESTART_IF_APP_DIFF_REMAINS_ZERO",
     "reconciliationClass": "SERVER_BEHIND",
     "serverHead": "6216755d318677ed9a56c36731a57531d02bf751",
-    "githubMainHead": "7c6e64d3486658feca9192bae7602b195f0537f8",
-    "githubAheadBy": 53,
+    "githubMainHead": "678656d84164f1aa7dadef8a3a627d0b905fe9e4",
+    "githubAheadBy": 57,
     "serverAheadBy": 0
   },
   "safety": {
     "noSecretsInRepository": true,
     "noRuntimeMutationFromDocumentedStateOnly": true,
-    "noDestructiveSync": true
+    "noDestructiveSync": true,
+    "fastForwardRequiresFreshDiffRecheck": true,
+    "skipBuildRestartOnlyWhenApplicationDiffIsZero": true
   },
-  "lastVerifiedAt": "2026-09-20T19:20:21.558Z",
+  "lastVerifiedAt": "2026-09-20T19:53:45.087Z",
   "liveEvidence": {
-    "evidenceId": "EVID-S2-FRONTEND-GIT-20260920-001",
-    "source": "Patricked-code/MCP GitHub Actions read-only evidence",
-    "workflowRunId": 35531961849,
-    "artifactId": 10612095179,
-    "artifactDigest": "sha256:85ce72d897d1ce7c805d89a86e15ae82322af9ee6eddb8aac6fac217d82efefb",
-    "transport": "github_oidc_mcp_readonly",
-    "mutationAllowed": false
+    "frontendGit": {
+      "evidenceId": "EVID-S2-FRONTEND-GIT-20260920-001",
+      "source": "Patricked-code/MCP GitHub Actions read-only evidence",
+      "workflowRunId": 35531961849,
+      "artifactId": 10612095179,
+      "artifactDigest": "sha256:85ce72d897d1ce7c805d89a86e15ae82322af9ee6eddb8aac6fac217d82efefb",
+      "mutationAllowed": false
+    },
+    "backendPath": {
+      "evidenceId": "EVID-S2-BACKEND-PATH-20260920-001",
+      "source": "Patricked-code/MCP GitHub Actions read-only evidence",
+      "workflowRunId": 35533714750,
+      "artifactId": 10611638096,
+      "artifactDigest": "sha256:34dfa858c9664908424ea4d6432b8bafe5b2f2422f24bd05ce6350623bead22f",
+      "mutationAllowed": false
+    },
+    "runtimeHttp": {
+      "evidenceId": "EVID-S2-RUNTIME-HTTP-20260920-001",
+      "source": "Patricked-code/MCP GitHub Actions read-only evidence",
+      "workflowRunId": 35533765848,
+      "artifactId": 10612397117,
+      "artifactDigest": "sha256:78ba9a228aad34a54a2cb566533a67514058233f7944361c18fa548713ca51b6",
+      "mutationAllowed": false
+    },
+    "gitDiff": {
+      "evidenceId": "EVID-S2-DIFF-NONREG-20260920-001",
+      "serverHead": "6216755d318677ed9a56c36731a57531d02bf751",
+      "githubHeadObserved": "678656d84164f1aa7dadef8a3a627d0b905fe9e4",
+      "aheadBy": 57,
+      "behindBy": 0,
+      "mergeBase": "6216755d318677ed9a56c36731a57531d02bf751",
+      "changedFiles": 16,
+      "applicationCodeFilesChanged": 0,
+      "classification": "FAST_FORWARD_GOVERNANCE_ONLY_AT_OBSERVATION"
+    }
   },
-  "verificationNote": "Top-level runtime remains unverified until backend, process and HTTP evidence are current; frontend Git linkage is verified separately under runtime.frontend/liveEvidence."
+  "verificationNote": "Global runtime remains DOCUMENTED_UNVERIFIED because backend source/process ownership, restart ownership and database attachment are still unknown. Frontend Git/path/Passenger/HTTP and backend path/HTTP reachability are live-verified. Any future fast-forward must re-observe the exact GitHub head and diff before execution."
 }
