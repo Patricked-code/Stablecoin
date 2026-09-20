@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "verificationStatus": "PARTIALLY_VERIFIED",
+  "verificationStatus": "DOCUMENTED_UNVERIFIED",
   "sourceDocument": "docs/STABLECOIN_PLESK_DEPLOYMENT_RUNBOOK.md",
   "runtime": {
     "managed": true,
@@ -60,5 +60,6 @@
     "artifactDigest": "sha256:85ce72d897d1ce7c805d89a86e15ae82322af9ee6eddb8aac6fac217d82efefb",
     "transport": "github_oidc_mcp_readonly",
     "mutationAllowed": false
-  }
+  },
+  "verificationNote": "Top-level runtime remains unverified until backend, process and HTTP evidence are current; frontend Git linkage is verified separately under runtime.frontend/liveEvidence."
 }
