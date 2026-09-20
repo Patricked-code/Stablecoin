@@ -137,15 +137,15 @@ CURRENT_WORKSTREAM = GOVERNED_REPOSITORY_EVOLUTION
 CURRENT_TASK = STB-TASK-20260915-002
 CURRENT_TASK_STATUS = IN_PROGRESS
 TASK_BASELINE_SHA = 45f440d304022dd06d9f7f68e98fb38bc568488a
-SOURCE_HEAD_OBSERVED = 45f440d304022dd06d9f7f68e98fb38bc568488a
-LAST_COMPLETED_ACTION = PARALLEL_SSH_MECHANISM_REMOVED_EXISTING_LINKAGE_REUSE_PRESERVED
-CURRENT_BLOCKER = EXISTING_WEALTHTECH_SSH_BRIDGE_NOT_AVAILABLE_IN_CURRENT_SESSION
-EXACT_NEXT_ACTION = RECONNECT_EXISTING_WEALTHTECH_SSH_BRIDGE_AND_REOBSERVE_S2_STABLECOIN_RUNTIME
+SOURCE_HEAD_OBSERVED = fc935852da22d0fc7125464081935cc4e9c079db
+LAST_COMPLETED_ACTION = MCP_PR86_RECONCILED_AGAINST_CURRENT_MCP_MAIN_STALE_CANDIDATE_NO_RUNTIME_MUTATION
+CURRENT_BLOCKER = WEALTHTECH_SSH_BRIDGE_NOT_EXPOSED_IN_CURRENT_SESSION_AND_STABLECOIN_CAPABILITY_ABSENT_FROM_CURRENT_MCP_MAIN
+EXACT_NEXT_ACTION = REOBSERVE_MCP_LIVE_QUEUE_SESSION_LOCKS_THEN_PORT_PR86_STABLECOIN_CAPABILITY_TO_CURRENT_MCP_MAIN_AND_GOVERNED_DEPLOY_BEFORE_S2_READONLY_STATUS
 RUNTIME_STATUS = DOCUMENTED_UNVERIFIED
-CI_STATUS = PASS_FOR_PARALLEL_SSH_REMOVAL_SHA_36bf94fa0bf041be0e7128af2d53d335e1a449b5
+CI_STATUS = PASS_FOR_CURRENT_STABLECOIN_MAIN_SHA_fc935852da22d0fc7125464081935cc4e9c079db_RUN_34906495480
 MCP_REGISTRATION_STATUS = READY_NOT_LIVE_ATTESTED
 SECURITY_WARNINGS = SEE_SECTION_5_REQUIRES_SEPARATE_VERIFICATION
-CHECKPOINT_ID = STB-CHK-20260915-005
+CHECKPOINT_ID = STB-CHK-20260920-006
 EVIDENCE_IDS = EVID-GH-HEAD-20260915-001,EVID-GH-PERM-20260915-001,EVID-NONREG-20260915-001,EVID-CI-20260915-001,EVID-LINKAGE-20260915-001,EVID-MCP-BRIDGE-20260915-001,EVID-CORRECTION-20260915-001,EVID-CI-CORRECTION-20260915-001
 APPLICATION_CODE_MUTATION = NONE
 RUNTIME_MUTATION = NONE
@@ -168,6 +168,18 @@ Le checkpoint est une mémoire de reprise et doit être réconcilié avec Git, l
 - `2026-09-15 / EVID-MCP-BRIDGE-20260915-001` : la branche historique documente `wealthtech_ssh_bridge` comme pont externe vers S1/S2 ; cette preuve reste historique jusqu'à reconnexion live.
 - `2026-09-15 / EVID-CORRECTION-20260915-001` : le transport GitHub Actions SSH ajouté ensuite est classé mécanisme parallèle non nécessaire et retiré conformément à la gouvernance existante.
 - `2026-09-15 / EVID-CI-CORRECTION-20260915-001` : GitHub Actions `Governance Consistency` run `34906458393` a validé le SHA `36bf94fa0bf041be0e7128af2d53d335e1a449b5` après retrait complet du mécanisme SSH parallèle.
+
+### Réconciliation inter-repository du 2026-09-20
+
+- `Patricked-code/Stablecoin/main` réobservé au SHA exact `fc935852da22d0fc7125464081935cc4e9c079db`; GitHub Actions `Governance Consistency` run `34906495480` = SUCCESS sur ce SHA exact.
+- `Patricked-code/MCP/main` réobservé au SHA exact `847b775a0b64b42ba3bddfee518ca0a486d810ce` après l'intégration terminale GWC et la PR #98.
+- La PR MCP #86 `feat(stablecoin): add governed S2 SSH sync and deploy recipe` reste OPEN/DRAFT, non fusionnée, head `5f54b78c87ae3a5e8a402ac80af42355a7f4ec08`, base historique `555a51d0648ef796eba4868282942055a2f67a65`.
+- Comparaison fraîche de #86 avec MCP `main` : `DIVERGED`, `ahead_by=18`, `behind_by=588`. La PR historique ne doit donc pas être fusionnée telle quelle.
+- Le code MCP `main@847b775a...` a été vérifié : `src/tools/writeScoped.ts` n'expose actuellement que `api_opcv`, `front_end_opcvm`, `legacy_funds_frontend`, `legacy_funds_api`, `brvmchainsolution`; aucune entrée `stablecoin_frontend`. Le registre actif `data/mcp-git-registry.json` ne contient ni `CS-STABLECOIN-001` ni `chainsolutions.stablecoin`.
+- La PR #86 reste néanmoins une preuve de conception exploitable : elle contient le mapping `stablecoin_frontend`, `CS-STABLECOIN-001`, remote `github`, branche `main`, fast-forward strict, build Next.js legacy et restart Passenger, avec backend conservé en `LIVE_DISCOVERY_REQUIRED`.
+- La mémoire canonique MCP courante est désormais en mode `POST_INTEGRATION_OPERATIONAL_CONTINUITY` et exige avant mutation : GitHub main + Work Queue + Governed Session + Live State, puis reprise d'une tâche compatible ou création d'une nouvelle tâche issue de l'intention explicite.
+- Dans la présente session, GitHub est accessible mais `wealthtech_ssh_bridge` n'est pas exposé comme outil exécutable. Aucun transport SSH parallèle n'a été recréé et aucune mutation serveur/runtime n'a été exécutée.
+- Conséquence : la prochaine intégration Stablecoin doit porter l'intention de #86 sur le MCP actuel, sous une tâche/session/locks live réobservés, puis passer CI/review/merge/governed deploy exact-SHA. Seulement après activation runtime, la première action S2 doit rester `git_status_project_s2(stablecoin_frontend)` en lecture seule.
 
 ### Action suivante exacte
 
