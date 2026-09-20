@@ -1,37 +1,64 @@
 {
   "schemaVersion": 1,
-  "verificationStatus": "DOCUMENTED_UNVERIFIED",
+  "verificationStatus": "PARTIALLY_VERIFIED",
   "sourceDocument": "docs/STABLECOIN_PLESK_DEPLOYMENT_RUNBOOK.md",
   "runtime": {
     "managed": true,
     "freshVerificationRequiredBeforeMutation": true,
-    "serverIdentity": "TO_BE_VERIFIED",
+    "serverIdentity": "S2",
     "frontend": {
       "domain": "stablecoin.chainsolutions.fr",
       "documentedMode": "Plesk/Phusion Passenger",
       "documentedPath": "/var/www/vhosts/chainsolutions.fr/stablecoin.chainsolutions.fr/stablecoin",
       "activePathMustBeVerified": true,
-      "documentedRestart": "touch tmp/restart.txt"
+      "documentedRestart": "touch tmp/restart.txt",
+      "liveVerificationStatus": "CURRENT",
+      "verifiedPath": "/var/www/vhosts/chainsolutions.fr/stablecoin.chainsolutions.fr/stablecoin",
+      "verifiedBranch": "main",
+      "verifiedHead": "6216755d318677ed9a56c36731a57531d02bf751",
+      "workingTreeChanges": 0,
+      "remoteFetch": "https://github.com/Patricked-code/Stablecoin.git",
+      "remotePush": "https://github.com/Patricked-code/Stablecoin.git",
+      "githubMainObserved": "7c6e64d3486658feca9192bae7602b195f0537f8",
+      "githubAheadBy": 53,
+      "serverAheadBy": 0,
+      "reconciliationClass": "SERVER_BEHIND"
     },
     "backend": {
       "domain": "api.stablecoin.chainsolutions.fr",
       "documentedMode": "Express/Sequelize",
       "documentedPath": "/var/www/vhosts/chainsolutions.fr/api.stablecoin.chainsolutions.fr",
       "repository": "UNKNOWN_UNTIL_SERVER_RECONCILIATION",
-      "head": "UNKNOWN_UNTIL_SERVER_RECONCILIATION"
+      "head": "UNKNOWN_UNTIL_SERVER_RECONCILIATION",
+      "liveVerificationStatus": "UNKNOWN"
     }
   },
   "gitLinkage": {
     "canonicalRepository": "Patricked-code/Stablecoin",
     "canonicalBranch": "main",
-    "serverRemoteState": "TO_BE_VERIFIED",
-    "serverHeadState": "TO_BE_VERIFIED",
-    "workingTreeState": "TO_BE_VERIFIED",
-    "desiredReconciliation": "VERIFY_SERVER_THEN_COMPARE_WITH_GITHUB_BEFORE_SYNC"
+    "serverRemoteState": "CURRENT",
+    "serverHeadState": "CURRENT",
+    "workingTreeState": "CLEAN",
+    "desiredReconciliation": "VERIFY_BACKEND_PROCESS_HTTP_THEN_PREPARE_FAST_FORWARD",
+    "reconciliationClass": "SERVER_BEHIND",
+    "serverHead": "6216755d318677ed9a56c36731a57531d02bf751",
+    "githubMainHead": "7c6e64d3486658feca9192bae7602b195f0537f8",
+    "githubAheadBy": 53,
+    "serverAheadBy": 0
   },
   "safety": {
     "noSecretsInRepository": true,
     "noRuntimeMutationFromDocumentedStateOnly": true,
     "noDestructiveSync": true
+  },
+  "lastVerifiedAt": "2026-09-20T19:20:21.558Z",
+  "liveEvidence": {
+    "evidenceId": "EVID-S2-FRONTEND-GIT-20260920-001",
+    "source": "Patricked-code/MCP GitHub Actions read-only evidence",
+    "workflowRunId": 35531961849,
+    "artifactId": 10612095179,
+    "artifactDigest": "sha256:85ce72d897d1ce7c805d89a86e15ae82322af9ee6eddb8aac6fac217d82efefb",
+    "transport": "github_oidc_mcp_readonly",
+    "mutationAllowed": false
   }
 }
