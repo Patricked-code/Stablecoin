@@ -45,11 +45,11 @@ Le runbook `docs/STABLECOIN_PLESK_DEPLOYMENT_RUNBOOK.md` documente :
 - build historique sous Node 18 avec `NODE_OPTIONS=--openssl-legacy-provider` ;
 - restart frontend via `tmp/restart.txt`.
 
-**Classification actuelle :** `PARTIAL_LIVE_VERIFICATION`. Le frontend est vérifié live (chemin, branche, HEAD, remotes, worktree, Passenger et HTTP). Le chemin backend et sa joignabilité HTTP sont vérifiés, mais sa source/ownership process, sa procédure de restart et la base attachée restent `UNKNOWN` / `DOCUMENTED_UNVERIFIED`.
+**Classification actuelle :** `PARTIAL_LIVE_VERIFICATION`. Le frontend est vérifié live et a été fast-forwardé avec succès vers le `main` GitHub attesté, sans changement applicatif, build ni restart. Le backend est vérifié comme process Passenger au cwd API et joignable en HTTP, mais sa source exacte, la base attachée et l'ownership de restart restent `UNKNOWN` / `DOCUMENTED_UNVERIFIED`.
 
 ## 5. API / données
 
-Le runbook documente un backend Express / Sequelize et un contrôle d'API key via la table `Wtiapikeys`. La preuve live du 2026-09-20 confirme que `/var/www/vhosts/chainsolutions.fr/api.stablecoin.chainsolutions.fr` existe mais n'est pas un dépôt Git. Les réponses `401` sur la racine API et `/health` prouvent une API joignable et protégée, pas une panne. La source exacte, l'ownership process/restart et la base attachée restent à cartographier.
+Le runbook documente un backend Express / Sequelize et un contrôle d'API key via la table `Wtiapikeys`. La preuve live du 2026-09-20 confirme que `/var/www/vhosts/chainsolutions.fr/api.stablecoin.chainsolutions.fr` existe mais n'est pas un dépôt Git. Les réponses `401` sur la racine API et `/health` prouvent une API joignable et protégée, pas une panne. Le process Passenger backend est maintenant observé avec cwd `/var/www/vhosts/chainsolutions.fr/api.stablecoin.chainsolutions.fr`. La source exacte, la base attachée et l'ownership de restart restent à cartographier.
 
 ## 6. Authentification
 
@@ -57,7 +57,11 @@ Le runbook documente un flux combinant API métier et Magic Link, avec callbacks
 
 ## 7. Déploiement et Git
 
-Le checkout frontend S2 est vérifié live sur `main@6216755d318677ed9a56c36731a57531d02bf751`, worktree propre, avec `origin` fetch/push vers `https://github.com/Patricked-code/Stablecoin.git`. Le `main` GitHub observé à `678656d84164f1aa7dadef8a3a627d0b905fe9e4` est 57 commits devant, sans divergence. Le diff observé touche 16 fichiers de gouvernance/.mcp/CI/README et **0 fichier applicatif**. Un futur fast-forward peut donc être préparé sans build ni restart uniquement si une re-comparaison immédiatement avant exécution confirme encore `applicationCodeFilesChanged=0`.
+Le checkout frontend S2 a été fast-forwardé de `6216755d318677ed9a56c36731a57531d02bf751` vers `4e946bd523acfbef3d08d9ff7b0b3dd3f074c3a3` par le chemin GitHub-first borné du MCP. Le diff contenait 16 fichiers de gouvernance/.mcp/CI/README et **0 fichier applicatif** ; aucun build ni restart n'a été exécuté. Une post-attestation indépendante confirme `main@4e946bd...`, worktree propre, origin canonique, frontend HTTP 200 et API 401/401. Toute écriture future doit refaire les mêmes contrôles exact-SHA et refuser automatiquement si un fichier applicatif apparaît.
+
+### GitHub-first bounded WRITE
+
+Depuis MCP `ab9b1aa902aab3efed42ba527847ab48df3c8eaa`, Stablecoin dispose d'un chemin d'écriture spécialisé : GitHub issue/workflow → OIDC WRITE dédié → endpoint MCP borné → fast-forward S2 exact-SHA. Ce chemin n'est pas un shell générique et n'autorise ni build, restart, stash, rebase, reset, ni fichier applicatif dans le delta.
 
 ## 8. MCP
 

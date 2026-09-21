@@ -37,8 +37,8 @@ Tâche gouvernée : `STB-TASK-20260915-002`.
 - [ ] réobserver les autorités MCP live applicables : Governed Work Queue, Governed Session, locks et Live State ;
 - [ ] reprendre une tâche compatible si elle existe, sinon enregistrer/claim une tâche Stablecoin dédiée issue de l'intention explicite courante ;
 - [ ] porter les invariants utiles de #86 sur une branche gouvernée issue du `main` MCP courant, sans réutiliser son historique stale ;
-- [ ] valider RED/GREEN, non-régression, CI exact-head et revue du candidat MCP réconcilié ;
-- [ ] fusionner puis déployer le MCP uniquement via le chemin gouverné GitHub → S1 et attester Live State exact-SHA ;
+- [x] valider RED/GREEN, non-régression, CI exact-head et revue du candidat MCP réconcilié via PR #117 ;
+- [x] fusionner puis déployer le MCP uniquement via le chemin gouverné GitHub → S1 : `ab9b1aa902aab3efed42ba527847ab48df3c8eaa`, Governed Deploy #54 SUCCESS ;
 - [x] après activation, exécuter comme première action Stablecoin un statut Git frontend S2 strictement read-only via GitHub OIDC ;
 - [x] établir un chemin read-only GitHub OIDC gouverné vers le MCP sans exposition interactive du bridge ;
 - [x] observer S2 en lecture seule : serveur, vhost, dossier actif, remotes, branche, HEAD, working tree, Passenger/Node et HTTP ;
@@ -46,7 +46,7 @@ Tâche gouvernée : `STB-TASK-20260915-002`.
 - [x] classifier le frontend : `SERVER_BEHIND` de 57 commits à l'observation `main@678656d8...`, sans divergence, worktree propre, branche/remote corrects ;
 - [x] mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et `SUIVI.md` avec les preuves live ;
 - [x] préparer un plan de mise à jour non destructif : recheck exact-head/diff, fast-forward strict du checkout frontend seulement, aucun build/restart si le diff reste non applicatif, puis post-attestation ;
-- [ ] obtenir l'autorisation d'opération runtime explicite avant d'exécuter ce fast-forward sur S2.
+- [x] obtenir l'autorisation d'opération runtime explicite avant d'exécuter ce fast-forward sur S2 ;\n- [x] activer le WRITE borné GitHub-first via MCP PR #117 et Governed Deploy #54 ;\n- [x] exécuter le fast-forward exact-SHA S2 sans build/restart et obtenir les attestations Git/runtime post-écriture ;\n- [ ] après CI de ce checkpoint, aligner son unique commit documentaire sur S2 puis conserver l'attestation terminale hors Git.
 
 ## P1 — Réconciliation serveur ↔ GitHub
 
@@ -57,10 +57,10 @@ Tâche gouvernée : `STB-TASK-20260915-002`.
 - [x] relever branche, HEAD, remotes et working tree du frontend côté serveur ;
 - [x] comparer le frontend serveur ↔ `Patricked-code/Stablecoin/main` ;
 - [ ] identifier la source/ownership du backend API ; le chemin live existe mais n'est pas un dépôt Git ;
-- [ ] confirmer l'ownership/restart du backend ; le process Passenger frontend et son cwd sont vérifiés live ;
+- [ ] confirmer la source/base/restart ownership du backend ; le process Passenger backend et son cwd sont désormais vérifiés live.
 - [x] confirmer les domaines et réponses HTTP/API (`frontend=200`, API racine/health=`401` protégés) ;
 - [x] mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et `SUIVI.md` avec les preuves live ;
-- [ ] préparer la liaison gouvernée GitHub → serveur adaptée au modèle MCP, sans écriture destructive.
+- [x] préparer et activer la liaison gouvernée GitHub → serveur pour le fast-forward Stablecoin exact-SHA, sans écriture destructive générique.
 
 ## P1 — Sécurité
 

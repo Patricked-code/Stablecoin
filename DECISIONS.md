@@ -94,3 +94,14 @@
 **Preuve courante :** au 2026-09-20, `S2@6216755d318677ed9a56c36731a57531d02bf751` est 57 commits derrière `GitHub main@678656d84164f1aa7dadef8a3a627d0b905fe9e4`, avec 16 fichiers modifiés exclusivement dans la gouvernance, `.mcp`, CI, scripts de vérification et README ; zéro fichier applicatif.
 
 **Conséquence :** ce constat n'est pas une autorisation permanente. Toute évolution ultérieure de `main` impose une nouvelle comparaison. Si le diff applicatif devient non nul, le plan sans build/restart est automatiquement invalidé.
+
+
+## DEC-2026-09-21-015 — GitHub-first bounded WRITE pour Stablecoin
+
+**Décision :** pour le frontend Stablecoin S2, une mutation peut être autorisée depuis GitHub sans exposition interactive de `wealthtech_ssh_bridge` uniquement via la surface MCP dédiée et bornée introduite par PR #117.
+
+**Contraintes durables :** SHA serveur attendu exact, SHA cible exact, branche `main`, worktree propre, origin canonique, relation fast-forward, zéro fichier applicatif dans le diff, aucune commande libre, aucun build/restart/stash/rebase/reset. Le canal read-only reste séparé et ne peut jamais autoriser un WRITE.
+
+**Preuve d'activation :** MCP `ab9b1aa902aab3efed42ba527847ab48df3c8eaa` déployé sur S1 par Governed Deploy #54, puis fast-forward S2 `6216755d... → 4e946bd...` réussi via run `35569719611`, suivi de deux attestations read-only Git/runtime SUCCESS.
+
+**Conséquence :** ce mécanisme n'est pas une permission générique d'écriture serveur. Toute autre opération ou tout diff applicatif exige son propre chantier gouverné.
