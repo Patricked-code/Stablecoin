@@ -46,7 +46,7 @@ Tâche gouvernée : `STB-TASK-20260915-002`.
 - [x] classifier le frontend : `SERVER_BEHIND` de 57 commits à l'observation `main@678656d8...`, sans divergence, worktree propre, branche/remote corrects ;
 - [x] mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et `SUIVI.md` avec les preuves live ;
 - [x] préparer un plan de mise à jour non destructif : recheck exact-head/diff, fast-forward strict du checkout frontend seulement, aucun build/restart si le diff reste non applicatif, puis post-attestation ;
-- [x] obtenir l'autorisation d'opération runtime explicite avant d'exécuter ce fast-forward sur S2 ;\n- [x] activer le WRITE borné GitHub-first via MCP PR #117 et Governed Deploy #54 ;\n- [x] exécuter le fast-forward exact-SHA S2 sans build/restart et obtenir les attestations Git/runtime post-écriture ;\n- [ ] après CI de ce checkpoint, aligner son unique commit documentaire sur S2 puis conserver l'attestation terminale hors Git.
+- [x] obtenir l'autorisation d'opération runtime explicite avant d'exécuter ce fast-forward sur S2 ;\n- [x] activer le WRITE borné GitHub-first via MCP PR #117 et Governed Deploy #54 ;\n- [x] exécuter le fast-forward exact-SHA S2 sans build/restart et obtenir les attestations Git/runtime post-écriture ;\n- [x] après CI du checkpoint, aligner le commit documentaire sur S2 ; preuve fraîche du 2026-09-23 : frontend S2 `main@2a8be8219689e6213ce20f13d69b6b45f3693dfe`, worktree propre, identique au `main` GitHub observé.
 
 ## P1 — Réconciliation serveur ↔ GitHub
 
@@ -56,8 +56,10 @@ Tâche gouvernée : `STB-TASK-20260915-002`.
 - [x] confirmer le dossier frontend actif au lieu de présumer le chemin historique ;
 - [x] relever branche, HEAD, remotes et working tree du frontend côté serveur ;
 - [x] comparer le frontend serveur ↔ `Patricked-code/Stablecoin/main` ;
-- [ ] identifier la source/ownership du backend API ; le chemin live existe mais n'est pas un dépôt Git ;
-- [ ] confirmer la source/base/restart ownership du backend ; le process Passenger backend et son cwd sont désormais vérifiés live.
+- [x] identifier la source déclarée et les métadonnées du backend API : dossier live non-Git, package `api.fan-token@1.0.0`, source déclarée `git+https://gitlab.com/wealthtech1/api/api.fan-token.git` ;
+- [x] confirmer la configuration DB non secrète : dialecte MySQL et base `db_stablecoin` pour development/test/production ;
+- [ ] identifier la révision exacte du source backend déployé et réconcilier son historique avec la source GitLab déclarée ;
+- [ ] confirmer l'ownership du process backend et la procédure exacte de restart ; la sonde runtime fraîche du 2026-09-23 ne retrouve pas le cwd backend dans son échantillon borné.
 - [x] confirmer les domaines et réponses HTTP/API (`frontend=200`, API racine/health=`401` protégés) ;
 - [x] mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et `SUIVI.md` avec les preuves live ;
 - [x] préparer et activer la liaison gouvernée GitHub → serveur pour le fast-forward Stablecoin exact-SHA, sans écriture destructive générique.
@@ -73,7 +75,7 @@ Tâche gouvernée : `STB-TASK-20260915-002`.
 - [ ] traiter séparément l'avertissement SSRProvider documenté dans le runbook ;
 - [ ] traiter le parsing `productTypes` documenté comme instable ;
 - [ ] cartographier les routes frontend/API réellement utilisées ;
-- [ ] documenter la base de données et le backend après découverte vérifiée ;
+- [ ] compléter la documentation backend/base après découverte vérifiée du schéma courant, de la révision déployée et du restart ownership ; les métadonnées package/MySQL/`db_stablecoin` sont déjà attestées.
 - [ ] inventorier les contrats/réseaux/déploiements blockchain actuels ;
 - [x] CI de cohérence de gouvernance ajoutée et premier run réussi ; toute CI externe éventuelle reste `UNKNOWN` jusqu'à preuve.
 

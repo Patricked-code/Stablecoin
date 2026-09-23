@@ -135,17 +135,18 @@ CURRENT_WORKSTREAM = GOVERNED_REPOSITORY_EVOLUTION
 CURRENT_TASK = STB-TASK-20260915-002
 CURRENT_TASK_STATUS = IN_PROGRESS
 TASK_BASELINE_SHA = 45f440d304022dd06d9f7f68e98fb38bc568488a
-SOURCE_HEAD_OBSERVED = 4e946bd523acfbef3d08d9ff7b0b3dd3f074c3a3
-LAST_COMPLETED_ACTION = S2_FRONTEND_FAST_FORWARD_EXACT_SHA_SUCCESS_POST_ATTESTED_NO_BUILD_NO_RESTART
-CURRENT_BLOCKER = BACKEND_SOURCE_DATABASE_AND_RESTART_OWNERSHIP_UNKNOWN
-EXACT_NEXT_ACTION = VALIDATE_THIS_CHECKPOINT_COMMIT_CI_THEN_FINAL_DOCS_ONLY_FAST_FORWARD_AND_EXTERNAL_ATTESTATION_THEN_CONTINUE_BACKEND_DISCOVERY
-RUNTIME_STATUS = FRONTEND_ALIGNED_CURRENT_PASSENGER_HTTP_200_BACKEND_PASSENGER_HTTP_401_401_SOURCE_DATABASE_RESTART_OWNERSHIP_UNKNOWN
-CI_STATUS = PREVIOUS_HEAD_4e946bd523acfbef3d08d9ff7b0b3dd3f074c3a3_PASS_RUN_35534041463_CHECKPOINT_COMMIT_REQUIRES_EXACT_SHA_CI
-MCP_REGISTRATION_STATUS = GITHUB_OIDC_READONLY_AND_BOUNDED_WRITE_ACTIVE_MCP_MAIN_ab9b1aa902aab3efed42ba527847ab48df3c8eaa_S1_ATTESTED_DEPLOY_RUN_35569573744
+SOURCE_HEAD_OBSERVED = 2a8be8219689e6213ce20f13d69b6b45f3693dfe
+LAST_COMPLETED_ACTION = S2_BACKEND_METADATA_INVENTORY_READONLY_COMPLETED_SOURCE_AND_DATABASE_IDENTIFIED
+CURRENT_BLOCKER = BACKEND_DEPLOYED_SOURCE_REVISION_PROCESS_AND_RESTART_OWNERSHIP_UNKNOWN
+EXACT_NEXT_ACTION = VALIDATE_THIS_CHECKPOINT_CI_THEN_DISCOVER_BACKEND_DEPLOYED_REVISION_AND_RESTART_OWNERSHIP_READONLY_WITHOUT_BRIDGE
+RUNTIME_STATUS = FRONTEND_ALIGNED_2a8be821_HTTP_200_BACKEND_HTTP_401_401_DECLARED_SOURCE_AND_DB_IDENTIFIED_CURRENT_PROCESS_OWNERSHIP_UNKNOWN
+CI_STATUS = CURRENT_HEAD_2a8be8219689e6213ce20f13d69b6b45f3693dfe_PASS_RUN_35570105399_NEW_CHECKPOINT_REQUIRES_EXACT_SHA_CI
+MCP_REGISTRATION_STATUS = GITHUB_OIDC_READONLY_AND_BOUNDED_WRITE_ACTIVE_BACKEND_INVENTORY_PROBE_SUCCESS_RUN_35803784710
 SECURITY_WARNINGS = SEE_SECTION_5_REQUIRES_SEPARATE_VERIFICATION
-CHECKPOINT_ID = STB-CHK-20260921-008
-EVIDENCE_IDS = EVID-GH-HEAD-20260915-001,EVID-GH-PERM-20260915-001,EVID-NONREG-20260915-001,EVID-CI-20260915-001,EVID-LINKAGE-20260915-001,EVID-MCP-BRIDGE-20260915-001,EVID-CORRECTION-20260915-001,EVID-CI-CORRECTION-20260915-001,EVID-S2-FRONTEND-GIT-20260920-001,EVID-S2-BACKEND-PATH-20260920-001,EVID-S2-RUNTIME-HTTP-20260920-001,EVID-S2-DIFF-NONREG-20260920-001,EVID-S2-FAST-FORWARD-20260921-001,EVID-S2-POST-FAST-FORWARD-GIT-20260921-001,EVID-S2-POST-FAST-FORWARD-RUNTIME-20260921-001
+CHECKPOINT_ID = STB-CHK-20260923-009
+EVIDENCE_IDS = EVID-GH-HEAD-20260915-001,EVID-GH-PERM-20260915-001,EVID-NONREG-20260915-001,EVID-CI-20260915-001,EVID-LINKAGE-20260915-001,EVID-MCP-BRIDGE-20260915-001,EVID-CORRECTION-20260915-001,EVID-CI-CORRECTION-20260915-001,EVID-S2-FRONTEND-GIT-20260920-001,EVID-S2-BACKEND-PATH-20260920-001,EVID-S2-RUNTIME-HTTP-20260920-001,EVID-S2-DIFF-NONREG-20260920-001,EVID-S2-FAST-FORWARD-20260921-001,EVID-S2-POST-FAST-FORWARD-GIT-20260921-001,EVID-S2-POST-FAST-FORWARD-RUNTIME-20260921-001,EVID-S2-FRONTEND-GIT-20260923-001,EVID-S2-BACKEND-GIT-20260923-001,EVID-S2-RUNTIME-HTTP-20260923-001,EVID-S2-BACKEND-INVENTORY-20260923-001
 APPLICATION_CODE_MUTATION = NONE
+BACKEND_METADATA_DISCOVERY = PACKAGE_api.fan-token_V1.0.0_DECLARED_GITLAB_SOURCE_MYSQL_db_stablecoin_NO_SECRET_VALUES_READ
 RUNTIME_MUTATION = S2_FRONTEND_FAST_FORWARD_6216755d318677ed9a56c36731a57531d02bf751_TO_4e946bd523acfbef3d08d9ff7b0b3dd3f074c3a3_NO_BUILD_NO_RESTART
 MCP_CORE_MUTATION = PR117_GITHUB_FIRST_BOUNDED_WRITE_MERGED_ab9b1aa902aab3efed42ba527847ab48df3c8eaa_DEPLOYED_S1
 ```
@@ -181,9 +182,9 @@ Le checkpoint est une mémoire de reprise et doit être réconcilié avec Git, l
 
 ### Action suivante exacte
 
-Reconnecter le `wealthtech_ssh_bridge` existant puis observer S2 en lecture seule. Vérifier le vhost/dossier Passenger actif, `git remote -v`, la présence et l'URL du remote `github`, la branche, le HEAD, le working tree, le process Passenger/Node et les réponses HTTP. Comparer ensuite le HEAD serveur au `main` GitHub courant.
+Continuer exclusivement via le fallback GitHub-first/OIDC déjà intégré. La prochaine découverte doit rester strictement read-only et viser deux éléments encore inconnus : la révision exacte du backend déployé issue du dépôt déclaré `gitlab.com/wealthtech1/api/api.fan-token.git`, puis l'ownership/procédure exacte de restart du backend. Ne pas utiliser le bridge, ne pas recréer de transport parallèle et ne pas muter S2 tant que ces deux points ne sont pas attestés.
 
-Aucune commande `git fetch`, `git merge`, build, restart ou autre mutation serveur n'est autorisée avant cette attestation. Si le bridge n'est pas accessible, conserver `RUNTIME_STATUS = DOCUMENTED_UNVERIFIED` et s'arrêter au blocker au lieu de créer un transport parallèle.
+Le frontend S2 est déjà aligné sur `Patricked-code/Stablecoin/main@2a8be8219689e6213ce20f13d69b6b45f3693dfe`, worktree propre.
 
 Le checkpoint n'embarque volontairement pas son propre SHA de commit : le HEAD Git distant observé reste l'autorité pour la version du checkpoint. Toute nouvelle session doit donc réobserver Git et la CI avant écriture.
 
@@ -322,3 +323,46 @@ Post-attestation indépendante, strictement read-only :
 Le frontend Stablecoin a donc été aligné sans modifier le code applicatif et sans build/restart.
 
 Ce checkpoint est versionné après l'attestation. Son propre commit ne peut pas contenir son propre SHA ; après CI exact-head, il doit être fast-forwardé sur S2 par le même chemin borné si le delta reste documentaire/non applicatif. L'attestation terminale de ce dernier alignement reste externe à ce document afin d'éviter une boucle auto-référentielle de commits.
+
+
+### Réconciliation backend S2 par inventaire borné — 2026-09-23
+
+Les preuves ont été collectées exclusivement via le fallback GitHub-first/OIDC du MCP, sans usage du bridge et avec `mutationAllowed=false`.
+
+Preuves fraîches :
+
+- `EVID-S2-FRONTEND-GIT-20260923-001` — MCP run `35794187803`, artifact `10723146851`, digest `sha256:57f4f44de4a0a47bd54cdffc8e0c74ddab641cd7c87eb0d1bde78bd3e8f5fd65`, output SHA-256 `999f7045d739d4070d6e54267bb6742783e43b94cffb1a6fcbf0c8fdcaf5e349` ;
+- `EVID-S2-BACKEND-GIT-20260923-001` — MCP run `35794181381`, artifact `10723566187`, digest `sha256:17c8de239f085b627b020741b63cd7ab2abe1948481ffed3c406bf9fbf14c039`, output SHA-256 `c55731f56f2229c3542362fee23b56b4305097975afa1d7b8e0a60929bb81f4f` ;
+- `EVID-S2-RUNTIME-HTTP-20260923-001` — MCP run `35794212028`, artifact `10723780966`, digest `sha256:4057aa3261bd99957c18e7b472e5ecbb3fe429ca33125e87cfdd884fb9160307`, output SHA-256 `39bb318dd4eba57f0888573eaaf9e525009fd042fc2388f01052290df29382ba` ;
+- `EVID-S2-BACKEND-INVENTORY-20260923-001` — MCP run `35803784710`, artifact `10726298618`, digest `sha256:301b4db911b3ebf03ced5c50288d943fff6d12edb227d18d063d9cec01ca22f4`, output SHA-256 `44816f10def98a9164d3d29c49259db0bbe0098c048207005ea4d1926c7276b2`.
+
+État courant attesté :
+
+```text
+FRONTEND_BRANCH = main
+FRONTEND_HEAD = 2a8be8219689e6213ce20f13d69b6b45f3693dfe
+FRONTEND_WORKTREE_CHANGES = 0
+FRONTEND_ORIGIN = https://github.com/Patricked-code/Stablecoin.git
+FRONTEND_HTTP = 200
+
+BACKEND_PATH = /var/www/vhosts/chainsolutions.fr/api.stablecoin.chainsolutions.fr
+BACKEND_PATH_EXISTS = true
+BACKEND_GIT_REPOSITORY = false
+BACKEND_PACKAGE_NAME = api.fan-token
+BACKEND_PACKAGE_VERSION = 1.0.0
+BACKEND_PACKAGE_MAIN = index.js
+BACKEND_DECLARED_SOURCE = git+https://gitlab.com/wealthtech1/api/api.fan-token.git
+BACKEND_STACK = Express_4.18.1_Sequelize_6.20.1_MySQL
+BACKEND_DATABASE_CONFIG = db_stablecoin
+BACKEND_HTTP_ROOT = 401
+BACKEND_HTTP_HEALTH = 401
+BACKEND_CURRENT_PROCESS_CWD_MATCH = NOT_OBSERVED_IN_BOUNDED_SAMPLE
+BACKEND_DEPLOYED_REVISION = UNKNOWN
+BACKEND_RESTART_OWNERSHIP = UNKNOWN
+```
+
+L'inventaire n'a lu aucune valeur de secret : seules les références de variables d'environnement, les métadonnées de package/configuration et des empreintes SHA-256 de fichiers connus ont été exposées. Les fichiers `models/wtiapikey.js` et `middlewares/verifyApiKeyWti.js` sont confirmés présents par métadonnées/empreintes, ce qui relie la preuve live aux éléments historiquement documentés dans le runbook.
+
+La déclaration `package_repository` identifie une source GitLab historique, mais elle ne prouve ni que ce dépôt est encore accessible, ni quel commit exact est déployé sur S2. Le dossier backend actif n'étant pas un dépôt Git, la révision déployée doit être établie par une preuve supplémentaire non destructive. La sonde runtime du 23 septembre ne montre pas de process dont le cwd est le dossier backend Stablecoin dans son échantillon borné ; l'ancienne observation du 21 septembre ne doit donc plus être présentée comme une preuve de process courante.
+
+Aucune mutation applicative ou runtime n'a été effectuée pendant cette réconciliation.

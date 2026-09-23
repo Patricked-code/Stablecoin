@@ -15,36 +15,46 @@
       "liveVerificationStatus": "CURRENT",
       "verifiedPath": "/var/www/vhosts/chainsolutions.fr/stablecoin.chainsolutions.fr/stablecoin",
       "verifiedBranch": "main",
-      "verifiedHead": "4e946bd523acfbef3d08d9ff7b0b3dd3f074c3a3",
+      "verifiedHead": "2a8be8219689e6213ce20f13d69b6b45f3693dfe",
       "workingTreeChanges": 0,
       "remoteFetch": "https://github.com/Patricked-code/Stablecoin.git",
       "remotePush": "https://github.com/Patricked-code/Stablecoin.git",
-      "githubMainObserved": "4e946bd523acfbef3d08d9ff7b0b3dd3f074c3a3",
+      "githubMainObserved": "2a8be8219689e6213ce20f13d69b6b45f3693dfe",
       "githubAheadBy": 0,
       "serverAheadBy": 0,
       "reconciliationClass": "IN_SYNC",
       "verifiedProcessMode": "Plesk/Phusion Passenger",
       "verifiedProcessCwd": "/var/www/vhosts/chainsolutions.fr/stablecoin.chainsolutions.fr/stablecoin",
       "httpStatus": 200,
-      "observedDiffScope": "ALIGNED_AFTER_BOUNDED_GITHUB_FIRST_FAST_FORWARD",
+      "observedDiffScope": "CURRENTLY_ALIGNED_READONLY_REOBSERVATION_20260923",
       "applicationCodeFilesChanged": 0
     },
     "backend": {
       "domain": "api.stablecoin.chainsolutions.fr",
       "documentedMode": "Express/Sequelize",
       "documentedPath": "/var/www/vhosts/chainsolutions.fr/api.stablecoin.chainsolutions.fr",
-      "repository": "NOT_APPLICABLE_AT_DOCUMENTED_PATH",
-      "head": "NOT_APPLICABLE_AT_DOCUMENTED_PATH",
-      "liveVerificationStatus": "PARTIAL_CURRENT",
+      "repository": "DEPLOYED_DIRECTORY_NOT_GIT",
+      "head": "UNKNOWN_NO_GIT_METADATA",
+      "liveVerificationStatus": "CURRENT_METADATA_PARTIAL",
       "pathExists": true,
       "gitRepository": false,
       "httpRootStatus": 401,
       "httpHealthStatus": 401,
       "reachability": "REACHABLE_AUTH_PROTECTED",
-      "processOwnershipStatus": "PROCESS_CWD_CURRENT_SOURCE_OWNERSHIP_UNKNOWN",
+      "processOwnershipStatus": "CURRENT_RUNTIME_PROBE_NO_BACKEND_CWD_MATCH_IN_BOUNDED_SAMPLE",
       "restartProcedureStatus": "DOCUMENTED_UNVERIFIED",
-      "verifiedProcessMode": "Plesk/Phusion Passenger",
-      "verifiedProcessCwd": "/var/www/vhosts/chainsolutions.fr/api.stablecoin.chainsolutions.fr"
+      "verifiedProcessMode": "HTTP_REACHABLE_PROCESS_OWNERSHIP_UNKNOWN",
+      "packageName": "api.fan-token",
+      "packageVersion": "1.0.0",
+      "packageMain": "index.js",
+      "declaredSourceRepository": "git+https://gitlab.com/wealthtech1/api/api.fan-token.git",
+      "databaseDialect": "mysql",
+      "databaseName": "db_stablecoin",
+      "databaseConfigScopes": [
+        "development",
+        "test",
+        "production"
+      ]
     }
   },
   "gitLinkage": {
@@ -55,8 +65,8 @@
     "workingTreeState": "CLEAN",
     "desiredReconciliation": "MAINTAIN_GITHUB_FIRST_BOUNDED_SYNC_REVERIFY_EXACT_SHA_DIFF_AND_RUNTIME_BEFORE_EACH_WRITE",
     "reconciliationClass": "IN_SYNC",
-    "serverHead": "4e946bd523acfbef3d08d9ff7b0b3dd3f074c3a3",
-    "githubMainHead": "4e946bd523acfbef3d08d9ff7b0b3dd3f074c3a3",
+    "serverHead": "2a8be8219689e6213ce20f13d69b6b45f3693dfe",
+    "githubMainHead": "2a8be8219689e6213ce20f13d69b6b45f3693dfe",
     "githubAheadBy": 0,
     "serverAheadBy": 0
   },
@@ -69,7 +79,7 @@
     "githubFirstBoundedWrite": true,
     "genericServerWrite": false
   },
-  "lastVerifiedAt": "2026-09-21T06:44:53.852Z",
+  "lastVerifiedAt": "2026-09-23T00:50:46.904Z",
   "liveEvidence": {
     "frontendGit": {
       "evidenceId": "EVID-S2-FRONTEND-GIT-20260920-001",
@@ -143,7 +153,53 @@
       "outputSha256": "d1000370982ece346e9b680614d828c8f81bd82bca9d9167c07386a012a145d5",
       "observedAt": "2026-09-21T06:44:53.852Z",
       "mutationAllowed": false
+    },
+    "frontendGitCurrent": {
+      "evidenceId": "EVID-S2-FRONTEND-GIT-20260923-001",
+      "source": "Patricked-code/MCP GitHub Actions read-only evidence",
+      "workflowRunId": 35794187803,
+      "artifactId": 10723146851,
+      "artifactDigest": "sha256:57f4f44de4a0a47bd54cdffc8e0c74ddab641cd7c87eb0d1bde78bd3e8f5fd65",
+      "outputSha256": "999f7045d739d4070d6e54267bb6742783e43b94cffb1a6fcbf0c8fdcaf5e349",
+      "observedAt": "2026-09-22T22:47:24.987Z",
+      "mutationAllowed": false
+    },
+    "backendGitCurrent": {
+      "evidenceId": "EVID-S2-BACKEND-GIT-20260923-001",
+      "source": "Patricked-code/MCP GitHub Actions read-only evidence",
+      "workflowRunId": 35794181381,
+      "artifactId": 10723566187,
+      "artifactDigest": "sha256:17c8de239f085b627b020741b63cd7ab2abe1948481ffed3c406bf9fbf14c039",
+      "outputSha256": "c55731f56f2229c3542362fee23b56b4305097975afa1d7b8e0a60929bb81f4f",
+      "observedAt": "2026-09-22T22:47:18.561Z",
+      "mutationAllowed": false
+    },
+    "runtimeCurrent": {
+      "evidenceId": "EVID-S2-RUNTIME-HTTP-20260923-001",
+      "source": "Patricked-code/MCP GitHub Actions read-only evidence",
+      "workflowRunId": 35794212028,
+      "artifactId": 10723780966,
+      "artifactDigest": "sha256:4057aa3261bd99957c18e7b472e5ecbb3fe429ca33125e87cfdd884fb9160307",
+      "outputSha256": "39bb318dd4eba57f0888573eaaf9e525009fd042fc2388f01052290df29382ba",
+      "observedAt": "2026-09-22T22:47:41.203Z",
+      "mutationAllowed": false,
+      "frontendHttp": 200,
+      "apiRootHttp": 401,
+      "apiHealthHttp": 401,
+      "backendCwdProcessObserved": false
+    },
+    "backendInventoryCurrent": {
+      "evidenceId": "EVID-S2-BACKEND-INVENTORY-20260923-001",
+      "source": "Patricked-code/MCP GitHub Actions read-only evidence",
+      "workflowRunId": 35803784710,
+      "artifactId": 10726298618,
+      "artifactDigest": "sha256:301b4db911b3ebf03ced5c50288d943fff6d12edb227d18d063d9cec01ca22f4",
+      "outputSha256": "44816f10def98a9164d3d29c49259db0bbe0098c048207005ea4d1926c7276b2",
+      "observedAt": "2026-09-23T00:50:46.904Z",
+      "mutationAllowed": false,
+      "packageSha256": "b424cb1469c574fe0254ea0d9c4ca021b90683d2dcee9e0c073034b94a97db0d",
+      "sourceFileCount": 210
     }
   },
-  "verificationNote": "Snapshot exact post-fast-forward: S2 frontend and GitHub main were aligned at 4e946bd523acfbef3d08d9ff7b0b3dd3f074c3a3, worktree clean, frontend HTTP 200, API HTTP 401/401. The checkpoint commit carrying this snapshot must itself be aligned by a final docs-only bounded fast-forward and attested externally; no self-referential SHA is stored. Global runtime stays DOCUMENTED_UNVERIFIED because backend source/database/restart ownership remain unresolved."
+  "verificationNote": "Fresh 2026-09-23 read-only snapshot: S2 frontend is aligned with Patricked-code/Stablecoin main at 2a8be8219689e6213ce20f13d69b6b45f3693dfe, worktree clean, frontend HTTP 200; API root/health remain 401 protected. Backend directory is not a Git repository. Safe metadata inventory identifies package api.fan-token@1.0.0, declared GitLab source wealthtech1/api/api.fan-token, Express/Sequelize/MySQL and db_stablecoin configuration. Exact deployed backend revision, current process ownership and restart ownership remain unresolved; global runtime therefore remains DOCUMENTED_UNVERIFIED."
 }
