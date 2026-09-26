@@ -1,0 +1,120 @@
+# =============================================================================
+# Stablecoin — Observation S2 read-only (canal de secours du MCP)
+# Version : v1.0.0 — 2026-09-26 — DEC-2026-09-26-017
+# Origine : adapté de Wealthtechinnovations/api_opcv .github/workflows/ops-s2-observe.yml
+#           (@5ac4a313, source non modifiée). Déclenchement manuel uniquement.
+# Journal des modifications
+#   v1.0.0 (2026-09-26) : version initiale.
+# =============================================================================
+name: Stablecoin S2 Observe (secours MCP)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mcp_unavailable_reason:
+        description: "Obligatoire — preuve que le MCP est indisponible (erreur observée, date)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stablecoin-s2-ssh-fallback
+  cancel-in-progress: false
+
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout canonical main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Verify governance consistency
+        run: node scripts/verify-governance-consistency.js
+
+      - name: Record fallback justification
+        env:
+          REASON: ${{ inputs.mcp_unavailable_reason }}
+        run: |
+          set -euo pipefail
+          test -n "$REASON"
+          echo "FALLBACK_CHANNEL=GITHUB_ACTIONS_SSH"
+          echo "MCP_UNAVAILABLE_REASON=$REASON"
+
+      - name: Prepare strict pinned SSH
+        env:
+          S2_HOST: ${{ secrets.S2_HOST || secrets.STABLECOIN_SSH_HOST }}
+          S2_SSH_KEY: ${{ secrets.S2_SSH_KEY || secrets.STABLECOIN_SSH_PRIVATE_KEY }}
+          S2_KNOWN_HOSTS: ${{ secrets.S2_KNOWN_HOSTS || secrets.STABLECOIN_SSH_KNOWN_HOSTS }}
+        run: bash .github/scripts/s2/prepare_s2_ssh.sh
+
+      - name: Observe S2 without MCP bridge
+        env:
+          HOST: ${{ secrets.S2_HOST || secrets.STABLECOIN_SSH_HOST }}
+          USER_SSH: ${{ secrets.S2_USER || secrets.STABLECOIN_SSH_USER }}
+          S2_SSH_PORT: ${{ vars.S2_SSH_PORT || vars.STABLECOIN_SSH_PORT }}
+        run: |
+          set -euo pipefail
+          SSH_USER="${USER_SSH:-root}"
+          STABLECOIN_SSH_OPERATION_CLASS=READ_ONLY \
+            bash .github/scripts/s2/s2_ssh_readonly_retry.sh \
+            "$SSH_USER@$HOST" 'python3 -' .github/scripts/s2/s2_observe.py \
+            > S2_OBSERVATION.json
+
+      - name: Validate observation evidence
+        run: |
+          set -euo pipefail
+          python3 -m json.tool S2_OBSERVATION.json >/dev/null
+          python3 - <<'PY'
+          import json
+          p = json.load(open("S2_OBSERVATION.json", encoding="utf-8"))
+          assert p["repository"] == "Patricked-code/Stablecoin"
+          s = p["safety"]
+          assert s["read_only_observer"] is True
+          assert s["arbitrary_remote_shell"] is False
+          assert s["secret_values_read"] is False
+          assert s["production_mutation_performed"] is False
+          assert p["git"]["frontend"]["expected_branch"] == "main"
+          print("STABLECOIN_S2_OBSERVATION=PASS")
+          PY
+
+      - name: Publish safe summary
+        if: always()
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json, pathlib
+          print("## Stablecoin — observation S2 read-only (secours MCP)")
+          pth = pathlib.Path("S2_OBSERVATION.json")
+          if not pth.exists() or pth.stat().st_size == 0:
+              print("Observation indisponible : voir les journaux du job.")
+          else:
+              p = json.loads(pth.read_text(encoding="utf-8"))
+              g = p["git"]["frontend"]
+              print(f"- frontend : branch={g.get('branch')} head={g.get('head')} remote={g.get('remote_head')} alignment={g.get('remote_alignment')}")
+              print(f"- frontend worktree : tracked_dirty={len(g.get('tracked_dirty') or [])} untracked={len(g.get('untracked') or [])}")
+              if g.get("pending_delta"):
+                  d = g["pending_delta"]
+                  print(f"- delta en attente : changed={d.get('changed_files')} applicatifs={len(d.get('application_files') or [])}")
+              b = p["backend"]
+              print(f"- backend : exists={b.get('exists')} git={b.get('is_git')} package={b.get('package_name')}@{b.get('package_version')}")
+              print(f"- processus Stablecoin (par cwd) : {len(p['runtime'].get('processes') or [])}")
+              for h in p.get("http", []):
+                  print(f"- HTTP {h.get('url')} : {h.get('http_code')}")
+          PY
+
+      - name: Upload observation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stablecoin-s2-observation
+          path: S2_OBSERVATION.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Remove SSH material
+        if: always()
+        run: rm -f ~/.ssh/id_deploy ~/.ssh/known_hosts

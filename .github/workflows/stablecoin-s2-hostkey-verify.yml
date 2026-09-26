@@ -1,0 +1,71 @@
+# =============================================================================
+# Stablecoin — Vérification de la clé d'hôte S2 épinglée (sans connexion SSH)
+# Version : v1.0.0 — 2026-09-26 — DEC-2026-09-26-017
+# Origine : adapté de Wealthtechinnovations/api_opcv .github/workflows/ops-s2-hostkey-bootstrap.yml
+#           (@5ac4a313, source non modifiée). Évolution : compare les EMPREINTES (et non le
+#           fichier haché, dont le sel change à chaque hachage), ne commite jamais :
+#           un nouvel épinglage passe par un commit gouverné.
+# Journal des modifications
+#   v1.0.0 (2026-09-26) : version initiale.
+# =============================================================================
+name: Stablecoin S2 Host Key Verify
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stablecoin-s2-ssh-fallback
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - name: Checkout canonical main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Compare live S2 host key with the pinned fingerprints
+        env:
+          HOST: ${{ secrets.S2_HOST || secrets.STABLECOIN_SSH_HOST }}
+        run: |
+          set -euo pipefail
+          umask 077
+          test -n "$HOST" || { echo "::error::S2_HOST missing"; exit 1; }
+          work="$RUNNER_TEMP/hostkey"
+          mkdir -p "$work"
+          ssh-keyscan -T 10 -t ed25519,ecdsa,rsa "$HOST" 2>/dev/null | sort -u > "$work/live"
+          test -s "$work/live" || { echo "::error::no S2 host key returned"; exit 2; }
+          ssh-keygen -lf "$work/live" -E sha256 | awk '{print $2, $NF}' | sort > "$work/live.fp"
+          awk '{print $2, $NF}' .github/scripts/s2/s2_hostkey_fingerprints.txt | sort > "$work/pinned.fp"
+          if cmp -s "$work/live.fp" "$work/pinned.fp"; then
+            echo "HOST_KEY_FINGERPRINTS=MATCH"
+          else
+            echo "::error::S2 host key fingerprints differ from the pin. Refusing; investigate out-of-band."
+            echo "live fingerprints:"
+            cat "$work/live.fp"
+            exit 3
+          fi
+          if ssh-keygen -F "$HOST" -f .github/scripts/s2/s2_known_hosts.tofu >/dev/null 2>&1; then
+            echo "HOST_PIN_BINDING=MATCHES_S2_HOST"
+          else
+            echo "::warning::Same host keys, but the pinned file is not bound to this S2_HOST value. Set S2_KNOWN_HOSTS or re-pin through a governed commit with the candidate artifact."
+            cp "$work/live" "$work/candidate"
+            ssh-keygen -H -f "$work/candidate" >/dev/null 2>&1
+            rm -f "$work/candidate.old"
+            echo "HOST_PIN_BINDING=CANDIDATE_GENERATED"
+          fi
+
+      - name: Upload candidate pin (public key material, hashed host)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stablecoin-s2-hostkey-candidate
+          path: ${{ runner.temp }}/hostkey/candidate
+          if-no-files-found: ignore
+          retention-days: 7

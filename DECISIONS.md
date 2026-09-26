@@ -116,3 +116,25 @@
 **Décision :** `.github/workflows/governed-ssh-readonly.yml` et `scripts/ssh/governed-readonly.sh` sont restaurés depuis `44874fa` / `8d5dcb6` comme **canal de secours** : déclenchement manuel `workflow_dispatch` uniquement, motif d'indisponibilité MCP obligatoire (`mcp_unavailable_reason`), actions allowlistées strictement read-only, clé d'hôte vérifiée, connexion root refusée, matériel SSH éphémère supprimé en fin de job. La surface est déclarée dans `.mcp/manifest.json` (`mcpIntegration.fallbackSshTransport`).
 
 **Contraintes :** aucune écriture, aucun déploiement, aucun restart via ce canal. Toute évolution vers une capacité d'écriture exige une nouvelle décision. Les secrets `STABLECOIN_SSH_PRIVATE_KEY`, `STABLECOIN_SSH_KNOWN_HOSTS`, `STABLECOIN_SSH_HOST`, `STABLECOIN_SSH_USER` restent exclusivement dans GitHub Actions Secrets ; ils ne sont pas configurés au 2026-09-26 et doivent l'être par le propriétaire avec un utilisateur S2 dédié non-root.
+
+**Évolution :** étendue le même jour par DEC-2026-09-26-017 (modèle AfricaFunds, réconciliation bornée autorisée par le propriétaire, secrets `S2_*`).
+
+
+## DEC-2026-09-26-017 — Canal SSH de secours aligné sur le modèle AfricaFunds
+
+**Statut :** `EXTENDS DEC-2026-09-26-016`. Le MCP reste le canal principal pour interroger l'état du serveur et réconcilier GitHub ↔ S2 ; il reste obligatoire pour les actions de matrice de dépôts et les suppressions de dépôts.
+
+**Contexte :** le propriétaire a précisé le modèle d'exploitation : GitHub porte le travail gouverné ; le MCP interroge l'état serveur et réconcilie ; lorsque le MCP est inaccessible, le SSH GitHub Actions prend le relais, comme pour AfricaFunds (`Wealthtechinnovations/api_opcv`). Il a autorisé le fast-forward borné du frontend par ce canal et exigé une évolution sans régression ni suppression de l'existant, sans aucune modification d'AfricaFunds, d'`api_opcv` ni du MCP.
+
+**Décision :**
+
+- reprise adaptée, sans modification des sources, des primitives S2 d'AfricaFunds (`api_opcv@5ac4a313596ee38a8cbce52b794b68649b677dab`) : préparation SSH épinglée, helper SSH read-only avec reprise bornée et son test, garde Git, observation, inventaire des secrets sans valeurs, workflows d'observation, de réconciliation, d'inventaire et de clé d'hôte ;
+- la réconciliation reproduit exactement les garanties de la commande bornée MCP (`Patricked-code/MCP src/stablecoin/githubFastForward.ts`) : branche `main`, worktree propre y compris fichiers non suivis, origin exact, SHA serveur attendu exact, SHA cible égal au `main` GitHub, relation fast-forward, zéro fichier applicatif (même liste que le MCP), HTTP front 200 / API 401 / health 401 avant et après, mêmes codes de sortie 20–31. En plus : phrase de confirmation `RECONCILE STABLECOIN S2`, lancement depuis `main` uniquement, sauvegarde de l'état Git dans `/var/backups/stablecoin-governance/<horodatage>/` avant mutation, aucune reprise automatique d'une mutation ;
+- aucun build, restart, reset, clean, stash, rebase, pull ni push ; aucune commande libre ; ces interdits sont contrôlés par `scripts/verify-governance-consistency.js` ;
+- secrets : `S2_HOST` et `S2_SSH_KEY` (mêmes valeurs qu'`api_opcv`), optionnels `S2_USER` (défaut `root`, comme le MCP — `src/config/env.ts` — et AfricaFunds), `S2_KNOWN_HOSTS`, `S2_REPORT_PASSPHRASE` ; les noms `STABLECOIN_SSH_*` de DEC-016 restent acceptés comme alias ;
+- la connexion root est admise pour ce canal (clé S2 partagée) ; `governed-readonly.sh` conserve le refus root par défaut et ne l'admet que sur transmission explicite de `allow_root_shared_s2_key` par son workflow ;
+- clé d'hôte épinglée : copie de la clé publique S2 d'AfricaFunds, dont les trois empreintes ont été confirmées identiques par `ssh-keyscan stablecoin.chainsolutions.fr` le 2026-09-26 (`EVID-S2-HOSTKEY-20260926-001`) ;
+- tous les fichiers du canal sont placés sous `.github/` afin de rester « non applicatifs » pour le classifieur du fast-forward MCP ; `scripts/ssh/governed-readonly.sh` (DEC-016) est déplacé, historique conservé, en `.github/scripts/s2/governed-readonly.sh` : à son ancien emplacement, il aurait fait refuser tout fast-forward MCP ultérieur (`application_diff_detected`) ;
+- dépôt public : l'observation ne publie ni hostname ni kernel et ne lit ni `.env`, ni environnement, ni ligne de commande des processus ; l'inventaire des secrets n'émet jamais de valeur, préfixe, empreinte ni longueur, et son rapport détaillé n'est publié que chiffré (`S2_REPORT_PASSPHRASE`).
+
+**Conséquence :** tant que `S2_HOST` et `S2_SSH_KEY` ne sont pas configurés sur `Patricked-code/Stablecoin`, le canal reste inactif. Toute capacité supplémentaire (build, restart, backend, déploiement applicatif) exige une nouvelle décision.

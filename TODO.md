@@ -64,9 +64,25 @@ Tâche gouvernée : `STB-TASK-20260915-002`.
 - [x] mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et `SUIVI.md` avec les preuves live ;
 - [x] préparer et activer la liaison gouvernée GitHub → serveur pour le fast-forward Stablecoin exact-SHA, sans écriture destructive générique.
 - [x] restaurer le connecteur SSH GitHub Actions comme canal de secours read-only (DEC-2026-09-26-016) ;
-- [ ] (propriétaire) créer un utilisateur S2 dédié non-root + clé SSH, puis configurer les 4 secrets `STABLECOIN_SSH_*` ;
+- [x] ~~(propriétaire) créer un utilisateur S2 dédié non-root + clé SSH, puis configurer les 4 secrets `STABLECOIN_SSH_*`~~ — remplacé par DEC-2026-09-26-017 : secrets `S2_HOST` / `S2_SSH_KEY` partagés avec AfricaFunds (les noms `STABLECOIN_SSH_*` restent acceptés comme alias) ;
 - [ ] exécuter un premier run `Governed SSH Readonly` et attester son résultat dans `SUIVI.md` ;
 - [ ] (propriétaire) rétablir les connexions MCP `wealthtech_ssh_bridge` (session locale + connecteur claude.ai).
+
+## P0 — Canal SSH de secours aligné sur AfricaFunds
+
+Tâche gouvernée : `STB-TASK-20260926-003` (DEC-2026-09-26-017).
+
+- [x] reprendre et adapter, sans les modifier, les primitives S2 d'AfricaFunds (`api_opcv@5ac4a313`) : préparation SSH épinglée, helper read-only, garde Git, observation, inventaire des secrets, workflows ;
+- [x] réconciliation bornée identique à la commande MCP (exact-SHA, zéro fichier applicatif, HTTP avant/après, codes 20–31), plus phrase de confirmation, lancement depuis `main` et sauvegarde avant mutation ;
+- [x] placer tout le canal sous `.github/` (compatibilité avec le classifieur du fast-forward MCP) et déplacer `scripts/ssh/governed-readonly.sh` en conservant son historique ;
+- [x] épingler la clé d'hôte S2 (trois empreintes confirmées par `ssh-keyscan stablecoin.chainsolutions.fr`) ;
+- [x] tests de la garde Git et du helper SSH read-only, exécutés localement et ajoutés à la CI `Governance Consistency` ;
+- [x] contrôles d'invariants du canal ajoutés au validateur de gouvernance ;
+- [ ] (propriétaire) configurer `S2_HOST` et `S2_SSH_KEY` sur `Patricked-code/Stablecoin` avec les mêmes valeurs qu'`api_opcv`, et optionnellement `S2_REPORT_PASSPHRASE` ;
+- [ ] exécuter `Stablecoin S2 Host Key Verify`, puis `Stablecoin S2 Observe`, et attester les résultats dans `SUIVI.md` ;
+- [ ] exécuter `Stablecoin S2 Secret Inventory` (rapport chiffré) pour savoir, sans exposer de valeur, si `NEXT_PUBLIC_PRIVATE_KEY` est configurée et présente dans le bundle client ;
+- [ ] si S2 est en retard sur `main` : réconcilier via le MCP s'il est disponible, sinon via `Stablecoin S2 Reconcile` (observe puis reconcile exact-SHA) ;
+- [ ] transmettre ces informations au MCP par intake dès sa reconnexion, sans modifier le dépôt MCP.
 
 ## P1 — Sécurité
 

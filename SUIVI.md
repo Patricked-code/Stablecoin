@@ -132,19 +132,20 @@ Les changements sont limités aux documents de gouvernance/mémoire, au README e
 
 ```text
 CURRENT_WORKSTREAM = GOVERNED_REPOSITORY_EVOLUTION
-CURRENT_TASK = STB-TASK-20260915-002
+CURRENT_TASK = STB-TASK-20260926-003
 CURRENT_TASK_STATUS = IN_PROGRESS
-TASK_BASELINE_SHA = 45f440d304022dd06d9f7f68e98fb38bc568488a
-SOURCE_HEAD_OBSERVED = 2a8be8219689e6213ce20f13d69b6b45f3693dfe
-LAST_COMPLETED_ACTION = S2_BACKEND_METADATA_INVENTORY_READONLY_COMPLETED_SOURCE_AND_DATABASE_IDENTIFIED
-CURRENT_BLOCKER = BACKEND_DEPLOYED_SOURCE_REVISION_PROCESS_AND_RESTART_OWNERSHIP_UNKNOWN
-EXACT_NEXT_ACTION = VALIDATE_THIS_CHECKPOINT_CI_THEN_DISCOVER_BACKEND_DEPLOYED_REVISION_AND_RESTART_OWNERSHIP_READONLY_WITHOUT_BRIDGE
-RUNTIME_STATUS = FRONTEND_ALIGNED_2a8be821_HTTP_200_BACKEND_HTTP_401_401_DECLARED_SOURCE_AND_DB_IDENTIFIED_CURRENT_PROCESS_OWNERSHIP_UNKNOWN
-CI_STATUS = CURRENT_HEAD_2a8be8219689e6213ce20f13d69b6b45f3693dfe_PASS_RUN_35570105399_NEW_CHECKPOINT_REQUIRES_EXACT_SHA_CI
-MCP_REGISTRATION_STATUS = GITHUB_OIDC_READONLY_AND_BOUNDED_WRITE_ACTIVE_BACKEND_INVENTORY_PROBE_SUCCESS_RUN_35803784710
-SECURITY_WARNINGS = SEE_SECTION_5_REQUIRES_SEPARATE_VERIFICATION
-CHECKPOINT_ID = STB-CHK-20260923-009
-EVIDENCE_IDS = EVID-GH-HEAD-20260915-001,EVID-GH-PERM-20260915-001,EVID-NONREG-20260915-001,EVID-CI-20260915-001,EVID-LINKAGE-20260915-001,EVID-MCP-BRIDGE-20260915-001,EVID-CORRECTION-20260915-001,EVID-CI-CORRECTION-20260915-001,EVID-S2-FRONTEND-GIT-20260920-001,EVID-S2-BACKEND-PATH-20260920-001,EVID-S2-RUNTIME-HTTP-20260920-001,EVID-S2-DIFF-NONREG-20260920-001,EVID-S2-FAST-FORWARD-20260921-001,EVID-S2-POST-FAST-FORWARD-GIT-20260921-001,EVID-S2-POST-FAST-FORWARD-RUNTIME-20260921-001,EVID-S2-FRONTEND-GIT-20260923-001,EVID-S2-BACKEND-GIT-20260923-001,EVID-S2-RUNTIME-HTTP-20260923-001,EVID-S2-BACKEND-INVENTORY-20260923-001
+TASK_BASELINE_SHA = b5955823f30ff60a20d9abb25a40c31988844dff
+SOURCE_HEAD_OBSERVED = b5955823f30ff60a20d9abb25a40c31988844dff
+LAST_COMPLETED_ACTION = S2_SSH_FALLBACK_ALIGNED_ON_AFRICAFUNDS_MODEL_AND_MCP_BOUNDED_FAST_FORWARD_GUARANTEES_LOCAL_TESTS_PASS
+CURRENT_BLOCKER = S2_HOST_AND_S2_SSH_KEY_NOT_CONFIGURED_ON_STABLECOIN_REPOSITORY;INTERACTIVE_MCP_BRIDGE_SESSION_INVALID
+EXACT_NEXT_ACTION = VALIDATE_THIS_CHECKPOINT_CI_THEN_OWNER_CONFIGURES_S2_HOST_S2_SSH_KEY_THEN_RUN_STABLECOIN_S2_HOSTKEY_VERIFY_AND_STABLECOIN_S2_OBSERVE_AND_ATTEST
+PARKED_TASKS = STB-TASK-20260915-002(IN_PROGRESS;BLOCKER=BACKEND_DEPLOYED_SOURCE_REVISION_PROCESS_AND_RESTART_OWNERSHIP_UNKNOWN;NEXT=DISCOVER_BACKEND_DEPLOYED_REVISION_AND_RESTART_OWNERSHIP_READONLY)
+RUNTIME_STATUS = FRONTEND_LAST_ATTESTED_2a8be821_HTTP_200_BACKEND_HTTP_401_401_PUBLIC_HTTP_REOBSERVED_2026-09-26_200_401_S2_NOT_REOBSERVED_SINCE_2026-09-23
+CI_STATUS = PREVIOUS_HEAD_b5955823f30ff60a20d9abb25a40c31988844dff_PASS_RUN_36259266988_NEW_CHECKPOINT_REQUIRES_EXACT_SHA_CI
+MCP_REGISTRATION_STATUS = GITHUB_OIDC_READONLY_AND_BOUNDED_WRITE_ACTIVE_BACKEND_INVENTORY_PROBE_SUCCESS_RUN_35803784710;INTERACTIVE_BRIDGE_SESSION_INVALID_2026-09-26
+SECURITY_WARNINGS = PUBLIC_REPOSITORY;KEY_SHAPED_STRINGS_HARDCODED_IN_10_TRACKED_FILES;ENV_LOCAL_IN_21_HISTORICAL_COMMITS;NEXT_PUBLIC_PRIVATE_KEY_READ_BY_CLIENT_COMPONENTS;ROTATION_BY_OWNER_REQUIRED_IF_REAL_KEYS;SEE_SECTION_5
+CHECKPOINT_ID = STB-CHK-20260926-010
+EVIDENCE_IDS = EVID-GH-HEAD-20260915-001,EVID-GH-PERM-20260915-001,EVID-NONREG-20260915-001,EVID-CI-20260915-001,EVID-LINKAGE-20260915-001,EVID-MCP-BRIDGE-20260915-001,EVID-CORRECTION-20260915-001,EVID-CI-CORRECTION-20260915-001,EVID-S2-FRONTEND-GIT-20260920-001,EVID-S2-BACKEND-PATH-20260920-001,EVID-S2-RUNTIME-HTTP-20260920-001,EVID-S2-DIFF-NONREG-20260920-001,EVID-S2-FAST-FORWARD-20260921-001,EVID-S2-POST-FAST-FORWARD-GIT-20260921-001,EVID-S2-POST-FAST-FORWARD-RUNTIME-20260921-001,EVID-S2-FRONTEND-GIT-20260923-001,EVID-S2-BACKEND-GIT-20260923-001,EVID-S2-RUNTIME-HTTP-20260923-001,EVID-S2-BACKEND-INVENTORY-20260923-001,EVID-MCP-UNAVAILABLE-20260926-001,EVID-SSH-FALLBACK-20260926-001,EVID-SEC-SCAN-20260926-001,EVID-S2-HOSTKEY-20260926-001,EVID-MCP-CLASSIFIER-COMPAT-20260926-001,EVID-S2-GUARD-TESTS-20260926-001
 APPLICATION_CODE_MUTATION = NONE
 BACKEND_METADATA_DISCOVERY = PACKAGE_api.fan-token_V1.0.0_DECLARED_GITLAB_SOURCE_MYSQL_db_stablecoin_NO_SECRET_VALUES_READ
 RUNTIME_MUTATION = S2_FRONTEND_FAST_FORWARD_6216755d318677ed9a56c36731a57531d02bf751_TO_4e946bd523acfbef3d08d9ff7b0b3dd3f074c3a3_NO_BUILD_NO_RESTART
@@ -154,6 +155,8 @@ MCP_CORE_MUTATION = PR117_GITHUB_FIRST_BOUNDED_WRITE_MERGED_ab9b1aa902aab3efed42
 Le checkpoint est une mémoire de reprise et doit être réconcilié avec Git, la CI et le runtime avant toute nouvelle mutation.
 
 ### Portée de la tâche courante
+
+`STB-TASK-20260926-003` (ouverte le 2026-09-26 sur instruction explicite du propriétaire) aligne le canal SSH de secours Stablecoin sur le modèle AfricaFunds et sur les garanties de la commande bornée MCP : observation, inventaire des secrets sans valeurs, vérification de la clé d'hôte et fast-forward borné du frontend, utilisables uniquement lorsque le MCP est indisponible (DEC-2026-09-26-016 / DEC-2026-09-26-017). `STB-TASK-20260915-002` n'est pas abandonnée : elle est parquée (`PARKED_TASKS`) avec son blocker et sa prochaine action inchangés.
 
 `STB-TASK-20260915-002` révalide et gouverne la liaison GitHub ↔ serveur déjà documentée : remote serveur `github` vers `Patricked-code/Stablecoin`, procédure fast-forward documentée, et pont externe `wealthtech_ssh_bridge`. Le connecteur GitHub Actions SSH ajouté récemment est retiré comme mécanisme parallèle non nécessaire.
 
@@ -181,6 +184,8 @@ Le checkpoint est une mémoire de reprise et doit être réconcilié avec Git, l
 - Conséquence : la prochaine intégration Stablecoin doit porter l'intention de #86 sur le MCP actuel, sous une tâche/session/locks live réobservés, puis passer CI/review/merge/governed deploy exact-SHA. Seulement après activation runtime, la première action S2 doit rester `git_status_project_s2(stablecoin_frontend)` en lecture seule.
 
 ### Action suivante exacte
+
+**Mise à jour 2026-09-26 (`STB-CHK-20260926-010`) :** la tâche courante est `STB-TASK-20260926-003` ; sa prochaine action est donnée par le Current State Block et par la section « Alignement du canal SSH de secours sur AfricaFunds — 2026-09-26 ». Le paragraphe ci-dessous reste la prochaine action de `STB-TASK-20260915-002`, parquée.
 
 Continuer exclusivement via le fallback GitHub-first/OIDC déjà intégré. La prochaine découverte doit rester strictement read-only et viser deux éléments encore inconnus : la révision exacte du backend déployé issue du dépôt déclaré `gitlab.com/wealthtech1/api/api.fan-token.git`, puis l'ownership/procédure exacte de restart du backend. Ne pas utiliser le bridge, ne pas recréer de transport parallèle et ne pas muter S2 tant que ces deux points ne sont pas attestés.
 
@@ -378,6 +383,46 @@ Session Claude Code locale (poste de Patrick), sur autorisation explicite du pro
 
 ```text
 EXACT_NEXT_ACTION = OWNER_RUNS_S2_ENCRYPTED_SECRETS_BACKUP_THEN_CONFIGURES_STABLECOIN_SSH_SECRETS_OR_RESTORES_MCP
+APPLICATION_CODE_MUTATION = NONE
+RUNTIME_MUTATION = NONE
+```
+
+> Remplacé le même jour par `STB-CHK-20260926-010` (section suivante et Current State Block).
+
+### Alignement du canal SSH de secours sur AfricaFunds — 2026-09-26
+
+Tâche `STB-TASK-20260926-003`, checkpoint `STB-CHK-20260926-010`, décision `DEC-2026-09-26-017`. Session Claude Code locale (poste de Patrick), sur instruction explicite du propriétaire : reprendre le modèle AfricaFunds sans régression ni suppression de l'existant, sans modifier AfricaFunds, `api_opcv` ni le MCP.
+
+Modèle d'exploitation précisé par le propriétaire : GitHub = travail gouverné ; MCP = interrogation de l'état serveur et réconciliation (obligatoire pour la matrice de dépôts et les suppressions de dépôts) ; SSH GitHub Actions = secours quand le MCP est inaccessible.
+
+Preuves :
+
+- `EVID-S2-HOSTKEY-20260926-001` : `ssh-keyscan stablecoin.chainsolutions.fr` (sans connexion) retourne exactement les trois empreintes épinglées par AfricaFunds : `SHA256:Ady8eJEP8zd8Cs8TxdYtVTgvoO5Bjgylg8YBro/RKUI` (ECDSA), `SHA256:GCZER3VgJrq9YB3QdJo4+rQ+dM4Y+sKxDS0NI/6jngs` (RSA), `SHA256:XxGk6WDdc3pqCBnNvBZoFd4Ugc+3x8hcI0J1o0cEKhw` (ED25519). Le frontend Stablecoin et AfricaFunds sont donc sur le même S2 ; l'épinglage public est copié dans `.github/scripts/s2/`.
+- `EVID-MCP-CLASSIFIER-COMPAT-20260926-001` : avec la liste non applicative exacte du MCP (`src/stablecoin/githubFastForward.ts`), le delta `2a8be821` (dernier SHA S2 attesté) → `b5955823` contenait 8 fichiers dont **1 applicatif** (`scripts/ssh/governed-readonly.sh`, ajouté par DEC-016) : tout fast-forward MCP aurait été refusé (`application_diff_detected`). Après déplacement sous `.github/scripts/s2/`, le delta `2a8be821` → état de ce checkpoint compte 24 fichiers dont **0 applicatif**. Régression introduite puis corrigée le même jour.
+- `EVID-S2-GUARD-TESTS-20260926-001` : localement (Git Bash, Git 2.35.1), `test_s2_git_guard.sh` = PASS (observation, refus 10/21/22/23/24/25/26/28, succès du fast-forward borné avec sauvegarde, absence de fuite du mode test) et `test_s2_ssh_readonly_retry.sh` = PASS. Contre-épreuves : une garde sabotée (fichiers `pages/*` admis) fait échouer le test ; une copie sabotée (déclencheur `push:`, `reset --hard`) fait échouer le validateur de gouvernance.
+- Sources lues sans modification : `Wealthtechinnovations/api_opcv@5ac4a313596ee38a8cbce52b794b68649b677dab` (worktree propre avant et après) et `Patricked-code/MCP@0eb55a5`.
+
+Surface ajoutée ou modifiée (aucun fichier applicatif) :
+
+```text
+.github/scripts/s2/          prepare_s2_ssh.sh, s2_ssh_readonly_retry.sh, s2_git_guard.sh,
+                             s2_observe.py, s2_secret_inventory.py, governed-readonly.sh (déplacé),
+                             tests, épinglage de la clé d'hôte
+.github/workflows/           stablecoin-s2-observe.yml, stablecoin-s2-reconcile.yml,
+                             stablecoin-s2-secret-inventory.yml, stablecoin-s2-hostkey-verify.yml,
+                             governed-ssh-readonly.yml (évolué), governance-consistency.yml (tests ajoutés)
+.mcp/manifest.json           fallbackSshTransport étendu (alias STABLECOIN_SSH_* conservés)
+scripts/verify-governance-consistency.js   invariants du canal (ajout additif)
+```
+
+État et suite :
+
+```text
+S2_SSH_FALLBACK = IMPLEMENTED_INACTIVE_UNTIL_S2_HOST_AND_S2_SSH_KEY_CONFIGURED
+S2_RECONCILE_SCOPE = FRONTEND_EXACT_SHA_FAST_FORWARD_ZERO_APPLICATION_DIFF_CONFIRMATION_REQUIRED
+EXACT_NEXT_ACTION = VALIDATE_THIS_CHECKPOINT_CI_THEN_OWNER_CONFIGURES_S2_HOST_S2_SSH_KEY_THEN_RUN_STABLECOIN_S2_HOSTKEY_VERIFY_AND_STABLECOIN_S2_OBSERVE_AND_ATTEST
+PENDING_OWNER_ACTIONS = CONFIGURE_S2_SECRETS;OPTIONAL_S2_REPORT_PASSPHRASE;RUN_ENCRYPTED_SECRETS_BACKUP_SCRIPT;RECONNECT_MCP
+MCP_INTAKE = PENDING_UNTIL_MCP_RECONNECTED_NO_MCP_REPOSITORY_MODIFICATION
 APPLICATION_CODE_MUTATION = NONE
 RUNTIME_MUTATION = NONE
 ```

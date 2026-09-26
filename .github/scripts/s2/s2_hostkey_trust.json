@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "repository": "Patricked-code/Stablecoin",
+  "server": "S2",
+  "trust_model": "TOFU_PINNED_PENDING_OOB",
+  "source": "Copied on 2026-09-26 from Wealthtechinnovations/api_opcv@5ac4a313596ee38a8cbce52b794b68649b677dab .governance/ssh/s2_known_hosts.tofu (same S2 server; original pin = one-time ssh-keyscan from a GitHub-hosted runner, no SSH login). Source repository not modified.",
+  "independent_check": "EVID-S2-HOSTKEY-20260926-001: ssh-keyscan stablecoin.chainsolutions.fr on 2026-09-26 returned exactly the three pinned fingerprints (ECDSA, RSA, ED25519).",
+  "strict_host_key_checking_required": true,
+  "automatic_key_rotation": false,
+  "oob_verification": "PENDING",
+  "decision": "DEC-2026-09-26-017",
+  "note": "The host key is public material. The hashed entries are bound to the S2_HOST value used by AfricaFunds: Stablecoin must use the same S2_HOST value, or provide S2_KNOWN_HOSTS. A future fingerprint mismatch is a hard failure until independently investigated."
+}

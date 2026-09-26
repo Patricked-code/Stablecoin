@@ -1,3 +1,7 @@
+# Governance Consistency — CI de gouvernance Stablecoin
+# v1.1.0 (2026-09-26) : ajout additif (DEC-2026-09-26-017) des contrôles de syntaxe et des
+#   tests du canal SSH de secours S2 (garde Git bornée et helper SSH read-only).
+# v1.0.0 (2026-09-15) : version initiale (validateur de cohérence de gouvernance).
 name: Governance Consistency
 
 on:
@@ -21,3 +25,13 @@ jobs:
           node-version: "20"
       - name: Verify governance consistency
         run: node scripts/verify-governance-consistency.js
+      - name: Verify S2 fallback scripts syntax
+        run: |
+          set -euo pipefail
+          for f in .github/scripts/s2/*.sh; do bash -n "$f"; done
+          for f in .github/scripts/s2/*.py; do python3 -m py_compile "$f"; done
+          echo "S2_FALLBACK_SYNTAX=PASS"
+      - name: Test S2 read-only SSH retry helper
+        run: bash .github/scripts/s2/test_s2_ssh_readonly_retry.sh
+      - name: Test S2 Git guard (bounded fast-forward)
+        run: bash .github/scripts/s2/test_s2_git_guard.sh

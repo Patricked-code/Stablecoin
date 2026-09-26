@@ -1,4 +1,9 @@
-# Governed SSH Readonly — canal de SECOURS (DEC-2026-09-26-016)
+# Governed SSH Readonly — canal de SECOURS (DEC-2026-09-26-016, DEC-2026-09-26-017)
+# v1.2.0 (2026-09-26) : alignement AfricaFunds (DEC-2026-09-26-017) — secrets S2_HOST /
+#   S2_SSH_KEY / S2_KNOWN_HOSTS / S2_USER (noms STABLECOIN_SSH_* conservés comme alias),
+#   préparation SSH épinglée partagée (.github/scripts/s2/prepare_s2_ssh.sh), script
+#   déplacé sous .github/scripts/s2/, connexion root admise explicitement, groupe de
+#   concurrence commun à tout le canal S2.
 # v1.1.0 (2026-09-26) : restauré depuis 44874fa comme fallback read-only,
 #   utilisable uniquement quand le MCP wealthtech_ssh_bridge est indisponible ;
 #   ajout du motif obligatoire mcp_unavailable_reason.
@@ -31,7 +36,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: stablecoin-governed-ssh-readonly
+  group: stablecoin-s2-ssh-fallback
   cancel-in-progress: false
 
 jobs:
@@ -73,50 +78,44 @@ jobs:
           fi
           printf 'target_path=%s\n' "$TARGET_PATH" >> "$GITHUB_OUTPUT"
 
-      - name: Configure ephemeral SSH client
+      - name: Prepare strict pinned SSH
         shell: bash
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.STABLECOIN_SSH_PRIVATE_KEY }}
-          SSH_KNOWN_HOSTS: ${{ secrets.STABLECOIN_SSH_KNOWN_HOSTS }}
-        run: |
-          set -euo pipefail
-          test -n "$SSH_PRIVATE_KEY"
-          test -n "$SSH_KNOWN_HOSTS"
-          install -d -m 700 "$HOME/.ssh"
-          printf '%s\n' "$SSH_PRIVATE_KEY" > "$HOME/.ssh/id_ed25519"
-          chmod 600 "$HOME/.ssh/id_ed25519"
-          printf '%s\n' "$SSH_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
-          chmod 600 "$HOME/.ssh/known_hosts"
+          S2_HOST: ${{ secrets.S2_HOST || secrets.STABLECOIN_SSH_HOST }}
+          S2_SSH_KEY: ${{ secrets.S2_SSH_KEY || secrets.STABLECOIN_SSH_PRIVATE_KEY }}
+          S2_KNOWN_HOSTS: ${{ secrets.S2_KNOWN_HOSTS || secrets.STABLECOIN_SSH_KNOWN_HOSTS }}
+        run: bash .github/scripts/s2/prepare_s2_ssh.sh
 
       - name: Execute allowlisted read-only SSH action
         shell: bash
         env:
-          SSH_HOST: ${{ secrets.STABLECOIN_SSH_HOST }}
-          SSH_USER: ${{ secrets.STABLECOIN_SSH_USER }}
-          SSH_PORT: ${{ vars.STABLECOIN_SSH_PORT }}
+          SSH_HOST: ${{ secrets.S2_HOST || secrets.STABLECOIN_SSH_HOST }}
+          SSH_USER: ${{ secrets.S2_USER || secrets.STABLECOIN_SSH_USER }}
+          SSH_PORT: ${{ vars.S2_SSH_PORT || vars.STABLECOIN_SSH_PORT }}
           ACTION: ${{ inputs.action }}
           TARGET_PATH: ${{ steps.target.outputs.target_path }}
         run: |
           set -euo pipefail
           test -n "$SSH_HOST"
-          test -n "$SSH_USER"
+          SSH_USER="${SSH_USER:-root}"
           PORT="${SSH_PORT:-22}"
 
           printf -v Q_ACTION '%q' "$ACTION"
           printf -v Q_TARGET '%q' "$TARGET_PATH"
           printf -v Q_REPO '%q' "Patricked-code/Stablecoin"
+          printf -v Q_ROOT_POLICY '%q' "allow_root_shared_s2_key"
 
           ssh \
             -p "$PORT" \
-            -i "$HOME/.ssh/id_ed25519" \
+            -i "$HOME/.ssh/id_deploy" \
             -o BatchMode=yes \
             -o IdentitiesOnly=yes \
             -o StrictHostKeyChecking=yes \
             -o UserKnownHostsFile="$HOME/.ssh/known_hosts" \
             -o ConnectTimeout=15 \
             "$SSH_USER@$SSH_HOST" \
-            "bash -s -- $Q_ACTION $Q_TARGET $Q_REPO" \
-            < scripts/ssh/governed-readonly.sh
+            "bash -s -- $Q_ACTION $Q_TARGET $Q_REPO $Q_ROOT_POLICY" \
+            < .github/scripts/s2/governed-readonly.sh
 
       - name: Remove ephemeral SSH material
         if: always()

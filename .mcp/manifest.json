@@ -55,14 +55,37 @@
     "existingExternalSshBridgePolicy": "REUSE_AND_REVALIDATE_EXISTING_WEALTHTECH_SSH_BRIDGE_NO_PARALLEL_TRANSPORT",
     "fallbackSshTransport": {
       "decision": "DEC-2026-09-26-016",
+      "alignmentDecision": "DEC-2026-09-26-017",
+      "model": "WEALTHTECHINNOVATIONS_API_OPCV_GITHUB_ACTIONS_S2_SSH",
       "primaryChannel": "wealthtech_ssh_bridge",
       "fallbackChannel": ".github/workflows/governed-ssh-readonly.yml",
-      "script": "scripts/ssh/governed-readonly.sh",
+      "workflows": {
+        "readonlyActions": ".github/workflows/governed-ssh-readonly.yml",
+        "observe": ".github/workflows/stablecoin-s2-observe.yml",
+        "reconcile": ".github/workflows/stablecoin-s2-reconcile.yml",
+        "secretInventory": ".github/workflows/stablecoin-s2-secret-inventory.yml",
+        "hostKeyVerify": ".github/workflows/stablecoin-s2-hostkey-verify.yml"
+      },
+      "scriptsRoot": ".github/scripts/s2",
+      "script": ".github/scripts/s2/governed-readonly.sh",
+      "guard": ".github/scripts/s2/s2_git_guard.sh",
+      "hostKeyPin": ".github/scripts/s2/s2_known_hosts.tofu",
       "trigger": "workflow_dispatch_only",
       "allowedOnlyWhen": "PRIMARY_MCP_CHANNEL_UNAVAILABLE_WITH_RECORDED_REASON",
-      "mode": "READ_ONLY_ALLOWLISTED_ACTIONS",
-      "writeAllowed": false,
-      "requiredSecrets": ["STABLECOIN_SSH_PRIVATE_KEY", "STABLECOIN_SSH_KNOWN_HOSTS", "STABLECOIN_SSH_HOST", "STABLECOIN_SSH_USER"],
+      "mode": "READ_ONLY_ALLOWLISTED_ACTIONS_PLUS_BOUNDED_FRONTEND_FAST_FORWARD",
+      "writeAllowed": "BOUNDED_FRONTEND_EXACT_SHA_FAST_FORWARD_ZERO_APPLICATION_DIFF_WITH_CONFIRMATION_ONLY",
+      "genericShellAllowed": false,
+      "buildOrRestartAllowed": false,
+      "sshUser": "S2_USER_OR_ROOT_DEFAULT_SAME_AS_MCP_AND_AFRICAFUNDS",
+      "requiredSecrets": ["S2_HOST", "S2_SSH_KEY"],
+      "optionalSecrets": ["S2_USER", "S2_KNOWN_HOSTS", "S2_REPORT_PASSPHRASE"],
+      "legacySecretAliases": {
+        "STABLECOIN_SSH_HOST": "S2_HOST",
+        "STABLECOIN_SSH_PRIVATE_KEY": "S2_SSH_KEY",
+        "STABLECOIN_SSH_KNOWN_HOSTS": "S2_KNOWN_HOSTS",
+        "STABLECOIN_SSH_USER": "S2_USER"
+      },
+      "mcpClassifierCompatibility": "ALL_FALLBACK_FILES_UNDER_.github_SO_THE_MCP_BOUNDED_FAST_FORWARD_KEEPS_THEM_NON_APPLICATION",
       "secretsStatus": "NOT_CONFIGURED_AT_2026-09-26"
     }
   }

@@ -195,6 +195,71 @@ ok(
   "LOOP_ENGINEERING.md must persist checkpoint semantics"
 );
 
+// --- Canal SSH de secours S2 (DEC-2026-09-26-016 / DEC-2026-09-26-017) — ajout additif ---
+const fallback = manifest.mcpIntegration?.fallbackSshTransport;
+ok(fallback && typeof fallback === "object", "fallback SSH transport declaration missing in manifest");
+if (fallback && typeof fallback === "object") {
+  ok(fallback.trigger === "workflow_dispatch_only", "fallback SSH transport must remain workflow_dispatch only");
+  ok(fallback.genericShellAllowed === false, "fallback SSH transport must not allow a generic shell");
+  ok(fallback.buildOrRestartAllowed === false, "fallback SSH transport must not build or restart");
+
+  const workflows = fallback.workflows || {};
+  const declared = [
+    fallback.scriptsRoot,
+    fallback.script,
+    fallback.guard,
+    fallback.hostKeyPin,
+    ...Object.values(workflows)
+  ].filter(Boolean);
+  for (const p of declared) {
+    ok(exists(p), `fallback SSH surface missing: ${p}`);
+    ok(
+      /^\.(github|mcp)\//.test(p),
+      `fallback SSH surface must stay under .github/ or .mcp/ (MCP fast-forward classifier): ${p}`
+    );
+  }
+
+  for (const wf of Object.values(workflows)) {
+    if (!exists(wf)) continue;
+    const text = read(wf);
+    ok(/^\s*workflow_dispatch:/m.test(text), `${wf} must be triggered by workflow_dispatch`);
+    ok(
+      !/^\s*(push|pull_request|pull_request_target|schedule|workflow_run|issues|issue_comment):/m.test(text),
+      `${wf} must not declare automatic triggers`
+    );
+    ok(!/contents:\s*write/.test(text), `${wf} must not request contents: write`);
+  }
+  for (const key of ["readonlyActions", "observe", "reconcile", "secretInventory"]) {
+    const wf = workflows[key];
+    ok(Boolean(wf), `fallback workflow role missing: ${key}`);
+    if (wf && exists(wf)) {
+      ok(read(wf).includes("mcp_unavailable_reason"), `${wf} must require mcp_unavailable_reason`);
+    }
+  }
+  if (workflows.reconcile && exists(workflows.reconcile)) {
+    ok(
+      read(workflows.reconcile).includes("RECONCILE STABLECOIN S2"),
+      "reconcile workflow must require the confirmation phrase"
+    );
+  }
+
+  if (fallback.guard && exists(fallback.guard)) {
+    const guardCode = read(fallback.guard)
+      .split(/\r?\n/)
+      .filter((line) => !/^\s*#/.test(line))
+      .join("\n");
+    ok(/git merge --ff-only/.test(guardCode), "S2 guard must use fast-forward only");
+    ok(
+      !/\bgit\s+(push|rebase|stash|clean|reset|checkout|restore|switch|pull|commit|tag|gc|prune)\b/.test(guardCode),
+      "S2 guard contains a forbidden git operation"
+    );
+    ok(
+      !/\b(npm|yarn|pnpm|pm2|systemctl|service|passenger-config|plesk)\b|\brm\s+-rf\b/.test(guardCode),
+      "S2 guard contains a forbidden build/restart/deletion command"
+    );
+  }
+}
+
 if (failures.length) {
   console.error("Governance consistency: FAIL");
   for (const failure of failures) console.error(`- ${failure}`);

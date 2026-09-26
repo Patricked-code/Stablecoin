@@ -1,0 +1,190 @@
+# =============================================================================
+# Stablecoin — Réconciliation gouvernée GitHub -> S2 (canal de secours du MCP)
+# Version : v1.0.0 — 2026-09-26 — DEC-2026-09-26-017
+# Origine : adapté de Wealthtechinnovations/api_opcv .github/workflows/governance-s2-reconcile.yml
+#           (@5ac4a313, source non modifiée) ; garanties identiques à la commande bornée
+#           MCP Patricked-code/MCP src/stablecoin/githubFastForward.ts.
+# Portée  : frontend uniquement ; fast-forward exact-SHA ; zéro fichier applicatif ;
+#           aucun build, restart, reset, clean, stash, rebase ni push.
+# Journal des modifications
+#   v1.0.0 (2026-09-26) : version initiale.
+# =============================================================================
+name: Stablecoin S2 Reconcile (secours MCP)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mcp_unavailable_reason:
+        description: "Obligatoire — preuve que le MCP est indisponible (erreur observée, date)"
+        required: true
+        type: string
+      action:
+        description: "observe ou reconcile"
+        required: true
+        default: observe
+        type: choice
+        options:
+          - observe
+          - reconcile
+      expected_server_sha:
+        description: "reconcile : SHA exact actuellement déployé sur S2 (lu par observe)"
+        required: false
+        default: ""
+        type: string
+      target_sha:
+        description: "reconcile : SHA exact de GitHub main à appliquer"
+        required: false
+        default: ""
+        type: string
+      confirmation:
+        description: "reconcile : saisir RECONCILE STABLECOIN S2"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stablecoin-s2-ssh-fallback
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout canonical main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Verify governance consistency
+        run: node scripts/verify-governance-consistency.js
+
+      - name: Resolve safe action
+        id: mode
+        env:
+          REF: ${{ github.ref }}
+          REASON: ${{ inputs.mcp_unavailable_reason }}
+          ACTION: ${{ inputs.action }}
+          EXPECTED: ${{ inputs.expected_server_sha }}
+          TARGET: ${{ inputs.target_sha }}
+          CONFIRMATION: ${{ inputs.confirmation }}
+        run: |
+          set -euo pipefail
+          test -n "$REASON" || { echo "::error::mcp_unavailable_reason missing"; exit 2; }
+          echo "FALLBACK_CHANNEL=GITHUB_ACTIONS_SSH"
+          echo "MCP_UNAVAILABLE_REASON=$REASON"
+          case "$ACTION" in observe|reconcile) ;; *) echo "::error::invalid action"; exit 2;; esac
+          if [ "$ACTION" = "reconcile" ]; then
+            [ "$REF" = "refs/heads/main" ] || { echo "::error::reconcile must be dispatched from main"; exit 3; }
+            [ "$CONFIRMATION" = "RECONCILE STABLECOIN S2" ] || { echo "::error::reconciliation confirmation phrase missing"; exit 3; }
+            [[ "$EXPECTED" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::expected_server_sha must be 40 lowercase hex"; exit 4; }
+            [[ "$TARGET" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::target_sha must be 40 lowercase hex"; exit 4; }
+            [ "$EXPECTED" != "$TARGET" ] || { echo "::error::expected_server_sha equals target_sha"; exit 4; }
+            REMOTE_MAIN="$(git ls-remote origin refs/heads/main | awk '{print $1}' | head -1)"
+            [ "$REMOTE_MAIN" = "$TARGET" ] || { echo "::error::target_sha is not the current GitHub main ($REMOTE_MAIN)"; exit 4; }
+          fi
+          echo "action=$ACTION" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare strict pinned SSH
+        env:
+          S2_HOST: ${{ secrets.S2_HOST || secrets.STABLECOIN_SSH_HOST }}
+          S2_SSH_KEY: ${{ secrets.S2_SSH_KEY || secrets.STABLECOIN_SSH_PRIVATE_KEY }}
+          S2_KNOWN_HOSTS: ${{ secrets.S2_KNOWN_HOSTS || secrets.STABLECOIN_SSH_KNOWN_HOSTS }}
+        run: bash .github/scripts/s2/prepare_s2_ssh.sh
+
+      - name: Preflight — observe the S2 frontend checkout
+        env:
+          HOST: ${{ secrets.S2_HOST || secrets.STABLECOIN_SSH_HOST }}
+          USER_SSH: ${{ secrets.S2_USER || secrets.STABLECOIN_SSH_USER }}
+          S2_SSH_PORT: ${{ vars.S2_SSH_PORT || vars.STABLECOIN_SSH_PORT }}
+        run: |
+          set -euo pipefail
+          SSH_USER="${USER_SSH:-root}"
+          STABLECOIN_SSH_OPERATION_CLASS=READ_ONLY \
+            bash .github/scripts/s2/s2_ssh_readonly_retry.sh \
+            "$SSH_USER@$HOST" 'bash -s -- observe' .github/scripts/s2/s2_git_guard.sh \
+            | tee reconciliation-preflight.txt
+
+      - name: Reconcile — bounded exact-SHA fast-forward (no retry)
+        if: steps.mode.outputs.action == 'reconcile'
+        env:
+          HOST: ${{ secrets.S2_HOST || secrets.STABLECOIN_SSH_HOST }}
+          USER_SSH: ${{ secrets.S2_USER || secrets.STABLECOIN_SSH_USER }}
+          S2_SSH_PORT: ${{ vars.S2_SSH_PORT || vars.STABLECOIN_SSH_PORT }}
+          EXPECTED: ${{ inputs.expected_server_sha }}
+          TARGET: ${{ inputs.target_sha }}
+        run: |
+          set -euo pipefail
+          SSH_USER="${USER_SSH:-root}"
+          PORT="${S2_SSH_PORT:-22}"
+          [[ "$EXPECTED" =~ ^[0-9a-f]{40}$ ]] || exit 4
+          [[ "$TARGET" =~ ^[0-9a-f]{40}$ ]] || exit 4
+          ssh -p "$PORT" -i ~/.ssh/id_deploy -o BatchMode=yes -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes -o ConnectTimeout=15 \
+            "$SSH_USER@$HOST" "bash -s -- reconcile $EXPECTED $TARGET" \
+            < .github/scripts/s2/s2_git_guard.sh | tee reconciliation-result.txt
+
+      - name: Post-attestation — measure S2 state
+        env:
+          HOST: ${{ secrets.S2_HOST || secrets.STABLECOIN_SSH_HOST }}
+          USER_SSH: ${{ secrets.S2_USER || secrets.STABLECOIN_SSH_USER }}
+          S2_SSH_PORT: ${{ vars.S2_SSH_PORT || vars.STABLECOIN_SSH_PORT }}
+          ACTION: ${{ steps.mode.outputs.action }}
+          TARGET: ${{ inputs.target_sha }}
+        run: |
+          set -euo pipefail
+          SSH_USER="${USER_SSH:-root}"
+          STABLECOIN_SSH_OPERATION_CLASS=READ_ONLY \
+            bash .github/scripts/s2/s2_ssh_readonly_retry.sh \
+            "$SSH_USER@$HOST" 'python3 -' .github/scripts/s2/s2_observe.py \
+            > S2_OBSERVATION.json
+          python3 -m json.tool S2_OBSERVATION.json >/dev/null
+          python3 - <<'PY'
+          import json, os
+          p = json.load(open("S2_OBSERVATION.json", encoding="utf-8"))
+          g = p["git"]["frontend"]
+          assert p["safety"]["production_mutation_performed"] is False
+          if os.environ["ACTION"] == "reconcile":
+              assert g["head"] == os.environ["TARGET"], (g["head"], os.environ["TARGET"])
+              assert g["tracked_dirty"] == [] and g["untracked"] == [], "worktree not clean"
+              print("STABLECOIN_S2_RECONCILIATION=PASS")
+          else:
+              print("STABLECOIN_S2_OBSERVATION=PASS")
+          PY
+
+      - name: Publish evidence
+        if: always()
+        env:
+          ACTION: ${{ steps.mode.outputs.action }}
+        run: |
+          {
+            echo "## Stablecoin S2 — ${ACTION:-unknown} (secours MCP)"
+            for f in reconciliation-preflight.txt reconciliation-result.txt; do
+              if [ -f "$f" ]; then
+                echo
+                echo "### $f"
+                echo '~~~text'
+                tail -200 "$f"
+                echo '~~~'
+              fi
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stablecoin-s2-reconciliation-evidence
+          path: |
+            reconciliation-preflight.txt
+            reconciliation-result.txt
+            S2_OBSERVATION.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Remove SSH material
+        if: always()
+        run: rm -f ~/.ssh/id_deploy ~/.ssh/known_hosts

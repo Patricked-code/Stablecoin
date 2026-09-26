@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 # governed-readonly.sh — actions SSH allowlistées, strictement en lecture seule
+# v1.2.0 (2026-09-26) : alignement AfricaFunds (DEC-2026-09-26-017) — déplacé de
+#   scripts/ssh/ vers .github/scripts/s2/ (chemin non applicatif pour le classifieur
+#   du fast-forward MCP) ; 4e argument optionnel ROOT_POLICY : la connexion root
+#   reste refusée par défaut et n'est admise que si le workflow transmet
+#   allow_root_shared_s2_key (clé S2 partagée, comme le MCP et AfricaFunds).
 # v1.1.0 (2026-09-26) : restauré depuis 8d5dcb6 comme canal de secours (DEC-2026-09-26-016).
 # v1.0.0 (2026-09-15) : version initiale.
 set -euo pipefail
@@ -7,6 +12,7 @@ set -euo pipefail
 ACTION="${1:-}"
 TARGET_PATH="${2:-}"
 EXPECTED_REPOSITORY="${3:-Patricked-code/Stablecoin}"
+ROOT_POLICY="${4:-refuse_root}"
 
 fail() {
   printf 'ERROR: %s\n' "$*" >&2
@@ -26,8 +32,12 @@ inventory() {
   printf 'kernel='; uname -sr
   printf 'pwd='; pwd
   if [ "$(id -u)" = "0" ]; then
-    echo "policy_violation=root_login"
-    exit 20
+    if [ "$ROOT_POLICY" = "allow_root_shared_s2_key" ]; then
+      echo "root_login=ALLOWED_BY_DEC-2026-09-26-017"
+    else
+      echo "policy_violation=root_login"
+      exit 20
+    fi
   fi
 }
 

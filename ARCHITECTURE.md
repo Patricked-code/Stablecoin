@@ -63,6 +63,16 @@ Le checkout frontend S2 a d'abord été fast-forwardé de `6216755d318677ed9a56c
 
 Depuis MCP `ab9b1aa902aab3efed42ba527847ab48df3c8eaa`, Stablecoin dispose d'un chemin d'écriture spécialisé : GitHub issue/workflow → OIDC WRITE dédié → endpoint MCP borné → fast-forward S2 exact-SHA. Ce chemin n'est pas un shell générique et n'autorise ni build, restart, stash, rebase, reset, ni fichier applicatif dans le delta.
 
+### Canaux d'accès au serveur S2 (modèle du propriétaire, 2026-09-26)
+
+| Canal | Rôle |
+|---|---|
+| GitHub | travail gouverné : code, commits, CI, règles du dépôt |
+| MCP (`wealthtech_ssh_bridge`, chemin GitHub-first/OIDC) | canal principal : interroger l'état du serveur et réconcilier GitHub ↔ S2 ; obligatoire pour les actions de matrice de dépôts et les suppressions de dépôts |
+| SSH GitHub Actions (`.github/scripts/s2/`, workflows `stablecoin-s2-*` et `governed-ssh-readonly`) | secours quand le MCP est inaccessible : observation, inventaire des secrets sans valeurs, fast-forward borné du frontend (DEC-2026-09-26-016 / DEC-2026-09-26-017) |
+
+Le canal de secours suit le modèle AfricaFunds (`Wealthtechinnovations/api_opcv`) et reproduit les garanties de la commande MCP bornée ; il n'autorise ni build, ni restart, ni commande libre. Ses fichiers restent sous `.github/` pour que le classifieur du fast-forward MCP les considère comme non applicatifs.
+
 ## 8. MCP
 
 Le repository expose progressivement un contrat `.mcp/*` pour permettre au MCP de découvrir : identité, gouvernance, permissions, agents, onboarding et cartographie runtime. Cette couche ne contient aucun secret et ne remplace pas les preuves live du MCP.
