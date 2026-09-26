@@ -15,19 +15,19 @@
       "liveVerificationStatus": "CURRENT",
       "verifiedPath": "/var/www/vhosts/chainsolutions.fr/stablecoin.chainsolutions.fr/stablecoin",
       "verifiedBranch": "main",
-      "verifiedHead": "2a8be8219689e6213ce20f13d69b6b45f3693dfe",
+      "verifiedHead": "65f116eae8989cbc57ed2653bc52da020a29051b",
       "workingTreeChanges": 0,
       "remoteFetch": "https://github.com/Patricked-code/Stablecoin.git",
       "remotePush": "https://github.com/Patricked-code/Stablecoin.git",
-      "githubMainObserved": "58090cc6760755c918b5dd2085239e69efeac44e",
-      "githubAheadBy": 3,
+      "githubMainObserved": "65f116eae8989cbc57ed2653bc52da020a29051b",
+      "githubAheadBy": 0,
       "serverAheadBy": 0,
-      "reconciliationClass": "SERVER_BEHIND_FAST_FORWARD_GOVERNANCE_ONLY",
+      "reconciliationClass": "IN_SYNC_AT_ATTESTATION_20260926_ATTESTATION_COMMIT_AHEAD_BY_DESIGN",
       "verifiedProcessMode": "Plesk/Phusion Passenger",
       "verifiedProcessCwd": "/var/www/vhosts/chainsolutions.fr/stablecoin.chainsolutions.fr/stablecoin",
       "processUserIsRoot": false,
       "httpStatus": 200,
-      "observedDiffScope": "READONLY_REOBSERVATION_20260926_SSH_FALLBACK_RUN_36266111300",
+      "observedDiffScope": "FAST_FORWARD_20260926_RUN_36270099807_25_FILES_0_APPLICATION",
       "applicationCodeFilesChanged": 0
     },
     "backend": {
@@ -64,15 +64,15 @@
     "canonicalRepository": "Patricked-code/Stablecoin",
     "canonicalBranch": "main",
     "serverRemoteState": "CURRENT",
-    "serverHeadState": "BEHIND_GITHUB_MAIN",
+    "serverHeadState": "CURRENT_AT_ATTESTATION",
     "workingTreeState": "CLEAN",
     "desiredReconciliation": "MAINTAIN_GITHUB_FIRST_BOUNDED_SYNC_REVERIFY_EXACT_SHA_DIFF_AND_RUNTIME_BEFORE_EACH_WRITE",
-    "reconciliationClass": "SERVER_BEHIND_FAST_FORWARD_GOVERNANCE_ONLY",
-    "serverHead": "2a8be8219689e6213ce20f13d69b6b45f3693dfe",
-    "githubMainHead": "58090cc6760755c918b5dd2085239e69efeac44e",
-    "githubAheadBy": 3,
+    "reconciliationClass": "IN_SYNC_AT_ATTESTATION_20260926_ATTESTATION_COMMIT_AHEAD_BY_DESIGN",
+    "serverHead": "65f116eae8989cbc57ed2653bc52da020a29051b",
+    "githubMainHead": "65f116eae8989cbc57ed2653bc52da020a29051b",
+    "githubAheadBy": 0,
     "serverAheadBy": 0,
-    "observedAt": "2026-09-26T19:27:32Z",
+    "observedAt": "2026-09-26T20:36:39Z",
     "reconciliationChannels": {
       "primary": "MCP bounded fast-forward (Patricked-code/MCP stablecoin-fast-forward.yml)",
       "fallback": ".github/workflows/stablecoin-s2-reconcile.yml (DEC-2026-09-26-017)"
@@ -87,7 +87,7 @@
     "githubFirstBoundedWrite": true,
     "genericServerWrite": false
   },
-  "lastVerifiedAt": "2026-09-26T19:27:32Z",
+  "lastVerifiedAt": "2026-09-26T20:36:39Z",
   "liveEvidence": {
     "frontendGit": {
       "evidenceId": "EVID-S2-FRONTEND-GIT-20260920-001",
@@ -236,7 +236,35 @@
       "backendCwdProcessObserved": true,
       "backendProcessMode": "Plesk/Phusion Passenger",
       "pm2StablecoinProcesses": 0
+    },
+    "fallbackFastForward": {
+      "evidenceId": "EVID-S2-FAST-FORWARD-20260926-001",
+      "source": "Patricked-code/Stablecoin SSH fallback — Stablecoin S2 Reconcile (DEC-2026-09-26-018/019)",
+      "workflowRunId": 36270099807,
+      "headSha": "65f116eae8989cbc57ed2653bc52da020a29051b",
+      "artifactId": 10915366323,
+      "artifactDigest": "sha256:8d798b3fe98144b1b6c1035baedd7d3b4773b94354455633783730b289fea1f4",
+      "serverBefore": "2a8be8219689e6213ce20f13d69b6b45f3693dfe",
+      "serverAfter": "65f116eae8989cbc57ed2653bc52da020a29051b",
+      "targetSha": "65f116eae8989cbc57ed2653bc52da020a29051b",
+      "changedFiles": 25,
+      "applicationFiles": 0,
+      "frontendHttp": 200,
+      "apiRootHttp": 401,
+      "apiHealthHttp": 401,
+      "backupPath": "/var/backups/stablecoin-governance/20260926T203639Z",
+      "mutationAllowed": true,
+      "buildExecuted": false,
+      "restartExecuted": false
+    },
+    "postFastForwardMcpGit": {
+      "evidenceId": "EVID-S2-POST-FAST-FORWARD-MCP-GIT-20260926-001",
+      "source": "wealthtech_ssh_bridge git_status_project_s2(stablecoin_frontend), read-only",
+      "observedHead": "65f116eae8989cbc57ed2653bc52da020a29051b",
+      "branch": "main",
+      "workingTreeChanges": 0,
+      "mutationAllowed": false
     }
   },
-  "verificationNote": "Fresh 2026-09-23 read-only snapshot: S2 frontend is aligned with Patricked-code/Stablecoin main at 2a8be8219689e6213ce20f13d69b6b45f3693dfe, worktree clean, frontend HTTP 200; API root/health remain 401 protected. Backend directory is not a Git repository. Safe metadata inventory identifies package api.fan-token@1.0.0, declared GitLab source wealthtech1/api/api.fan-token, Express/Sequelize/MySQL and db_stablecoin configuration. Exact deployed backend revision, current process ownership and restart ownership remain unresolved; global runtime therefore remains DOCUMENTED_UNVERIFIED. Update 2026-09-26 (SSH fallback, runs 36265174755 and 36266111300): S2 host key fingerprints match the pin; S2 frontend still at 2a8be8219689e6213ce20f13d69b6b45f3693dfe with a clean worktree while GitHub main is 58090cc6760755c918b5dd2085239e69efeac44e (3 commits, governance-only delta); frontend 200, API 401/401; backend process now observed under Plesk/Phusion Passenger with the same non-root subscription user as the frontend and no PM2 process. Deployed backend revision and exact restart procedure remain unresolved, so global runtime stays DOCUMENTED_UNVERIFIED."
+  "verificationNote": "Fresh 2026-09-23 read-only snapshot: S2 frontend is aligned with Patricked-code/Stablecoin main at 2a8be8219689e6213ce20f13d69b6b45f3693dfe, worktree clean, frontend HTTP 200; API root/health remain 401 protected. Backend directory is not a Git repository. Safe metadata inventory identifies package api.fan-token@1.0.0, declared GitLab source wealthtech1/api/api.fan-token, Express/Sequelize/MySQL and db_stablecoin configuration. Exact deployed backend revision, current process ownership and restart ownership remain unresolved; global runtime therefore remains DOCUMENTED_UNVERIFIED. Update 2026-09-26 (SSH fallback, runs 36265174755 and 36266111300): S2 host key fingerprints match the pin; S2 frontend still at 2a8be8219689e6213ce20f13d69b6b45f3693dfe with a clean worktree while GitHub main is 58090cc6760755c918b5dd2085239e69efeac44e (3 commits, governance-only delta); frontend 200, API 401/401; backend process now observed under Plesk/Phusion Passenger with the same non-root subscription user as the frontend and no PM2 process. Deployed backend revision and exact restart procedure remain unresolved, so global runtime stays DOCUMENTED_UNVERIFIED. Update 2026-09-26T20:36Z (fallback reconcile run 36270099807, DEC-2026-09-26-018/019): S2 frontend fast-forwarded 2a8be8219689e6213ce20f13d69b6b45f3693dfe -> 65f116eae8989cbc57ed2653bc52da020a29051b, 25 files, 0 application file, no build, no restart, HTTP 200/401/401 before and after; independent MCP read-only git status confirms main@65f116e with a clean worktree. The attestation commit that records this evidence is ahead of S2 by design until the next governance alignment."
 }

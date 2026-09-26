@@ -64,6 +64,8 @@ Le checkout frontend S2 a d'abord été fast-forwardé de `6216755d318677ed9a56c
 > Mise à jour 2026-09-26 : GitHub `main` a avancé depuis ; S2 reste à `2a8be821` (`STALE` pour l'alignement). Le remote live `origin` du checkout S2 pointe vers `https://github.com/Patricked-code/Stablecoin.git` (déjà observé le 2026-09-20) ; le runbook §4, qui décrit encore `origin` vers GitLab, est donc périmé sur ce point. L'existence d'un remote `github` distinct n'a pas été revérifiée. Le runbook n'est pas modifié dans ce lot, car `docs/*` est classé applicatif par le classifieur du fast-forward MCP (voir `TODO.md`).
 >
 > Constat de sécurité 2026-09-26 (`EVID-S2-WEB-EXPOSURE-20260926-001`, requêtes HEAD uniquement) : la racine web de `stablecoin.chainsolutions.fr` sert le dossier de l'application — `/SUIVI.md`, `/package.json`, `/.gitignore`, `/.next/BUILD_ID`, `/.git/HEAD`, `/.git/config` et `/.git/logs/HEAD` répondent `200` ; `/.env.local` répond `403`. Tout fichier versionné ou fast-forwardé sur S2 est donc publiquement lisible, ainsi que le dossier `.git`.
+>
+> Alignement 2026-09-26 (run `36270099807`, DEC-2026-09-26-018/019) : S2 fast-forwardé `2a8be821` → `65f116ea` par le canal de secours, 0 fichier applicatif, sans build/restart, HTTP 200/401/401 avant et après ; post-attestation MCP en lecture : `main@65f116e`, worktree propre.
 
 ### GitHub-first bounded WRITE
 

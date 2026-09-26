@@ -158,6 +158,8 @@
 
 **Conséquence :** tout delta contenant un fichier applicatif reste hors de cette décision et relève d'un chantier de déploiement dédié, avec build et restart gouvernés.
 
+**Première exécution (2026-09-26) :** `Stablecoin S2 Reconcile` run `36270099807`, S2 `2a8be821` → `65f116ea`, 25 fichiers, 0 applicatif, sans build/restart, HTTP 200/401/401 avant et après, post-attestation MCP en lecture.
+
 
 ## DEC-2026-09-26-019 — Levée de la contrainte du 2026-09-23 pour le seul fast-forward de gouvernance
 

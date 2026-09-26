@@ -86,7 +86,8 @@ Tâche gouvernée : `STB-TASK-20260926-003` (DEC-2026-09-26-017).
 - [x] (propriétaire) configurer `S2_HOST` (même adresse qu'`api_opcv`) et `S2_SSH_KEY` (clé ed25519 dédiée à Stablecoin, installée sur S2 par le propriétaire) — 2026-09-26 ;
 - [ ] (propriétaire, optionnel) configurer `S2_REPORT_PASSPHRASE` pour obtenir le rapport chiffré de l'inventaire des secrets ;
 - [x] exécuter `Stablecoin S2 Host Key Verify` (run `36265174755`) puis `Stablecoin S2 Observe` (run `36266111300`) et attester les résultats dans `SUIVI.md` ;
-- [ ] réconcilier S2 (`2a8be821` → `main` courant, gouvernance uniquement) après autorisation explicite du propriétaire ;
+- [x] réconcilier S2 (`2a8be821` → `main` courant, gouvernance uniquement) après autorisation explicite du propriétaire — `2a8be821` → `65f116ea`, run `36270099807`, 0 fichier applicatif, sans build/restart, post-attesté par le MCP (2026-09-26) ;
+- [ ] (P2) si une opération Git doit un jour s'exécuter sous l'utilisateur d'abonnement Plesk, vérifier puis rétablir la propriété des objets et fichiers écrits en `root` par les fast-forward (MCP 2026-09-21, secours 2026-09-26) ;
 - [ ] (propriétaire) après validation du canal, ranger la clé privée locale `stablecoin_s2_actions` dans le coffre chiffré ou la supprimer (elle reste dans le secret GitHub) ;
 - [ ] exécuter `Stablecoin S2 Secret Inventory` (rapport chiffré) pour savoir, sans exposer de valeur, si `NEXT_PUBLIC_PRIVATE_KEY` est configurée et présente dans le bundle client ;
 - [ ] si S2 est en retard sur `main` : réconcilier via le MCP s'il est disponible, sinon via `Stablecoin S2 Reconcile` (observe puis reconcile exact-SHA) ;
