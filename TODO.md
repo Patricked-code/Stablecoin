@@ -59,7 +59,7 @@ Tâche gouvernée : `STB-TASK-20260915-002`.
 - [x] identifier la source déclarée et les métadonnées du backend API : dossier live non-Git, package `api.fan-token@1.0.0`, source déclarée `git+https://gitlab.com/wealthtech1/api/api.fan-token.git` ;
 - [x] confirmer la configuration DB non secrète : dialecte MySQL et base `db_stablecoin` pour development/test/production ;
 - [ ] identifier la révision exacte du source backend déployé et réconcilier son historique avec la source GitLab déclarée ;
-- [ ] confirmer l'ownership du process backend et la procédure exacte de restart ; la sonde runtime fraîche du 2026-09-23 ne retrouve pas le cwd backend dans son échantillon borné.
+- [ ] confirmer l'ownership du process backend et la procédure exacte de restart ; la sonde runtime fraîche du 2026-09-23 ne retrouve pas le cwd backend dans son échantillon borné. — 2026-09-26 : ownership observé (`EVID-S2-BACKEND-PROCESS-20260926-001` : Plesk/Phusion Passenger, utilisateur d'abonnement non root identique au frontend, aucun PM2) ; la procédure exacte de restart reste à vérifier.
 - [x] confirmer les domaines et réponses HTTP/API (`frontend=200`, API racine/health=`401` protégés) ;
 - [x] mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et `SUIVI.md` avec les preuves live ;
 - [x] préparer et activer la liaison gouvernée GitHub → serveur pour le fast-forward Stablecoin exact-SHA, sans écriture destructive générique.
@@ -78,8 +78,11 @@ Tâche gouvernée : `STB-TASK-20260926-003` (DEC-2026-09-26-017).
 - [x] épingler la clé d'hôte S2 (trois empreintes confirmées par `ssh-keyscan stablecoin.chainsolutions.fr`) ;
 - [x] tests de la garde Git et du helper SSH read-only, exécutés localement et ajoutés à la CI `Governance Consistency` ;
 - [x] contrôles d'invariants du canal ajoutés au validateur de gouvernance ;
-- [ ] (propriétaire) configurer `S2_HOST` et `S2_SSH_KEY` sur `Patricked-code/Stablecoin` avec les mêmes valeurs qu'`api_opcv`, et optionnellement `S2_REPORT_PASSPHRASE` ;
-- [ ] exécuter `Stablecoin S2 Host Key Verify`, puis `Stablecoin S2 Observe`, et attester les résultats dans `SUIVI.md` ;
+- [x] (propriétaire) configurer `S2_HOST` (même adresse qu'`api_opcv`) et `S2_SSH_KEY` (clé ed25519 dédiée à Stablecoin, installée sur S2 par le propriétaire) — 2026-09-26 ;
+- [ ] (propriétaire, optionnel) configurer `S2_REPORT_PASSPHRASE` pour obtenir le rapport chiffré de l'inventaire des secrets ;
+- [x] exécuter `Stablecoin S2 Host Key Verify` (run `36265174755`) puis `Stablecoin S2 Observe` (run `36266111300`) et attester les résultats dans `SUIVI.md` ;
+- [ ] réconcilier S2 (`2a8be821` → `main` courant, gouvernance uniquement) après autorisation explicite du propriétaire ;
+- [ ] (propriétaire) après validation du canal, ranger la clé privée locale `stablecoin_s2_actions` dans le coffre chiffré ou la supprimer (elle reste dans le secret GitHub) ;
 - [ ] exécuter `Stablecoin S2 Secret Inventory` (rapport chiffré) pour savoir, sans exposer de valeur, si `NEXT_PUBLIC_PRIVATE_KEY` est configurée et présente dans le bundle client ;
 - [ ] si S2 est en retard sur `main` : réconcilier via le MCP s'il est disponible, sinon via `Stablecoin S2 Reconcile` (observe puis reconcile exact-SHA) ;
 - [ ] transmettre ces informations au MCP par intake dès sa reconnexion, sans modifier le dépôt MCP.

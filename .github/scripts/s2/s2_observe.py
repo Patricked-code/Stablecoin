@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Observation read-only de Stablecoin sur S2 (canal de secours du MCP).
 
-Version : v1.0.0 — 2026-09-26 — DEC-2026-09-26-017
+Version : v1.0.1 — 2026-09-26 — DEC-2026-09-26-017
 Origine : adapté de Wealthtechinnovations/api_opcv scripts/governance/s2_observe.py
           (@5ac4a313, source non modifiée).
 
@@ -11,6 +11,11 @@ ni ligne de commande des processus. Le dépôt étant public, le hostname et le
 kernel du serveur ne sont pas publiés.
 
 Journal des modifications
+  v1.0.1 (2026-09-26) : dépôt public — le nom de l'utilisateur système des processus
+                        n'est plus publié (remplacé par user_is_root et
+                        user_owns_app_dir) ; node_version renommé
+                        root_path_node_version (Node du PATH root, pas forcément
+                        celui de Passenger).
   v1.0.0 (2026-09-26) : version initiale (Git frontend, métadonnées backend,
                         processus Stablecoin identifiés par leur cwd, PM2 filtré,
                         sondes HTTP identiques au MCP).
@@ -19,7 +24,6 @@ from __future__ import annotations
 
 import json
 import os
-import pwd
 import re
 import shutil
 import subprocess
@@ -171,11 +175,23 @@ def stablecoin_processes():
             comm = (entry / "comm").read_text(encoding="utf-8", errors="ignore").strip()
         except Exception:
             comm = None
+        # Dépôt public : aucun nom d'utilisateur système n'est publié.
         try:
-            user = pwd.getpwuid(entry.stat().st_uid).pw_name
+            uid = entry.stat().st_uid
         except Exception:
-            user = None
-        rows.append({"pid": int(entry.name), "role": role, "comm": comm, "user": user, "cwd": cwd})
+            uid = None
+        try:
+            app_dir_uid = (FRONT if role == "frontend" else BACK).stat().st_uid
+        except Exception:
+            app_dir_uid = None
+        rows.append({
+            "pid": int(entry.name),
+            "role": role,
+            "comm": comm,
+            "user_is_root": (uid == 0) if uid is not None else None,
+            "user_owns_app_dir": (uid == app_dir_uid) if uid is not None and app_dir_uid is not None else None,
+            "cwd": cwd,
+        })
     return sorted(rows, key=lambda r: r["pid"])[:100]
 
 
@@ -228,7 +244,7 @@ def main():
             "processes": stablecoin_processes(),
             "pm2": pm2_stablecoin(),
             "passenger_status_available": shutil.which("passenger-status") is not None,
-            "node_version": run(["node", "--version"])["stdout"] if shutil.which("node") else None,
+            "root_path_node_version": run(["node", "--version"])["stdout"] if shutil.which("node") else None,
         },
         "http": [http_probe(url) for url in HTTP_TARGETS],
         "safety": {

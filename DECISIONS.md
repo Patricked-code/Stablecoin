@@ -138,3 +138,5 @@
 - dépôt public : l'observation ne publie ni hostname ni kernel et ne lit ni `.env`, ni environnement, ni ligne de commande des processus ; l'inventaire des secrets n'émet jamais de valeur, préfixe, empreinte ni longueur, et son rapport détaillé n'est publié que chiffré (`S2_REPORT_PASSPHRASE`).
 
 **Conséquence :** tant que `S2_HOST` et `S2_SSH_KEY` ne sont pas configurés sur `Patricked-code/Stablecoin`, le canal reste inactif. Toute capacité supplémentaire (build, restart, backend, déploiement applicatif) exige une nouvelle décision.
+
+**Mise en œuvre (2026-09-26) :** `S2_HOST` a la même valeur qu'`api_opcv` (liaison de l'épinglage confirmée, run `36265174755`). Pour `S2_SSH_KEY`, un secret GitHub ne pouvant pas être relu, le propriétaire a créé une clé ed25519 dédiée à Stablecoin et l'a ajoutée aux clés autorisées de `root` sur S2 ; elle est révocable indépendamment de celle d'AfricaFunds. Canal actif : observation read-only réussie (run `36266111300`).

@@ -89,7 +89,7 @@ Elle est conservée comme evidence historique, non comme architecture actuelle.
 
 - révision exacte du backend déployé et accessibilité/historique de la source GitLab déclarée `wealthtech1/api/api.fan-token` ;
 - schéma courant de `db_stablecoin` et confirmation runtime de la connexion effective à cette base ;
-- ownership du process backend et procédure exacte de restart ;
+- ownership du process backend et procédure exacte de restart (ownership observé le 2026-09-26 : Plesk/Phusion Passenger, utilisateur d'abonnement non root identique au frontend, aucun PM2 — la procédure de restart reste à vérifier) ;
 - inventaire actuel des contrats déployés et réseaux ;
 - CI réellement utilisée ;
 - dépendances inter-repositories ;
