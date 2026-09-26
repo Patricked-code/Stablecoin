@@ -52,6 +52,18 @@
     "mode": "repository_adapter",
     "coreModificationRequired": false,
     "registrationStatus": "NOT_ATTESTED_BY_LIVE_MCP_IN_THIS_CHANGE",
-    "existingExternalSshBridgePolicy": "REUSE_AND_REVALIDATE_EXISTING_WEALTHTECH_SSH_BRIDGE_NO_PARALLEL_TRANSPORT"
+    "existingExternalSshBridgePolicy": "REUSE_AND_REVALIDATE_EXISTING_WEALTHTECH_SSH_BRIDGE_NO_PARALLEL_TRANSPORT",
+    "fallbackSshTransport": {
+      "decision": "DEC-2026-09-26-016",
+      "primaryChannel": "wealthtech_ssh_bridge",
+      "fallbackChannel": ".github/workflows/governed-ssh-readonly.yml",
+      "script": "scripts/ssh/governed-readonly.sh",
+      "trigger": "workflow_dispatch_only",
+      "allowedOnlyWhen": "PRIMARY_MCP_CHANNEL_UNAVAILABLE_WITH_RECORDED_REASON",
+      "mode": "READ_ONLY_ALLOWLISTED_ACTIONS",
+      "writeAllowed": false,
+      "requiredSecrets": ["STABLECOIN_SSH_PRIVATE_KEY", "STABLECOIN_SSH_KNOWN_HOSTS", "STABLECOIN_SSH_HOST", "STABLECOIN_SSH_USER"],
+      "secretsStatus": "NOT_CONFIGURED_AT_2026-09-26"
+    }
   }
 }

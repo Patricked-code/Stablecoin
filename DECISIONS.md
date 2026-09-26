@@ -105,3 +105,14 @@
 **Preuve d'activation :** MCP `ab9b1aa902aab3efed42ba527847ab48df3c8eaa` déployé sur S1 par Governed Deploy #54, puis fast-forward S2 `6216755d... → 4e946bd...` réussi via run `35569719611`, suivi de deux attestations read-only Git/runtime SUCCESS.
 
 **Conséquence :** ce mécanisme n'est pas une permission générique d'écriture serveur. Toute autre opération ou tout diff applicatif exige son propre chantier gouverné.
+
+
+## DEC-2026-09-26-016 — Connecteur SSH GitHub Actions restauré comme canal de secours read-only
+
+**Statut :** `AMENDS DEC-2026-09-15-013` (sans le révoquer : le MCP reste le canal principal).
+
+**Contexte :** le 2026-09-26, les deux accès MCP au pont `wealthtech_ssh_bridge` étaient indisponibles (`Invalid or missing MCP session` côté local ; `connection invalidated` côté connecteur claude.ai). Le propriétaire (Patrick) a demandé explicitement le rétablissement d'un moyen d'accès au serveur de déploiement lorsque le MCP ne passe pas.
+
+**Décision :** `.github/workflows/governed-ssh-readonly.yml` et `scripts/ssh/governed-readonly.sh` sont restaurés depuis `44874fa` / `8d5dcb6` comme **canal de secours** : déclenchement manuel `workflow_dispatch` uniquement, motif d'indisponibilité MCP obligatoire (`mcp_unavailable_reason`), actions allowlistées strictement read-only, clé d'hôte vérifiée, connexion root refusée, matériel SSH éphémère supprimé en fin de job. La surface est déclarée dans `.mcp/manifest.json` (`mcpIntegration.fallbackSshTransport`).
+
+**Contraintes :** aucune écriture, aucun déploiement, aucun restart via ce canal. Toute évolution vers une capacité d'écriture exige une nouvelle décision. Les secrets `STABLECOIN_SSH_PRIVATE_KEY`, `STABLECOIN_SSH_KNOWN_HOSTS`, `STABLECOIN_SSH_HOST`, `STABLECOIN_SSH_USER` restent exclusivement dans GitHub Actions Secrets ; ils ne sont pas configurés au 2026-09-26 et doivent l'être par le propriétaire avec un utilisateur S2 dédié non-root.

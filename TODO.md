@@ -63,12 +63,19 @@ Tâche gouvernée : `STB-TASK-20260915-002`.
 - [x] confirmer les domaines et réponses HTTP/API (`frontend=200`, API racine/health=`401` protégés) ;
 - [x] mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et `SUIVI.md` avec les preuves live ;
 - [x] préparer et activer la liaison gouvernée GitHub → serveur pour le fast-forward Stablecoin exact-SHA, sans écriture destructive générique.
+- [x] restaurer le connecteur SSH GitHub Actions comme canal de secours read-only (DEC-2026-09-26-016) ;
+- [ ] (propriétaire) créer un utilisateur S2 dédié non-root + clé SSH, puis configurer les 4 secrets `STABLECOIN_SSH_*` ;
+- [ ] exécuter un premier run `Governed SSH Readonly` et attester son résultat dans `SUIVI.md` ;
+- [ ] (propriétaire) rétablir les connexions MCP `wealthtech_ssh_bridge` (session locale + connecteur claude.ai).
 
 ## P1 — Sécurité
 
 - [ ] vérifier sans exposer sa valeur si une vraie clé privée blockchain est encore injectée via `NEXT_PUBLIC_PRIVATE_KEY` ;
 - [ ] si exposition confirmée, planifier retrait frontend, migration des signatures côté serveur et rotation contrôlée ;
 - [ ] inventorier les autres secrets publics potentiels sans jamais les copier dans Git.
+- [ ] constat 2026-09-26 (dépôt PUBLIC) : chaînes au format clé privée codées en dur dans 10 fichiers suivis (`priv_key` / `RelayerPrivateKey`) et `.env.local` présent dans l'historique (21 commits, 2023-01 → supprimé en `3ef11f5`) ; toute clé réelle est à considérer compromise ;
+- [ ] (propriétaire) sauvegarde chiffrée des secrets S2 avant toute neutralisation — décision du propriétaire : conserver les clés, pas de neutralisation avant sauvegarde ;
+- [ ] vérifier fonds/rôles E-WARI des adresses publiques dérivées, puis rotation contrôlée par le propriétaire.
 
 ## P2 — Qualité / dette technique
 

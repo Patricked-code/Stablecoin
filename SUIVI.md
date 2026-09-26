@@ -366,3 +366,18 @@ L'inventaire n'a lu aucune valeur de secret : seules les références de variabl
 La déclaration `package_repository` identifie une source GitLab historique, mais elle ne prouve ni que ce dépôt est encore accessible, ni quel commit exact est déployé sur S2. Le dossier backend actif n'étant pas un dépôt Git, la révision déployée doit être établie par une preuve supplémentaire non destructive. La sonde runtime du 23 septembre ne montre pas de process dont le cwd est le dossier backend Stablecoin dans son échantillon borné ; l'ancienne observation du 21 septembre ne doit donc plus être présentée comme une preuve de process courante.
 
 Aucune mutation applicative ou runtime n'a été effectuée pendant cette réconciliation.
+
+### Canal SSH de secours et constats sécurité — 2026-09-26
+
+Session Claude Code locale (poste de Patrick), sur autorisation explicite du propriétaire.
+
+- `EVID-MCP-UNAVAILABLE-20260926-001` : `wealthtech_ssh_bridge` local = `Invalid or missing MCP session` ; connecteur claude.ai = `connection invalidated`. HTTP public observé depuis le poste : frontend `200`, API `401` (inchangé).
+- `EVID-SSH-FALLBACK-20260926-001` : workflow `governed-ssh-readonly.yml` et script `scripts/ssh/governed-readonly.sh` restaurés (DEC-2026-09-26-016), déclarés dans `.mcp/manifest.json`. Secrets GitHub `STABLECOIN_SSH_*` : aucun configuré (`gh secret list` vide) → canal inactif tant que le propriétaire ne les a pas créés.
+- `EVID-SEC-SCAN-20260926-001` : dépôt `PUBLIC`. Chaînes au format clé privée codées en dur dans 10 fichiers suivis ; `.env.local` présent dans 21 commits historiques ; `NEXT_PUBLIC_PRIVATE_KEY` utilisée dans ~20 composants client ; `debug.log`/`yarn-error.log` suivis sans motif sensible. Aucune valeur lue ni affichée ; aucune réécriture d'historique.
+- Décision propriétaire : conserver les clés (sauvegarde chiffrée hors Git sur S2 par un script fourni hors dépôt, exécuté par le propriétaire) avant toute neutralisation.
+
+```text
+EXACT_NEXT_ACTION = OWNER_RUNS_S2_ENCRYPTED_SECRETS_BACKUP_THEN_CONFIGURES_STABLECOIN_SSH_SECRETS_OR_RESTORES_MCP
+APPLICATION_CODE_MUTATION = NONE
+RUNTIME_MUTATION = NONE
+```
