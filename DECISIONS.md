@@ -140,3 +140,20 @@
 **Conséquence :** tant que `S2_HOST` et `S2_SSH_KEY` ne sont pas configurés sur `Patricked-code/Stablecoin`, le canal reste inactif. Toute capacité supplémentaire (build, restart, backend, déploiement applicatif) exige une nouvelle décision.
 
 **Mise en œuvre (2026-09-26) :** `S2_HOST` a la même valeur qu'`api_opcv` (liaison de l'épinglage confirmée, run `36265174755`). Pour `S2_SSH_KEY`, un secret GitHub ne pouvant pas être relu, le propriétaire a créé une clé ed25519 dédiée à Stablecoin et l'a ajoutée aux clés autorisées de `root` sur S2 ; elle est révocable indépendamment de celle d'AfricaFunds. Canal actif : observation read-only réussie (run `36266111300`).
+
+**Cohérence (2026-09-26, passe de conformité) :** la valeur `existingExternalSshBridgePolicy = …_NO_PARALLEL_TRANSPORT` avait été conservée dans `.mcp/manifest.json` alors qu'un transport de secours y était déclaré : contradiction introduite par l'agent le même jour. La politique devient `REUSE_AND_REVALIDATE_EXISTING_WEALTHTECH_SSH_BRIDGE_AS_PRIMARY_GITHUB_ACTIONS_SSH_ONLY_AS_DECLARED_FALLBACK` (ancienne valeur tracée dans `previousExternalSshBridgePolicy`) et le validateur impose désormais cette valeur dès qu'un secours est déclaré.
+
+
+## DEC-2026-09-26-018 — Claude peut déclencher le fast-forward de gouvernance borné
+
+**Statut :** décision du propriétaire du 2026-09-26 (« Option B »). Elle précise `.mcp/agents.json` sans le contredire : `canDeploy` reste `false` pour tous les agents.
+
+**Contexte :** la passe de conformité a relevé que `.mcp/agents.json` déclare `canDeploy: false` pour Claude, alors que l'agent proposait de lancer lui-même la réconciliation S2. Conformément à `SOURCE_OF_TRUTH.md` §4, la règle la plus restrictive a été appliquée et la décision a été demandée au propriétaire.
+
+**Décision :** Claude (et lui seul à ce stade) peut déclencher le fast-forward borné du frontend S2 — par le chemin MCP borné lorsqu'il est disponible, sinon par `Stablecoin S2 Reconcile` — parce que cette opération n'est pas un déploiement au sens de `canDeploy` : SHA serveur et SHA cible exacts, zéro fichier applicatif (liste du MCP), aucun build, aucun restart, aucune commande libre, refus automatique sinon.
+
+**Conditions cumulatives :** capacité live revérifiée ; préconditions de la garde remplies ; autorisation explicite du propriétaire, dans la session en cours, pour chaque exécution précise (règle WealthTech §4 du poste) ; aucune contrainte de `SUIVI.md` non levée qui interdirait la mutation de S2 ; preuves et post-attestation consignées dans `SUIVI.md`.
+
+**Surface :** `.mcp/agents.json` (`canTriggerBoundedGovernanceFastForward`, `boundedGovernanceFastForwardDecision`, `boundedGovernanceFastForwardRequiresOwnerSessionAuthorization`), `.mcp/manifest.json` (`reconcileTriggeredBy`), invariants contrôlés par `scripts/verify-governance-consistency.js`.
+
+**Conséquence :** tout delta contenant un fichier applicatif reste hors de cette décision et relève d'un chantier de déploiement dédié, avec build et restart gouvernés.

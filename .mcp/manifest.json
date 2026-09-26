@@ -52,7 +52,8 @@
     "mode": "repository_adapter",
     "coreModificationRequired": false,
     "registrationStatus": "NOT_ATTESTED_BY_LIVE_MCP_IN_THIS_CHANGE",
-    "existingExternalSshBridgePolicy": "REUSE_AND_REVALIDATE_EXISTING_WEALTHTECH_SSH_BRIDGE_NO_PARALLEL_TRANSPORT",
+    "existingExternalSshBridgePolicy": "REUSE_AND_REVALIDATE_EXISTING_WEALTHTECH_SSH_BRIDGE_AS_PRIMARY_GITHUB_ACTIONS_SSH_ONLY_AS_DECLARED_FALLBACK",
+    "previousExternalSshBridgePolicy": "REUSE_AND_REVALIDATE_EXISTING_WEALTHTECH_SSH_BRIDGE_NO_PARALLEL_TRANSPORT (DEC-2026-09-15-013, amended by DEC-2026-09-26-016/017)",
     "fallbackSshTransport": {
       "decision": "DEC-2026-09-26-016",
       "alignmentDecision": "DEC-2026-09-26-017",
@@ -76,6 +77,7 @@
       "writeAllowed": "BOUNDED_FRONTEND_EXACT_SHA_FAST_FORWARD_ZERO_APPLICATION_DIFF_WITH_CONFIRMATION_ONLY",
       "genericShellAllowed": false,
       "buildOrRestartAllowed": false,
+      "reconcileTriggeredBy": "OWNER_OR_AGENT_WITH_canTriggerBoundedGovernanceFastForward_AND_OWNER_SESSION_AUTHORIZATION_DEC-2026-09-26-018",
       "sshUser": "S2_USER_OR_ROOT_DEFAULT_SAME_AS_MCP_AND_AFRICAFUNDS",
       "requiredSecrets": ["S2_HOST", "S2_SSH_KEY"],
       "optionalSecrets": ["S2_USER", "S2_KNOWN_HOSTS", "S2_REPORT_PASSPHRASE"],

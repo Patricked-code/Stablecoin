@@ -30,7 +30,7 @@ Tâche gouvernée : `STB-TASK-20260915-002`.
 - [x] retrouver la procédure historique de mise à jour `git fetch github main` + `git merge --ff-only github/main` ;
 - [x] retrouver la preuve historique du pont externe `wealthtech_ssh_bridge` vers S1/S2 ;
 - [x] identifier le connecteur GitHub Actions SSH ajouté récemment comme mécanisme parallèle non nécessaire ;
-- [x] retirer ce mécanisme parallèle et conserver l'orchestrateur externe MCP ;
+- [x] retirer ce mécanisme parallèle et conserver l'orchestrateur externe MCP ; (2026-09-26 : `CONTRADICTED` par DEC-2026-09-26-016 / 017 — rétabli comme canal de secours déclaré, le MCP restant principal)
 - [x] réobserver le MCP central après l'intégration GWC : `Patricked-code/MCP/main@847b775a0b64b42ba3bddfee518ca0a486d810ce` ;
 - [x] réconcilier la PR MCP #86 avec le `main` courant : candidat `DIVERGED`, 18 commits ahead / 588 behind, à ne pas fusionner tel quel ;
 - [x] confirmer que le MCP `main` courant n'expose plus `stablecoin_frontend` et ne contient pas `CS-STABLECOIN-001` dans le registre actif ;
@@ -46,7 +46,12 @@ Tâche gouvernée : `STB-TASK-20260915-002`.
 - [x] classifier le frontend : `SERVER_BEHIND` de 57 commits à l'observation `main@678656d8...`, sans divergence, worktree propre, branche/remote corrects ;
 - [x] mettre à jour `.mcp/server-map.json`, `ARCHITECTURE.md` et `SUIVI.md` avec les preuves live ;
 - [x] préparer un plan de mise à jour non destructif : recheck exact-head/diff, fast-forward strict du checkout frontend seulement, aucun build/restart si le diff reste non applicatif, puis post-attestation ;
-- [x] obtenir l'autorisation d'opération runtime explicite avant d'exécuter ce fast-forward sur S2 ;\n- [x] activer le WRITE borné GitHub-first via MCP PR #117 et Governed Deploy #54 ;\n- [x] exécuter le fast-forward exact-SHA S2 sans build/restart et obtenir les attestations Git/runtime post-écriture ;\n- [x] après CI du checkpoint, aligner le commit documentaire sur S2 ; preuve fraîche du 2026-09-23 : frontend S2 `main@2a8be8219689e6213ce20f13d69b6b45f3693dfe`, worktree propre, identique au `main` GitHub observé.
+- [x] obtenir l'autorisation d'opération runtime explicite avant d'exécuter ce fast-forward sur S2 ;
+- [x] activer le WRITE borné GitHub-first via MCP PR #117 et Governed Deploy #54 ;
+- [x] exécuter le fast-forward exact-SHA S2 sans build/restart et obtenir les attestations Git/runtime post-écriture ;
+- [x] après CI du checkpoint, aligner le commit documentaire sur S2 ; preuve fraîche du 2026-09-23 : frontend S2 `main@2a8be8219689e6213ce20f13d69b6b45f3693dfe`, worktree propre, identique au `main` GitHub observé.
+
+> 2026-09-26 : les quatre lignes ci-dessus étaient fusionnées sur une seule ligne par des `\n` littéraux ; séparation sans modification du contenu (passe de conformité).
 
 ## P1 — Réconciliation serveur ↔ GitHub
 
@@ -86,6 +91,29 @@ Tâche gouvernée : `STB-TASK-20260926-003` (DEC-2026-09-26-017).
 - [ ] exécuter `Stablecoin S2 Secret Inventory` (rapport chiffré) pour savoir, sans exposer de valeur, si `NEXT_PUBLIC_PRIVATE_KEY` est configurée et présente dans le bundle client ;
 - [ ] si S2 est en retard sur `main` : réconcilier via le MCP s'il est disponible, sinon via `Stablecoin S2 Reconcile` (observe puis reconcile exact-SHA) ;
 - [ ] transmettre ces informations au MCP par intake dès sa reconnexion, sans modifier le dépôt MCP.
+
+## P0 — Passe de conformité gouvernance du 2026-09-26
+
+Tâche gouvernée : `STB-TASK-20260926-003` (checkpoint `STB-CHK-20260926-012`).
+
+- [x] relire en entier l'ordre obligatoire (`GOVERNANCE.md` → `LOOP_ENGINEERING.md`), le runbook et les cinq `.mcp/*` ;
+- [x] revérifier et consigner la capacité live (`push=true`, `admin=false`) ;
+- [x] relever les contradictions et appliquer la règle la plus restrictive (`SOURCE_OF_TRUTH.md` §4) ;
+- [x] résoudre `canDeploy=false` ↔ réconciliation par la décision du propriétaire DEC-2026-09-26-018 (Option B) ;
+- [x] corriger la contradiction introduite par l'agent sur `existingExternalSshBridgePolicy` et la rendre impossible par le validateur ;
+- [x] annoter, sans les effacer, les énoncés `STALE` / `CONTRADICTED` de `SUIVI.md`, `ARCHITECTURE.md` et `TODO.md` ;
+- [ ] (propriétaire) trancher la contrainte du 2026-09-23 « ne pas muter S2 tant que la révision backend et la procédure de restart ne sont pas attestées » pour le fast-forward de gouvernance ; tant qu'elle n'est pas levée, aucune réconciliation S2 ;
+- [ ] (propriétaire, optionnel) activer un hook Git local versionné sous `.github/hooks/` (validateur + tests avant chaque commit sur ce poste).
+
+## P0 — Sécurité : exposition web du dossier applicatif (constat 2026-09-26)
+
+- [ ] `EVID-S2-WEB-EXPOSURE-20260926-001` : la racine web sert le dossier de l'application ; `/.git/HEAD`, `/.git/config`, `/.git/logs/HEAD`, `/SUIVI.md`, `/package.json`, `/.gitignore`, `/.next/BUILD_ID` répondent `200` (`/.env.local` = `403`). Chantier dédié, décision et exécution par le propriétaire : pointer la racine web Plesk vers `public/` ou refuser `/.git`, les fichiers cachés et les fichiers de gouvernance, puis revérifier ;
+- [ ] vérifier en lecture seule sur S2, sans afficher aucune valeur, si les URL des remotes de `.git/config` contiennent des identifiants (booléen), puis décider d'une rotation si nécessaire.
+
+## P2 — Documentation runtime
+
+- [ ] annoter le runbook §4 (`origin` pointe désormais vers GitHub) dans un lot compatible : `docs/*` est classé applicatif par le fast-forward MCP, qui refuserait alors l'alignement S2 sans build/restart ; à traiter avec un déploiement gouverné ou après extension de la liste MCP par intake ;
+- [ ] proposer au MCP par intake : ajouter `docs/*.md` à la liste non applicative du fast-forward Stablecoin.
 
 ## P1 — Sécurité
 

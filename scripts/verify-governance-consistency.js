@@ -136,11 +136,46 @@ ok(
   "parallel MCP mechanisms must remain forbidden"
 );
 
+// Politique du pont SSH externe. Valeur historique (DEC-2026-09-15-013) ou valeur
+// déclarant le secours GitHub Actions (DEC-2026-09-26-016/017) ; un secours déclaré
+// impose la seconde valeur, afin qu'aucune contradiction ne puisse réapparaître.
+const LEGACY_BRIDGE_POLICY = "REUSE_AND_REVALIDATE_EXISTING_WEALTHTECH_SSH_BRIDGE_NO_PARALLEL_TRANSPORT";
+const FALLBACK_BRIDGE_POLICY =
+  "REUSE_AND_REVALIDATE_EXISTING_WEALTHTECH_SSH_BRIDGE_AS_PRIMARY_GITHUB_ACTIONS_SSH_ONLY_AS_DECLARED_FALLBACK";
+const bridgePolicy = manifest.mcpIntegration?.existingExternalSshBridgePolicy;
+const fallbackDeclared = Boolean(manifest.mcpIntegration?.fallbackSshTransport);
 ok(
-  manifest.mcpIntegration?.existingExternalSshBridgePolicy ===
-    "REUSE_AND_REVALIDATE_EXISTING_WEALTHTECH_SSH_BRIDGE_NO_PARALLEL_TRANSPORT",
+  bridgePolicy === LEGACY_BRIDGE_POLICY || bridgePolicy === FALLBACK_BRIDGE_POLICY,
   "existing external SSH bridge reuse policy missing"
 );
+if (fallbackDeclared) {
+  ok(
+    bridgePolicy === FALLBACK_BRIDGE_POLICY,
+    "a declared SSH fallback requires the fallback-aware bridge policy (no silent parallel transport)"
+  );
+  ok(
+    manifest.mcpIntegration.fallbackSshTransport.allowedOnlyWhen ===
+      "PRIMARY_MCP_CHANNEL_UNAVAILABLE_WITH_RECORDED_REASON",
+    "SSH fallback must stay limited to MCP unavailability with a recorded reason"
+  );
+}
+
+// Déclenchement du fast-forward de gouvernance borné par un agent (DEC-2026-09-26-018) :
+// n'implique jamais un droit de déploiement et exige l'autorisation du propriétaire.
+for (const agent of agents.agents || []) {
+  if (agent.canTriggerBoundedGovernanceFastForward === true) {
+    ok(agent.canDeploy === false, `${agent.name}: bounded governance fast-forward must not grant deploy`);
+    ok(
+      agent.boundedGovernanceFastForwardRequiresOwnerSessionAuthorization === true,
+      `${agent.name}: bounded governance fast-forward requires owner session authorization`
+    );
+    const decision = agent.boundedGovernanceFastForwardDecision;
+    ok(
+      typeof decision === "string" && read("DECISIONS.md").includes(`## ${decision}`),
+      `${agent.name}: bounded governance fast-forward decision missing in DECISIONS.md`
+    );
+  }
+}
 
 for (const [role, target] of Object.entries(onboarding.semanticRoles || {})) {
   const [file, anchor] = String(target).split("#");

@@ -22,6 +22,9 @@
       "canCreateBranch": false,
       "canSwitchBranchWithoutOwnerApproval": false,
       "canDeploy": false,
+      "canTriggerBoundedGovernanceFastForward": true,
+      "boundedGovernanceFastForwardDecision": "DEC-2026-09-26-018",
+      "boundedGovernanceFastForwardRequiresOwnerSessionAuthorization": true,
       "requiresGovernanceReadBeforeWrite": true,
       "requiresFreshRuntimeVerificationBeforeRuntimeAction": true,
       "liveCapabilityMustBeVerifiedBeforeWrite": true
@@ -43,6 +46,7 @@
     "canWriteCanonicalBranchMeans": "REPOSITORY_POLICY_CEILING_ONLY",
     "provesLiveConnectorWriteCapability": false,
     "liveCapabilityMustBeVerifiedBeforeWrite": true,
-    "currentTaskScopeMustAuthorizeMutation": true
+    "currentTaskScopeMustAuthorizeMutation": true,
+    "boundedGovernanceFastForwardIsNotDeploy": "EXACT_SHA_FRONTEND_FAST_FORWARD_ZERO_APPLICATION_FILE_NO_BUILD_NO_RESTART_ONLY_DEC-2026-09-26-018"
   }
 }

@@ -83,6 +83,8 @@ Le runbook documente notamment :
 
 **État de preuve actuel :** `PARTIAL_LIVE_VERIFICATION` sous un statut global conservateur `DOCUMENTED_UNVERIFIED`. Le frontend Git/Passenger/HTTP, le chemin backend et la joignabilité HTTP sont vérifiés live. La source/ownership process du backend, son restart et la base attachée restent inconnus.
 
+> Mise à jour 2026-09-26 (`EVID-S2-BACKEND-PROCESS-20260926-001`) : l'ownership du process backend est désormais observé (Plesk/Phusion Passenger, utilisateur d'abonnement non root identique au frontend, aucun PM2). La révision déployée, la procédure exacte de restart et la connexion effective à la base restent inconnues.
+
 ## 5. Sécurité connue
 
 Le runbook documente un risque potentiel autour d'une variable `NEXT_PUBLIC_PRIVATE_KEY`. Aucune valeur n'est enregistrée ici.
@@ -135,17 +137,17 @@ CURRENT_WORKSTREAM = GOVERNED_REPOSITORY_EVOLUTION
 CURRENT_TASK = STB-TASK-20260926-003
 CURRENT_TASK_STATUS = IN_PROGRESS
 TASK_BASELINE_SHA = b5955823f30ff60a20d9abb25a40c31988844dff
-SOURCE_HEAD_OBSERVED = 58090cc6760755c918b5dd2085239e69efeac44e
-LAST_COMPLETED_ACTION = S2_SSH_FALLBACK_ACTIVATED_HOSTKEY_VERIFIED_READONLY_OBSERVATION_SUCCESS_RUN_36266111300
-CURRENT_BLOCKER = S2_FRONTEND_BEHIND_GITHUB_MAIN_RECONCILIATION_REQUIRES_EXPLICIT_OWNER_AUTHORIZATION;INTERACTIVE_MCP_BRIDGE_SESSION_INVALID
-EXACT_NEXT_ACTION = VALIDATE_THIS_CHECKPOINT_CI_THEN_ON_OWNER_AUTHORIZATION_RECONCILE_S2_EXPECTED_2a8be8219689e6213ce20f13d69b6b45f3693dfe_TARGET_CURRENT_GITHUB_MAIN_VIA_MCP_IF_AVAILABLE_ELSE_STABLECOIN_S2_RECONCILE
+SOURCE_HEAD_OBSERVED = 1e3ecf503e7f27d82798f8b1083f24f6e940dbc2
+LAST_COMPLETED_ACTION = GOVERNANCE_FULL_REREAD_COMPLIANCE_AUDIT_CONTRADICTIONS_RECORDED_OPTION_B_DEC-2026-09-26-018_RECORDED
+CURRENT_BLOCKER = OWNER_DECISION_REQUIRED_ON_2026-09-23_S2_MUTATION_PRECONDITION;INTERACTIVE_MCP_BRIDGE_SESSION_INVALID
+EXACT_NEXT_ACTION = VALIDATE_THIS_CHECKPOINT_CI_THEN_OWNER_DECIDES_2026-09-23_PRECONDITION_THEN_IF_LIFTED_AND_AUTHORIZED_CLAUDE_RECONCILES_S2_EXPECTED_2a8be8219689e6213ce20f13d69b6b45f3693dfe_TARGET_CURRENT_MAIN_PER_DEC-2026-09-26-018
 PARKED_TASKS = STB-TASK-20260915-002(IN_PROGRESS;BLOCKER=BACKEND_DEPLOYED_SOURCE_REVISION_AND_EXACT_RESTART_PROCEDURE_UNKNOWN;PROCESS_OWNERSHIP_ATTESTED_20260926_PASSENGER_NON_ROOT;NEXT=DISCOVER_BACKEND_DEPLOYED_REVISION_AND_RESTART_PROCEDURE_READONLY)
 RUNTIME_STATUS = S2_FRONTEND_2a8be821_CLEAN_BEHIND_MAIN_BY_3_GOVERNANCE_ONLY_HTTP_200_BACKEND_PASSENGER_NON_ROOT_HTTP_401_401_OBSERVED_2026-09-26T19:27:32Z
-CI_STATUS = PREVIOUS_HEAD_58090cc6760755c918b5dd2085239e69efeac44e_PASS_RUN_36263708374_NEW_CHECKPOINT_REQUIRES_EXACT_SHA_CI
+CI_STATUS = PREVIOUS_HEAD_1e3ecf503e7f27d82798f8b1083f24f6e940dbc2_PASS_RUN_36266811342_NEW_CHECKPOINT_REQUIRES_EXACT_SHA_CI
 MCP_REGISTRATION_STATUS = GITHUB_OIDC_READONLY_AND_BOUNDED_WRITE_ACTIVE_BACKEND_INVENTORY_PROBE_SUCCESS_RUN_35803784710;INTERACTIVE_BRIDGE_SESSION_INVALID_2026-09-26
-SECURITY_WARNINGS = PUBLIC_REPOSITORY;KEY_SHAPED_STRINGS_HARDCODED_IN_10_TRACKED_FILES;ENV_LOCAL_IN_21_HISTORICAL_COMMITS;NEXT_PUBLIC_PRIVATE_KEY_READ_BY_CLIENT_COMPONENTS;ROTATION_BY_OWNER_REQUIRED_IF_REAL_KEYS;SEE_SECTION_5
-CHECKPOINT_ID = STB-CHK-20260926-011
-EVIDENCE_IDS = EVID-GH-HEAD-20260915-001,EVID-GH-PERM-20260915-001,EVID-NONREG-20260915-001,EVID-CI-20260915-001,EVID-LINKAGE-20260915-001,EVID-MCP-BRIDGE-20260915-001,EVID-CORRECTION-20260915-001,EVID-CI-CORRECTION-20260915-001,EVID-S2-FRONTEND-GIT-20260920-001,EVID-S2-BACKEND-PATH-20260920-001,EVID-S2-RUNTIME-HTTP-20260920-001,EVID-S2-DIFF-NONREG-20260920-001,EVID-S2-FAST-FORWARD-20260921-001,EVID-S2-POST-FAST-FORWARD-GIT-20260921-001,EVID-S2-POST-FAST-FORWARD-RUNTIME-20260921-001,EVID-S2-FRONTEND-GIT-20260923-001,EVID-S2-BACKEND-GIT-20260923-001,EVID-S2-RUNTIME-HTTP-20260923-001,EVID-S2-BACKEND-INVENTORY-20260923-001,EVID-MCP-UNAVAILABLE-20260926-001,EVID-SSH-FALLBACK-20260926-001,EVID-SEC-SCAN-20260926-001,EVID-S2-HOSTKEY-20260926-001,EVID-MCP-CLASSIFIER-COMPAT-20260926-001,EVID-S2-GUARD-TESTS-20260926-001,EVID-CI-20260926-58090cc,EVID-S2-HOSTKEY-BINDING-20260926-001,EVID-S2-FALLBACK-OBSERVE-20260926-001,EVID-S2-BACKEND-PROCESS-20260926-001
+SECURITY_WARNINGS = PUBLIC_REPOSITORY;KEY_SHAPED_STRINGS_HARDCODED_IN_10_TRACKED_FILES;ENV_LOCAL_IN_21_HISTORICAL_COMMITS;NEXT_PUBLIC_PRIVATE_KEY_READ_BY_CLIENT_COMPONENTS;ROTATION_BY_OWNER_REQUIRED_IF_REAL_KEYS;WEB_ROOT_SERVES_APP_DIRECTORY_AND_GIT_DIRECTORY_EVID-S2-WEB-EXPOSURE-20260926-001;SEE_SECTION_5
+CHECKPOINT_ID = STB-CHK-20260926-012
+EVIDENCE_IDS = EVID-GH-HEAD-20260915-001,EVID-GH-PERM-20260915-001,EVID-NONREG-20260915-001,EVID-CI-20260915-001,EVID-LINKAGE-20260915-001,EVID-MCP-BRIDGE-20260915-001,EVID-CORRECTION-20260915-001,EVID-CI-CORRECTION-20260915-001,EVID-S2-FRONTEND-GIT-20260920-001,EVID-S2-BACKEND-PATH-20260920-001,EVID-S2-RUNTIME-HTTP-20260920-001,EVID-S2-DIFF-NONREG-20260920-001,EVID-S2-FAST-FORWARD-20260921-001,EVID-S2-POST-FAST-FORWARD-GIT-20260921-001,EVID-S2-POST-FAST-FORWARD-RUNTIME-20260921-001,EVID-S2-FRONTEND-GIT-20260923-001,EVID-S2-BACKEND-GIT-20260923-001,EVID-S2-RUNTIME-HTTP-20260923-001,EVID-S2-BACKEND-INVENTORY-20260923-001,EVID-MCP-UNAVAILABLE-20260926-001,EVID-SSH-FALLBACK-20260926-001,EVID-SEC-SCAN-20260926-001,EVID-S2-HOSTKEY-20260926-001,EVID-MCP-CLASSIFIER-COMPAT-20260926-001,EVID-S2-GUARD-TESTS-20260926-001,EVID-CI-20260926-58090cc,EVID-S2-HOSTKEY-BINDING-20260926-001,EVID-S2-FALLBACK-OBSERVE-20260926-001,EVID-S2-BACKEND-PROCESS-20260926-001,EVID-CI-20260926-1e3ecf5,EVID-GH-PERM-20260926-001,EVID-GOV-REREAD-20260926-001,EVID-S2-WEB-EXPOSURE-20260926-001
 APPLICATION_CODE_MUTATION = NONE
 BACKEND_METADATA_DISCOVERY = PACKAGE_api.fan-token_V1.0.0_DECLARED_GITLAB_SOURCE_MYSQL_db_stablecoin_NO_SECRET_VALUES_READ
 RUNTIME_MUTATION = S2_FRONTEND_FAST_FORWARD_6216755d318677ed9a56c36731a57531d02bf751_TO_4e946bd523acfbef3d08d9ff7b0b3dd3f074c3a3_NO_BUILD_NO_RESTART
@@ -159,6 +161,8 @@ Le checkpoint est une mémoire de reprise et doit être réconcilié avec Git, l
 `STB-TASK-20260926-003` (ouverte le 2026-09-26 sur instruction explicite du propriétaire) aligne le canal SSH de secours Stablecoin sur le modèle AfricaFunds et sur les garanties de la commande bornée MCP : observation, inventaire des secrets sans valeurs, vérification de la clé d'hôte et fast-forward borné du frontend, utilisables uniquement lorsque le MCP est indisponible (DEC-2026-09-26-016 / DEC-2026-09-26-017). `STB-TASK-20260915-002` n'est pas abandonnée : elle est parquée (`PARKED_TASKS`) avec son blocker et sa prochaine action inchangés.
 
 `STB-TASK-20260915-002` révalide et gouverne la liaison GitHub ↔ serveur déjà documentée : remote serveur `github` vers `Patricked-code/Stablecoin`, procédure fast-forward documentée, et pont externe `wealthtech_ssh_bridge`. Le connecteur GitHub Actions SSH ajouté récemment est retiré comme mécanisme parallèle non nécessaire.
+
+> Statut 2026-09-26 : `CONTRADICTED` sur ce dernier point par les décisions du propriétaire DEC-2026-09-26-016 / 017 — le connecteur est rétabli comme canal de secours déclaré, utilisable seulement quand le MCP est indisponible. Le texte ci-dessus reste la trace historique du 2026-09-15.
 
 ### Work log gouverné
 
@@ -190,6 +194,8 @@ Le checkpoint est une mémoire de reprise et doit être réconcilié avec Git, l
 Continuer exclusivement via le fallback GitHub-first/OIDC déjà intégré. La prochaine découverte doit rester strictement read-only et viser deux éléments encore inconnus : la révision exacte du backend déployé issue du dépôt déclaré `gitlab.com/wealthtech1/api/api.fan-token.git`, puis l'ownership/procédure exacte de restart du backend. Ne pas utiliser le bridge, ne pas recréer de transport parallèle et ne pas muter S2 tant que ces deux points ne sont pas attestés.
 
 Le frontend S2 est déjà aligné sur `Patricked-code/Stablecoin/main@2a8be8219689e6213ce20f13d69b6b45f3693dfe`, worktree propre.
+
+> Statut 2026-09-26 : `STALE` — S2 est toujours à `2a8be821`, mais `main` a avancé (delta de gouvernance uniquement) ; voir `EVID-S2-FALLBACK-OBSERVE-20260926-001`. La contrainte « ne pas muter S2 tant que ces deux points ne sont pas attestés » reste en vigueur tant que le propriétaire ne l'a pas levée (voir la passe de conformité du 2026-09-26).
 
 Le checkpoint n'embarque volontairement pas son propre SHA de commit : le HEAD Git distant observé reste l'autorité pour la version du checkpoint. Toute nouvelle session doit donc réobserver Git et la CI avant écriture.
 
@@ -461,3 +467,44 @@ BACKEND_RESTART_PROCEDURE = DOCUMENTED_UNVERIFIED
 Correction de publication : la sonde `s2_observe.py` v1.0.0 publiait le nom de l'utilisateur système des processus dans l'artefact (dépôt public, artefact expirant le 2026-10-26). La v1.0.1 ne publie plus que `user_is_root` et `user_owns_app_dir`. Le nom n'est reporté dans aucun document versionné.
 
 Suite : la réconciliation S2 (`2a8be821` → `main` courant, delta de gouvernance uniquement, sans build ni restart) exige l'autorisation explicite du propriétaire pour cette opération précise ; elle passera par le MCP s'il est reconnecté, sinon par `Stablecoin S2 Reconcile`.
+
+> Remplacé le même jour par `STB-CHK-20260926-012` (section suivante et Current State Block).
+
+### Passe de conformité gouvernance — 2026-09-26
+
+Tâche `STB-TASK-20260926-003`, checkpoint `STB-CHK-20260926-012`. Demande du propriétaire : relire, appliquer et respecter toutes les règles de gouvernance applicables avant d'exécuter l'Option B.
+
+Preuves :
+
+- `EVID-CI-20260926-1e3ecf5` : `Governance Consistency` run `36266811342` = SUCCESS sur le SHA exact `1e3ecf503e7f27d82798f8b1083f24f6e940dbc2`.
+- `EVID-GH-PERM-20260926-001` : le `2026-09-26T20:03:59Z`, capacité live de la connexion GitHub active (identité `gh` `Wealthtechinnovations`) : `pull=true`, `push=true`, `triage=true`, `maintain=false`, `admin=false` ; dépôt `public`, branche par défaut `main`. Politique repository-side ∩ capacité live ∩ tâche courante : écriture documentaire sur `main` autorisée.
+- `EVID-GOV-REREAD-20260926-001` : relecture intégrale, dans l'ordre obligatoire, de `GOVERNANCE.md`, `SOURCE_OF_TRUTH.md`, `AGENTS.md`, `README.md`, `SUIVI.md`, `DECISIONS.md`, `TODO.md`, `ARCHITECTURE.md`, `LOOP_ENGINEERING.md`, du runbook et des cinq `.mcp/*`. Aucun `00_START_HERE.md`, `CLAUDE.md` de dépôt ni `.governance/` n'existe. HEAD `1e3ecf5` = `origin/main`, aucun commit tiers depuis `9ca23b8`.
+- `EVID-S2-WEB-EXPOSURE-20260926-001` : requêtes HEAD uniquement, aucun contenu téléchargé : `/.git/HEAD`, `/.git/config`, `/.git/logs/HEAD`, `/SUIVI.md`, `/package.json`, `/.gitignore`, `/.next/BUILD_ID` = `200` ; `/.env.local` = `403` ; `/.env` = `404`. La racine web sert le dossier de l'application : tout fichier présent dans le checkout S2 est lisible publiquement, y compris le dossier `.git`. Défaut préexistant, à traiter dans un chantier sécurité dédié (`TODO.md`).
+
+Conformité de l'agent (sessions du 2026-09-26) :
+
+```text
+ORDRE_DE_LECTURE (AGENTS §1, GOVERNANCE §8)      = NON RESPECTÉ avant b5955823/58090cc/1e3ecf50 → CORRIGÉ (EVID-GOV-REREAD-20260926-001)
+CAPACITÉ_LIVE_AVANT_ÉCRITURE (GOVERNANCE §7.1)   = NON CONSIGNÉE avant ces écritures → CORRIGÉ (EVID-GH-PERM-20260926-001)
+TÂCHE_ET_CHECKPOINT (LOOP §3)                    = ABSENTS pour b5955823 → CORRIGÉ dès 58090cc
+NON_RÉGRESSION (GOVERNANCE §5)                   = RÉGRESSION b5955823 (classifieur MCP) → CORRIGÉE dans 58090cc
+CONTRADICTIONS (SOURCE_OF_TRUTH §4)              = voir ci-dessous
+ÉNONCÉS_STALE (SOURCE_OF_TRUTH §3, §8)           = NON ANNOTÉS dans 1e3ecf50 → ANNOTÉS (SUIVI §4, §8 ; ARCHITECTURE §4, §5, §7 ; TODO)
+BRANCHE / FORCE / HISTORIQUE                     = RESPECTÉ
+SECRETS                                          = RESPECTÉ (aucune valeur lue, affichée ou versionnée)
+CI_EXACT_SHA                                     = RESPECTÉ
+RUNTIME (AGENTS §6)                              = serveur, dossier, Passenger, HEAD/remote, HTTP confirmés ; build/restart non requis (runbook lu)
+MCP (AGENTS §7)                                  = NON APPLICABLE tant que le MCP est indisponible ; intake en attente
+```
+
+Contradictions relevées :
+
+1. `.mcp/agents.json` `canDeploy=false` pour Claude ↔ proposition de l'agent de lancer la réconciliation S2 : règle restrictive appliquée, décision demandée ; **résolue** par le propriétaire (Option B) → DEC-2026-09-26-018 (`canDeploy` reste `false`).
+2. `existingExternalSshBridgePolicy = …_NO_PARALLEL_TRANSPORT` ↔ secours SSH déclaré (introduite par l'agent dans `58090cc`) : **résolue** — politique explicite du secours, ancienne valeur tracée, validateur renforcé.
+3. **Contrainte du 2026-09-23** (§ « Action suivante exacte », tâche parquée `STB-TASK-20260915-002`) : « ne pas muter S2 tant que la révision backend et la procédure de restart ne sont pas attestées » ↔ fast-forward de gouvernance autorisé par l'Option B. Elle n'est levée par aucune décision ; elle est plus récente que la consigne du 2026-09-21 (« fast-forwarder les checkpoints documentaires par le chemin borné »). **Non résolue : la règle la plus restrictive s'applique, aucune réconciliation S2 n'est lancée** tant que le propriétaire ne l'a pas explicitement levée ou maintenue.
+4. Runbook §4 (`origin` GitLab) ↔ observation live (`origin` = GitHub) : runbook `STALE` sur ce point ; annotation différée car `docs/*` est classé applicatif par le fast-forward MCP (`TODO.md`).
+5. Runbook §5 (Node 18.20.8) ↔ Node `v14.16.0` du PATH root : non contradictoire (Node de l'application ≠ Node du compte root).
+
+Correction de forme préexistante : `TODO.md` contenait quatre éléments fusionnés par des `\n` littéraux ; ils sont séparés sans changement de contenu.
+
+Aucune mutation applicative ni runtime dans cette passe.
