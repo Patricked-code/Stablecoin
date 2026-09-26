@@ -102,7 +102,7 @@ Tâche gouvernée : `STB-TASK-20260926-003` (checkpoint `STB-CHK-20260926-012`).
 - [x] résoudre `canDeploy=false` ↔ réconciliation par la décision du propriétaire DEC-2026-09-26-018 (Option B) ;
 - [x] corriger la contradiction introduite par l'agent sur `existingExternalSshBridgePolicy` et la rendre impossible par le validateur ;
 - [x] annoter, sans les effacer, les énoncés `STALE` / `CONTRADICTED` de `SUIVI.md`, `ARCHITECTURE.md` et `TODO.md` ;
-- [ ] (propriétaire) trancher la contrainte du 2026-09-23 « ne pas muter S2 tant que la révision backend et la procédure de restart ne sont pas attestées » pour le fast-forward de gouvernance ; tant qu'elle n'est pas levée, aucune réconciliation S2 ;
+- [x] (propriétaire) trancher la contrainte du 2026-09-23 « ne pas muter S2 tant que la révision backend et la procédure de restart ne sont pas attestées » pour le fast-forward de gouvernance — levée pour ce seul cas, maintenue pour le reste (DEC-2026-09-26-019) ;
 - [ ] (propriétaire, optionnel) activer un hook Git local versionné sous `.github/hooks/` (validateur + tests avant chaque commit sur ce poste).
 
 ## P0 — Sécurité : exposition web du dossier applicatif (constat 2026-09-26)

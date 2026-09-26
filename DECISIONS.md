@@ -157,3 +157,14 @@
 **Surface :** `.mcp/agents.json` (`canTriggerBoundedGovernanceFastForward`, `boundedGovernanceFastForwardDecision`, `boundedGovernanceFastForwardRequiresOwnerSessionAuthorization`), `.mcp/manifest.json` (`reconcileTriggeredBy`), invariants contrôlés par `scripts/verify-governance-consistency.js`.
 
 **Conséquence :** tout delta contenant un fichier applicatif reste hors de cette décision et relève d'un chantier de déploiement dédié, avec build et restart gouvernés.
+
+
+## DEC-2026-09-26-019 — Levée de la contrainte du 2026-09-23 pour le seul fast-forward de gouvernance
+
+**Statut :** décision du propriétaire du 2026-09-26.
+
+**Contexte :** la contrainte « ne pas muter S2 tant que la révision backend et la procédure de restart ne sont pas attestées » (prochaine action de `STB-TASK-20260915-002`, 2026-09-23) est plus récente que la consigne du 2026-09-21 d'aligner S2 sur les checkpoints documentaires par le chemin borné. Aucune décision ne l'ayant levée, la règle la plus restrictive s'appliquait (`SOURCE_OF_TRUTH.md` §4) et bloquait tout fast-forward.
+
+**Décision :** le propriétaire lève cette contrainte pour le seul fast-forward de gouvernance borné du frontend S2 (DEC-2026-09-20-014, DEC-2026-09-21-015, DEC-2026-09-26-017, DEC-2026-09-26-018 : SHA exacts, zéro fichier applicatif, aucun build, aucun restart, sauvegarde avant mutation). Elle reste en vigueur pour toute mutation de S2 touchant le backend, le code applicatif, un build ou un restart, tant que la révision backend et la procédure de restart ne sont pas attestées.
+
+**Canal (précision du propriétaire) :** le travail porte uniquement sur `Patricked-code/Stablecoin` ; le dépôt et le code du MCP ne sont ni modifiés ni opérés. Les fonctions MCP pour Stablecoin sont ajoutées progressivement : au 2026-09-26, le pont MCP répond mais n'expose Stablecoin qu'en lecture (`get_write_tools_context` : « pull et déploiement restent désactivés »). Tant que le MCP n'expose pas d'écriture Stablecoin, il est considéré indisponible **pour les écritures** au sens de DEC-2026-09-26-016/017 : les lectures passent par le MCP lorsqu'il répond, le fast-forward borné par `Stablecoin S2 Reconcile`, avec ce motif consigné.
